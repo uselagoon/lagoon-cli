@@ -1,0 +1,52 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/lagoon
+    steps:
+      - checkout
+      - run:
+          name: run build
+          command: |
+            dep ensure
+            go build -v
+      - run:
+          name: run tests
+          command: |
+            go fmt ./...
+            go vet ./...
+            go test -v ./...
+  deploy:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/lagoon
+    steps:
+      - checkout
+      - run:
+          name: run build
+          command: |
+            dep ensure
+            go build -v
+      - run: go get -u github.com/mitchellh/gox
+      - run: go get -u github.com/tcnksm/ghr
+      - run: go get -u github.com/stevenmatthewt/semantics
+      - run:
+          name: cross compile
+          command: |
+            gox -os="linux darwin windows" -arch="amd64" -output="dist/lagooncli_{{.OS}}_{{.Arch}}"
+            cd dist/ && gzip *
+      - store_artifacts:
+          path: dist
+          name: Artifact storage
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

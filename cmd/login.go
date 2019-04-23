@@ -40,7 +40,7 @@ var loginCmd = &cobra.Command{
 		}
 		err = conn.Close()
 		viper.Set("lagoon_token", strings.TrimSpace(string(out)))
-		err = viper.WriteConfig();
+		err = viper.WriteConfig()
 		if err != nil {
 			panic(err)
 		}

@@ -45,7 +45,7 @@ func initConfig() {
 	viper.SetDefault("lagoon_token", "")
 	viper.SetDefault("lagoon_graphql", "https://api.lagoon.amazeeio.cloud/graphql")
 	err = viper.ReadInConfig()
-	if err != nil{
+	if err != nil {
 		err = viper.WriteConfigAs(filepath.Join(home, configName+".yml"))
 		if err != nil {
 			panic(err)
