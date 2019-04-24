@@ -30,7 +30,7 @@ var loginCmd = &cobra.Command{
 		}
 		session, err := conn.NewSession()
 		if err != nil {
-			conn.Close()
+			_ = conn.Close()
 			panic(err)
 		}
 

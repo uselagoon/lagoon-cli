@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/lagoon
+    working_directory: /go/src/github.com/mglaman/lagoon
     steps:
       - checkout
       - run:
@@ -20,7 +20,7 @@ jobs:
   deploy:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/lagoon
+    working_directory: /go/src/github.com/mglaman/lagoon
     steps:
       - checkout
       - run:
