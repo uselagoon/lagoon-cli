@@ -12,7 +12,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "lagoon",
 	Short: "Command line integration for Lagoon",
-	Long:  `@todo.`,
+	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
 }
 
 func Execute() {
