@@ -41,7 +41,8 @@ var projectsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		apiToken := viper.GetString("lagoon_token")
 		if apiToken == "" {
-			panic("Need to run `login` first")
+			fmt.Println("Need to run `lagoon login` first")
+			os.Exit(1)
 		}
 
 		if len(args) == 0 {
