@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -12,19 +11,16 @@ var projectListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Show your projects",
 	Run: func(cmd *cobra.Command, args []string) {
-		client := GraphQLClient()
-		req := GraphQLRequest(`
+		var responseData WhatIsThere
+		err := GraphQLRequest(`
 query whatIsThere {
   allProjects {
     gitUrl
     name
   }
 }
-`)
-		//var responseData map[string]interface{}
-		var responseData WhatIsThere
-		ctx := context.Background()
-		if err := client.Run(ctx, req, &responseData); err != nil {
+`, &responseData)
+		if err != nil {
 			panic(err)
 		}
 		table := tablewriter.NewWriter(os.Stdout)

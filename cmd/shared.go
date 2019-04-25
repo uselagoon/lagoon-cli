@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	context "context"
 	"fmt"
 	"github.com/machinebox/graphql"
 	"github.com/spf13/viper"
@@ -41,8 +42,10 @@ func ValidateToken() bool {
 func GraphQLClient() *graphql.Client {
 	return graphql.NewClient(viper.GetString("lagoon_graphql"))
 }
-func GraphQLRequest(q string) *graphql.Request {
+func GraphQLRequest(q string, resp interface{}) error {
+	client := GraphQLClient()
 	req := graphql.NewRequest(q)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", getGraphQLToken()))
-	return req
+	ctx := context.Background()
+	return client.Run(ctx, req, &resp)
 }

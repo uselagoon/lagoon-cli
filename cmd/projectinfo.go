@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -22,8 +21,8 @@ var projectInfoCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		projectName := args[0]
-		client := GraphQLClient()
-		req := GraphQLRequest(fmt.Sprintf(`query {
+		var responseData ProjectByName
+		err := GraphQLRequest(fmt.Sprintf(`query {
   projectByName(name: "%s") {
     id,
     name,
@@ -42,10 +41,9 @@ var projectInfoCmd = &cobra.Command{
     storageCalc,
     developmentEnvironmentsLimit,
   }
-}`, projectName))
-		var responseData ProjectByName
-		ctx := context.Background()
-		if err := client.Run(ctx, req, &responseData); err != nil {
+}`, projectName), &responseData)
+
+		if err != nil {
 			panic(err)
 		}
 		project := responseData.ProjectByName
