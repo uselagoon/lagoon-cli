@@ -143,4 +143,6 @@ query whatIsThere {
 		})
 	}
 	table.Render()
+	fmt.Println()
+	fmt.Println("To view a project's details, run `lagoon projects {name}`.")
 }
