@@ -35,27 +35,13 @@ type Project struct {
 	DevelopmentEnvironmentsLimit int            `json:"developmentEnvironmentsLimit"`
 }
 
-var projectsCmd = &cobra.Command{
-	Use:   "projects",
+var projectCmd = &cobra.Command{
+	Use:   "project",
 	Short: "Show your projects, or details about a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		apiToken := viper.GetString("lagoon_token")
-		if apiToken == "" {
-			fmt.Println("Need to run `lagoon login` first")
-			os.Exit(1)
-		}
-
-		if len(args) == 0 {
-			listProjects()
-		} else {
-			projectName := args[0]
-			getProject(projectName)
-		}
-	},
 }
 
 func init() {
-	rootCmd.AddCommand(projectsCmd)
+	rootCmd.AddCommand(projectCmd)
 }
 
 func getProject(name string) {
@@ -144,5 +130,5 @@ query whatIsThere {
 	}
 	table.Render()
 	fmt.Println()
-	fmt.Println("To view a project's details, run `lagoon projects {name}`.")
+	fmt.Println("To view a project's details, run `lagoon project info {name}`.")
 }
