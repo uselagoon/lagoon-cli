@@ -6,6 +6,7 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var projectInfoCmd = &cobra.Command{
@@ -65,13 +66,14 @@ var projectInfoCmd = &cobra.Command{
 		fmt.Println()
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAutoWrapText(true)
-		table.SetHeader([]string{"Name", "Deploy Type", "Environment Type", "Route"})
+		table.SetHeader([]string{"Name", "Deploy Type", "Environment Type", "Route", "SSH"})
 		for _, environment := range project.Environments {
 			table.Append([]string{
 				environment.Name,
 				environment.DeployType,
 				environment.EnvironmentType,
 				environment.Route,
+				fmt.Sprintf("ssh -p %s -t %s-%s@%s", viper.GetString("lagoon_port"), project.Name, environment.Name, viper.GetString("lagoon_hostname")),
 			})
 		}
 		table.Render()
