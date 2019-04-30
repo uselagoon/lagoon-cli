@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"path/filepath"
 )
 
 var rootCmd = &cobra.Command{
@@ -15,6 +16,7 @@ var rootCmd = &cobra.Command{
 	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
 }
 
+// Execute the root command.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"os"
+
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var projectListCmd = &cobra.Command{
@@ -14,10 +16,18 @@ var projectListCmd = &cobra.Command{
 		var responseData WhatIsThere
 		err := GraphQLRequest(`
 query whatIsThere {
-  allProjects {
-    gitUrl
-    name
-  }
+	allProjects {
+		gitUrl
+		name,
+		customer {
+		  id,
+		  name
+		}
+		environments {
+		  environmentType,
+		  route
+		}
+	  }
 }
 `, &responseData)
 		if err != nil {
@@ -25,11 +35,17 @@ query whatIsThere {
 		}
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAutoWrapText(true)
-		table.SetHeader([]string{"Name", "Git URL"})
+		table.SetHeader([]string{"Name", "Customer", "Git URL", "URL"})
 		for _, project := range responseData.AllProjects {
+			productionEnvironment, err := getProductionEnvironment(project.Environments)
+			if err != nil {
+				panic(err)
+			}
 			table.Append([]string{
 				project.Name,
+				project.Customer.Name,
 				project.GitURL,
+				productionEnvironment.Route,
 			})
 		}
 		table.Render()
@@ -40,4 +56,13 @@ query whatIsThere {
 
 func init() {
 	projectCmd.AddCommand(projectListCmd)
+}
+
+func getProductionEnvironment(environments []Environments) (*Environments, error) {
+	for _, environment := range environments {
+		if environment.EnvironmentType == "production" {
+			return &environment, nil
+		}
+	}
+	return nil, errors.New("Unable to determine production environment")
 }

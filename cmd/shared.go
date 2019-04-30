@@ -3,22 +3,30 @@ package cmd
 import (
 	context "context"
 	"fmt"
+
 	"github.com/machinebox/graphql"
 	"github.com/spf13/viper"
 )
 
+// ProjectByName struct.
 type ProjectByName struct {
 	ProjectByName Project `json:"projectByName"`
 }
+
+// WhatIsThere struct.
 type WhatIsThere struct {
 	AllProjects []Project `json:"allProjects"`
 }
+
+// Environments struct.
 type Environments struct {
 	Name            string `json:"name"`
 	EnvironmentType string `json:"environmentType"`
 	DeployType      string `json:"deployType"`
 	Route           string `json:"route"`
 }
+
+// Project struct.
 type Project struct {
 	ID                           int            `json:"id"`
 	GitURL                       string         `json:"gitUrl"`
@@ -30,6 +38,13 @@ type Project struct {
 	Environments                 []Environments `json:"environments"`
 	AutoIdle                     int            `json:"autoIdle"`
 	DevelopmentEnvironmentsLimit int            `json:"developmentEnvironmentsLimit"`
+	Customer                     Customer       `json:"customer"`
+}
+
+// Customer struct.
+type Customer struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func getGraphQLToken() string {
@@ -42,6 +57,8 @@ func ValidateToken() bool {
 func GraphQLClient() *graphql.Client {
 	return graphql.NewClient(viper.GetString("lagoon_graphql"))
 }
+
+// GraphQLRequest performs a request.
 func GraphQLRequest(q string, resp interface{}) error {
 	client := GraphQLClient()
 	req := graphql.NewRequest(q)
