@@ -28,7 +28,8 @@ required = [
 "github.com/spf13/cobra",
 "github.com/spf13/viper",
 "github.com/machinebox/graphql",
-"github.com/olekukonko/tablewriter"
+"github.com/olekukonko/tablewriter",
+"github.com/pkg/browser"
 ]
 
 [[constraint]]

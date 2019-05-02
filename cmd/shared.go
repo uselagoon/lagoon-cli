@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	context "context"
+	"context"
 	"fmt"
-
 	"github.com/machinebox/graphql"
 	"github.com/spf13/viper"
 )
