@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/mglaman/lagoon/graphql"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -14,7 +15,7 @@ var projectListCmd = &cobra.Command{
 	Short: "Show your projects",
 	Run: func(cmd *cobra.Command, args []string) {
 		var responseData WhatIsThere
-		err := GraphQLRequest(`
+		err := graphql.GraphQLRequest(`
 query whatIsThere {
 	allProjects {
 		gitUrl
@@ -64,5 +65,5 @@ func getProductionEnvironment(environments []Environments) (*Environments, error
 			return &environment, nil
 		}
 	}
-	return nil, errors.New("Unable to determine production environment")
+	return nil, errors.New("unable to determine production environment")
 }

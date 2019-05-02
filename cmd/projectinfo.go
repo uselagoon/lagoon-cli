@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mglaman/lagoon/graphql"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -24,7 +25,7 @@ var projectInfoCmd = &cobra.Command{
 		}
 		projectName := args[0]
 		var responseData ProjectByName
-		err := GraphQLRequest(fmt.Sprintf(`query {
+		err := graphql.GraphQLRequest(fmt.Sprintf(`query {
   projectByName(name: "%s") {
     id,
     name,
@@ -49,7 +50,7 @@ var projectInfoCmd = &cobra.Command{
 			panic(err)
 		}
 		project := responseData.ProjectByName
-		var currentDevEnvironments int = 0
+		var currentDevEnvironments = 0
 		for _, environment := range project.Environments {
 			if environment.EnvironmentType == "development" {
 				currentDevEnvironments++

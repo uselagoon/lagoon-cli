@@ -1,12 +1,5 @@
 package cmd
 
-import (
-	"context"
-	"fmt"
-	"github.com/machinebox/graphql"
-	"github.com/spf13/viper"
-)
-
 // ProjectByName struct.
 type ProjectByName struct {
 	ProjectByName Project `json:"projectByName"`
@@ -44,24 +37,4 @@ type Project struct {
 type Customer struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
-}
-
-func getGraphQLToken() string {
-	return viper.GetString("lagoon_token")
-}
-func ValidateToken() bool {
-	return getGraphQLToken() != ""
-}
-
-func GraphQLClient() *graphql.Client {
-	return graphql.NewClient(viper.GetString("lagoon_graphql"))
-}
-
-// GraphQLRequest performs a request.
-func GraphQLRequest(q string, resp interface{}) error {
-	client := GraphQLClient()
-	req := graphql.NewRequest(q)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", getGraphQLToken()))
-	ctx := context.Background()
-	return client.Run(ctx, req, &resp)
 }
