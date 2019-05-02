@@ -9,14 +9,10 @@ import (
 
 var kibanaCmd = &cobra.Command{
 	Use:   "kibana",
-	Short: "Launch the web user interface",
+	Short: "Launch the Kibana logs user interface",
 	Run: func(cmd *cobra.Command, args []string) {
 		url := viper.GetString("lagoon_kibana")
 		fmt.Println(fmt.Sprintf("Opening %s", url))
 		_ = browser.OpenURL(url)
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(kibanaCmd)
 }

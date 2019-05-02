@@ -48,10 +48,6 @@ var loginCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(loginCmd)
-}
-
 func publicKey(path string) ssh.AuthMethod {
 	key, err := ioutil.ReadFile(path)
 	if err != nil {

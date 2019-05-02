@@ -16,7 +16,3 @@ var webCmd = &cobra.Command{
 		_ = browser.OpenURL(url)
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(webCmd)
-}

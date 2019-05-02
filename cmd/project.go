@@ -18,7 +18,3 @@ var projectCmd = &cobra.Command{
 		}
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(projectCmd)
-}

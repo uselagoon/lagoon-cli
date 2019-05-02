@@ -39,7 +39,3 @@ func Prompt(prompt string) string {
 	fmt.Print(fullPrompt + ": ")
 	return GetInput()
 }
-
-func init() {
-	rootCmd.AddCommand(configCmd)
-}
