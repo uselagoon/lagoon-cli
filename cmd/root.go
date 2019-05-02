@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 )
 
+var cmdProjectName = ""
+
 var rootCmd = &cobra.Command{
 	Use:   "lagoon",
 	Short: "Command line integration for Lagoon",
@@ -17,6 +19,7 @@ var rootCmd = &cobra.Command{
 
 // Execute the root command.
 func Execute() {
+	viper.AutomaticEnv()
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -26,6 +29,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.EnableCommandSorting = false
+
+	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "The project name to interact with")
+
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}{{if gt (len .Aliases) 0}}

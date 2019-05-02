@@ -14,16 +14,18 @@ var projectInfoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			// @todo list current projects and allow choosing?
-			fmt.Println("You must provide a project name.")
-			os.Exit(1)
+		if cmdProjectName == "" {
+			if len(args) == 0 {
+				// @todo list current projects and allow choosing?
+				fmt.Println("You must provide a project name.")
+				os.Exit(1)
+			}
+			if len(args) > 1 {
+				fmt.Println("Too many arguments.")
+				os.Exit(1)
+			}
+			cmdProjectName = args[0]
 		}
-		if len(args) > 1 {
-			fmt.Println("Too many arguments.")
-			os.Exit(1)
-		}
-		projectName := args[0]
 		var responseData ProjectByName
 		err := graphql.GraphQLRequest(fmt.Sprintf(`query {
   projectByName(name: "%s") {
@@ -44,7 +46,7 @@ var projectInfoCmd = &cobra.Command{
     storageCalc,
     developmentEnvironmentsLimit,
   }
-}`, projectName), &responseData)
+}`, cmdProjectName), &responseData)
 
 		if err != nil {
 			panic(err)
@@ -57,7 +59,7 @@ var projectInfoCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Println(projectName)
+		fmt.Println(project.Name)
 		fmt.Println()
 		fmt.Println(fmt.Sprintf("Git URL: %s", project.GitURL))
 		fmt.Println(fmt.Sprintf("Branches Pattern: %s", project.Branches))
