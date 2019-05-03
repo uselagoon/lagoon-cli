@@ -3,8 +3,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/mglaman/lagoon/graphql"
 	"os"
+
+	"github.com/mglaman/lagoon/graphql"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -18,6 +19,7 @@ var projectListCmd = &cobra.Command{
 		err := graphql.GraphQLRequest(`
 query whatIsThere {
 	allProjects {
+		id
 		gitUrl
 		name,
 		customer {
@@ -36,13 +38,14 @@ query whatIsThere {
 		}
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAutoWrapText(true)
-		table.SetHeader([]string{"Name", "Customer", "Git URL", "URL"})
+		table.SetHeader([]string{"ID", "Name", "Customer", "Git URL", "URL"})
 		for _, project := range responseData.AllProjects {
 			productionEnvironment, err := getProductionEnvironment(project.Environments)
 			if err != nil {
 				panic(err)
 			}
 			table.Append([]string{
+				fmt.Sprintf("%d", project.ID),
 				project.Name,
 				project.Customer.Name,
 				project.GitURL,
