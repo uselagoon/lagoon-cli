@@ -2,13 +2,17 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/mglaman/lagoon/app"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"path/filepath"
 )
 
+var cmdProject app.LagoonProject
 var cmdProjectName = ""
 
 var rootCmd = &cobra.Command{

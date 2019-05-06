@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/mglaman/lagoon/app"
 	"github.com/mglaman/lagoon/graphql"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -17,10 +18,9 @@ var projectCmd = &cobra.Command{
 			fmt.Println("Need to run `lagoon login` first")
 			os.Exit(1)
 		}
-		localProject, err := app.GetLocalProject()
-		if err != nil {
-			panic(err)
+		cmdProject, err := app.GetLocalProject()
+		if err == nil {
+			cmdProjectName = cmdProject.Name
 		}
-		fmt.Println(localProject.Name)
 	},
 }
