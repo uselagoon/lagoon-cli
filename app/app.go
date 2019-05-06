@@ -9,15 +9,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// LagoonProject represets the information of a Lagoon project.
 type LagoonProject struct {
 	Dir               string
 	Name              string
 	DockerComposeYaml string `yaml:"docker-compose-yaml"`
 }
+
+// LagoonDockerCompose represents the docker-compose.yml file contents for a Lagoon project.
 type LagoonDockerCompose struct {
 	LagoonProject string `yaml:"x-lagoon-project"`
 }
 
+// ReadConfig reads the configuration files of a Lagoon project.
 func (project *LagoonProject) ReadConfig() error {
 	var err error
 
