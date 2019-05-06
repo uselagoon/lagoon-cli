@@ -9,14 +9,11 @@ jobs:
       - run:
           name: run build
           command: |
-            dep ensure
-            go build -v
+            make deps
+            make build
       - run:
           name: run tests
-          command: |
-            go fmt ./...
-            go vet ./...
-            go test -v ./...
+          command: make test
   deploy:
     docker:
       - image: circleci/golang:1.12
@@ -26,8 +23,8 @@ jobs:
       - run:
           name: run build
           command: |
-            dep ensure
-            go build -v
+            make deps
+            make build
       - run: go get -u github.com/mitchellh/gox
       - run: go get -u github.com/tcnksm/ghr
       - run: go get -u github.com/stevenmatthewt/semantics
