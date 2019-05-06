@@ -2,16 +2,20 @@ package app
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 type LagoonProject struct {
 	Dir               string
 	Name              string
 	DockerComposeYaml string `yaml:"docker-compose-yaml"`
+}
+type LagoonDockerCompose struct {
+	LagoonProject string `yaml:"x-lagoon-project"`
 }
 
 func (project *LagoonProject) ReadConfig() error {
@@ -22,6 +26,16 @@ func (project *LagoonProject) ReadConfig() error {
 	if err != nil {
 		return fmt.Errorf("unable to load config file %s/: %v", filepath.Join(project.Dir, ".lagoon.yml"), err)
 	}
+
+	dockerComposeFilepath := filepath.Join(project.Dir, project.DockerComposeYaml)
+	if !fileExists(dockerComposeFilepath) {
+		return fmt.Errorf("Could not load docker-compose.yml at %s", dockerComposeFilepath)
+	}
+	sourceCompose, _ := ioutil.ReadFile(dockerComposeFilepath)
+	var dockerCompose LagoonDockerCompose
+	yaml.Unmarshal(sourceCompose, &dockerCompose)
+	// Reset the name based on the docker-compose.yml file.
+	project.Name = dockerCompose.LagoonProject
 
 	return nil
 }
@@ -35,13 +49,21 @@ func GetLocalProject() (*LagoonProject, error) {
 	if err != nil {
 		return app, fmt.Errorf("error determining the current directory: %s", err)
 	}
+	return getProjectFromPath(appDir)
+}
+
+func getProjectFromPath(path string) (*LagoonProject, error) {
+	app := &LagoonProject{}
+	var err error
+
+	appDir := path
 	appDir, err = findLocalProjectRoot(appDir)
 	if err != nil {
 		return app, err
 	}
 	app.Name = filepath.Base(appDir)
 	app.Dir = appDir
-
+	app.ReadConfig()
 	return app, nil
 }
 

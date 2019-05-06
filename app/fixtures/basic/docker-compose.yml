@@ -1,0 +1,8 @@
+version: '2.3'
+
+x-lagoon-project:
+  &lagoon-project basic-lagoon
+x-volumes:
+  &default-volumes
+    volumes:
+      - .:/app:delegated
