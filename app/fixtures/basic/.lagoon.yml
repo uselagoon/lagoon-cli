@@ -1,0 +1,14 @@
+docker-compose-yaml: docker-compose.yml
+tasks:
+  pre-rollout:
+    - run:
+        name: env variables
+        command: env
+        service: cli
+environments:
+  master:
+    cronjobs:
+      - name: drush cron
+        schedule: "H * * * *"
+        command: drush cron
+        service: cli

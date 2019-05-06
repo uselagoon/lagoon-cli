@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mglaman/lagoon/graphql"
 	"os"
+
+	"github.com/mglaman/lagoon/graphql"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
