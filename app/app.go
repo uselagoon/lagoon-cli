@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -13,6 +15,7 @@ import (
 type LagoonProject struct {
 	Dir               string
 	Name              string
+	Environment       string
 	DockerComposeYaml string `yaml:"docker-compose-yaml"`
 }
 
@@ -41,23 +44,26 @@ func (project *LagoonProject) ReadConfig() error {
 	// Reset the name based on the docker-compose.yml file.
 	project.Name = dockerCompose.LagoonProject
 
+	gitCmd := exec.Command("git", "symbolic-ref", "--short", "HEAD")
+	gitBranch, err := gitCmd.Output()
+	if err == nil {
+		project.Environment = strings.TrimSpace(string(gitBranch))
+	}
+
 	return nil
 }
 
 // GetLocalProject returns the current Lagoon app detected.
-func GetLocalProject() (*LagoonProject, error) {
-	app := &LagoonProject{}
-	var err error
-
+func GetLocalProject() (LagoonProject, error) {
 	appDir, err := os.Getwd()
 	if err != nil {
-		return app, fmt.Errorf("error determining the current directory: %s", err)
+		return LagoonProject{}, fmt.Errorf("error determining the current directory: %s", err)
 	}
 	return getProjectFromPath(appDir)
 }
 
-func getProjectFromPath(path string) (*LagoonProject, error) {
-	app := &LagoonProject{}
+func getProjectFromPath(path string) (LagoonProject, error) {
+	app := LagoonProject{}
 	var err error
 
 	appDir := path

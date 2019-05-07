@@ -18,9 +18,6 @@ var projectCmd = &cobra.Command{
 			fmt.Println("Need to run `lagoon login` first")
 			os.Exit(1)
 		}
-		cmdProject, err := app.GetLocalProject()
-		if err == nil {
-			cmdProjectName = cmdProject.Name
-		}
+		cmdProject, _ = app.GetLocalProject()
 	},
 }

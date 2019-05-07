@@ -3,9 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/mglaman/lagoon/graphql"
 
+	"github.com/logrusorgru/aurora"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -15,7 +17,7 @@ var projectInfoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" {
+		if cmdProject.Name == "" {
 			if len(args) == 0 {
 				// @todo list current projects and allow choosing?
 				fmt.Println("You must provide a project name.")
@@ -25,7 +27,7 @@ var projectInfoCmd = &cobra.Command{
 				fmt.Println("Too many arguments.")
 				os.Exit(1)
 			}
-			cmdProjectName = args[0]
+			cmdProject.Name = args[0]
 		}
 		var responseData ProjectByName
 		err := graphql.GraphQLRequest(fmt.Sprintf(`query {
@@ -47,7 +49,7 @@ var projectInfoCmd = &cobra.Command{
     storageCalc,
     developmentEnvironmentsLimit,
   }
-}`, cmdProjectName), &responseData)
+}`, cmdProject.Name), &responseData)
 
 		if err != nil {
 			panic(err)
@@ -60,17 +62,26 @@ var projectInfoCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Println(project.Name)
+		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Project"), cmdProject.Name))
+		if cmdProject.Environment != "" {
+			if cmdProject.Environment == strings.TrimSpace(project.ProductionEnvironment) {
+				fmt.Println(fmt.Sprintf("%s: %s (production)", aurora.Yellow("Environment"), cmdProject.Environment))
+			} else {
+				fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Environment"), cmdProject.Environment))
+			}
+		}
 		fmt.Println()
-		fmt.Println(fmt.Sprintf("Git URL: %s", project.GitURL))
-		fmt.Println(fmt.Sprintf("Branches Pattern: %s", project.Branches))
-		fmt.Println(fmt.Sprintf("Pull Requests: %s", project.Pullrequests))
-		fmt.Println(fmt.Sprintf("Production Environment: %s", project.ProductionEnvironment))
-		fmt.Println(fmt.Sprintf("Development Environments: %d / %d", currentDevEnvironments, project.DevelopmentEnvironmentsLimit))
+		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Git"), project.GitURL))
+		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Branches"), project.Branches))
+		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Pull Requests"), project.Pullrequests))
+		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Production Environment"), project.ProductionEnvironment))
+		fmt.Println(fmt.Sprintf("%s: %d / %d", aurora.Yellow("Development Environments"), currentDevEnvironments, project.DevelopmentEnvironmentsLimit))
 		fmt.Println()
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetAutoWrapText(true)
-		table.SetHeader([]string{"Name", "Deploy Type", "Environment Type", "Route", "SSH"})
+		table.SetAutoWrapText(false)
+		table.SetAutoFormatHeaders(false)
+		table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+		table.SetHeader([]string{"Name", "Deploy Type", "Environment", "Route", "SSH"})
 		for _, environment := range project.Environments {
 			table.Append([]string{
 				environment.Name,

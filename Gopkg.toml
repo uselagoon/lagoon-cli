@@ -30,7 +30,8 @@ required = [
 "github.com/machinebox/graphql",
 "github.com/olekukonko/tablewriter",
 "github.com/pkg/browser",
-"gopkg.in/yaml.v2"
+"gopkg.in/yaml.v2",
+"github.com/logrusorgru/aurora"
 ]
 
 [[constraint]]

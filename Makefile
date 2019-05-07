@@ -4,7 +4,7 @@ DEPCMD=dep
 ARTIFACT_NAME=lagoon
 ARTIFACT_DESTINATION=$(GOPATH)/bin
 
-all: dep test build
+all: deps test build
 deps:
 	$(DEPCMD) ensure
 build:

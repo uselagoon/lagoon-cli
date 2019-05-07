@@ -37,6 +37,14 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:ba852707958e39694e7f64328008287892adf9b1aed0174480e2f50e0c23e521"
+  name = "github.com/logrusorgru/aurora"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "21d75270181e0436fee7bd58b991c212cf309068"
+  version = "v2.0"
+
+[[projects]]
   digest = "1:d86c8eb7189141c0e902fd8dcf6e79b8feea523978018e20f2ac794626ad0f63"
   name = "github.com/machinebox/graphql"
   packages = ["."]
@@ -213,6 +221,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/logrusorgru/aurora",
     "github.com/machinebox/graphql",
     "github.com/mitchellh/go-homedir",
     "github.com/olekukonko/tablewriter",
