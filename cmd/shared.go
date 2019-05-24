@@ -10,33 +10,46 @@ type WhatIsThere struct {
 	AllProjects []Project `json:"allProjects"`
 }
 
-// Environments struct.
-type Environments struct {
-	Name                 string `json:"name"`
-	EnvironmentType      string `json:"environmentType"`
-	DeployType           string `json:"deployType"`
-	Route                string `json:"route"`
-	Routes               string `json:"routes"`
-	OpenshiftProjectName string `json:"openshiftProjectName"`
+type EnvironmentByOpenshiftProjectName struct {
+	Environment Environment `json:"environmentByOpenshiftProjectName"`
+}
+
+// Environment struct.
+type Environment struct {
+	Name                 string             `json:"name"`
+	EnvironmentType      string             `json:"environmentType"`
+	DeployType           string             `json:"deployType"`
+	Route                string             `json:"route"`
+	Routes               string             `json:"routes"`
+	OpenshiftProjectName string             `json:"openshiftProjectName"`
+	HitsMonth            EnvironmentHits    `json:"hitsMonth"`
+	StorageMonth         EnvironmentStorage `json:"storageMonth"`
 }
 
 // Project struct.
 type Project struct {
-	ID                           int            `json:"id"`
-	GitURL                       string         `json:"gitUrl"`
-	Subfolder                    string         `json:"subfolder"`
-	Name                         string         `json:"name"`
-	Branches                     string         `json:"branches"`
-	Pullrequests                 string         `json:"pullrequests"`
-	ProductionEnvironment        string         `json:"productionEnvironment"`
-	Environments                 []Environments `json:"environments"`
-	AutoIdle                     int            `json:"autoIdle"`
-	DevelopmentEnvironmentsLimit int            `json:"developmentEnvironmentsLimit"`
-	Customer                     Customer       `json:"customer"`
+	ID                           int           `json:"id"`
+	GitURL                       string        `json:"gitUrl"`
+	Subfolder                    string        `json:"subfolder"`
+	Name                         string        `json:"name"`
+	Branches                     string        `json:"branches"`
+	Pullrequests                 string        `json:"pullrequests"`
+	ProductionEnvironment        string        `json:"productionEnvironment"`
+	Environments                 []Environment `json:"environments"`
+	AutoIdle                     int           `json:"autoIdle"`
+	DevelopmentEnvironmentsLimit int           `json:"developmentEnvironmentsLimit"`
+	Customer                     Customer      `json:"customer"`
 }
 
 // Customer struct.
 type Customer struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EnvironmentHits struct {
+	Total int `json:"total"`
+}
+type EnvironmentStorage struct {
+	BytesUsed int `json:"bytesUsed"`
 }

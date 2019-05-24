@@ -62,7 +62,7 @@ func init() {
 	projectCmd.AddCommand(projectListCmd)
 }
 
-func getProductionEnvironment(environments []Environments) (*Environments, error) {
+func getProductionEnvironment(environments []Environment) (*Environment, error) {
 	for _, environment := range environments {
 		if environment.EnvironmentType == "production" {
 			return &environment, nil
