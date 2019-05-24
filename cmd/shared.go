@@ -12,10 +12,12 @@ type WhatIsThere struct {
 
 // Environments struct.
 type Environments struct {
-	Name            string `json:"name"`
-	EnvironmentType string `json:"environmentType"`
-	DeployType      string `json:"deployType"`
-	Route           string `json:"route"`
+	Name                 string `json:"name"`
+	EnvironmentType      string `json:"environmentType"`
+	DeployType           string `json:"deployType"`
+	Route                string `json:"route"`
+	Routes               string `json:"routes"`
+	OpenshiftProjectName string `json:"openshiftProjectName"`
 }
 
 // Project struct.

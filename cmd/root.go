@@ -71,6 +71,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(kibanaCmd)
 	rootCmd.AddCommand(projectCmd)
+	rootCmd.AddCommand(environmentCmd)
 
 }
 
