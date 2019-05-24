@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var environmentInfoName = ""
 var environmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Show a project's environment",

@@ -31,7 +31,9 @@ required = [
 "github.com/olekukonko/tablewriter",
 "github.com/pkg/browser",
 "gopkg.in/yaml.v2",
-"github.com/logrusorgru/aurora"
+"github.com/logrusorgru/aurora",
+"golang.org/x/text",
+"code.cloudfoundry.org/bytefmt"
 ]
 
 [[constraint]]
@@ -49,3 +51,11 @@ required = [
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  name = "golang.org/x/text"
+  version = "0.3.0"
+
+[[constraint]]
+  branch = "master"
+  name = "code.cloudfoundry.org/bytefmt"

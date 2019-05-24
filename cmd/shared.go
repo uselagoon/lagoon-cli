@@ -14,6 +14,10 @@ type EnvironmentByOpenshiftProjectName struct {
 	Environment Environment `json:"environmentByOpenshiftProjectName"`
 }
 
+type DeploymentByRemoteId struct {
+	Deployment Deployment `json:"deploymentByRemoteId"`
+}
+
 // Environment struct.
 type Environment struct {
 	Name                 string             `json:"name"`
@@ -24,6 +28,7 @@ type Environment struct {
 	OpenshiftProjectName string             `json:"openshiftProjectName"`
 	HitsMonth            EnvironmentHits    `json:"hitsMonth"`
 	StorageMonth         EnvironmentStorage `json:"storageMonth"`
+	Deployments          []Deployment       `json:"deployments"`
 }
 
 // Project struct.
@@ -52,4 +57,15 @@ type EnvironmentHits struct {
 }
 type EnvironmentStorage struct {
 	BytesUsed int `json:"bytesUsed"`
+}
+
+type Deployment struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Status    string `json:"status"`
+	Created   string `json:"created"`
+	Started   string `json:"started"`
+	Completed string `json:"completed"`
+	RemoteID  string `json:"remoteId"`
+	BuildLog  string `json:"buildLog"`
 }

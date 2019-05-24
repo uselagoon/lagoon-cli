@@ -2,15 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"os"
+	"time"
 
 	"github.com/mglaman/lagoon/graphql"
 
+	"code.cloudfoundry.org/bytefmt"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 )
 
-var environmentInfoName = ""
 var environmentInfoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Environment information",
@@ -26,29 +29,33 @@ var environmentInfoCmd = &cobra.Command{
 		}
 		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Environment"), environmentInfoName))
 
+		year, month, _ := time.Now().Date()
 		var responseData EnvironmentByOpenshiftProjectName
 		err := graphql.GraphQLRequest(fmt.Sprintf(`query {
-	environmentByOpenshiftProjectName(openshiftProjectName: "%s") {
+	environmentByOpenshiftProjectName(openshiftProjectName: "%[1]s") {
 		deployType,
 		environmentType
-		hitsMonth(month: 0){
+		hitsMonth(month: "%[2]d-%[3]d"){
 			total
 		}
-		storageMonth(month: "2019-05") {
+		storageMonth(month: "%[2]d-%[3]d") {
 			bytesUsed
 		}
 	}
 }
-`, environmentInfoName), &responseData)
+`, environmentInfoName, year, month), &responseData)
 		if err != nil {
 			panic(err)
 		}
+		p := message.NewPrinter(language.English)
 		fmt.Println()
-		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Mode"), responseData.Environment.EnvironmentType))
-		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Type"), responseData.Environment.DeployType))
+		fmt.Println(p.Sprintf("%s: %s", aurora.Yellow("Mode"), responseData.Environment.EnvironmentType))
+		fmt.Println(p.Sprintf("%s: %s", aurora.Yellow("Type"), responseData.Environment.DeployType))
 		fmt.Println()
-		fmt.Println(fmt.Sprintf("%s: %d", aurora.Yellow("Hits this month"), responseData.Environment.HitsMonth.Total))
-		fmt.Println(fmt.Sprintf("%s: %d", aurora.Yellow("Storage this month"), responseData.Environment.StorageMonth.BytesUsed))
+		_, _ = p.Println("Usage this month")
+		_, _ = p.Println("----------------")
+		fmt.Println(p.Sprintf("%s: %d", aurora.Yellow("Hits"), responseData.Environment.HitsMonth.Total))
+		fmt.Println(p.Sprintf("%s: %s", aurora.Yellow("Storage"), bytefmt.ByteSize(uint64(responseData.Environment.StorageMonth.BytesUsed))))
 	},
 }
 

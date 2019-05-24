@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:d1a104572273cfb58e801812704dca4fe2eab80f3b0144592a722a76c280c598"
+  name = "code.cloudfoundry.org/bytefmt"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2aa6f33b730c79971cfc3c742f279195b0abc627"
+
+[[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
@@ -195,12 +203,26 @@
   revision = "953cdadca894cdc07be76fc99f95b40c28f06623"
 
 [[projects]]
-  digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
+  digest = "1:527127d794a73407132deff061fd39fe0e8320bdb606ffe9daf42d05f575d808"
   name = "golang.org/x/text"
   packages = [
+    ".",
+    "collate",
+    "collate/build",
+    "feature/plural",
+    "internal",
+    "internal/catmsg",
+    "internal/colltab",
+    "internal/format",
     "internal/gen",
+    "internal/number",
+    "internal/stringset",
+    "internal/tag",
     "internal/triegen",
     "internal/ucd",
+    "language",
+    "message",
+    "message/catalog",
     "transform",
     "unicode/cldr",
     "unicode/norm",
@@ -221,6 +243,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "code.cloudfoundry.org/bytefmt",
     "github.com/logrusorgru/aurora",
     "github.com/machinebox/graphql",
     "github.com/mitchellh/go-homedir",
@@ -229,6 +252,9 @@
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "golang.org/x/crypto/ssh",
+    "golang.org/x/text",
+    "golang.org/x/text/language",
+    "golang.org/x/text/message",
     "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
