@@ -18,3 +18,7 @@ Fetches your JWT token for integrating with Lagoon's APIs
 ### projects
 
 List your projects
+
+## Acknowledgements
+
+[Matt Glaman](https://github.com/mglaman) - Initial conception and development - Thanks Matt!
