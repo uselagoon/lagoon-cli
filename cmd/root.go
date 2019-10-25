@@ -4,16 +4,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/mglaman/lagoon/app"
+	"github.com/amazeeio/lagoon-cli/app"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/manifoldco/promptui"
 )
 
 var cmdProject app.LagoonProject
-var cmdProjectName = ""
+var cmdLagoon = ""
+var forceAction bool
+var cmdSSHKey = ""
 
 var rootCmd = &cobra.Command{
 	Use:   "lagoon",
@@ -34,8 +39,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.EnableCommandSorting = false
 
-	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "The project name to interact with")
-
+	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The lagoon instance to interact with")
+	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "f", false, "force")
+	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify a specific SSH key to use")
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}{{if gt (len .Aliases) 0}}
@@ -88,18 +94,60 @@ func initConfig() {
 	// @todo see if we can grok the proper info from the cwd .lagoon.yml
 	viper.AddConfigPath(home)
 	viper.SetConfigName(configName)
-	viper.SetDefault("lagoon_hostname", "ssh.lagoon.amazeeio.cloud")
-	viper.SetDefault("lagoon_port", 32222)
-	viper.SetDefault("lagoon_token", "")
-	viper.SetDefault("lagoon_graphql", "https://api.lagoon.amazeeio.cloud/graphql")
-	viper.SetDefault("lagoon_ui", "https://ui-lagoon-master.ch.amazee.io")
-	viper.SetDefault("lagoon_kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
+	viper.SetDefault("lagoons.amazeeio.hostname", "ssh.lagoon.amazeeio.cloud")
+	viper.SetDefault("lagoons.amazeeio.port", 32222)
+	viper.SetDefault("lagoons.amazeeio.token", "")
+	viper.SetDefault("lagoons.amazeeio.graphql", "https://api.lagoon.amazeeio.cloud/graphql")
+	viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
+	viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
+	viper.SetDefault("default", "amazeeio")
 	err = viper.ReadInConfig()
 	if err != nil {
 		err = viper.WriteConfigAs(filepath.Join(home, configName+".yml"))
 		if err != nil {
 			panic(err)
 		}
-
 	}
+	if cmdLagoon == "" {
+		if viper.GetString("default") == "" {
+			cmdLagoon = "amazeeio"
+		} else {
+			cmdLagoon = viper.GetString("default")
+		}
+	}
+	viper.Set("current", strings.TrimSpace(string(cmdLagoon)))
+	err = viper.WriteConfig()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func yesNo() bool {
+	if forceAction != true {
+		prompt := promptui.Select{
+			Label: "Select[Yes/No]",
+			Items: []string{"No", "Yes"},
+		}
+		_, result, err := prompt.Run()
+		if err != nil {
+			panic(err)
+		}
+		return result == "Yes"
+	}
+	return true
+}
+
+func selectList(listItems []string) string {
+	if forceAction != true {
+		prompt := promptui.Select{
+			Label: "Select item",
+			Items: listItems,
+		}
+		_, result, err := prompt.Run()
+		if err != nil {
+			panic(err)
+		}
+		return result
+	}
+	return ""
 }
