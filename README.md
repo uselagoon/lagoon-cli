@@ -5,22 +5,44 @@ to work against [Amazee.io](https://www.amazee.io/) instance.
 
 ## Usage
 
-### config
+### `config`
 
 Allows you to configure Lagoon CLI to specify endpoints, such as your own Lagoon instance.
 
-### login
+### `add`
 
-Fetches your JWT token for integrating with Lagoon's APIs
+### `delete`
 
-### projects
+### `list`
 
-List your projects
+### `update`
 
-## Build
+### `info`
+
+### `deploy`
+
+# Build
+## Build using make
 ```
 make deps
-make build
+make build-linux
+make build-darwin #macos
+```
+
+## Build using Docker
+You can build lagoon-cli without installing `go` by running the `docker-build` make command. This will use the `Dockerfile.build` to build the cli inside of a docker container, then copy the binaries into the `builds/` directory once complete
+```
+make docker-build
+```
+Versions can also be defined, and the binaries will be version tagged
+```
+make VERSION=v0.0.1 docker-build
+```
+
+# Install
+```
+make install-linux
+make install-darwin #macos
 ```
 
 ## Acknowledgements
