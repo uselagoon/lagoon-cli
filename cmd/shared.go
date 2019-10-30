@@ -2,15 +2,18 @@ package cmd
 
 var projectBranches string
 var projectProductionEnvironment string
+var projectDevelopmentEnvironmentsLimit int
 var projectPullRequests string
-var projectAutoIdle int
+var projectAutoIdle *int
 var projectGitURL string
 var projectProductionEnv string
-var projectOpenshift string
+var projectOpenshift int
 var lagoonHostname string
 var lagoonPort string
 var lagoonGraphQL string
 var lagoonToken string
+
+var jsonPatch string
 
 // ProjectByName struct.
 type ProjectByName struct {

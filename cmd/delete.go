@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var projectVariableCmd = &cobra.Command{
-	Use:   "variable",
-	Short: "Add or delete variables on environments or projects",
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a project or environment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Using Lagoon:", cmdLagoon, "\n")
 		// get a new token if the current one is invalid
@@ -24,8 +24,4 @@ var projectVariableCmd = &cobra.Command{
 			}
 		}
 	},
-}
-
-func init() {
-	projectCmd.AddCommand(projectVariableCmd)
 }

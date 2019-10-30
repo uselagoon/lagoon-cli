@@ -9,24 +9,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var projectVariableEnvCmd = &cobra.Command{
-	Use:   "environment [add|delete] [project name] [environment name]",
-	Short: "Add or delete variable on environment",
+var addVariableEnvCmd = &cobra.Command{
+	Use:   "environment [project name] [environment name]",
+	Short: "Add variable to environment",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(args) < 3 {
-			fmt.Println("Not enough arguments. Requires: command, project name and environment.")
+		if len(args) < 2 {
+			fmt.Println("Not enough arguments. Requires: project name and environment.")
 			cmd.Help()
 			os.Exit(1)
 		}
-		cmdValue := args[0]
-		if cmdValue != "delete" && cmdValue != "add" {
-			fmt.Println("Command must be add or delete")
-			cmd.Help()
-			os.Exit(1)
-		}
-		projectName := args[1]
-		projectEnvironment := args[2]
+		projectName := args[0]
+		projectEnvironment := args[1]
 
 		fmt.Println(fmt.Sprintf("Deleting %s-%s", projectName, projectEnvironment))
 
@@ -39,7 +33,7 @@ var projectVariableEnvCmd = &cobra.Command{
 }`, projectName, projectEnvironment), &responseData)
 			//var err error
 			err = nil
-			fmt.Println(fmt.Sprintf("%s %s-%s", cmdValue, projectName, projectEnvironment))
+			fmt.Println(fmt.Sprintf("%s-%s", projectName, projectEnvironment))
 			if err != nil {
 				fmt.Println(err.Error())
 			} else {
@@ -55,5 +49,5 @@ var projectVariableEnvCmd = &cobra.Command{
 }
 
 func init() {
-	projectVariableCmd.AddCommand(projectVariableEnvCmd)
+	addVariableCmd.AddCommand(addVariableEnvCmd)
 }
