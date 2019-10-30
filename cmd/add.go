@@ -13,7 +13,6 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a project, environment, or variable",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Using Lagoon:", cmdLagoon, "\n")
 		// get a new token if the current one is invalid
 		valid := graphql.VerifyTokenExpiry()
 		if valid == false {
@@ -30,7 +29,6 @@ var addVariableCmd = &cobra.Command{
 	Use:   "variable",
 	Short: "Add variables on environments or projects",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Using Lagoon:", cmdLagoon, "\n")
 		// get a new token if the current one is invalid
 		valid := graphql.VerifyTokenExpiry()
 		if valid == false {

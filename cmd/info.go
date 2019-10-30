@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete a project or environment",
+var infoCmd = &cobra.Command{
+	Use:   "info",
+	Short: "Get info on projects, environments, etc..",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// get a new token if the current one is invalid
 		valid := graphql.VerifyTokenExpiry()

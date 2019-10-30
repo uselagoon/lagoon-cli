@@ -7,10 +7,29 @@ import (
 	"encoding/json"
 
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/app"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 )
+
+var projectCmd = &cobra.Command{
+	Use:   "project",
+	Short: "Show your projects, or details about a project",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// get a new token if the current one is invalid
+		valid := graphql.VerifyTokenExpiry()
+		if valid == false {
+			loginErr := loginToken()
+			if loginErr != nil {
+				fmt.Println("Unable to refresh token, you may need to run `lagoon login` first")
+				os.Exit(1)
+			}
+		}
+		// can use this to pick out info from a local project for some operations
+		cmdProject, _ = app.GetLocalProject()
+	},
+}
 
 var deleteProjectCmd = &cobra.Command{
 	Use:   "project [project name]",

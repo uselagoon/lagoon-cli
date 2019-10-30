@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/app"
-	"github.com/amazeeio/lagoon-cli/graphql"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -81,6 +81,9 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(deployEnvCmd)
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(infoCmd)
 
 }
 
@@ -88,25 +91,6 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Lagoon CLI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-	},
-}
-
-var projectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Show your projects, or details about a project",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Using Lagoon:", cmdLagoon, "\n")
-		// get a new token if the current one is invalid
-		valid := graphql.VerifyTokenExpiry()
-		if valid == false {
-			loginErr := loginToken()
-			if loginErr != nil {
-				fmt.Println("Unable to refresh token, you may need to run `lagoon login` first")
-				os.Exit(1)
-			}
-		}
-		// can use this to pick out info from a local project for some operations
-		cmdProject, _ = app.GetLocalProject()
 	},
 }
 
@@ -150,6 +134,7 @@ func initConfig() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Using Lagoon:", cmdLagoon, "\n")
 }
 
 func yesNo() bool {
@@ -202,4 +187,25 @@ func unset(key string) error {
 		return err
 	}
 	return nil
+}
+
+// FormatType .
+type FormatType string
+
+// . .
+const (
+	JSON   FormatType = "JSON"
+	YAML   FormatType = "YAML"
+	STDOUT FormatType = "STDOUT"
+)
+
+func errorFormat(errorMsg string, format FormatType) error {
+	switch format {
+	case JSON:
+		return errors.New("{\"error\":\"" + errorMsg + "\"}")
+	case YAML:
+		return errors.New("{\"error\":\"" + errorMsg + "\"}")
+	}
+	return errors.New("{\"error\":\"" + errorMsg + "\"}")
+
 }

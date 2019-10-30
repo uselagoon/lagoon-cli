@@ -27,7 +27,7 @@ var deployEnvCmd = &cobra.Command{
 
 		lagoonAPI, err := graphql.LagoonAPI()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(errorFormat(err.Error(), JSON))
 			return
 		}
 
@@ -53,7 +53,8 @@ var deployEnvCmd = &cobra.Command{
 			}
 			CustomRequestResult, err := lagoonAPI.Request(CustomRequest)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println(errorFormat(err.Error(), JSON))
+				return
 			}
 			jsonBytes, _ = json.Marshal(CustomRequestResult)
 			fmt.Println(string(jsonBytes))
@@ -67,7 +68,3 @@ var deployEnvCmd = &cobra.Command{
 
 	},
 }
-
-// func init() {
-// 	projectCmd.AddCommand(deployEnvCmd)
-// }
