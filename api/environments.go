@@ -7,8 +7,8 @@ import (
 // GetEnvironmentByName .
 func (api *Interface) GetEnvironmentByName(environment EnvironmentByName) (interface{}, error) {
 	req := graphql.NewRequest(`
-	query {
-		environmentByName(name: "${name}", project:${projectId}) {
+	query ($name: String!, $project: Int!) {
+		environmentByName(name: $name, project: $project) {
 			id,
 			name,
 			route,
