@@ -3,22 +3,40 @@ package graphql
 import (
 	"context"
 	"fmt"
+	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/machinebox/graphql"
 	"github.com/spf13/viper"
 )
 
+// HasValidToken .
 func HasValidToken() bool {
 	return getGraphQLToken() != ""
 }
 
+// LagoonAPI .
+func LagoonAPI() (api.Client, error) {
+	lagoon := viper.GetString("current")
+	lagoonAPI, err := api.NewWithToken(
+		viper.GetString("lagoons."+lagoon+".token"),
+		viper.GetString("lagoons."+lagoon+".graphql"),
+	)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return lagoonAPI, nil
+}
+
 func getGraphQLToken() string {
-	return viper.GetString("lagoon_token")
+	lagoon := viper.GetString("current")
+	return viper.GetString("lagoons." + lagoon + ".token")
 }
 
 // GraphQLClient returns a new GraphQL client.
 func GraphQLClient() *graphql.Client {
-	return graphql.NewClient(viper.GetString("lagoon_graphql"))
+	lagoon := viper.GetString("current")
+	return graphql.NewClient(viper.GetString("lagoons." + lagoon + ".graphql"))
 }
 
 // GraphQLRequest performs a GraphQL request.
@@ -43,3 +61,40 @@ func VerifyTokenExpiry() bool {
 	}
 	return false
 }
+
+// DefaultFragment is blank to use what is defined in api
+var DefaultFragment = ""
+
+// ProjectByNameFragment .
+var ProjectByNameFragment = `fragment Project on Project {
+	id
+	name
+	gitUrl
+	subfolder
+	branches
+	pullrequests
+	productionEnvironment
+	environments {
+		id
+		name
+		openshiftProjectName
+		environmentType
+		deployType
+		route
+	}
+	autoIdle
+	storageCalc
+	developmentEnvironmentsLimit
+}`
+
+// AllProjectsFragment .
+var AllProjectsFragment = `fragment Project on Project {
+	id
+	gitUrl
+	name,
+	developmentEnvironmentsLimit,
+	environments {
+		environmentType,
+		route
+	}
+}`
