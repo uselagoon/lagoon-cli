@@ -7,8 +7,8 @@ import (
 
 // Table .
 type Table struct {
-	Header []string
-	Data   []Data
+	Header []string `json:"header"`
+	Data   []Data   `json:"data"`
 }
 
 // Data .
