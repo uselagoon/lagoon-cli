@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	// "github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
