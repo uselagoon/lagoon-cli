@@ -1,13 +1,12 @@
 package projects
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/output"
-
-	"encoding/json"
 )
 
 // ListAllProjects will list all projects
@@ -56,74 +55,134 @@ func ListAllProjects() ([]byte, error) {
 	return returnJSON, nil
 }
 
-// ListEnvironmentVariables will list the environment variables for a project and all environments attached
-func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, error) {
+// ListEnvironmentsForProject will list all environments for a project
+func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
 
-	// get project info from lagoon, we need the project ID for later
+	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
-	queryFragment := graphql.ProjectAndEnvironmentEnvVars
-	if revealValue {
-		queryFragment = graphql.ProjectAndEnvironmentEnvVarsRevealed
-	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, queryFragment)
+	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
-	var envVars api.Project
-	err = json.Unmarshal([]byte(projectByName), &envVars)
+	var projects api.Project
+	err = json.Unmarshal([]byte(projectByName), &projects)
 	if err != nil {
 		return []byte(""), err
 	}
+
+	// count the current dev environments in a project
+	var currentDevEnvironments = 0
+	for _, environment := range projects.Environments {
+		if environment.EnvironmentType == "development" {
+			currentDevEnvironments++
+		}
+	}
+
+	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Project Name"), projects.Name))
+	// fmt.Println(fmt.Sprintf("%s: %d", aurora.Yellow("Project ID"), projects.ID))
+	// fmt.Println()
+	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Git"), projects.GitURL))
+	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Branches"), projects.Branches))
+	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Pull Requests"), projects.Pullrequests))
+	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Production Environment"), projects.ProductionEnvironment))
+	// fmt.Println(fmt.Sprintf("%s: %d / %d", aurora.Yellow("Development Environments"), currentDevEnvironments, projects.DevelopmentEnvironmentsLimit))
+	// fmt.Println()
+
+	// process the data for output
 	data := []output.Data{}
-	if len(envVars.EnvVariables) != 0 {
-		for _, projectEnvVar := range envVars.EnvVariables {
-			envVarRow := []string{
-				fmt.Sprintf("%v", projectEnvVar.ID),
-				project.Name,
-				"",
-				projectEnvVar.Scope,
-				projectEnvVar.Name,
-			}
-			if revealValue {
-				envVarRow = append(envVarRow, projectEnvVar.Value)
-			}
-			data = append(data, envVarRow)
-		}
-	}
-	for _, v := range envVars.Environments {
-		if len(v.EnvVariables) != 0 {
-			for _, environmentEnvVar := range v.EnvVariables {
-				envVarRow := []string{
-					fmt.Sprintf("%v", environmentEnvVar.ID),
-					project.Name,
-					v.Name,
-					environmentEnvVar.Scope,
-					environmentEnvVar.Name,
-				}
-				if revealValue {
-					envVarRow = append(envVarRow, environmentEnvVar.Value)
-				}
-				data = append(data, envVarRow)
-			}
-		}
+	for _, environment := range projects.Environments {
+		data = append(data, []string{
+			fmt.Sprintf("%d", environment.ID),
+			environment.Name,
+			string(environment.DeployType),
+			string(environment.EnvironmentType),
+			environment.Route,
+			//fmt.Sprintf("ssh -p %s -t %s@%s", viper.GetString("lagoons."+cmdLagoon+".port"), environment.OpenshiftProjectName, viper.GetString("lagoons."+cmdLagoon+".hostname")),
+		})
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Project", "Environment", "Scope", "Variable Name"},
+		Header: []string{"ID", "Name", "Deploy Type", "Environment", "Route"}, //, "SSH"},
 		Data:   data,
-	}
-	if revealValue {
-		dataMain.Header = append(dataMain.Header, "Variable Value")
 	}
 	returnJSON, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnJSON, nil
+}
+
+// AddProject .
+func AddProject(projectName string, jsonPatch string) ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	project := api.ProjectPatch{}
+	err = json.Unmarshal([]byte(jsonPatch), &project)
+	if err != nil {
+		return []byte(""), err
+	}
+	project.Name = projectName
+
+	projectAddResult, err := lagoonAPI.AddProject(project, graphql.ProjectByNameFragment)
+	return projectAddResult, nil
+}
+
+// DeleteProject .
+func DeleteProject(projectName string) ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+
+	project := api.Project{
+		Name: projectName,
+	}
+
+	projectAddResult, err := lagoonAPI.DeleteProject(project)
+	return projectAddResult, nil
+}
+
+// UpdateProject .
+func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// get the project id from name
+	projectBName := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := lagoonAPI.GetProjectByName(projectBName, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projects api.Project
+	err = json.Unmarshal([]byte(projectByName), &projects)
+	if err != nil {
+		return []byte(""), err
+	}
+	projectID := projects.ID
+
+	// patch the project by id
+	projectUpdate := api.UpdateProject{}
+	project := api.ProjectPatch{}
+	err = json.Unmarshal([]byte(jsonPatch), &project)
+	if err != nil {
+		return []byte(""), err
+	}
+	projectUpdate = api.UpdateProject{
+		ID:    projectID,
+		Patch: project,
+	}
+	projectUpdateID, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
+	return projectUpdateID, nil
 }

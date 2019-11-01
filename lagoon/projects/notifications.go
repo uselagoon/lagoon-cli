@@ -1,13 +1,12 @@
 package projects
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/output"
-
-	"encoding/json"
 )
 
 // ListAllProjectRocketChats will list all rocketchat notifications for a project
