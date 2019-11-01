@@ -21,56 +21,56 @@ import (
 type Client interface {
 	// Assorted
 	RunQuery(*graphql.Request, interface{}) (interface{}, error)
-	Request(CustomRequest) (interface{}, error)
+	Request(CustomRequest) ([]byte, error)
 	SanitizeGroupName(string) string
 	SanitizeProjectName(string) string
 	// Users
-	AddUser(User) (interface{}, error)
-	UpdateUser(UpdateUser) (interface{}, error)
-	DeleteUser(User) (interface{}, error)
-	GetUserBySSHKey(SSHKeyValue) (interface{}, error)
-	AddSSHKey(AddSSHKey) (interface{}, error)
-	DeleteSSHKey(DeleteSSHKey) (interface{}, error)
+	AddUser(User) ([]byte, error)
+	UpdateUser(UpdateUser) ([]byte, error)
+	DeleteUser(User) ([]byte, error)
+	GetUserBySSHKey(SSHKeyValue) ([]byte, error)
+	AddSSHKey(AddSSHKey) ([]byte, error)
+	DeleteSSHKey(DeleteSSHKey) ([]byte, error)
 	// Tasks
-	UpdateTask(UpdateTask) (interface{}, error)
+	UpdateTask(UpdateTask) ([]byte, error)
 	// Backups
-	AddBackup(AddBackup) (interface{}, error)
-	DeleteBackup(DeleteBackup) (interface{}, error)
-	UpdateRestore(UpdateRestore) (interface{}, error)
-	GetAllEnvironmentBackups() (interface{}, error)
-	GetEnvironmentBackups(EnvironmentBackups) (interface{}, error)
+	AddBackup(AddBackup) ([]byte, error)
+	DeleteBackup(DeleteBackup) ([]byte, error)
+	UpdateRestore(UpdateRestore) ([]byte, error)
+	GetAllEnvironmentBackups() ([]byte, error)
+	GetEnvironmentBackups(EnvironmentBackups) ([]byte, error)
 	// Groups
-	AddGroup(AddGroup) (interface{}, error)
-	AddGroupWithParent(AddGroup) (interface{}, error)
-	UpdateGroup(UpdateGroup) (interface{}, error)
-	DeleteGroup(AddGroup) (interface{}, error)
-	AddUserToGroup(AddUserToGroup) (interface{}, error)
-	AddGroupToProject(ProjectToGroup) (interface{}, error)
-	RemoveGroupFromProject(ProjectToGroup) (interface{}, error)
-	RemoveUserFromGroup(UserGroup) (interface{}, error)
+	AddGroup(AddGroup) ([]byte, error)
+	AddGroupWithParent(AddGroup) ([]byte, error)
+	UpdateGroup(UpdateGroup) ([]byte, error)
+	DeleteGroup(AddGroup) ([]byte, error)
+	AddUserToGroup(AddUserToGroup) ([]byte, error)
+	AddGroupToProject(ProjectToGroup) ([]byte, error)
+	RemoveGroupFromProject(ProjectToGroup) ([]byte, error)
+	RemoveUserFromGroup(UserGroup) ([]byte, error)
 	// Environments
-	GetEnvironmentByName(EnvironmentByName) (interface{}, error)
-	AddOrUpdateEnvironment(AddUpdateEnvironment) (interface{}, error)
-	UpdateEnvironment(UpdateEnvironment) (interface{}, error)
-	DeleteEnvironment(DeleteEnvironment) (interface{}, error)
-	SetEnvironmentServices(SetEnvironmentServices) (interface{}, error)
+	GetEnvironmentByName(EnvironmentByName, string) ([]byte, error)
+	AddOrUpdateEnvironment(AddUpdateEnvironment) ([]byte, error)
+	UpdateEnvironment(UpdateEnvironment) ([]byte, error)
+	DeleteEnvironment(DeleteEnvironment) ([]byte, error)
+	SetEnvironmentServices(SetEnvironmentServices) ([]byte, error)
 	// Projects
-	GetOpenShiftInfoForProject(Project) (interface{}, error)
-	AddProject(ProjectPatch, string) (interface{}, error)
-	UpdateProject(UpdateProject, string) (interface{}, error)
-	DeleteProject(Project) (interface{}, error)
-	GetProductionEnvironmentForProject(Project) (interface{}, error)
-	GetEnvironmentByOpenshiftProjectName(Environment) (interface{}, error)
-	GetProjectsByGitURL(Project) (interface{}, error)
-	GetProjectByName(Project, string) (interface{}, error)
-	GetAllProjects(string) (interface{}, error)
-	GetRocketChatInfoForProject(Project) (interface{}, error)
-	GetSlackinfoForProject(Project) (interface{}, error)
-	GetActiveSystemForProject(Project, string) (interface{}, error)
-	GetEnvironmentsForProject(Project) (interface{}, error)
-	GetDeploymentByRemoteID(Deployment) (interface{}, error)
-	AddDeployment(Deployment) (interface{}, error)
-	UpdateDeployment(UpdateDeployment) (interface{}, error)
+	GetOpenShiftInfoForProject(Project) ([]byte, error)
+	AddProject(ProjectPatch, string) ([]byte, error)
+	UpdateProject(UpdateProject, string) ([]byte, error)
+	DeleteProject(Project) ([]byte, error)
+	GetProductionEnvironmentForProject(Project) ([]byte, error)
+	GetEnvironmentByOpenshiftProjectName(Environment) ([]byte, error)
+	GetProjectsByGitURL(Project) ([]byte, error)
+	GetProjectByName(Project, string) ([]byte, error)
+	GetAllProjects(string) ([]byte, error)
+	GetRocketChatInfoForProject(Project, string) ([]byte, error)
+	GetSlackInfoForProject(Project, string) ([]byte, error)
+	GetActiveSystemForProject(Project, string) ([]byte, error)
+	GetEnvironmentsForProject(Project) ([]byte, error)
+	GetDeploymentByRemoteID(Deployment) ([]byte, error)
+	AddDeployment(Deployment) ([]byte, error)
+	UpdateDeployment(UpdateDeployment) ([]byte, error)
 }
 
 // Interface struct
@@ -85,8 +85,9 @@ type Interface struct {
 
 // CustomRequest .
 type CustomRequest struct {
-	Query     string
-	Variables map[string]interface{}
+	Query        string
+	Variables    map[string]interface{}
+	MappedResult string
 }
 
 var netClient = &http.Client{
@@ -161,13 +162,21 @@ func sanitizeName(name string) string {
 }
 
 // Request .
-func (api *Interface) Request(request CustomRequest) (interface{}, error) {
+func (api *Interface) Request(request CustomRequest) ([]byte, error) {
 	req := graphql.NewRequest(request.Query)
 	for varName, varValue := range request.Variables {
 		req.Var(string(varName), varValue)
 	}
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult[request.MappedResult])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 func generateVars(request *graphql.Request, jsonData interface{}) {

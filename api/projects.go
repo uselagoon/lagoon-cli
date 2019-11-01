@@ -1,11 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/machinebox/graphql"
 )
 
 // GetOpenShiftInfoForProject .
-func (api *Interface) GetOpenShiftInfoForProject(project Project) (interface{}, error) {
+func (api *Interface) GetOpenShiftInfoForProject(project Project) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query ($project: String!) {
 		project:projectByName(name: $project) {
@@ -31,11 +32,19 @@ func (api *Interface) GetOpenShiftInfoForProject(project Project) (interface{}, 
 	}`)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // AddProject .
-func (api *Interface) AddProject(project ProjectPatch, fragment string) (interface{}, error) {
+func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte, error) {
 	if fragment == "" {
 		fragment = projectFragment
 	}
@@ -53,11 +62,19 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) (interfa
 	}` + fragment)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["addProject"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // UpdateProject .
-func (api *Interface) UpdateProject(project UpdateProject, fragment string) (interface{}, error) {
+func (api *Interface) UpdateProject(project UpdateProject, fragment string) ([]byte, error) {
 	if fragment == "" {
 		fragment = projectFragment
 	}
@@ -72,11 +89,19 @@ func (api *Interface) UpdateProject(project UpdateProject, fragment string) (int
 	}` + fragment)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["updateProject"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // DeleteProject .
-func (api *Interface) DeleteProject(project Project) (interface{}, error) {
+func (api *Interface) DeleteProject(project Project) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($name: String!) {
 		deleteProject(input: {
@@ -85,11 +110,19 @@ func (api *Interface) DeleteProject(project Project) (interface{}, error) {
 	}`)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["deleteProject"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetProductionEnvironmentForProject .
-func (api *Interface) GetProductionEnvironmentForProject(project Project) (interface{}, error) {
+func (api *Interface) GetProductionEnvironmentForProject(project Project) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query ($name: String!) {
 		project:projectByName(name: $name){
@@ -98,11 +131,19 @@ func (api *Interface) GetProductionEnvironmentForProject(project Project) (inter
 	}`)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetEnvironmentByOpenshiftProjectName .
-func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environment) (interface{}, error) {
+func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query {
 		environmentByOpenshiftProjectName(openshiftProjectName: "${openshiftProjectName}") {
@@ -115,11 +156,19 @@ func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environme
 	}`)
 	generateVars(req, environment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["environmentByOpenshiftProjectName"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetProjectsByGitURL .
-func (api *Interface) GetProjectsByGitURL(project Project) (interface{}, error) {
+func (api *Interface) GetProjectsByGitURL(project Project) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query {
 		allProjects(gitUrl: "${gitUrl}") {
@@ -135,11 +184,19 @@ func (api *Interface) GetProjectsByGitURL(project Project) (interface{}, error) 
 	}`)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["allProjects"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetProjectByName .
-func (api *Interface) GetProjectByName(project Project, fragment string) (interface{}, error) {
+func (api *Interface) GetProjectByName(project Project, fragment string) ([]byte, error) {
 	if fragment == "" {
 		fragment = projectFragment
 	}
@@ -151,11 +208,19 @@ func (api *Interface) GetProjectByName(project Project, fragment string) (interf
 	}` + fragment)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetAllProjects .
-func (api *Interface) GetAllProjects(fragment string) (interface{}, error) {
+func (api *Interface) GetAllProjects(fragment string) ([]byte, error) {
 	if fragment == "" {
 		fragment = projectFragment
 	}
@@ -166,11 +231,22 @@ func (api *Interface) GetAllProjects(fragment string) (interface{}, error) {
 		}
 	}` + fragment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["allProjects"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetRocketChatInfoForProject .
-func (api *Interface) GetRocketChatInfoForProject(project Project) (interface{}, error) {
+func (api *Interface) GetRocketChatInfoForProject(project Project, fragment string) ([]byte, error) {
+	if fragment == "" {
+		fragment = notificationsRocketChatFragment
+	}
 	req := graphql.NewRequest(`
 	query ($name: String!) {
 		project:projectByName(name: $name) {
@@ -178,29 +254,48 @@ func (api *Interface) GetRocketChatInfoForProject(project Project) (interface{},
 				...Notification
 			}
 		}
-	}` + notificationsRocketChatFragment)
+	}` + fragment)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
-// GetSlackinfoForProject .
-func (api *Interface) GetSlackinfoForProject(project Project) (interface{}, error) {
+// GetSlackInfoForProject .
+func (api *Interface) GetSlackInfoForProject(project Project, fragment string) ([]byte, error) {
+	if fragment == "" {
+		fragment = notificationsSlackFragment
+	}
 	req := graphql.NewRequest(`
 	query ($name: String!){
 		project:projectByName(name: $name) {
-			rocketchats: notifications(type: SLACK) {
+			slacks: notifications(type: SLACK) {
 				...Notification
 			}
 		}
-	}` + notificationsSlackFragment)
+	}` + fragment)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetActiveSystemForProject . @TODO
-func (api *Interface) GetActiveSystemForProject(project Project, task string) (interface{}, error) {
+func (api *Interface) GetActiveSystemForProject(project Project, task string) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query ($name: String!){
 		project:projectByName(name: $name){
@@ -212,11 +307,19 @@ func (api *Interface) GetActiveSystemForProject(project Project, task string) (i
 	generateVars(req, project)
 	req.Var("task", task)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetEnvironmentsForProject .
-func (api *Interface) GetEnvironmentsForProject(project Project) (interface{}, error) {
+func (api *Interface) GetEnvironmentsForProject(project Project) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query ($name: String!){
 		project:projectByName(name: $name){
@@ -227,11 +330,19 @@ func (api *Interface) GetEnvironmentsForProject(project Project) (interface{}, e
 	}`)
 	generateVars(req, project)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["project"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetDeploymentByRemoteID .
-func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) (interface{}, error) {
+func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query deploymentByRemoteId($id: String!) {
 		deploymentByRemoteId(id: $id) {
@@ -240,11 +351,19 @@ func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) (interface{
 	}` + deploymentFragment)
 	generateVars(req, deployment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["deploymentByRemoteId"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // AddDeployment .
-func (api *Interface) AddDeployment(deployment Deployment) (interface{}, error) {
+func (api *Interface) AddDeployment(deployment Deployment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $status: DeploymentStatusType!, $created: String!, $environment: Int!, $id: Int, $remoteId: String, $started: String, $completed: String) {
 		addDeployment(input: {
@@ -262,11 +381,19 @@ func (api *Interface) AddDeployment(deployment Deployment) (interface{}, error) 
 	}` + deploymentFragment)
 	generateVars(req, deployment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["addDeployment"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // UpdateDeployment .
-func (api *Interface) UpdateDeployment(deployment UpdateDeployment) (interface{}, error) {
+func (api *Interface) UpdateDeployment(deployment UpdateDeployment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($id: Int!, $patch: UpdateDeploymentPatchInput!) {
 		updateDeployment(input: {
@@ -278,5 +405,13 @@ func (api *Interface) UpdateDeployment(deployment UpdateDeployment) (interface{}
 	}` + deploymentFragment)
 	generateVars(req, deployment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["updateDeployment"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }

@@ -1,11 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/machinebox/graphql"
 )
 
 // AddBackup .
-func (api *Interface) AddBackup(backup AddBackup) (interface{}, error) {
+func (api *Interface) AddBackup(backup AddBackup) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($id: Int, $environment: Int!, $source: String!, $backupId: String!, $created: String!) {
 		addBackup(input: {
@@ -20,11 +21,19 @@ func (api *Interface) AddBackup(backup AddBackup) (interface{}, error) {
 	}` + backupFragment)
 	generateVars(req, backup)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["addBackup"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // DeleteBackup .
-func (api *Interface) DeleteBackup(backup DeleteBackup) (interface{}, error) {
+func (api *Interface) DeleteBackup(backup DeleteBackup) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($backupId: String!) {
 		deleteBackup(input: {
@@ -33,11 +42,19 @@ func (api *Interface) DeleteBackup(backup DeleteBackup) (interface{}, error) {
 	}`)
 	generateVars(req, backup)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["deleteBackup"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // UpdateRestore .
-func (api *Interface) UpdateRestore(update UpdateRestore) (interface{}, error) {
+func (api *Interface) UpdateRestore(update UpdateRestore) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($backupId: String!, $patch: UpdateRestorePatchInput!) {
 		updateRestore(input: {
@@ -49,11 +66,19 @@ func (api *Interface) UpdateRestore(update UpdateRestore) (interface{}, error) {
 	}` + restoreFragment)
 	generateVars(req, update)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["updateRestore"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetAllEnvironmentBackups .
-func (api *Interface) GetAllEnvironmentBackups() (interface{}, error) {
+func (api *Interface) GetAllEnvironmentBackups() ([]byte, error) {
 	req := graphql.NewRequest(`
 	query {
 		allEnvironments {
@@ -69,11 +94,19 @@ func (api *Interface) GetAllEnvironmentBackups() (interface{}, error) {
 		}
 	}` + backupFragment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["allEnvironments"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // GetEnvironmentBackups .
-func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) (interface{}, error) {
+func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) ([]byte, error) {
 	req := graphql.NewRequest(`
 	query environmentByOpenshiftProjectName($openshiftProjectName: String!) {
 		environmentByOpenshiftProjectName(openshiftProjectName: $openshiftProjectName) {
@@ -93,5 +126,13 @@ func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) (interfa
 	}`)
 	generateVars(req, backups)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["environmentByOpenshiftProjectName"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }

@@ -75,12 +75,25 @@ var sshKeyFragment = `fragment SshKey on SshKey {
 	keyType
 }`
 
-var notificationsRocketChatFragment = `fragment Notification on Notification {
+var notificationsRocketChatFragment = `fragment Notification on NotificationRocketChat {
 	webhook
 	channel
 }`
 
-var notificationsSlackFragment = `fragment Notification on Notification {
+var notificationsSlackFragment = `fragment Notification on NotificationSlack {
 	webhook
 	channel
+}`
+
+var environmentByNameFragment = `fragment Environment on Environment {
+	id
+	name
+	route
+	routes
+	deployType
+	environmentType
+	openshiftProjectName
+	updated
+	created
+	deleted
 }`

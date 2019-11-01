@@ -1,33 +1,36 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/machinebox/graphql"
 )
 
 // GetEnvironmentByName .
-func (api *Interface) GetEnvironmentByName(environment EnvironmentByName) (interface{}, error) {
+func (api *Interface) GetEnvironmentByName(environment EnvironmentByName, fragment string) ([]byte, error) {
+	if fragment == "" {
+		fragment = environmentByNameFragment
+	}
 	req := graphql.NewRequest(`
 	query ($name: String!, $project: Int!) {
 		environmentByName(name: $name, project: $project) {
-			id,
-			name,
-			route,
-			routes,
-			deployType,
-			environmentType,
-			openshiftProjectName,
-			updated,
-			created,
-			deleted,
+			...Environment
 		}
-	}`)
+	}` + fragment)
 	generateVars(req, environment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["environmentByName"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // AddOrUpdateEnvironment .
-func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (interface{}, error) {
+func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $project: Int!, $deployType: DeployType!, $deployBaseRef: String!, $deployHeadRef: String, $deployTitle: String, $environmentType: EnvType!, $openshiftProjectName: String!) {
 		addOrUpdateEnvironment(input: {
@@ -65,11 +68,19 @@ func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (
 	// req.Var("environmentType", environment.Patch.EnvironmentType)
 	// req.Var("openshiftProjectName", environment.Patch.OpenshiftProjectName)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["addOrUpdateEnvironment"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // UpdateEnvironment .
-func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) (interface{}, error) {
+func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation {
 		updateEnvironment(input: {
@@ -82,11 +93,19 @@ func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) (interfac
 	}`)
 	generateVars(req, environment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["updateEnvironment"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // DeleteEnvironment .
-func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) (interface{}, error) {
+func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $project: String!, $execute: Boolean) {
 		deleteEnvironment(input: {
@@ -97,11 +116,19 @@ func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) (interfac
 	}`)
 	generateVars(req, environment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["deleteEnvironment"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }
 
 // SetEnvironmentServices .
-func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices) (interface{}, error) {
+func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($environment: Int!, $services: [String]!) {
 		setEnvironmentServices(input: {
@@ -114,5 +141,13 @@ func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices)
 	}`)
 	generateVars(req, environment)
 	returnType, err := api.RunQuery(req, Data{})
-	return returnType, err
+	if err != nil {
+		return []byte(""), err
+	}
+	reMappedResult := returnType.(map[string]interface{})
+	jsonBytes, err := json.Marshal(reMappedResult["setEnvironmentServices"])
+	if err != nil {
+		return []byte(""), err
+	}
+	return jsonBytes, nil
 }

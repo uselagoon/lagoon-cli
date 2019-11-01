@@ -181,7 +181,7 @@ type Openshift struct {
 
 // NotificationRocketChat struct.
 type NotificationRocketChat struct {
-	ID      string `json:"id,omitempty"`
+	ID      int    `json:"id,omitempty"`
 	Name    string `json:"name,omitempty"`
 	Webhook string `json:"webhook,omitempty"`
 	Channel string `json:"channel,omitempty"`
@@ -189,7 +189,7 @@ type NotificationRocketChat struct {
 
 // NotificationSlack struct.
 type NotificationSlack struct {
-	ID      string `json:"id,omitempty"`
+	ID      int    `json:"id,omitempty"`
 	Name    string `json:"name,omitempty"`
 	Webhook string `json:"webhook,omitempty"`
 	Channel string `json:"channel,omitempty"`
@@ -684,4 +684,14 @@ type Restore struct {
 	Status          string `json:"status,omitempty"`
 	RestoreLocation string `json:"restoreLocation,omitempty"`
 	Created         string `json:"created,omitempty"`
+}
+
+// RocketChats struct.
+type RocketChats struct {
+	RocketChats []NotificationRocketChat `json:"rocketchats"`
+}
+
+// Slacks struct.
+type Slacks struct {
+	Slacks []NotificationSlack `json:"slacks"`
 }
