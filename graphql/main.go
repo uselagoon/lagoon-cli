@@ -87,6 +87,58 @@ var ProjectByNameFragment = `fragment Project on Project {
 	developmentEnvironmentsLimit
 }`
 
+// ProjectEnvVars .
+var ProjectEnvVars = `fragment Project on Project {
+	id
+	name
+	envVariables {
+		id
+		name
+	}
+}`
+
+// ProjectAndEnvironmentEnvVars .
+var ProjectAndEnvironmentEnvVars = `fragment Project on Project {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+	}
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+		}
+	}
+}`
+
+// ProjectAndEnvironmentEnvVarsRevealed .
+var ProjectAndEnvironmentEnvVarsRevealed = `fragment Project on Project {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+		value
+	}
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+			value
+		}
+	}
+}`
+
 // AllProjectsFragment .
 var AllProjectsFragment = `fragment Project on Project {
 	id
@@ -96,5 +148,33 @@ var AllProjectsFragment = `fragment Project on Project {
 	environments {
 		environmentType,
 		route
+	}
+}`
+
+// RocketChatFragment .
+var RocketChatFragment = `fragment Notification on NotificationRocketChat {
+	id
+	name
+	webhook
+	channel
+}`
+
+// SlackFragment .
+var SlackFragment = `fragment Notification on NotificationSlack {
+	id
+	name
+	webhook
+	channel
+}`
+
+// EnvironmentVariablesFragment .
+var EnvironmentVariablesFragment = `fragment Environment on Environment {
+	id
+	name
+	environmentType
+	openshiftProjectName
+	envVariables {
+		id
+		name
 	}
 }`
