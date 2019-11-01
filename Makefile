@@ -14,6 +14,8 @@ test:
 	$(GOCMD) test -v ./...
 clean:
 	$(GOCMD) clean
+build:
+	GO111MODULE="on" $(GOCMD) build -o ${ARTIFACT_DESTINATION}/${ARTIFACT_NAME} -v
 
 build-linux:
 	GO111MODULE="on" $(GOCMD) build -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
