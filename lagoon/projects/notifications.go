@@ -44,11 +44,11 @@ func ListAllProjectRocketChats(projectName string) ([]byte, error) {
 		Header: []string{"ID", "Name", "Channel", "Webhook"},
 		Data:   data,
 	}
-	returnJSON, err := json.Marshal(dataMain)
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
-	return returnJSON, nil
+	return returnResult, nil
 }
 
 // ListAllProjectSlacks will list all rocketchat notifications for a project
@@ -86,9 +86,9 @@ func ListAllProjectSlacks(projectName string) ([]byte, error) {
 		Header: []string{"ID", "Name", "Channel", "Webhook"},
 		Data:   data,
 	}
-	returnJSON, err := json.Marshal(dataMain)
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
-	return returnJSON, nil
+	return returnResult, nil
 }

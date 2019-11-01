@@ -63,11 +63,11 @@ func AddEnvironmentVariableToEnvironment(projectName string, environmentName str
 		},
 		MappedResult: "addEnvVariable",
 	}
-	customReqResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
-	return customReqResult, nil
+	return returnResult, nil
 }
 
 // DeleteEnvironmentVariableFromEnvironment .
@@ -128,9 +128,9 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 		},
 		MappedResult: "deleteEnvVariable",
 	}
-	customReqResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
-	return customReqResult, nil
+	return returnResult, nil
 }

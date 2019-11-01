@@ -75,11 +75,11 @@ func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, err
 	if revealValue {
 		dataMain.Header = append(dataMain.Header, "Variable Value")
 	}
-	returnJSON, err := json.Marshal(dataMain)
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
-	return returnJSON, nil
+	return returnResult, nil
 }
 
 // AddEnvironmentVariableToProject will list all environments for a project
@@ -122,11 +122,11 @@ func AddEnvironmentVariableToProject(projectName string, envVar api.EnvVariable)
 		},
 		MappedResult: "addEnvVariable",
 	}
-	customReqResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
-	return customReqResult, nil
+	return returnResult, nil
 }
 
 // DeleteEnvironmentVariableFromProject will list all environments for a project
@@ -169,9 +169,9 @@ func DeleteEnvironmentVariableFromProject(projectName string, envVar api.EnvVari
 		},
 		MappedResult: "deleteEnvVariable",
 	}
-	customReqResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
-	return customReqResult, nil
+	return returnResult, nil
 }

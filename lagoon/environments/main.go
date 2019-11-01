@@ -30,6 +30,6 @@ func DeployEnvironmentBranch(projectName string, branchName string) ([]byte, err
 		},
 		MappedResult: "deployEnvironmentBranch",
 	}
-	requestResult, err := lagoonAPI.Request(customRequest)
-	return requestResult, err
+	returnResult, err := lagoonAPI.Request(customRequest)
+	return returnResult, err
 }

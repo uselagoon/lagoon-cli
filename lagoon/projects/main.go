@@ -48,11 +48,11 @@ func ListAllProjects() ([]byte, error) {
 		Header: []string{"ID", "Project Name", "Git URL", "Dev Environments"},
 		Data:   data,
 	}
-	returnJSON, err := json.Marshal(dataMain)
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
-	return returnJSON, nil
+	return returnResult, nil
 }
 
 // ListEnvironmentsForProject will list all environments for a project
@@ -111,11 +111,11 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 		Header: []string{"ID", "Name", "Deploy Type", "Environment", "Route"}, //, "SSH"},
 		Data:   data,
 	}
-	returnJSON, err := json.Marshal(dataMain)
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}
-	return returnJSON, nil
+	return returnResult, nil
 }
 
 // AddProject .
@@ -146,8 +146,8 @@ func DeleteProject(projectName string) ([]byte, error) {
 		Name: projectName,
 	}
 
-	projectAddResult, err := lagoonAPI.DeleteProject(project)
-	return projectAddResult, nil
+	returnResult, err := lagoonAPI.DeleteProject(project)
+	return returnResult, nil
 }
 
 // UpdateProject .
@@ -183,6 +183,6 @@ func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
 		ID:    projectID,
 		Patch: project,
 	}
-	projectUpdateID, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
-	return projectUpdateID, nil
+	returnResult, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
+	return returnResult, nil
 }
