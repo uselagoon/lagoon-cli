@@ -9,12 +9,10 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/app"
-
+	"github.com/manifoldco/promptui"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/manifoldco/promptui"
 )
 
 var cmdProject app.LagoonProject

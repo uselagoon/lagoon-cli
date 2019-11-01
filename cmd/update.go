@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/graphql"
-
 	"github.com/spf13/cobra"
 )
 

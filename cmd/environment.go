@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"encoding/json"
-
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/logrusorgru/aurora"
@@ -31,7 +29,6 @@ var deleteEnvCmd = &cobra.Command{
 			return
 		}
 
-		var jsonBytes []byte
 		evironment := api.DeleteEnvironment{
 			Name:    projectEnvironment,
 			Project: projectName,
@@ -46,13 +43,10 @@ var deleteEnvCmd = &cobra.Command{
 				fmt.Println(err)
 				return
 			}
-			jsonBytes, _ = json.Marshal(projectByName)
-			reMappedResult := projectByName.(map[string]interface{})
-			jsonBytes, _ = json.Marshal(reMappedResult["deleteEnvironment"])
-			if string(jsonBytes) == "success" {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(jsonBytes))))
+			if string(projectByName) == "success" {
+				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(projectByName))))
 			} else {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(jsonBytes))))
+				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(projectByName))))
 			}
 		}
 

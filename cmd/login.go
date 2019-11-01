@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh"
 )
 
 var loginCmd = &cobra.Command{

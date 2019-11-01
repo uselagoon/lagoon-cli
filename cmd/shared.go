@@ -21,6 +21,7 @@ var variableName string
 var variableScope string
 
 var jsonPatch string
+var revealValue bool
 
 // ProjectByName struct.
 type ProjectByName struct {
