@@ -83,7 +83,8 @@ var addVariableEnvCmd = &cobra.Command{
 
 var deleteVariableEnvCmd = &cobra.Command{
 	Use:   "environment [project name] [environment name]",
-	Short: "Add variable to environment",
+	Short: "Delete a variable from an environment",
+	Long: `This allows you to delete an environment variable from a project.`
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) < 2 {
@@ -210,16 +211,8 @@ Or via JSON
 
 var deleteVariableProjectCmd = &cobra.Command{
 	Use:   "project [project name]",
-	Short: "Add variable to a project",
-	Long: `This allows you to add an environment variable to a project.
-
-This can be done via flags.
-    $ lagoon add variable project my-project --varname VARNAME --varvalue varvalue --scope build
-    $ lagoon add variable project my-project -N VARNAME -V varvalue -S build
-
-Or via JSON
-    $ lagoon add variable project my-project --json '{"name":"VARNAME", "value":"varvalue", "scope":"build"}'
-    $ lagoon add variable project my-project -j '{"name":"VARNAME", "value":"varvalue", "scope":"build"}'
+	Short: "Delete a variable from a project",
+	Long: `This allows you to delete an environment variable from a project.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 
