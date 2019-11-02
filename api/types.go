@@ -241,6 +241,7 @@ type Project struct {
 	EnvVariables                 []EnvironmentVariable `json:"envVariables,omitempty"`
 	Environments                 []Environment         `json:"environments,omitempty"`
 	Deployments                  []Deployment          `json:"deployments,omitempty"`
+	Notifications                []interface{}         `json:"notifications,omitempty"`
 }
 
 // ProjectPatch struct.
