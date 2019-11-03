@@ -51,7 +51,7 @@ func processAllProjects(allProjects []byte) ([]byte, error) {
 		})
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Project Name", "Git URL", "Dev Environments"},
+		Header: []string{"ID", "ProjectName", "GitURL", "DevEnvironments"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -115,7 +115,7 @@ func processProjectInfo(projectByName []byte) ([]byte, error) {
 		})
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Name", "Deploy Type", "Environment", "Route"}, //, "SSH"},
+		Header: []string{"ID", "Name", "DeployType", "Environment", "Route"}, //, "SSH"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)

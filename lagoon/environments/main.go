@@ -1,9 +1,6 @@
 package environments
 
 import (
-	// "encoding/json"
-	// "errors"
-
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
 )
