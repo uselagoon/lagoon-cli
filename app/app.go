@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/integralist/go-findroot/find"
 	"gopkg.in/yaml.v2"
 )
 
@@ -59,6 +60,13 @@ func GetLocalProject() (LagoonProject, error) {
 	if err != nil {
 		return LagoonProject{}, fmt.Errorf("error determining the current directory: %s", err)
 	}
+
+	// the .lagoon.yml file will likely be in a git repo, we should check if the directory we are in is a repo :)
+	root, err := find.Repo()
+	if err != nil {
+		return LagoonProject{}, err
+	}
+	appDir = fmt.Sprintf("%+v", root)
 	return getProjectFromPath(appDir)
 }
 
