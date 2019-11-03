@@ -1,0 +1,16 @@
+site_name: 'Lagoon CLI'
+theme:
+  name: 'material'
+  palette:
+    primary: 'indigo'
+    accent: 'light blue'
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: "#"
+      baselevel: 2
+      separator: "_"
+pages:
+  - Getting Started: index.md
+  - Configuration: config.md
