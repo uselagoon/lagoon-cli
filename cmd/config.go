@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -24,10 +25,18 @@ var configDefaultCmd = &cobra.Command{
 		viper.Set("default", strings.TrimSpace(string(lagoonName)))
 		err := viper.WriteConfig()
 		if err != nil {
-			panic(err)
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 
-		fmt.Println(fmt.Sprintf("Updating default lagoon to %s", lagoonName))
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"default-lagoon": lagoonName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		//fmt.Println(fmt.Sprintf("Updating default lagoon to %s", lagoonName))
 	},
 }
 
@@ -35,19 +44,38 @@ var configLagoonsCmd = &cobra.Command{
 	Use:   "lagoons",
 	Short: "View lagoons",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("You have the following lagoons configured:")
 		lagoons := viper.Get("lagoons")
 		lagoonsMap := reflect.ValueOf(lagoons).MapKeys()
-		for _, lagoon := range lagoonsMap {
-			fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), lagoon))
-			fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Hostname"), viper.GetString("lagoons."+lagoon.String()+".hostname")))
-			fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("GraphQL"), viper.GetString("lagoons."+lagoon.String()+".graphql")))
-			fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Port"), viper.GetInt("lagoons."+lagoon.String()+".port")))
+		if !outputOptions.CSV && !outputOptions.JSON {
+			fmt.Println("You have the following lagoons configured:")
+			for _, lagoon := range lagoonsMap {
+				fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), lagoon))
+				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Hostname"), viper.GetString("lagoons."+lagoon.String()+".hostname")))
+				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("GraphQL"), viper.GetString("lagoons."+lagoon.String()+".graphql")))
+				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Port"), viper.GetInt("lagoons."+lagoon.String()+".port")))
+			}
+			fmt.Println("\nYour default lagoon is:")
+			fmt.Println(fmt.Sprintf("%s: %s\n", aurora.Yellow("Name"), viper.Get("default")))
+			fmt.Println("Your current lagoon is:")
+			fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), viper.Get("current")))
+		} else {
+			var lagoonsData []map[string]interface{}
+			for _, lagoon := range lagoonsMap {
+				lagoonMapData := map[string]interface{}{
+					"name":     fmt.Sprintf("%s", lagoon),
+					"hostname": viper.GetString("lagoons." + lagoon.String() + ".hostname"),
+					"graphql":  viper.GetString("lagoons." + lagoon.String() + ".graphql"),
+					"port":     viper.GetString("lagoons." + lagoon.String() + ".port"),
+				}
+				lagoonsData = append(lagoonsData, lagoonMapData)
+			}
+			returnedData := map[string]interface{}{
+				"lagoons":        lagoonsData,
+				"default-lagoon": viper.Get("default"),
+				"current-lagoon": viper.Get("current"),
+			}
+			output.RenderJSON(returnedData, outputOptions)
 		}
-		fmt.Println("\nYour default lagoon is:")
-		fmt.Println(fmt.Sprintf("%s: %s\n", aurora.Yellow("Name"), viper.Get("default")))
-		fmt.Println("Your current lagoon is:")
-		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), viper.Get("current")))
 	},
 }
 var configAddCmd = &cobra.Command{
@@ -75,11 +103,21 @@ var configAddCmd = &cobra.Command{
 			}
 			err := viper.WriteConfig()
 			if err != nil {
-				panic(err)
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
-			fmt.Println(fmt.Sprintf("\nAdded a new lagoon named: %s", lagoonName))
+			resultData := output.Result{
+				Result: "success",
+				ResultData: map[string]interface{}{
+					"lagoon":   lagoonName,
+					"hostname": lagoonHostname,
+					"graphql":  lagoonGraphQL,
+					"port":     lagoonPort,
+				},
+			}
+			output.RenderResult(resultData, outputOptions)
 		} else {
-			fmt.Println(fmt.Sprintf("\nMust have Hostname, Port, and GraphQL endpoint"))
+			output.RenderError("Must have Hostname, Port, and GraphQL endpoint", outputOptions)
 		}
 	},
 }
@@ -98,7 +136,8 @@ var configDeleteCmd = &cobra.Command{
 		if yesNo() {
 			err := unset(lagoonName)
 			if err != nil {
-				panic(err)
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 		}
 	},

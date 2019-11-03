@@ -3,10 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
-	"github.com/logrusorgru/aurora"
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
 
@@ -14,19 +15,30 @@ var deleteEnvCmd = &cobra.Command{
 	Use:   "environment [project name] [environment name]",
 	Short: "Delete an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if len(args) < 2 {
-			fmt.Println("Not enough arguments. Requires: project name and environment.")
-			cmd.Help()
-			os.Exit(1)
+		var projectName string
+		var projectEnvironment string
+		if len(args) != 0 || cmdProject.Name == "" {
+			if len(args) < 2 {
+				fmt.Println("Not enough arguments. Requires: project name and environment")
+				cmd.Help()
+				os.Exit(1)
+			}
+			projectName = args[0]
+			projectEnvironment = args[1]
+		} else {
+			if len(args) < 1 {
+				fmt.Println("Not enough arguments. Requires: environment")
+				cmd.Help()
+				os.Exit(1)
+			}
+			projectName = strings.TrimSpace(cmdProject.Name)
+			projectEnvironment = args[0]
 		}
-		projectName := args[0]
-		projectEnvironment := args[1]
 
 		lagoonAPI, err := graphql.LagoonAPI()
 		if err != nil {
-			fmt.Println(err)
-			return
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 
 		evironment := api.DeleteEnvironment{
@@ -40,14 +52,13 @@ var deleteEnvCmd = &cobra.Command{
 		if yesNo() {
 			projectByName, err := lagoonAPI.DeleteEnvironment(evironment)
 			if err != nil {
-				fmt.Println(err)
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
-			if string(projectByName) == "success" {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(projectByName))))
-			} else {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(projectByName))))
+			resultData := output.Result{
+				Result: string(projectByName),
 			}
+			output.RenderResult(resultData, outputOptions)
 		}
 
 	},

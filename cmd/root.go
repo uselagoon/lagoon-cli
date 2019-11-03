@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/app"
+	"github.com/amazeeio/lagoon-cli/graphql"
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/manifoldco/promptui"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -26,11 +27,17 @@ var rootCmd = &cobra.Command{
 	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
 }
 
+// version/build information
+var (
+	version string
+	build   string
+)
+
 // Execute the root command.
 func Execute() {
 	viper.AutomaticEnv()
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
 }
@@ -40,8 +47,15 @@ func init() {
 	cobra.EnableCommandSorting = false
 
 	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The lagoon instance to interact with")
-	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "f", false, "force")
+	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "force")
 	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify a specific SSH key to use")
+
+	rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "all projects (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Header, "no-header", "", false, "no header on table (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "output as csv")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "output as json")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "make json pretty")
+
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}{{if gt (len .Aliases) 0}}
@@ -82,7 +96,8 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(infoCmd)
-
+	rootCmd.AddCommand(versionCmd)
+	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 }
 
 var configCmd = &cobra.Command{
@@ -92,11 +107,22 @@ var configCmd = &cobra.Command{
 	},
 }
 
+// version/build information command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "version information",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Version:", version)
+		fmt.Println("Build:", build)
+		os.Exit(0)
+	},
+}
+
 func initConfig() {
 	// Find home directory.
 	home, err := homedir.Dir()
 	if err != nil {
-		fmt.Println(err)
+		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
 
@@ -117,7 +143,8 @@ func initConfig() {
 	if err != nil {
 		err = viper.WriteConfigAs(filepath.Join(home, configName+".yml"))
 		if err != nil {
-			panic(err)
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 	}
 	if cmdLagoon == "" {
@@ -130,9 +157,18 @@ func initConfig() {
 	viper.Set("current", strings.TrimSpace(string(cmdLagoon)))
 	err = viper.WriteConfig()
 	if err != nil {
-		panic(err)
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
 	}
-	fmt.Println("Using Lagoon:", cmdLagoon, "\n")
+
+	validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
+	// we can use that inplaces where projects already exist so you don't have to type it out
+	cmdProject, _ = app.GetLocalProject()
+
+	// if !outputOptions.CSV && !outputOptions.JSON {
+	// 	fmt.Println("Using Lagoon:", cmdLagoon)
+	// }
 }
 
 func yesNo() bool {
@@ -143,7 +179,8 @@ func yesNo() bool {
 		}
 		_, result, err := prompt.Run()
 		if err != nil {
-			panic(err)
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 		return result == "Yes"
 	}
@@ -158,7 +195,8 @@ func selectList(listItems []string) string {
 		}
 		_, result, err := prompt.Run()
 		if err != nil {
-			panic(err)
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 		return result
 	}
@@ -182,7 +220,8 @@ func unset(key string) error {
 	delete(viper.Get("lagoons").(map[string]interface{}), key)
 	err := viper.WriteConfig()
 	if err != nil {
-		return err
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
 	}
 	return nil
 }
@@ -197,13 +236,13 @@ const (
 	STDOUT FormatType = "STDOUT"
 )
 
-func errorFormat(errorMsg string, format FormatType) error {
-	switch format {
-	case JSON:
-		return errors.New("{\"error\":\"" + errorMsg + "\"}")
-	case YAML:
-		return errors.New("{\"error\":\"" + errorMsg + "\"}")
+func validateToken(lagoon string) {
+	valid := graphql.VerifyTokenExpiry(lagoon)
+	if valid == false {
+		loginErr := loginToken()
+		if loginErr != nil {
+			fmt.Println("Unable to refresh token, you may need to run `lagoon login` first")
+			os.Exit(1)
+		}
 	}
-	return errors.New("{\"error\":\"" + errorMsg + "\"}")
-
 }

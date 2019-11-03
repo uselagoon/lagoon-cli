@@ -10,7 +10,7 @@ import (
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
-	"github.com/logrusorgru/aurora"
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
 
@@ -18,14 +18,21 @@ var addVariableEnvCmd = &cobra.Command{
 	Use:   "environment [project name] [environment name]",
 	Short: "Add variable to environment",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		var projectName string
+		var environmentName string
 		if len(args) < 2 {
-			fmt.Println("Not enough arguments. Requires: project name, environment name.")
-			cmd.Help()
-			os.Exit(1)
+			if cmdProject.Name != "" && len(args) == 1 {
+				projectName = cmdProject.Name
+				environmentName = args[0]
+			} else {
+				fmt.Println("Not enough arguments. Requires: project name and environment name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		} else {
+			projectName = args[0]
+			environmentName = args[1]
 		}
-		projectName := args[0]
-		environmentName := args[1]
 
 		// setup the envvar
 		var envVar api.EnvVariable
@@ -35,20 +42,20 @@ var addVariableEnvCmd = &cobra.Command{
 			var tempEnvVar api.EnvVariable
 			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
 			if err != nil {
-				fmt.Println("{\"error\":\"" + err.Error() + "\"}")
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 			if tempEnvVar.Name == "" || tempEnvVar.Value == "" || string(tempEnvVar.Scope) == "" {
-				fmt.Println("{\"error\":\"Must define a variable name, value and scope\"}")
-				return
+				output.RenderError("Must define a variable name, value and scope", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = tempEnvVar.Name
 			envVar.Value = tempEnvVar.Value
 			variableScope = string(tempEnvVar.Scope)
 		} else {
 			if variableName == "" || variableValue == "" || variableScope == "" {
-				fmt.Println("{\"error\":\"Must define a variable name, value and scope\"}")
-				return
+				output.RenderError("Must define a variable name, value and scope", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = variableName
 			envVar.Value = variableValue
@@ -60,40 +67,51 @@ var addVariableEnvCmd = &cobra.Command{
 		} else if strings.EqualFold(string(variableScope), "runtime") {
 			envVar.Scope = api.RuntimeVar
 		} else {
-			fmt.Println("{\"error\":\"Unknown scope: " + variableScope + "\"}")
-			return
+			output.RenderError("Unknown scope: "+variableScope, outputOptions)
+			os.Exit(1)
 		}
 
 		customReqResult, err := environments.AddEnvironmentVariableToEnvironment(projectName, environmentName, envVar)
 		if err != nil {
-			fmt.Println("{\"error\":\"" + err.Error() + "\"}")
-			return
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 		var updatedProject api.EnvVariable
 		err = json.Unmarshal([]byte(customReqResult), &updatedProject)
 		if err != nil {
-			fmt.Println("{\"error\":\"" + err.Error() + "\"}")
-			return
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
-
-		fmt.Println(fmt.Sprintf("Result: %s", aurora.Green("success")))
-		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("ID"), strconv.Itoa(updatedProject.ID)))
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"ID": strconv.Itoa(updatedProject.ID),
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
 	},
 }
 
 var deleteVariableEnvCmd = &cobra.Command{
 	Use:   "environment [project name] [environment name]",
 	Short: "Delete a variable from an environment",
-	Long: `This allows you to delete an environment variable from a project.`
+	Long:  `This allows you to delete an environment variable from a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		var projectName string
+		var environmentName string
 		if len(args) < 2 {
-			fmt.Println("Not enough arguments. Requires: project name, environment name.")
-			cmd.Help()
-			os.Exit(1)
+			if cmdProject.Name != "" && len(args) == 1 {
+				projectName = cmdProject.Name
+				environmentName = args[0]
+			} else {
+				fmt.Println("Not enough arguments. Requires: project name and environment name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		} else {
+			projectName = args[0]
+			environmentName = args[1]
 		}
-		projectName := args[0]
-		environmentName := args[1]
 
 		// setup the envvar
 		var envVar api.EnvVariable
@@ -103,18 +121,18 @@ var deleteVariableEnvCmd = &cobra.Command{
 			var tempEnvVar api.EnvVariable
 			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
 			if err != nil {
-				fmt.Println(err)
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 			if tempEnvVar.Name == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = tempEnvVar.Name
 		} else {
 			if variableName == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = variableName
 		}
@@ -122,15 +140,13 @@ var deleteVariableEnvCmd = &cobra.Command{
 		if yesNo() {
 			deleteResult, err := environments.DeleteEnvironmentVariableFromEnvironment(projectName, environmentName, envVar)
 			if err != nil {
-				fmt.Println("{\"error\":\"" + err.Error() + "\"}")
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
-
-			if string(deleteResult) == "success" {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(deleteResult))))
-			} else {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(deleteResult))))
+			resultData := output.Result{
+				Result: string(deleteResult),
 			}
+			output.RenderResult(resultData, outputOptions)
 		}
 	},
 }
@@ -148,13 +164,18 @@ Or via JSON
     $ lagoon add variable project my-project -j '{"name":"VARNAME", "value":"varvalue", "scope":"build"}'
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		var projectName string
 		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: project name.")
-			cmd.Help()
-			os.Exit(1)
+			if cmdProject.Name != "" {
+				projectName = cmdProject.Name
+			} else {
+				fmt.Println("Not enough arguments. Requires: project name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		} else {
+			projectName = args[0]
 		}
-		projectName := args[0]
 
 		// setup the envvar
 		var envVar api.EnvVariable
@@ -164,20 +185,20 @@ Or via JSON
 			var tempEnvVar api.EnvVariable
 			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
 			if err != nil {
-				fmt.Println(err)
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 			if tempEnvVar.Name == "" || tempEnvVar.Value == "" || string(tempEnvVar.Scope) == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name, value and scope", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = tempEnvVar.Name
 			envVar.Value = tempEnvVar.Value
 			variableScope = string(tempEnvVar.Scope)
 		} else {
 			if variableName == "" || variableValue == "" || variableScope == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name, value and scope", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = variableName
 			envVar.Value = variableValue
@@ -190,22 +211,26 @@ Or via JSON
 			envVar.Scope = api.RuntimeVar
 		} else {
 			fmt.Println("Unknown scope:", variableScope)
-			return
+			os.Exit(1)
 		}
-		customReqResult, err := projects.DeleteEnvironmentVariableFromProject(projectName, envVar)
+		customReqResult, err := projects.AddEnvironmentVariableToProject(projectName, envVar)
 		if err != nil {
-			fmt.Println(err)
-			return
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
 		var updatedProject api.EnvVariable
 		err = json.Unmarshal([]byte(customReqResult), &updatedProject)
 		if err != nil {
-			fmt.Println(err)
-			return
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
 		}
-
-		fmt.Println(fmt.Sprintf("Result: %s", aurora.Green("success")))
-		fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("ID"), strconv.Itoa(updatedProject.ID)))
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"ID": strconv.Itoa(updatedProject.ID),
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
 	},
 }
 
@@ -215,13 +240,18 @@ var deleteVariableProjectCmd = &cobra.Command{
 	Long: `This allows you to delete an environment variable from a project.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		var projectName string
 		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: project name.")
-			cmd.Help()
-			os.Exit(1)
+			if cmdProject.Name != "" {
+				projectName = cmdProject.Name
+			} else {
+				fmt.Println("Not enough arguments. Requires: project name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		} else {
+			projectName = args[0]
 		}
-		projectName := args[0]
 
 		// setup the envvar
 		var envVar api.EnvVariable
@@ -231,18 +261,18 @@ var deleteVariableProjectCmd = &cobra.Command{
 			var tempEnvVar api.EnvVariable
 			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
 			if err != nil {
-				fmt.Println(err)
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 			if tempEnvVar.Name == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = tempEnvVar.Name
 		} else {
 			if variableName == "" {
-				fmt.Println("Must define a variable name, value and scope")
-				return
+				output.RenderError("Must define a variable name", outputOptions)
+				os.Exit(1)
 			}
 			envVar.Name = variableName
 		}
@@ -250,15 +280,13 @@ var deleteVariableProjectCmd = &cobra.Command{
 		if yesNo() {
 			deleteResult, err := projects.DeleteEnvironmentVariableFromProject(projectName, envVar)
 			if err != nil {
-				fmt.Println(err)
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
-
-			if string(deleteResult) == "success" {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(deleteResult))))
-			} else {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(deleteResult))))
+			resultData := output.Result{
+				Result: string(deleteResult),
 			}
+			output.RenderResult(resultData, outputOptions)
 		}
 	},
 }

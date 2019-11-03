@@ -5,38 +5,45 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
-	"github.com/logrusorgru/aurora"
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
 
 var deployEnvCmd = &cobra.Command{
 	Use:   "deploy [project name] [branch name]",
-	Short: "Deploy a branch environment",
+	Short: "Deploy a branch",
+	Long:  "Deploy a branch",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		var projectName string
+		var environmentName string
 		if len(args) < 2 {
-			fmt.Println("Not enough arguments. Requires: project name and environment.")
-			cmd.Help()
-			os.Exit(1)
+			if cmdProject.Name != "" && len(args) == 1 {
+				projectName = cmdProject.Name
+				environmentName = args[0]
+			} else {
+				fmt.Println("Not enough arguments. Requires: project name and environment name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		} else {
+			projectName = args[0]
+			environmentName = args[1]
 		}
-		projectName := args[0]
-		projectEnvironment := args[1]
 
-		fmt.Println(fmt.Sprintf("Deploying %s %s", projectName, projectEnvironment))
+		if !outputOptions.JSON {
+			fmt.Println(fmt.Sprintf("Deploying %s %s", projectName, environmentName))
+		}
 
 		if yesNo() {
-			deployResult, err := environments.DeployEnvironmentBranch(projectName, projectEnvironment)
+			deployResult, err := environments.DeployEnvironmentBranch(projectName, environmentName)
 			if err != nil {
-				fmt.Println(errorFormat(err.Error(), JSON))
-				return
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
-			fmt.Println(string(deployResult))
-
-			if string(deployResult) == "success" {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(string(deployResult))))
-			} else {
-				fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(string(deployResult))))
+			resultData := output.Result{
+				Result: string(deployResult),
 			}
+			output.RenderResult(resultData, outputOptions)
 		}
 
 	},
