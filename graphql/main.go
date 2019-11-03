@@ -1,18 +1,12 @@
 package graphql
 
 import (
-	"context"
 	"fmt"
+
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/machinebox/graphql"
 	"github.com/spf13/viper"
 )
-
-// HasValidToken .
-func HasValidToken() bool {
-	return getGraphQLToken() != ""
-}
 
 // LagoonAPI .
 func LagoonAPI() (api.Client, error) {
@@ -28,31 +22,23 @@ func LagoonAPI() (api.Client, error) {
 	return lagoonAPI, nil
 }
 
-func getGraphQLToken() string {
-	lagoon := viper.GetString("current")
+func getGraphQLToken(lagoon string) string {
 	return viper.GetString("lagoons." + lagoon + ".token")
 }
 
-// GraphQLClient returns a new GraphQL client.
-func GraphQLClient() *graphql.Client {
-	lagoon := viper.GetString("current")
-	return graphql.NewClient(viper.GetString("lagoons." + lagoon + ".graphql"))
-}
-
-// GraphQLRequest performs a GraphQL request.
-func GraphQLRequest(q string, resp interface{}) error {
-	client := GraphQLClient()
-	req := graphql.NewRequest(q)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", getGraphQLToken()))
-	ctx := context.Background()
-	return client.Run(ctx, req, &resp)
+func hasValidToken(lagoon string) bool {
+	return getGraphQLToken(lagoon) != ""
 }
 
 // VerifyTokenExpiry verfies if the current token is valid or not
-func VerifyTokenExpiry() bool {
-	if HasValidToken() {
+func VerifyTokenExpiry(lagoon string) bool {
+	if hasValidToken(lagoon) {
 		var p jwt.Parser
-		token, _, err := p.ParseUnverified(getGraphQLToken(), &jwt.StandardClaims{})
+		token, _, err := p.ParseUnverified(getGraphQLToken(lagoon), &jwt.StandardClaims{})
+		if err != nil {
+			//handle invalid token
+			return false
+		}
 		if err = token.Claims.Valid(); err != nil {
 			//handle invalid token
 			return false
@@ -177,4 +163,10 @@ var EnvironmentVariablesFragment = `fragment Environment on Environment {
 		id
 		name
 	}
+}`
+
+// ProjectNameID .
+var ProjectNameID = `fragment Project on Project {
+	id
+	name
 }`
