@@ -16,17 +16,23 @@ func ListAllProjects() ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-
 	allProjects, err := lagoonAPI.GetAllProjects(graphql.AllProjectsFragment)
 	if err != nil {
 		return []byte(""), err
 	}
-	var projects []api.Project
-	err = json.Unmarshal([]byte(allProjects), &projects)
+	returnResult, err := processAllProjects(allProjects)
 	if err != nil {
 		return []byte(""), err
 	}
+	return returnResult, nil
+}
 
+func processAllProjects(allProjects []byte) ([]byte, error) {
+	var projects []api.Project
+	err := json.Unmarshal([]byte(allProjects), &projects)
+	if err != nil {
+		return []byte(""), err
+	}
 	// process the data for output
 	data := []output.Data{}
 	for _, project := range projects {
@@ -48,11 +54,7 @@ func ListAllProjects() ([]byte, error) {
 		Header: []string{"ID", "Project Name", "Git URL", "Dev Environments"},
 		Data:   data,
 	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
+	return json.Marshal(dataMain)
 }
 
 // ListEnvironmentsForProject will list all environments for a project
@@ -62,7 +64,6 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
@@ -71,20 +72,7 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	var projects api.Project
-	err = json.Unmarshal([]byte(projectByName), &projects)
-	if err != nil {
-		return []byte(""), err
-	}
-
-	// count the current dev environments in a project
-	var currentDevEnvironments = 0
-	for _, environment := range projects.Environments {
-		if environment.EnvironmentType == "development" {
-			currentDevEnvironments++
-		}
-	}
-
+	// @TODO do we need this data? I'm not sure
 	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Project Name"), projects.Name))
 	// fmt.Println(fmt.Sprintf("%s: %d", aurora.Yellow("Project ID"), projects.ID))
 	// fmt.Println()
@@ -94,7 +82,26 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Production Environment"), projects.ProductionEnvironment))
 	// fmt.Println(fmt.Sprintf("%s: %d / %d", aurora.Yellow("Development Environments"), currentDevEnvironments, projects.DevelopmentEnvironmentsLimit))
 	// fmt.Println()
+	returnResult, err := processProjectInfo(projectByName)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
 
+func processProjectInfo(projectByName []byte) ([]byte, error) {
+	var projects api.Project
+	err := json.Unmarshal([]byte(projectByName), &projects)
+	if err != nil {
+		return []byte(""), err
+	}
+	// count the current dev environments in a project
+	var currentDevEnvironments = 0
+	for _, environment := range projects.Environments {
+		if environment.EnvironmentType == "development" {
+			currentDevEnvironments++
+		}
+	}
 	// process the data for output
 	data := []output.Data{}
 	for _, environment := range projects.Environments {
@@ -111,11 +118,7 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 		Header: []string{"ID", "Name", "Deploy Type", "Environment", "Route"}, //, "SSH"},
 		Data:   data,
 	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
+	return json.Marshal(dataMain)
 }
 
 // AddProject .
@@ -130,8 +133,10 @@ func AddProject(projectName string, jsonPatch string) ([]byte, error) {
 		return []byte(""), err
 	}
 	project.Name = projectName
-
 	projectAddResult, err := lagoonAPI.AddProject(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
 	return projectAddResult, nil
 }
 
@@ -141,13 +146,11 @@ func DeleteProject(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-
 	project := api.Project{
 		Name: projectName,
 	}
-
 	returnResult, err := lagoonAPI.DeleteProject(project)
-	return returnResult, nil
+	return returnResult, err
 }
 
 // UpdateProject .
@@ -156,7 +159,6 @@ func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-
 	// get the project id from name
 	projectBName := api.Project{
 		Name: projectName,
@@ -165,24 +167,35 @@ func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	var projects api.Project
-	err = json.Unmarshal([]byte(projectByName), &projects)
+	projectUpdate, err := processProjectUpdate(projectByName, jsonPatch)
 	if err != nil {
 		return []byte(""), err
+	}
+	returnResult, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdateProject, error) {
+	var projects api.Project
+	var projectUpdate api.UpdateProject
+	var project api.ProjectPatch
+	err := json.Unmarshal([]byte(projectByName), &projects)
+	if err != nil {
+		return projectUpdate, err
 	}
 	projectID := projects.ID
 
 	// patch the project by id
-	projectUpdate := api.UpdateProject{}
-	project := api.ProjectPatch{}
 	err = json.Unmarshal([]byte(jsonPatch), &project)
 	if err != nil {
-		return []byte(""), err
+		return projectUpdate, err
 	}
 	projectUpdate = api.UpdateProject{
 		ID:    projectID,
 		Patch: project,
 	}
-	returnResult, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
-	return returnResult, nil
+	return projectUpdate, nil
 }
