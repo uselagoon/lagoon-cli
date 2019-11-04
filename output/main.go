@@ -123,8 +123,13 @@ func RenderOutput(data Table, opts Options) {
 			table.SetRowSeparator("")
 			table.SetColumnSeparator(",")
 		} else {
-			table.SetKubePadding("\t") // pad with tabs
-			table.SetKubeFormat(true)
+			table.SetHeaderLine(false)
+			table.SetBorder(false)
+			table.SetCenterSeparator("")
+			table.SetRowSeparator("")
+			table.SetColumnSeparator(",")
+			table.SetTablePadding("\t") // pad with tabs
+			table.SetNoWhiteSpace(true)
 		}
 		for _, rowData := range data.Data {
 			table.Append(rowData)
