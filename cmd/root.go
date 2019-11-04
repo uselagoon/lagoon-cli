@@ -101,7 +101,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 // version/build information command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "version information",
+	Short: "Version information",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Version:", version)
 		fmt.Println("Build:", build)
