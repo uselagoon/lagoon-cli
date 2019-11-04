@@ -21,5 +21,7 @@ var addVariableCmd = &cobra.Command{
 func init() {
 	addCmd.AddCommand(addVariableCmd)
 	addCmd.AddCommand(addSlackNotificationCmd)
+	addCmd.AddCommand(addProjectSlackNotificationCmd)
 	addCmd.AddCommand(addRocketChatNotificationCmd)
+	addCmd.AddCommand(addProjectRocketChatNotificationCmd)
 }
