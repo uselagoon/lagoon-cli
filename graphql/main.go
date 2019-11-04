@@ -1,8 +1,6 @@
 package graphql
 
 import (
-	"fmt"
-
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
@@ -16,7 +14,6 @@ func LagoonAPI() (api.Client, error) {
 		viper.GetString("lagoons."+lagoon+".graphql"),
 	)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return lagoonAPI, nil
