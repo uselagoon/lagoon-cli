@@ -10,4 +10,5 @@
 
 /vendor
 /.idea
-/lagoon
+
+/builds/lagoon-cli-*
