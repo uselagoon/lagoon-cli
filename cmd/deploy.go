@@ -11,8 +11,8 @@ import (
 
 var deployEnvCmd = &cobra.Command{
 	Use:   "deploy [project name] [branch name]",
-	Short: "Deploy a branch",
-	Long:  "Deploy a branch",
+	Short: "Deploy a latest branch",
+	Long:  "Deploy a latest branch",
 	Run: func(cmd *cobra.Command, args []string) {
 		var projectName string
 		var environmentName string

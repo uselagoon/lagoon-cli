@@ -61,7 +61,7 @@ var listSlackCmd = &cobra.Command{
 
 var listRocketChatsCmd = &cobra.Command{
 	Use:   "rocketchat [project]",
-	Short: "rocketchat details about a project",
+	Short: "Rocketchat details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		var projectName string
 		var returnedJSON []byte

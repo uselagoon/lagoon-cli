@@ -6,7 +6,7 @@ import (
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "update project, environment, etc..",
+	Short: "Update project, environment, or notification",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }

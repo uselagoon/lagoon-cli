@@ -6,7 +6,7 @@ import (
 
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Add a project, environment, or variable",
+	Short: "Add a project, or add notifications and variables to projects or environments",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }

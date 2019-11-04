@@ -6,7 +6,7 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a project or environment",
+	Short: "Delete a project, or delete notifications and variables from projects or environments",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }

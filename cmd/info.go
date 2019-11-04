@@ -14,7 +14,7 @@ import (
 
 var infoCmd = &cobra.Command{
 	Use:   "info",
-	Short: "Get info on projects, environments, etc..",
+	Short: "Get info on a project, or deployment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }
