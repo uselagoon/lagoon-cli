@@ -56,9 +56,14 @@ Allows you to configure Lagoon CLI to specify endpoints, such as your own Lagoon
 * Environments
 
 # Build
-## Build using make
+## Run tests
 ```
-make deps
+make test
+make test-docker
+```
+
+## Build locally
+```
 make build-linux
 make build-darwin #macos
 ```
@@ -66,17 +71,27 @@ make build-darwin #macos
 ## Build using Docker
 You can build lagoon-cli without installing `go` by running the `docker-build` make command. This will use the `Dockerfile.build` to build the cli inside of a docker container, then copy the binaries into the `builds/` directory once complete
 ```
-make docker-build
+make build-docker-darwin
+make build-docker-linux
 ```
+
+## Run all
+```
+make all #locally
+make all-docker-linux
+make all-docker-darwin
+```
+
+## Notes
 Versions can also be defined, and the binaries will be version tagged
 ```
-make VERSION=v0.0.1 docker-build
+make VERSION=v0.0.1 ...
 ```
 
 # Install
 ```
 make install-linux
-make install-darwin #macos
+make install-darwin
 ```
 
 ## Acknowledgements
