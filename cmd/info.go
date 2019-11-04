@@ -83,9 +83,11 @@ var infoDeploymentCmd = &cobra.Command{
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
 		}
-		fmt.Println("START LOG")
-		fmt.Println(deployment.BuildLog)
-		fmt.Println("END LOG")
+		if deployment.BuildLog != "" {
+			fmt.Println(deployment.BuildLog)
+		} else {
+			fmt.Println("Log data is not available")
+		}
 
 	},
 }

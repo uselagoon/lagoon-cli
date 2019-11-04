@@ -2,6 +2,7 @@ package environments
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
@@ -57,7 +58,7 @@ func GetEnvironmentDeployments(projectName string, environmentName string) ([]by
 	var projects api.Project
 	err = json.Unmarshal([]byte(environmentByName), &projects)
 	if err != nil {
-		return []byte(""), err
+		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
 	}
 	// process the data for output
 	data := []output.Data{}
@@ -104,6 +105,5 @@ func GetDeploymentLog(deploymentID string) ([]byte, error) {
 		MappedResult: "deploymentByRemoteId",
 	}
 	deploymentByRemoteID, err := lagoonAPI.Request(customRequest)
-
 	return deploymentByRemoteID, err
 }

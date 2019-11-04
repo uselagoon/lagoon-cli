@@ -333,7 +333,7 @@ type UpdateRestorePatch struct {
 type Deployment struct {
 	ID          int                  `json:"id,omitempty"`
 	Name        string               `json:"name,omitempty"`
-	Status      DeploymentStatusType `json:"status"`
+	Status      DeploymentStatusType `json:"status,omitempty"`
 	Created     string               `json:"created,omitempty"`
 	Started     string               `json:"started,omitempty"`
 	Completed   string               `json:"completed,omitempty"`
@@ -346,7 +346,7 @@ type Deployment struct {
 type DeploymentEnv struct {
 	ID          int                  `json:"id,omitempty"`
 	Name        string               `json:"name,omitempty"`
-	Status      DeploymentStatusType `json:"status"`
+	Status      DeploymentStatusType `json:"status,omitempty"`
 	Created     string               `json:"created,omitempty"`
 	Started     string               `json:"started,omitempty"`
 	Completed   string               `json:"completed,omitempty"`
