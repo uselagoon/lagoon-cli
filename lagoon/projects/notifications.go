@@ -16,8 +16,6 @@ func ListAllProjectRocketChats(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// get rocketchat project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
@@ -51,15 +49,13 @@ func ListAllProjectRocketChats(projectName string) ([]byte, error) {
 	return returnResult, nil
 }
 
-// ListAllProjectSlacks will list all rocketchat notifications for a project
+// ListAllProjectSlacks will list all slack notifications for a project
 func ListAllProjectSlacks(projectName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// get rocketchat project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
@@ -93,15 +89,13 @@ func ListAllProjectSlacks(projectName string) ([]byte, error) {
 	return returnResult, nil
 }
 
-// ListAllSlacks will list all rocketchat notifications for a project
+// ListAllSlacks will list all slack notifications on all projects
 func ListAllSlacks() ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// get rocketchat project info from lagoon
 	customReq := api.CustomRequest{
 		Query: `query {
 			allProjects {
@@ -163,15 +157,13 @@ func ListAllSlacks() ([]byte, error) {
 	return returnResult, nil
 }
 
-// ListAllRocketChats will list all rocketchat notifications for a project
+// ListAllRocketChats will list all rocketchat notifications on all projects
 func ListAllRocketChats() ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// get rocketchat project info from lagoon
 	customReq := api.CustomRequest{
 		Query: `query {
 			allProjects {
@@ -233,16 +225,13 @@ func ListAllRocketChats() ([]byte, error) {
 	return returnResult, nil
 }
 
-// AddSlackNotificationToProject will list all environments for a project
-func AddSlackNotificationToProject(projectName string, webhookURL string, channel string, notificationName string) ([]byte, error) {
-
+// AddSlackNotification will add a slack notification to lagoon to be used by a project
+func AddSlackNotification(notificationName string, channel string, webhookURL string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $channel: String!, $webhook: String!) {
 			addNotificationSlack(input:{name: $name, channel: $channel, webhook: $webhook}
@@ -261,9 +250,17 @@ func AddSlackNotificationToProject(projectName string, webhookURL string, channe
 	if err != nil {
 		return []byte(""), err
 	}
+	return returnResult, nil
+}
 
-	// run the query to add the environment variable to lagoon
-	customReq = api.CustomRequest{
+// AddSlackNotificationToProject will add a notification to a project
+func AddSlackNotificationToProject(projectName string, notificationName string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $project: String!) {
 			addNotificationToProject(input:{notificationName: $name, notificationType: SLACK, project: $project}
 			){
@@ -276,23 +273,20 @@ func AddSlackNotificationToProject(projectName string, webhookURL string, channe
 		},
 		MappedResult: "addNotificationToProject",
 	}
-	returnResult, err = lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnResult, nil
 }
 
-// DeleteSlackNotification will list all environments for a project
+// DeleteSlackNotification will delete a slack notification from lagoon
 func DeleteSlackNotification(notificationName string) ([]byte, error) {
-
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!) {
 			deleteNotificationSlack(input:{name: $name})
@@ -309,14 +303,13 @@ func DeleteSlackNotification(notificationName string) ([]byte, error) {
 	return returnResult, nil
 }
 
-// DeleteSlackNotificationFromProject will list all environments for a project
+// DeleteSlackNotificationFromProject will delete a slack notification from a project
 func DeleteSlackNotificationFromProject(projectName string, notificationName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
@@ -330,8 +323,6 @@ func DeleteSlackNotificationFromProject(projectName string, notificationName str
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $project: String!) {
 			removeNotificationFromProject(input:{notificationName: $name, project: $project, notificationType: SLACK})
@@ -352,19 +343,16 @@ func DeleteSlackNotificationFromProject(projectName string, notificationName str
 	return returnResult, nil
 }
 
-// AddRocketChatNotificationToProject will list all environments for a project
-func AddRocketChatNotificationToProject(projectName string, webhookURL string, channel string, notificationName string) ([]byte, error) {
-
+// AddRocketChatNotification will add a rocketchat notification to lagoon to be used by a project
+func AddRocketChatNotification(notificationName string, channel string, webhookURL string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $channel: String!, $webhook: String!) {
-			addNotificationSlack(input:{name: $name, channel: $channel, webhook: $webhook}
+			addNotificationRocketChat(input:{name: $name, channel: $channel, webhook: $webhook}
 			){
 				id
 			}
@@ -374,15 +362,23 @@ func AddRocketChatNotificationToProject(projectName string, webhookURL string, c
 			"channel": channel,
 			"webhook": webhookURL,
 		},
-		MappedResult: "addNotificationSlack",
+		MappedResult: "addNotificationRocketChat",
 	}
 	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
+	return returnResult, nil
+}
 
-	// run the query to add the environment variable to lagoon
-	customReq = api.CustomRequest{
+// AddRocketChatNotificationToProject will add a rocketchat notification to a project
+func AddRocketChatNotificationToProject(projectName string, notificationName string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $project: String!) {
 			addNotificationToProject(input:{notificationName: $name, notificationType: ROCKETCHAT, project: $project}
 			){
@@ -395,23 +391,20 @@ func AddRocketChatNotificationToProject(projectName string, webhookURL string, c
 		},
 		MappedResult: "addNotificationToProject",
 	}
-	returnResult, err = lagoonAPI.Request(customReq)
+	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnResult, nil
 }
 
-// DeleteRocketChatNotification will list all environments for a project
+// DeleteRocketChatNotification will delete a rocketchat notification from lagoon
 func DeleteRocketChatNotification(notificationName string) ([]byte, error) {
-
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!) {
 			deleteNotificationRocketChat(input:{name: $name})
@@ -428,14 +421,13 @@ func DeleteRocketChatNotification(notificationName string) ([]byte, error) {
 	return returnResult, nil
 }
 
-// DeleteRocketChatNotificationFromProject will list all environments for a project
+// DeleteRocketChatNotificationFromProject will delete a rocketchat notification from a project
 func DeleteRocketChatNotificationFromProject(projectName string, notificationName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
-
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
@@ -449,8 +441,6 @@ func DeleteRocketChatNotificationFromProject(projectName string, notificationNam
 	if err != nil {
 		return []byte(""), err
 	}
-
-	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
 		Query: `mutation ($name: String!, $project: String!) {
 			removeNotificationFromProject(input:{notificationName: $name, project: $project, notificationType: ROCKETCHAT})
@@ -463,6 +453,65 @@ func DeleteRocketChatNotificationFromProject(projectName string, notificationNam
 			"project": projectName,
 		},
 		MappedResult: "removeNotificationFromProject",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+// UpdateSlackNotification will update an existing notification
+func UpdateSlackNotification(notificationName string, jsonPatch string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	var updateSlack api.UpdateNotificationSlackPatch
+
+	err = json.Unmarshal([]byte(jsonPatch), &updateSlack)
+	customReq := api.CustomRequest{
+		Query: `mutation ($name: String!, $patch: UpdateNotificationSlackPatchInput!) {
+			updateNotificationSlack(input:{name: $name, patch: $patch}
+			){
+				id
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"name":  notificationName,
+			"patch": updateSlack,
+		},
+		MappedResult: "updateNotificationSlack",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+// UpdateRocketChatNotification will update an existing notification
+func UpdateRocketChatNotification(notificationName string, jsonPatch string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	var updateRocketChat api.UpdateNotificationRocketChatPatch
+	err = json.Unmarshal([]byte(jsonPatch), &updateRocketChat)
+	customReq := api.CustomRequest{
+		Query: `mutation ($name: String!, $patch: UpdateNotificationRocketChatPatchInput!) {
+			updateNotificationRocketChat(input:{name: $name, patch: $patch}
+			){
+				id
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"name":  notificationName,
+			"patch": updateRocketChat,
+		},
+		MappedResult: "updateNotificationRocketChat",
 	}
 	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {

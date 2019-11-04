@@ -10,3 +10,10 @@ var updateCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }
+
+func init() {
+	updateCmd.AddCommand(updateSlackNotificationCmd)
+	updateSlackNotificationCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
+	updateCmd.AddCommand(updateRocketChatNotificationCmd)
+	updateRocketChatNotificationCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
+}
