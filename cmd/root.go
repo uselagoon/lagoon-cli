@@ -46,15 +46,18 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.EnableCommandSorting = false
 
-	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The lagoon instance to interact with")
-	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "force")
+	rootCmd.PersistentFlags().StringVarP(&cmdProject.Name, "project", "p", "", "Specify a project to use")
+	rootCmd.PersistentFlags().StringVarP(&cmdProject.Environment, "environment", "e", "", "Specify an environment to use")
+
+	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The Lagoon instance to interact with")
+	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "Force (if supported)")
 	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify a specific SSH key to use")
 
-	rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "all projects (if supported)")
-	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Header, "no-header", "", false, "no header on table (if supported)")
-	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "output as csv")
-	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "output as json")
-	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "make json pretty")
+	rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Header, "no-header", "", false, "No header on table (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "Output as CSV (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
