@@ -13,7 +13,7 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list projects, environment, etc..",
+	Short: "List projects, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }

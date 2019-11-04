@@ -73,14 +73,14 @@ func RenderResult(result Result, opts Options) {
 			fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(trimQuotes(result.Result))))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Println(fmt.Sprintf("%s: %s", k, v))
+					fmt.Println(fmt.Sprintf("%s: %v", k, v))
 				}
 			}
 		} else {
 			fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(trimQuotes(result.Result))))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Println(fmt.Sprintf("%s: %s", k, v))
+					fmt.Println(fmt.Sprintf("%s: %v", k, v))
 				}
 			}
 		}

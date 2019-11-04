@@ -70,9 +70,7 @@ Examples:
 
 Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
 {{- $current_command:= . }}
-  {{rpad .Name .NamePadding }} {{.Short}}{{if .HasAvailableSubCommands}}{{range .Commands}}
-    {{rpad .Name 9 }} {{.Short}}
-{{- end}}{{end}}{{end}}{{end}}{{end}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}
 
 {{if .HasAvailableLocalFlags -}}
 Flags:
@@ -89,7 +87,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(webCmd)
-	rootCmd.AddCommand(projectCmd)
+	// rootCmd.AddCommand(projectCmd)
 	rootCmd.AddCommand(deployEnvCmd)
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(addCmd)
@@ -100,17 +98,10 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 }
 
-var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Configure Lagoon CLI",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-	},
-}
-
 // version/build information command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "version information",
+	Short: "Version information",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Version:", version)
 		fmt.Println("Build:", build)

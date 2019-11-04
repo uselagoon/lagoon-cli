@@ -6,21 +6,20 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/app"
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
 
-var projectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Show your projects, or details about a project",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// can use this to pick out info from a local project for some operations
-		cmdProject, _ = app.GetLocalProject()
-		fmt.Println(cmdProject)
-	},
-}
+// var projectCmd = &cobra.Command{
+// 	Use:   "project",
+// 	Short: "Show your projects, or details about a project",
+// 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+// 		// can use this to pick out info from a local project for some operations
+// 		cmdProject, _ = app.GetLocalProject()
+// 		fmt.Println(cmdProject)
+// 	},
+// }
 
 var deleteProjectCmd = &cobra.Command{
 	Use:   "project [project name]",
