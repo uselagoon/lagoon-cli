@@ -67,7 +67,7 @@ lagoon --lagoon mylagoon list projects
 # View Lagoons
 You can view all the Lagoons you have configured by running
 ```bash
-lagoon config lagoons
+lagoon config list
 ```
 Output
 ```yaml

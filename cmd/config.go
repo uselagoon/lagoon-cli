@@ -41,8 +41,8 @@ var configDefaultCmd = &cobra.Command{
 }
 
 var configLagoonsCmd = &cobra.Command{
-	Use:   "lagoons",
-	Short: "View lagoons",
+	Use:   "list",
+	Short: "View all configured lagoons",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoons := viper.Get("lagoons")
 		lagoonsMap := reflect.ValueOf(lagoons).MapKeys()
