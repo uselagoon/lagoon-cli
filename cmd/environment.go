@@ -5,8 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/graphql"
+	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
@@ -35,22 +34,10 @@ var deleteEnvCmd = &cobra.Command{
 			projectEnvironment = args[0]
 		}
 
-		lagoonAPI, err := graphql.LagoonAPI()
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-
-		evironment := api.DeleteEnvironment{
-			Name:    projectEnvironment,
-			Project: projectName,
-			Execute: true,
-		}
-
 		fmt.Println(fmt.Sprintf("Deleting %s-%s", projectName, projectEnvironment))
 
 		if yesNo() {
-			projectByName, err := lagoonAPI.DeleteEnvironment(evironment)
+			projectByName, err := environments.DeleteEnvironment(projectName, projectEnvironment)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
