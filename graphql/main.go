@@ -70,16 +70,6 @@ var ProjectByNameFragment = `fragment Project on Project {
 	developmentEnvironmentsLimit
 }`
 
-// ProjectEnvVars .
-var ProjectEnvVars = `fragment Project on Project {
-	id
-	name
-	envVariables {
-		id
-		name
-	}
-}`
-
 // ProjectAndEnvironmentEnvVars .
 var ProjectAndEnvironmentEnvVars = `fragment Project on Project {
 	id
@@ -119,6 +109,71 @@ var ProjectAndEnvironmentEnvVarsRevealed = `fragment Project on Project {
 			scope
 			value
 		}
+	}
+}`
+
+// ProjectEnvVars .
+var ProjectEnvVars = `fragment Project on Project {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+	}
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+		}
+	}
+}`
+
+// ProjectEnvVarsRevealed .
+var ProjectEnvVarsRevealed = `fragment Project on Project {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+		value
+	}
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+			value
+		}
+	}
+}`
+
+// EnvironmentEnvVars .
+var EnvironmentEnvVars = `fragment Environment on Environment {
+	openshiftProjectName
+	name
+	envVariables {
+		id
+		name
+		scope
+	}
+}`
+
+// EnvironmentEnvVarsRevealed .
+var EnvironmentEnvVarsRevealed = `fragment Environment on Environment {
+	openshiftProjectName
+	name
+	envVariables {
+		id
+		name
+		scope
+		value
 	}
 }`
 
