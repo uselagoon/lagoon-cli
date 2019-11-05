@@ -10,16 +10,18 @@ import (
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var infoCmd = &cobra.Command{
-	Use:   "info",
+var getCmd = &cobra.Command{
+	Use:   "get",
 	Short: "Get info on a project, or deployment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
 }
 
-var infoProjectCmd = &cobra.Command{
+var getProjectCmd = &cobra.Command{
 	Use:   "project [project]",
 	Short: "Details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -57,7 +59,7 @@ var infoProjectCmd = &cobra.Command{
 	},
 }
 
-var infoDeploymentCmd = &cobra.Command{
+var getDeploymentCmd = &cobra.Command{
 	Use:   "deployment [remote id]",
 	Short: "Get build log by remote id",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -93,6 +95,6 @@ var infoDeploymentCmd = &cobra.Command{
 }
 
 func init() {
-	infoCmd.AddCommand(infoProjectCmd)
-	infoCmd.AddCommand(infoDeploymentCmd)
+	getCmd.AddCommand(getProjectCmd)
+	getCmd.AddCommand(getDeploymentCmd)
 }
