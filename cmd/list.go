@@ -9,12 +9,35 @@ import (
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
+
+// ListFlags .
+type ListFlags struct {
+	Project     string `json:"project,omitempty"`
+	Environment string `json:"environment,omitempty"`
+	Reveal      bool   `json:"reveal,omitempty"`
+}
+
+func parseListFlags(flags pflag.FlagSet) ListFlags {
+	configMap := make(map[string]interface{})
+	flags.VisitAll(func(f *pflag.Flag) {
+		if flags.Changed(f.Name) {
+			configMap[f.Name] = f.Value
+		}
+	})
+	jsonStr, _ := json.Marshal(configMap)
+	parsedFlags := ListFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
+}
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List projects, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
 }
 
@@ -45,22 +68,21 @@ var listProjectCmd = &cobra.Command{
 
 var listVariablesCmd = &cobra.Command{
 	Use:   "variables",
-	Short: "Show your variables for a project",
+	Short: "Show your variables for a project or environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		if len(args) < 1 {
-			if cmdProject.Name != "" {
-				projectName = cmdProject.Name
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
+		getListFlags := parseListFlags(*cmd.Flags())
+		if getListFlags.Project == "" {
+			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
+			os.Exit(1)
 		}
-
-		returnedJSON, err := projects.ListEnvironmentVariables(projectName, revealValue)
+		var returnedJSON []byte
+		var err error
+		if getListFlags.Environment != "" {
+			returnedJSON, err = environments.ListEnvironmentVariables(getListFlags.Project, getListFlags.Environment, getListFlags.Reveal)
+		} else {
+			returnedJSON, err = projects.ListProjectVariables(getListFlags.Project, getListFlags.Reveal)
+		}
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -81,26 +103,17 @@ var listVariablesCmd = &cobra.Command{
 }
 
 var listDeploymentsCmd = &cobra.Command{
-	Use:   "deployments [project name] [environment name]",
+	Use:   "deployments",
 	Short: "Show your deployments for an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var environmentName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				environmentName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and environment name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			environmentName = args[1]
+		getListFlags := parseListFlags(*cmd.Flags())
+		if getListFlags.Project == "" || getListFlags.Environment == "" {
+			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			cmd.Help()
+			os.Exit(1)
 		}
 
-		returnedJSON, err := environments.GetEnvironmentDeployments(projectName, environmentName)
+		returnedJSON, err := environments.GetEnvironmentDeployments(getListFlags.Project, getListFlags.Environment)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)

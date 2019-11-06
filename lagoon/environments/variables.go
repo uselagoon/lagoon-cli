@@ -3,9 +3,11 @@ package environments
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
+	"github.com/amazeeio/lagoon-cli/output"
 )
 
 // AddEnvironmentVariableToEnvironment will list all environments for a project
@@ -117,7 +119,7 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 	if envVar.ID == 0 {
 		return []byte(""), errors.New("no matching var found")
 	}
-	// run the query to add the environment variable to lagoon
+	// run the query to delete the environment variable to lagoon
 	// we consume the project ID here
 	customReq := api.CustomRequest{
 		Query: `mutation deleteEnvironmentVariableFromProject ($id: Int!) {
@@ -129,6 +131,73 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 		MappedResult: "deleteEnvVariable",
 	}
 	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+// ListEnvironmentVariables will list the environment variables for a project and all environments attached
+func ListEnvironmentVariables(projectName string, environmentName string, revealValue bool) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	// get project info from lagoon, we need the project ID for later
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+	environment := api.EnvironmentByName{
+		Name:    environmentName,
+		Project: projectInfo.ID,
+	}
+	queryFragment := graphql.EnvironmentEnvVars
+	if revealValue {
+		queryFragment = graphql.EnvironmentEnvVarsRevealed
+	}
+	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, queryFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var envVars api.Environment
+	err = json.Unmarshal([]byte(environmentByName), &envVars)
+	if err != nil {
+		return []byte(""), err
+	}
+	data := []output.Data{}
+	if len(envVars.EnvVariables) != 0 {
+		for _, environmentEnvVar := range envVars.EnvVariables {
+			envVarRow := []string{
+				fmt.Sprintf("%v", environmentEnvVar.ID),
+				project.Name,
+				envVars.Name,
+				environmentEnvVar.Scope,
+				environmentEnvVar.Name,
+			}
+			if revealValue {
+				envVarRow = append(envVarRow, environmentEnvVar.Value)
+			}
+			data = append(data, envVarRow)
+		}
+	}
+	dataMain := output.Table{
+		Header: []string{"ID", "Project", "Environment", "Scope", "Variable Name"},
+		Data:   data,
+	}
+	if revealValue {
+		dataMain.Header = append(dataMain.Header, "Variable Value")
+	}
+	returnResult, err := json.Marshal(dataMain)
 	if err != nil {
 		return []byte(""), err
 	}

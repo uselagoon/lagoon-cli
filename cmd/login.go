@@ -15,6 +15,7 @@ var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Log into a Lagoon instance",
 	Run: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		loginErr := loginToken()
 		if loginErr != nil {
 			fmt.Println("Unable to login, error was: ", loginErr.Error())

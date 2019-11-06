@@ -10,33 +10,50 @@ import (
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
-var infoCmd = &cobra.Command{
-	Use:   "info",
+// GetFlags .
+type GetFlags struct {
+	Project     string `json:"project,omitempty"`
+	Environment string `json:"environment,omitempty"`
+	RemoteID    string `json:"remoteid,omitempty"`
+}
+
+func parseGetFlags(flags pflag.FlagSet) GetFlags {
+	configMap := make(map[string]interface{})
+	flags.VisitAll(func(f *pflag.Flag) {
+		if flags.Changed(f.Name) {
+			configMap[f.Name] = f.Value
+		}
+	})
+	jsonStr, _ := json.Marshal(configMap)
+	parsedFlags := GetFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
+}
+
+var getCmd = &cobra.Command{
+	Use:   "get",
 	Short: "Get info on a project, or deployment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
 }
 
-var infoProjectCmd = &cobra.Command{
-	Use:   "project [project]",
+var getProjectCmd = &cobra.Command{
+	Use:   "project",
 	Short: "Details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		if len(args) < 1 {
-			if cmdProject.Name != "" {
-				projectName = cmdProject.Name
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
+		getProjectFlags := parseGetFlags(*cmd.Flags())
+		if getProjectFlags.Project == "" {
+			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
+			os.Exit(1)
 		}
 
-		returnedJSON, err := projects.ListEnvironmentsForProject(projectName)
+		returnedJSON, err := projects.ListEnvironmentsForProject(getProjectFlags.Project)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -57,18 +74,18 @@ var infoProjectCmd = &cobra.Command{
 	},
 }
 
-var infoDeploymentCmd = &cobra.Command{
+var getDeploymentCmd = &cobra.Command{
 	Use:   "deployment [remote id]",
 	Short: "Get build log by remote id",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
+		getProjectFlags := parseGetFlags(*cmd.Flags())
+		if getProjectFlags.RemoteID == "" {
 			fmt.Println("Not enough arguments. Requires: remote id")
 			cmd.Help()
 			os.Exit(1)
 		}
-		deploymentID := args[0]
 
-		returnedJSON, err := environments.GetDeploymentLog(deploymentID)
+		returnedJSON, err := environments.GetDeploymentLog(getProjectFlags.RemoteID)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -93,6 +110,7 @@ var infoDeploymentCmd = &cobra.Command{
 }
 
 func init() {
-	infoCmd.AddCommand(infoProjectCmd)
-	infoCmd.AddCommand(infoDeploymentCmd)
+	getCmd.AddCommand(getProjectCmd)
+	getCmd.AddCommand(getDeploymentCmd)
+	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

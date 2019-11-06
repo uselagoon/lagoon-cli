@@ -21,10 +21,19 @@ var cmdLagoon = ""
 var forceAction bool
 var cmdSSHKey = ""
 var inputScanner = bufio.NewScanner(os.Stdin)
+var versionFlag bool
+
 var rootCmd = &cobra.Command{
 	Use:   "lagoon",
 	Short: "Command line integration for Lagoon",
 	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if versionFlag {
+			displayVersionInfo()
+		}
+		cmd.Help()
+		os.Exit(1)
+	},
 }
 
 // version/build information
@@ -46,8 +55,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.EnableCommandSorting = false
 
-	rootCmd.PersistentFlags().StringVarP(&cmdProject.Name, "project", "p", "", "Specify a project to use")
-	rootCmd.PersistentFlags().StringVarP(&cmdProject.Environment, "environment", "e", "", "Specify an environment to use")
+	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
+	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
 
 	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The Lagoon instance to interact with")
 	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "Force (if supported)")
@@ -58,6 +67,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "Output as CSV (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
+
+	rootCmd.PersistentFlags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
@@ -87,18 +98,17 @@ Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
 
 Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
 `)
-	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(webCmd)
-	// rootCmd.AddCommand(projectCmd)
-	rootCmd.AddCommand(deployEnvCmd)
-	rootCmd.AddCommand(deleteCmd)
+	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(addCmd)
-	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(updateCmd)
-	rootCmd.AddCommand(infoCmd)
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(deployEnvCmd)
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
+	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(versionCmd)
 }
 
 // version/build information command
@@ -106,10 +116,14 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Version:", version)
-		fmt.Println("Build:", build)
-		os.Exit(0)
+		displayVersionInfo()
 	},
+}
+
+func displayVersionInfo() {
+	fmt.Println("Version:", version)
+	fmt.Println("Build:", build)
+	os.Exit(0)
 }
 
 func initConfig() {
@@ -148,21 +162,29 @@ func initConfig() {
 			cmdLagoon = viper.GetString("default")
 		}
 	}
-	viper.Set("current", strings.TrimSpace(string(cmdLagoon)))
+	viper.Set("current", strings.TrimSpace(string(cmdLagoon))) // set the current lagoon to whatever we defined from config or as override in a flag
+
 	err = viper.WriteConfig()
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
 
-	validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
+	// and environments too
 	cmdProject, _ = app.GetLocalProject()
+	if cmdProject.Name != "" {
+		cmdProjectName = cmdProject.Name
+	}
+	if cmdProject.Environment != "" {
+		cmdProjectEnvironment = cmdProject.Environment
+	}
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
 	// }
+
 }
 
 func yesNo() bool {

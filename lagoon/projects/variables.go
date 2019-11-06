@@ -10,8 +10,8 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
-// ListEnvironmentVariables will list the environment variables for a project and all environments attached
-func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, error) {
+// ListProjectVariables will list the environment variables for a project and all environments attached
+func ListProjectVariables(projectName string, revealValue bool) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -22,9 +22,9 @@ func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, err
 	project := api.Project{
 		Name: projectName,
 	}
-	queryFragment := graphql.ProjectAndEnvironmentEnvVars
+	queryFragment := graphql.ProjectEnvVars
 	if revealValue {
-		queryFragment = graphql.ProjectAndEnvironmentEnvVarsRevealed
+		queryFragment = graphql.ProjectEnvVarsRevealed
 	}
 	projectByName, err := lagoonAPI.GetProjectByName(project, queryFragment)
 	if err != nil {
@@ -41,7 +41,6 @@ func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, err
 			envVarRow := []string{
 				fmt.Sprintf("%v", projectEnvVar.ID),
 				project.Name,
-				"",
 				projectEnvVar.Scope,
 				projectEnvVar.Name,
 			}
@@ -51,25 +50,8 @@ func ListEnvironmentVariables(projectName string, revealValue bool) ([]byte, err
 			data = append(data, envVarRow)
 		}
 	}
-	for _, v := range envVars.Environments {
-		if len(v.EnvVariables) != 0 {
-			for _, environmentEnvVar := range v.EnvVariables {
-				envVarRow := []string{
-					fmt.Sprintf("%v", environmentEnvVar.ID),
-					project.Name,
-					v.Name,
-					environmentEnvVar.Scope,
-					environmentEnvVar.Name,
-				}
-				if revealValue {
-					envVarRow = append(envVarRow, environmentEnvVar.Value)
-				}
-				data = append(data, envVarRow)
-			}
-		}
-	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Project", "Environment", "Scope", "Variable Name"},
+		Header: []string{"ID", "Project", "Scope", "Variable Name"},
 		Data:   data,
 	}
 	if revealValue {

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"reflect"
@@ -9,8 +10,31 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
+
+// LagoonConfigFlags .
+type LagoonConfigFlags struct {
+	Lagoon   string `json:"lagoon,omitempty"`
+	Hostname string `json:"hostname,omitempty"`
+	Port     string `json:"port,omitempty"`
+	GraphQL  string `json:"graphql,omitempty"`
+	Token    string `json:"token,omitempty"`
+}
+
+func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
+	configMap := make(map[string]interface{})
+	flags.VisitAll(func(f *pflag.Flag) {
+		if flags.Changed(f.Name) {
+			configMap[f.Name] = f.Value
+		}
+	})
+	jsonStr, _ := json.Marshal(configMap)
+	parsedFlags := LagoonConfigFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
+}
 
 var configCmd = &cobra.Command{
 	Use:   "config",
@@ -23,13 +47,13 @@ var configDefaultCmd = &cobra.Command{
 	Use:   "default [lagoon name]",
 	Short: "Set the default Lagoon to use",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: lagoon name")
+		lagoonConfig := parseLagoonConfig(*cmd.Flags())
+		if lagoonConfig.Lagoon == "" {
+			fmt.Println("Not enough arguments")
 			cmd.Help()
 			os.Exit(1)
 		}
-		lagoonName := args[0]
-		viper.Set("default", strings.TrimSpace(string(lagoonName)))
+		viper.Set("default", strings.TrimSpace(string(lagoonConfig.Lagoon)))
 		err := viper.WriteConfig()
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -39,7 +63,7 @@ var configDefaultCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"default-lagoon": lagoonName,
+				"default-lagoon": lagoonConfig.Lagoon,
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
@@ -85,28 +109,24 @@ var configLagoonsCmd = &cobra.Command{
 		}
 	},
 }
+
 var configAddCmd = &cobra.Command{
-	Use:   "add [lagoon name]",
+	Use:   "add",
 	Short: "Add information about an additional Lagoon instance to use",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
+		lagoonConfig := parseLagoonConfig(*cmd.Flags())
+		if lagoonConfig.Lagoon == "" {
 			fmt.Println("Not enough arguments. Requires: lagoon name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		lagoonName := args[0]
 
-		if lagoonHostname == "" && lagoonPort == "" && lagoonGraphQL == "" {
-			lagoonHostname = Prompt(fmt.Sprintf("Lagoon Hostname (%s)", viper.GetString("lagoons."+lagoonName+".hostname")))
-			lagoonPort = Prompt(fmt.Sprintf("Lagoon Port (%d)", viper.GetInt("lagoons."+lagoonName+".port")))
-			lagoonGraphQL = Prompt(fmt.Sprintf("Lagoon GraphQL endpoint (%s)", viper.GetString("lagoons."+lagoonName+".graphql")))
-		}
-		if lagoonHostname != "" && lagoonPort != "" && lagoonGraphQL != "" {
-			viper.Set("lagoons."+lagoonName+".hostname", lagoonHostname)
-			viper.Set("lagoons."+lagoonName+".port", lagoonPort)
-			viper.Set("lagoons."+lagoonName+".graphql", lagoonGraphQL)
-			if lagoonToken != "" {
-				viper.Set("lagoons."+lagoonName+".token", lagoonToken)
+		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".hostname", lagoonConfig.Token)
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".port", lagoonConfig.Token)
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".graphql", lagoonConfig.Token)
+			if lagoonConfig.Token != "" {
+				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
 			}
 			err := viper.WriteConfig()
 			if err != nil {
@@ -116,10 +136,10 @@ var configAddCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
-					"lagoon":   lagoonName,
-					"hostname": lagoonHostname,
-					"graphql":  lagoonGraphQL,
-					"port":     lagoonPort,
+					"lagoon":   lagoonConfig.Lagoon,
+					"hostname": lagoonConfig.Hostname,
+					"graphql":  lagoonConfig.GraphQL,
+					"port":     lagoonConfig.Port,
 				},
 			}
 			output.RenderResult(resultData, outputOptions)
@@ -133,15 +153,16 @@ var configDeleteCmd = &cobra.Command{
 	Use:   "delete [lagoon name]",
 	Short: "Delete a Lagoon instance configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
+		lagoonConfig := parseLagoonConfig(*cmd.Flags())
+
+		if lagoonConfig.Lagoon == "" {
 			fmt.Println("Not enough arguments. Requires: lagoon name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		lagoonName := args[0]
-		fmt.Println(fmt.Sprintf("Deleting config for lagoon: %s", lagoonName))
+		fmt.Println(fmt.Sprintf("Deleting config for lagoon: %s", lagoonConfig.Lagoon))
 		if yesNo() {
-			err := unset(lagoonName)
+			err := unset(lagoonConfig.Lagoon)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -155,8 +176,8 @@ func init() {
 	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configAddCmd)
 	configCmd.AddCommand(configDeleteCmd)
-	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
-	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
-	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
-	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
+	configCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
+	configCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
+	configCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
+	configCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
 }

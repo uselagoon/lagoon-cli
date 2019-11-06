@@ -1,41 +1,54 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
+
+// DeployFlags .
+type DeployFlags struct {
+	Branch string `json:"branch,omitempty"`
+}
+
+func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
+	configMap := make(map[string]interface{})
+	flags.VisitAll(func(f *pflag.Flag) {
+		if flags.Changed(f.Name) {
+			configMap[f.Name] = f.Value
+		}
+	})
+	jsonStr, _ := json.Marshal(configMap)
+	parsedFlags := DeployFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
+}
 
 var deployEnvCmd = &cobra.Command{
 	Use:   "deploy [project name] [branch name]",
 	Short: "Deploy a latest branch",
 	Long:  "Deploy a latest branch",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var environmentName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				environmentName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and environment name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			environmentName = args[1]
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		deployBranch := parseDeployFlags(*cmd.Flags())
+		if cmdProjectName == "" || deployBranch.Branch == "" {
+			fmt.Println("Not enough arguments. Requires: lagoon name and branch name")
+			cmd.Help()
+			os.Exit(1)
 		}
 
 		if !outputOptions.JSON {
-			fmt.Println(fmt.Sprintf("Deploying %s %s", projectName, environmentName))
+			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
 		if yesNo() {
-			deployResult, err := environments.DeployEnvironmentBranch(projectName, environmentName)
+			deployResult, err := environments.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)

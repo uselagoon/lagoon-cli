@@ -4,15 +4,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
-var projectBranches string
-var projectProductionEnvironment string
-var projectDevelopmentEnvironmentsLimit int
-var projectPullRequests string
-var projectAutoIdle *int
-var projectGitURL string
-var projectProductionEnv string
-var projectOpenshift int
-
 // config vars
 var lagoonHostname string
 var lagoonPort string
@@ -29,15 +20,20 @@ var revealValue bool
 var listAllProjects bool
 var noHeader bool
 
+// These are available to all cmds and are set either by flags (-p and -e) or via `lagoon-cli/app` when entering a directory that has a valid lagoon project
+var cmdProjectName string
+var cmdProjectEnvironment string
+
+var remoteID string
+
+var notificationName string
+var notificationNewName string
+var notificationWebhook string
+var notificationChannel string
+
 var outputOptions = output.Options{
 	Header: false,
 	CSV:    false,
 	JSON:   false,
 	Pretty: false,
-}
-
-// LagoonConfig .
-type LagoonConfig struct {
-	Hostname string
-	Port     string
 }
