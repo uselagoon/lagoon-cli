@@ -472,15 +472,15 @@ func UpdateSlackNotification(notificationName string, jsonPatch string) ([]byte,
 
 	err = json.Unmarshal([]byte(jsonPatch), &updateSlack)
 	customReq := api.CustomRequest{
-		Query: `mutation ($name: String!, $patch: UpdateNotificationSlackPatchInput!) {
-			updateNotificationSlack(input:{name: $name, patch: $patch}
+		Query: `mutation ($oldname: String!, $patch: UpdateNotificationSlackPatchInput!) {
+			updateNotificationSlack(input:{name: $oldname, patch: $patch}
 			){
 				id
 			}
 		}`,
 		Variables: map[string]interface{}{
-			"name":  notificationName,
-			"patch": updateSlack,
+			"oldname": notificationName,
+			"patch":   updateSlack,
 		},
 		MappedResult: "updateNotificationSlack",
 	}
@@ -501,15 +501,15 @@ func UpdateRocketChatNotification(notificationName string, jsonPatch string) ([]
 	var updateRocketChat api.UpdateNotificationRocketChatPatch
 	err = json.Unmarshal([]byte(jsonPatch), &updateRocketChat)
 	customReq := api.CustomRequest{
-		Query: `mutation ($name: String!, $patch: UpdateNotificationRocketChatPatchInput!) {
-			updateNotificationRocketChat(input:{name: $name, patch: $patch}
+		Query: `mutation ($oldname: String!, $patch: UpdateNotificationRocketChatPatchInput!) {
+			updateNotificationRocketChat(input:{name: $oldname, patch: $patch}
 			){
 				id
 			}
 		}`,
 		Variables: map[string]interface{}{
-			"name":  notificationName,
-			"patch": updateRocketChat,
+			"oldname": notificationName,
+			"patch":   updateRocketChat,
 		},
 		MappedResult: "updateNotificationRocketChat",
 	}
