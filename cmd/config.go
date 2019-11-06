@@ -114,9 +114,7 @@ var configAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add information about an additional Lagoon instance to use",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
-
 		if lagoonConfig.Lagoon == "" {
 			fmt.Println("Not enough arguments. Requires: lagoon name")
 			cmd.Help()

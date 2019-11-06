@@ -172,7 +172,14 @@ func initConfig() {
 
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
+	// and environments too
 	cmdProject, _ = app.GetLocalProject()
+	if cmdProject.Name != "" {
+		cmdProjectName = cmdProject.Name
+	}
+	if cmdProject.Environment != "" {
+		cmdProjectEnvironment = cmdProject.Environment
+	}
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)

@@ -17,14 +17,12 @@ import (
 
 // EnvironmentVariableFlags .
 type EnvironmentVariableFlags struct {
-	VarName     string `json:"varname,omitempty"`
-	VarValue    string `json:"varvalue,omitempty"`
-	VarScope    string `json:"varscope,omitempty"`
-	Project     string `json:"project,omitempty"`
-	Environment string `json:"environment,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+	Scope string `json:"scope,omitempty"`
 }
 
-func parseEnvVars(flags pflag.FlagSet) EnvironmentVariableFlags {
+func parseEnvVars(flags pflag.FlagSet) api.EnvVariable {
 	configMap := make(map[string]interface{})
 	flags.VisitAll(func(f *pflag.Flag) {
 		if flags.Changed(f.Name) {
@@ -32,7 +30,7 @@ func parseEnvVars(flags pflag.FlagSet) EnvironmentVariableFlags {
 		}
 	})
 	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := EnvironmentVariableFlags{}
+	parsedFlags := api.EnvVariable{}
 	json.Unmarshal(jsonStr, &parsedFlags)
 	return parsedFlags
 }
@@ -42,58 +40,42 @@ var addVariableCmd = &cobra.Command{
 	Short: "Add variables on environments or projects",
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
-		if envVarFlags.Project == "" {
+		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		// setup the envvar
-		var envVar api.EnvVariable
-		// check if we have a jsonpatch or not
 		if jsonPatch != "" {
-			// unmarshall the json patch into a tempvar
-			var tempEnvVar api.EnvVariable
-			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
+			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
 			}
-			if tempEnvVar.Name == "" || tempEnvVar.Value == "" || string(tempEnvVar.Scope) == "" {
-				output.RenderError("Must define a variable name, value and scope", outputOptions)
-				os.Exit(1)
-			}
-			envVar.Name = tempEnvVar.Name
-			envVar.Value = tempEnvVar.Value
-			variableScope = string(tempEnvVar.Scope)
-		} else {
-			if envVarFlags.VarName == "" || envVarFlags.VarValue == "" || envVarFlags.VarScope == "" {
-				output.RenderError("Must define a variable name, value and scope", outputOptions)
-				os.Exit(1)
-			}
-			envVar.Name = envVarFlags.VarName
-			envVar.Value = envVarFlags.VarValue
 		}
-		if strings.EqualFold(string(envVarFlags.VarScope), "global") {
-			envVar.Scope = api.GlobalVar
-		} else if strings.EqualFold(string(envVarFlags.VarScope), "build") {
-			envVar.Scope = api.BuildVar
-		} else if strings.EqualFold(string(envVarFlags.VarScope), "runtime") {
-			envVar.Scope = api.RuntimeVar
+		if envVarFlags.Name == "" || envVarFlags.Value == "" || envVarFlags.Scope == "" {
+			output.RenderError("Must define a variable name, value and scope", outputOptions)
+			os.Exit(1)
+		}
+		if strings.EqualFold(string(envVarFlags.Scope), "global") {
+			envVarFlags.Scope = api.GlobalVar
+		} else if strings.EqualFold(string(envVarFlags.Scope), "build") {
+			envVarFlags.Scope = api.BuildVar
+		} else if strings.EqualFold(string(envVarFlags.Scope), "runtime") {
+			envVarFlags.Scope = api.RuntimeVar
 		} else {
-			output.RenderError("Unknown scope: "+envVarFlags.VarScope, outputOptions)
+			output.RenderError("Unknown scope: "+string(envVarFlags.Scope), outputOptions)
 			os.Exit(1)
 		}
 		var customReqResult []byte
 		var err error
 		returnResultData := map[string]interface{}{}
-		if envVarFlags.Environment != "" {
-			customReqResult, err = environments.AddEnvironmentVariableToEnvironment(envVarFlags.Project, envVarFlags.Environment, envVar)
-			returnResultData["Project"] = envVarFlags.Project
-			returnResultData["Environment"] = envVarFlags.Environment
+		if cmdProjectEnvironment != "" {
+			customReqResult, err = environments.AddEnvironmentVariableToEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
+			returnResultData["Project"] = cmdProjectName
+			returnResultData["Environment"] = cmdProjectEnvironment
 		} else {
-			customReqResult, err = projects.AddEnvironmentVariableToProject(envVarFlags.Project, envVar)
-			returnResultData["Project"] = envVarFlags.Project
+			customReqResult, err = projects.AddEnvironmentVariableToProject(cmdProjectName, envVarFlags)
+			returnResultData["Project"] = cmdProjectName
 		}
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -121,43 +103,30 @@ var deleteVariableCmd = &cobra.Command{
 	Long:  `This allows you to delete an environment variable from a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
-		if envVarFlags.Project == "" {
+		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		// setup the envvar
-		var envVar api.EnvVariable
-		// check if we have a jsonpatch or not
 		if jsonPatch != "" {
-			// unmarshall the json patch into a tempvar
-			var tempEnvVar api.EnvVariable
-			err := json.Unmarshal([]byte(jsonPatch), &tempEnvVar)
+			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
 			}
-			if tempEnvVar.Name == "" {
-				output.RenderError("Must define a variable name", outputOptions)
-				os.Exit(1)
-			}
-			envVar.Name = tempEnvVar.Name
-		} else {
-			if envVarFlags.VarName == "" {
-				output.RenderError("Must define a variable name", outputOptions)
-				os.Exit(1)
-			}
-			envVar.Name = envVarFlags.VarName
+		}
+		if envVarFlags.Name == "" {
+			output.RenderError("Must define a variable name", outputOptions)
+			os.Exit(1)
 		}
 
 		if yesNo() {
 			var deleteResult []byte
 			var err error
-			if envVarFlags.Environment != "" {
-				deleteResult, err = environments.DeleteEnvironmentVariableFromEnvironment(envVarFlags.Project, envVarFlags.Environment, envVar)
+			if cmdProjectEnvironment != "" {
+				deleteResult, err = environments.DeleteEnvironmentVariableFromEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
 			} else {
-				deleteResult, err = projects.DeleteEnvironmentVariableFromProject(envVarFlags.Project, envVar)
+				deleteResult, err = projects.DeleteEnvironmentVariableFromProject(cmdProjectName, envVarFlags)
 			}
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
@@ -172,9 +141,9 @@ var deleteVariableCmd = &cobra.Command{
 }
 
 func init() {
-	addVariableCmd.Flags().StringVarP(&variableName, "varname", "N", "", "Name of the variable to add")
-	addVariableCmd.Flags().StringVarP(&variableValue, "varvalue", "V", "", "Value of the variable to add")
-	addVariableCmd.Flags().StringVarP(&variableScope, "varscope", "S", "", "Scope of the variable[global, build, runtime]")
+	addVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to add")
+	addVariableCmd.Flags().StringVarP(&variableValue, "value", "V", "", "Value of the variable to add")
+	addVariableCmd.Flags().StringVarP(&variableScope, "scope", "S", "", "Scope of the variable[global, build, runtime]")
 	addVariableCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
-	deleteVariableCmd.Flags().StringVarP(&variableName, "varname", "N", "", "Name of the variable to add")
+	deleteVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to add")
 }

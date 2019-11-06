@@ -14,8 +14,7 @@ import (
 
 // DeployFlags .
 type DeployFlags struct {
-	Project string `json:"project,omitempty"`
-	Branch  string `json:"branch,omitempty"`
+	Branch string `json:"branch,omitempty"`
 }
 
 func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
@@ -38,18 +37,18 @@ var deployEnvCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		deployBranch := parseDeployFlags(*cmd.Flags())
-		if deployBranch.Project == "" || deployBranch.Branch == "" {
+		if cmdProjectName == "" || deployBranch.Branch == "" {
 			fmt.Println("Not enough arguments. Requires: lagoon name and branch name")
 			cmd.Help()
 			os.Exit(1)
 		}
 
 		if !outputOptions.JSON {
-			fmt.Println(fmt.Sprintf("Deploying %s %s", deployBranch.Project, deployBranch.Branch))
+			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
 		if yesNo() {
-			deployResult, err := environments.DeployEnvironmentBranch(deployBranch.Project, deployBranch.Branch)
+			deployResult, err := environments.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)

@@ -261,8 +261,8 @@ type ProjectPatch struct {
 	AutoIdle                     *int   `json:"autoIdle,omitempty"`
 	StorageCalc                  *int   `json:"storageCalc,omitempty"`
 	OpenshiftProjectPattern      string `json:"openshiftProjectPattern,omitempty"`
-	DevelopmentEnvironmentsLimit int    `json:"developmentEnvironmentsLimit,omitempty"`
-	Openshift                    int    `json:"openshift,omitempty"`
+	DevelopmentEnvironmentsLimit *int   `json:"developmentEnvironmentsLimit,omitempty"`
+	Openshift                    *int   `json:"openshift,omitempty"`
 }
 
 // AddSSHKey .
