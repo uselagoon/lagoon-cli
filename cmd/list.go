@@ -68,7 +68,7 @@ var listProjectCmd = &cobra.Command{
 
 var listVariablesCmd = &cobra.Command{
 	Use:   "variables",
-	Short: "Show your variables for a project or environmen",
+	Short: "Show your variables for a project or environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		getListFlags := parseListFlags(*cmd.Flags())
 		if getListFlags.Project == "" {
