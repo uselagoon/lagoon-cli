@@ -20,6 +20,7 @@ var revealValue bool
 var listAllProjects bool
 var noHeader bool
 
+// These are available to all cmds and are set either by flags (-p and -e) or via `lagoon-cli/app` when entering a directory that has a valid lagoon project
 var cmdProjectName string
 var cmdProjectEnvironment string
 
