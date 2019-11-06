@@ -31,9 +31,9 @@ func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
 		}
 	})
 	jsonStr, _ := json.Marshal(configMap)
-	lagoonConfig := LagoonConfigFlags{}
-	json.Unmarshal(jsonStr, &lagoonConfig)
-	return lagoonConfig
+	parsedFlags := LagoonConfigFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
 }
 
 var configCmd = &cobra.Command{

@@ -29,15 +29,19 @@ var revealValue bool
 var listAllProjects bool
 var noHeader bool
 
+var cmdProjectName string
+var cmdProjectEnvironment string
+
+var remoteID string
+
+var notificationName string
+var notificationNewName string
+var notificationWebhook string
+var notificationChannel string
+
 var outputOptions = output.Options{
 	Header: false,
 	CSV:    false,
 	JSON:   false,
 	Pretty: false,
-}
-
-// LagoonConfig .
-type LagoonConfig struct {
-	Hostname string
-	Port     string
 }

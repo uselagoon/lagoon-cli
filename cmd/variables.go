@@ -32,9 +32,9 @@ func parseEnvVars(flags pflag.FlagSet) EnvironmentVariableFlags {
 		}
 	})
 	jsonStr, _ := json.Marshal(configMap)
-	envVar := EnvironmentVariableFlags{}
-	json.Unmarshal(jsonStr, &envVar)
-	return envVar
+	parsedFlags := EnvironmentVariableFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
 }
 
 var addVariableCmd = &cobra.Command{

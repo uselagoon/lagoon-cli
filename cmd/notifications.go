@@ -9,13 +9,36 @@ import (
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
+// NotificationFlags .
+type NotificationFlags struct {
+	Project             string `json:"project,omitempty"`
+	NotificationName    string `json:"name,omitempty"`
+	NotificationNewName string `json:"newname,omitempty"`
+	NotificationOldName string `json:"old,omitempty"`
+	NotificationWebhook string `json:"webhook,omitempty"`
+	NotificationChannel string `json:"channel,omitempty"`
+}
+
+func parseNotificationFlags(flags pflag.FlagSet) NotificationFlags {
+	configMap := make(map[string]interface{})
+	flags.VisitAll(func(f *pflag.Flag) {
+		if flags.Changed(f.Name) {
+			configMap[f.Name] = f.Value
+		}
+	})
+	jsonStr, _ := json.Marshal(configMap)
+	parsedFlags := NotificationFlags{}
+	json.Unmarshal(jsonStr, &parsedFlags)
+	return parsedFlags
+}
+
 var listSlackCmd = &cobra.Command{
-	Use:   "slack [project]",
+	Use:   "slack",
 	Short: "Slack details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
 		var returnedJSON []byte
 		var err error
 		if listAllProjects {
@@ -25,19 +48,14 @@ var listSlackCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		} else {
-			if len(args) < 1 {
-				if cmdProject.Name != "" {
-					projectName = cmdProject.Name
-				} else {
-					fmt.Println("Not enough arguments. Requires: project name")
-					cmd.Help()
-					os.Exit(1)
-				}
-			} else {
-				projectName = args[0]
+			notificationFlags := parseNotificationFlags(*cmd.Flags())
+			if notificationFlags.Project == "" {
+				fmt.Println("Not enough arguments. Requires: project name")
+				cmd.Help()
+				os.Exit(1)
 			}
 
-			returnedJSON, err = projects.ListAllProjectSlacks(projectName)
+			returnedJSON, err = projects.ListAllProjectSlacks(notificationFlags.Project)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -59,10 +77,9 @@ var listSlackCmd = &cobra.Command{
 }
 
 var listRocketChatsCmd = &cobra.Command{
-	Use:   "rocketchat [project]",
+	Use:   "rocketchat",
 	Short: "Rocketchat details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
 		var returnedJSON []byte
 		var err error
 		if listAllProjects {
@@ -72,19 +89,14 @@ var listRocketChatsCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		} else {
-			if len(args) < 1 {
-				if cmdProject.Name != "" {
-					projectName = cmdProject.Name
-				} else {
-					fmt.Println("Not enough arguments. Requires: project name")
-					cmd.Help()
-					os.Exit(1)
-				}
-			} else {
-				projectName = args[0]
+			notificationFlags := parseNotificationFlags(*cmd.Flags())
+			if notificationFlags.Project == "" {
+				fmt.Println("Not enough arguments. Requires: project name")
+				cmd.Help()
+				os.Exit(1)
 			}
 
-			returnedJSON, err = projects.ListAllProjectRocketChats(projectName)
+			returnedJSON, err = projects.ListAllProjectRocketChats(notificationFlags.Project)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -105,21 +117,17 @@ var listRocketChatsCmd = &cobra.Command{
 }
 
 var addSlackNotificationCmd = &cobra.Command{
-	Use:   "slack [notification name] [channel] [webhook url]",
+	Use:   "slack",
 	Short: "Add a new slack notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		var channel string
-		var webhookURL string
-		if len(args) < 3 {
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
 			fmt.Println("Not enough arguments. Requires: notifcation name, channel, and webhook url")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		channel = args[1]
-		webhookURL = args[2]
-		addResult, err := projects.AddSlackNotification(notificationName, channel, webhookURL)
+
+		addResult, err := projects.AddSlackNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -139,25 +147,16 @@ var addSlackNotificationCmd = &cobra.Command{
 }
 
 var addProjectSlackNotificationCmd = &cobra.Command{
-	Use:   "project-slack [project name] [notification name]",
+	Use:   "project-slack",
 	Short: "Add a slack notification to a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var notificationName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				notificationName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and notification name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			notificationName = args[1]
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			cmd.Help()
+			os.Exit(1)
 		}
-		addResult, err := projects.AddSlackNotificationToProject(projectName, notificationName)
+		addResult, err := projects.AddSlackNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -177,21 +176,17 @@ var addProjectSlackNotificationCmd = &cobra.Command{
 }
 
 var addRocketChatNotificationCmd = &cobra.Command{
-	Use:   "rocketchat [notification name] [channel] [webhook url]",
+	Use:   "rocketchat",
 	Short: "Add a new rocketchat notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		var channel string
-		var webhookURL string
-		if len(args) < 3 {
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
 			fmt.Println("Not enough arguments. Requires: notifcation name, channel, and webhook url")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		channel = args[1]
-		webhookURL = args[2]
-		addResult, err := projects.AddRocketChatNotification(notificationName, channel, webhookURL)
+
+		addResult, err := projects.AddRocketChatNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -211,25 +206,16 @@ var addRocketChatNotificationCmd = &cobra.Command{
 }
 
 var addProjectRocketChatNotificationCmd = &cobra.Command{
-	Use:   "project-rocketchat [project name] [notification name]",
+	Use:   "project-rocketchat",
 	Short: "Add a rocketchat notification to a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var notificationName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				notificationName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and notification name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			notificationName = args[1]
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			cmd.Help()
+			os.Exit(1)
 		}
-		addResult, err := projects.AddRocketChatNotificationToProject(projectName, notificationName)
+		addResult, err := projects.AddRocketChatNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -249,25 +235,16 @@ var addProjectRocketChatNotificationCmd = &cobra.Command{
 }
 
 var deleteProjectSlackNotificationCmd = &cobra.Command{
-	Use:   "project-slack [project name] [notification name]",
+	Use:   "project-slack",
 	Short: "Delete a slack notification from a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var notificationName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				notificationName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and notification name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			notificationName = args[1]
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			cmd.Help()
+			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteSlackNotificationFromProject(projectName, notificationName)
+		deleteResult, err := projects.DeleteSlackNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -286,25 +263,16 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 }
 
 var deleteProjectRocketChatNotificationCmd = &cobra.Command{
-	Use:   "project-rocketchat [project name] [notification name]",
+	Use:   "project-rocketchat",
 	Short: "Delete a rocketchat notification from a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		var notificationName string
-		if len(args) < 2 {
-			if cmdProject.Name != "" && len(args) == 1 {
-				projectName = cmdProject.Name
-				notificationName = args[0]
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name and notification name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
-			notificationName = args[1]
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			cmd.Help()
+			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteRocketChatNotificationFromProject(projectName, notificationName)
+		deleteResult, err := projects.DeleteRocketChatNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -322,17 +290,16 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 	},
 }
 var deleteRocketChatNotificationCmd = &cobra.Command{
-	Use:   "rocketchat [notification name]",
+	Use:   "rocketchat",
 	Short: "Delete a rocketchat notification from lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: notification name")
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: notifcation name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		deleteResult, err := projects.DeleteRocketChatNotification(notificationName)
+		deleteResult, err := projects.DeleteRocketChatNotification(notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -349,17 +316,16 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 }
 
 var deleteSlackNotificationCmd = &cobra.Command{
-	Use:   "slack [notification name]",
+	Use:   "slack",
 	Short: "Delete a slack notification from lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: notification name")
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: notifcation name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		deleteResult, err := projects.DeleteSlackNotification(notificationName)
+		deleteResult, err := projects.DeleteSlackNotification(notificationFlags.NotificationName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -372,17 +338,31 @@ var deleteSlackNotificationCmd = &cobra.Command{
 }
 
 var updateRocketChatNotificationCmd = &cobra.Command{
-	Use:   "rocketchat [notification name]",
+	Use:   "rocketchat",
 	Short: "Update an existing rocketchat notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: project name")
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: current notifcation name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		updateResult, err := projects.UpdateRocketChatNotification(notificationName, jsonPatch)
+		oldName := notificationFlags.NotificationName
+		// if we have a new name, shuffle around the name
+		if notificationFlags.NotificationNewName != "" {
+			newName := notificationFlags.NotificationNewName
+			notificationFlags.NotificationName = newName
+		}
+		notificationFlags.NotificationOldName = oldName
+		if jsonPatch == "" {
+			jsonPatchBytes, err := json.Marshal(notificationFlags)
+			if err != nil {
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
+			}
+			jsonPatch = string(jsonPatchBytes)
+		}
+		updateResult, err := projects.UpdateRocketChatNotification(notificationFlags.NotificationOldName, jsonPatch)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -402,17 +382,31 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 }
 
 var updateSlackNotificationCmd = &cobra.Command{
-	Use:   "slack [notification name]",
+	Use:   "slack",
 	Short: "Update an existing slack notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		var notificationName string
-		if len(args) < 1 {
-			fmt.Println("Not enough arguments. Requires: project name")
+		notificationFlags := parseNotificationFlags(*cmd.Flags())
+		if notificationFlags.NotificationName == "" {
+			fmt.Println("Not enough arguments. Requires: current notifcation name")
 			cmd.Help()
 			os.Exit(1)
 		}
-		notificationName = args[0]
-		updateResult, err := projects.UpdateSlackNotification(notificationName, jsonPatch)
+		oldName := notificationFlags.NotificationName
+		// if we have a new name, shuffle around the name
+		if notificationFlags.NotificationNewName != "" {
+			newName := notificationFlags.NotificationNewName
+			notificationFlags.NotificationName = newName
+		}
+		notificationFlags.NotificationOldName = oldName
+		if jsonPatch == "" {
+			jsonPatchBytes, err := json.Marshal(notificationFlags)
+			if err != nil {
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
+			}
+			jsonPatch = string(jsonPatchBytes)
+		}
+		updateResult, err := projects.UpdateSlackNotification(notificationFlags.NotificationOldName, jsonPatch)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -429,4 +423,30 @@ var updateSlackNotificationCmd = &cobra.Command{
 		}
 		output.RenderResult(resultData, outputOptions)
 	},
+}
+
+func init() {
+	addSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	addSlackNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
+	addSlackNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
+
+	addRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	addRocketChatNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
+	addRocketChatNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
+
+	addProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	addProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+
+	deleteProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	deleteProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+
+	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
+	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")
+	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
+	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
+
+	updateSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
+	updateSlackNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")
+	updateSlackNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
+	updateSlackNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
 }

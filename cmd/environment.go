@@ -35,7 +35,7 @@ var deleteEnvCmd = &cobra.Command{
 	Short: "Delete an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		environmentFlags := parseEnvironmentFlags(*cmd.Flags())
-		if environmentFlags.Project == "" && environmentFlags.Environment == "" {
+		if environmentFlags.Project == "" || environmentFlags.Environment == "" {
 			fmt.Println("Not enough arguments. Requires: project name and environment name")
 			cmd.Help()
 			os.Exit(1)

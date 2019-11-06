@@ -2,19 +2,14 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a project, or add notifications and variables to projects or environments",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-	},
-}
-
-var addVariableCmd = &cobra.Command{
-	Use:   "variable",
-	Short: "Add variables on environments or projects",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
 }
 

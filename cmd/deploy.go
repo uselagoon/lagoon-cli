@@ -38,7 +38,7 @@ var deployEnvCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		deployBranch := parseDeployFlags(*cmd.Flags())
-		if deployBranch.Project == "" && deployBranch.Branch == "" {
+		if deployBranch.Project == "" || deployBranch.Branch == "" {
 			fmt.Println("Not enough arguments. Requires: lagoon name and branch name")
 			cmd.Help()
 			os.Exit(1)
