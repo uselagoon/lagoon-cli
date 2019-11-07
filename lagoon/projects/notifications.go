@@ -62,7 +62,6 @@ func ListAllRocketChats() ([]byte, error) {
 	}
 	returnResult, err := processAllRocketChats(allRocketChats)
 	if err != nil {
-		fmt.Println("ERRR")
 		return []byte(""), err
 	}
 	return returnResult, nil
