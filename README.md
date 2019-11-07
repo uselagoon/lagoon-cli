@@ -56,6 +56,9 @@ Allows you to configure Lagoon CLI to specify endpoints, such as your own Lagoon
 * Environments
 
 # Build
+
+Note: You should make sure you have your `GOPATH` configured and in your path if you are going to build the lagoon CLI. If you haven't got `go` installed and are using the docker method, you can export `GOPATH` to be somewhere else in your `PATH` for binaries.
+
 ## Run tests
 ```
 make test
