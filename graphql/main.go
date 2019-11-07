@@ -121,15 +121,6 @@ var ProjectEnvVars = `fragment Project on Project {
 		name
 		scope
 	}
-	environments {
-		openshiftProjectName
-		name
-		envVariables {
-			id
-			name
-			scope
-		}
-	}
 }`
 
 // ProjectEnvVarsRevealed .
@@ -141,16 +132,6 @@ var ProjectEnvVarsRevealed = `fragment Project on Project {
 		name
 		scope
 		value
-	}
-	environments {
-		openshiftProjectName
-		name
-		envVariables {
-			id
-			name
-			scope
-			value
-		}
 	}
 }`
 

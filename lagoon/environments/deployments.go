@@ -3,6 +3,7 @@ package environments
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
@@ -54,9 +55,40 @@ func GetEnvironmentDeployments(projectName string, environmentName string) ([]by
 		MappedResult: "environmentByName",
 	}
 	environmentByName, err := lagoonAPI.Request(customRequest)
+	fmt.Println(string(environmentByName))
+	// var projects api.Project
+	// err = json.Unmarshal([]byte(environmentByName), &projects)
+	// if err != nil {
+	// 	return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+	// }
+	// // process the data for output
+	// data := []output.Data{}
+	// for _, deployment := range projects.Deployments {
+	// 	data = append(data, []string{
+	// 		deployment.RemoteID,
+	// 		deployment.Name,
+	// 		string(deployment.Status),
+	// 		string(deployment.Created),
+	// 		string(deployment.Started),
+	// 		string(deployment.Completed),
+	// 	})
+	// }
+	// dataMain := output.Table{
+	// 	Header: []string{"RemoteID", "Name", "Status", "Created", "Started", "Completed"},
+	// 	Data:   data,
+	// }
+	// returnResult, err := json.Marshal(dataMain)
 
+	returnResult, err := processEnvironmentDeployments(environmentByName)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processEnvironmentDeployments(environmentByName []byte) ([]byte, error) {
 	var projects api.Project
-	err = json.Unmarshal([]byte(environmentByName), &projects)
+	err := json.Unmarshal([]byte(environmentByName), &projects)
 	if err != nil {
 		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
 	}
@@ -76,11 +108,7 @@ func GetEnvironmentDeployments(projectName string, environmentName string) ([]by
 		Header: []string{"RemoteID", "Name", "Status", "Created", "Started", "Completed"},
 		Data:   data,
 	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
+	return json.Marshal(dataMain)
 }
 
 // GetDeploymentLog .

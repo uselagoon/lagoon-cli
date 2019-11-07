@@ -37,8 +37,9 @@ func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
 }
 
 var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Configure Lagoon CLI",
+	Use:     "config",
+	Aliases: []string{"c"},
+	Short:   "Configure Lagoon CLI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
 }

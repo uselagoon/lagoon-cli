@@ -36,25 +36,93 @@ func processAllProjects(allProjects []byte) ([]byte, error) {
 	// process the data for output
 	data := []output.Data{}
 	for _, project := range projects {
-		// count the current dev environments in a project
-		var currentDevEnvironments = 0
-		for _, environment := range project.Environments {
-			if environment.EnvironmentType == "development" {
-				currentDevEnvironments++
-			}
-		}
-		data = append(data, []string{
-			fmt.Sprintf("%v", project.ID),
-			fmt.Sprintf("%v", project.Name),
-			fmt.Sprintf("%v", project.GitURL),
-			fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
-		})
+		projectData := processProject(project)
+		data = append(data, projectData)
 	}
 	dataMain := output.Table{
 		Header: []string{"ID", "ProjectName", "GitURL", "DevEnvironments"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
+}
+
+func processProject(project api.Project) []string {
+	// count the current dev environments in a project
+	var currentDevEnvironments = 0
+	for _, environment := range project.Environments {
+		if environment.EnvironmentType == "development" {
+			currentDevEnvironments++
+		}
+	}
+	data := []string{
+		fmt.Sprintf("%v", project.ID),
+		fmt.Sprintf("%v", project.Name),
+		fmt.Sprintf("%v", project.GitURL),
+		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
+	}
+	return data
+}
+
+// GetProjectInfo will get basic info about a project
+func GetProjectInfo(projectName string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	// get project info from lagoon
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processProjectInfo(projectByName)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processProjectInfo(projectByName []byte) ([]byte, error) {
+	var project api.Project
+	err := json.Unmarshal([]byte(projectByName), &project)
+	if err != nil {
+		return []byte(""), err
+	}
+	projectData := processProjectExtra(project)
+	var data []output.Data
+	data = append(data, projectData)
+	dataMain := output.Table{
+		Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
+}
+
+func processProjectExtra(project api.Project) []string {
+	// count the current dev environments in a project
+	var currentDevEnvironments = 0
+	var projectRoute = "none"
+	for _, environment := range project.Environments {
+		if environment.EnvironmentType == "development" {
+			currentDevEnvironments++
+		}
+		if environment.EnvironmentType == "production" {
+			projectRoute = environment.Route
+		}
+	}
+	data := []string{
+		fmt.Sprintf("%v", project.ID),
+		fmt.Sprintf("%v", project.Name),
+		fmt.Sprintf("%v", project.GitURL),
+		fmt.Sprintf("%v", project.Branches),
+		fmt.Sprintf("%v", project.Pullrequests),
+		fmt.Sprintf("%v", projectRoute),
+		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
+	}
+	return data
 }
 
 // ListEnvironmentsForProject will list all environments for a project
@@ -72,24 +140,14 @@ func ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	// @TODO do we need this data? I'm not sure
-	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Project Name"), projects.Name))
-	// fmt.Println(fmt.Sprintf("%s: %d", aurora.Yellow("Project ID"), projects.ID))
-	// fmt.Println()
-	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Git"), projects.GitURL))
-	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Branches"), projects.Branches))
-	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Pull Requests"), projects.Pullrequests))
-	// fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Production Environment"), projects.ProductionEnvironment))
-	// fmt.Println(fmt.Sprintf("%s: %d / %d", aurora.Yellow("Development Environments"), currentDevEnvironments, projects.DevelopmentEnvironmentsLimit))
-	// fmt.Println()
-	returnResult, err := processProjectInfo(projectByName)
+	returnResult, err := processEnvironmentsList(projectByName)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnResult, nil
 }
 
-func processProjectInfo(projectByName []byte) ([]byte, error) {
+func processEnvironmentsList(projectByName []byte) ([]byte, error) {
 	var projects api.Project
 	err := json.Unmarshal([]byte(projectByName), &projects)
 	if err != nil {
@@ -105,13 +163,16 @@ func processProjectInfo(projectByName []byte) ([]byte, error) {
 	// process the data for output
 	data := []output.Data{}
 	for _, environment := range projects.Environments {
+		var envRoute = "none"
+		if environment.Route != "" {
+			envRoute = environment.Route
+		}
 		data = append(data, []string{
 			fmt.Sprintf("%d", environment.ID),
 			environment.Name,
 			string(environment.DeployType),
 			string(environment.EnvironmentType),
-			environment.Route,
-			//fmt.Sprintf("ssh -p %s -t %s@%s", viper.GetString("lagoons."+cmdLagoon+".port"), environment.OpenshiftProjectName, viper.GetString("lagoons."+cmdLagoon+".hostname")),
+			envRoute,
 		})
 	}
 	dataMain := output.Table{

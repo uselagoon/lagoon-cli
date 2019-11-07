@@ -33,8 +33,9 @@ func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
 }
 
 var deleteProjectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Delete a project",
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Delete a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		var projectName string
 		if len(args) < 1 {
@@ -68,8 +69,9 @@ var deleteProjectCmd = &cobra.Command{
 }
 
 var addProjectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Add a new project to lagoon",
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Add a new project to lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectFlags := parseProjectFlags(*cmd.Flags())
 		if cmdProjectName == "" {
@@ -108,8 +110,9 @@ var addProjectCmd = &cobra.Command{
 }
 
 var updateProjectCmd = &cobra.Command{
-	Use:   "project [project name]",
-	Short: "Update a project",
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Update a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectFlags := parseProjectFlags(*cmd.Flags())
 		if cmdProjectName == "" {

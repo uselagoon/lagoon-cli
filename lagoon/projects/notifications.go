@@ -9,8 +9,8 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
-// ListAllProjectRocketChats will list all rocketchat notifications for a project
-func ListAllProjectRocketChats(projectName string) ([]byte, error) {
+// ListProjectRocketChats will list all rocketchat notifications for a project
+func ListProjectRocketChats(projectName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -23,134 +23,7 @@ func ListAllProjectRocketChats(projectName string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	var rocketChats api.RocketChats
-	err = json.Unmarshal([]byte(projectRocketChats), &rocketChats)
-	if err != nil {
-		return []byte(""), err
-	}
-	// process the data for output
-	data := []output.Data{}
-	for _, rocketchat := range rocketChats.RocketChats {
-		data = append(data, []string{
-			fmt.Sprintf("%d", rocketchat.ID),
-			rocketchat.Name,
-			rocketchat.Channel,
-			rocketchat.Webhook,
-		})
-	}
-	dataMain := output.Table{
-		Header: []string{"NID", "NotificationName", "Channel", "Webhook"},
-		Data:   data,
-	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
-// ListAllProjectSlacks will list all slack notifications for a project
-func ListAllProjectSlacks(projectName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-	project := api.Project{
-		Name: projectName,
-	}
-	projectSlacks, err := lagoonAPI.GetSlackInfoForProject(project, graphql.SlackFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	var slacks api.Slacks
-	err = json.Unmarshal([]byte(projectSlacks), &slacks)
-	if err != nil {
-		return []byte(""), err
-	}
-	// process the data for output
-	data := []output.Data{}
-	for _, slack := range slacks.Slacks {
-		data = append(data, []string{
-			fmt.Sprintf("%d", slack.ID),
-			slack.Name,
-			slack.Channel,
-			slack.Webhook,
-		})
-	}
-	dataMain := output.Table{
-		Header: []string{"NID", "NotificationName", "Channel", "Webhook"},
-		Data:   data,
-	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
-// ListAllSlacks will list all slack notifications on all projects
-func ListAllSlacks() ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-	customReq := api.CustomRequest{
-		Query: `query {
-			allProjects {
-				name
-				id
-				notifications {
-					...Notification
-				}
-			}
-		}
-		fragment Notification on NotificationSlack {
-			id
-			name
-			webhook
-			channel
-		}`,
-		Variables:    map[string]interface{}{},
-		MappedResult: "allProjects",
-	}
-	returnResult, err := lagoonAPI.Request(customReq)
-	if err != nil {
-		return []byte(""), err
-	}
-	var projects []api.Project
-	err = json.Unmarshal([]byte(returnResult), &projects)
-	if err != nil {
-		return []byte(""), err
-	}
-	// process the data for output
-	data := []output.Data{}
-	for _, project := range projects {
-		for _, notif := range project.Notifications {
-			var slack api.NotificationSlack
-			returnResult, _ = json.Marshal(notif)
-			err := json.Unmarshal([]byte(returnResult), &slack)
-			if err != nil {
-				return []byte(""), err
-			}
-			if slack.ID != 0 {
-				// fmt.Println(slack.ID)
-				data = append(data, []string{
-					fmt.Sprintf("%d", slack.ID),
-					project.Name,
-					slack.Name,
-					slack.Channel,
-					slack.Webhook,
-				})
-			}
-		}
-	}
-	dataMain := output.Table{
-		Header: []string{"NID", "Project", "NotificationName", "Channel", "Webhook"},
-		Data:   data,
-	}
-	returnResult, err = json.Marshal(dataMain)
+	returnResult, err := processProjectRocketChats(projectRocketChats)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -183,12 +56,51 @@ func ListAllRocketChats() ([]byte, error) {
 		Variables:    map[string]interface{}{},
 		MappedResult: "allProjects",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	allRocketChats, err := lagoonAPI.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
+	returnResult, err := processAllRocketChats(allRocketChats)
+	if err != nil {
+		fmt.Println("ERRR")
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processProjectRocketChats(allProjects []byte) ([]byte, error) {
+	var rocketChats api.RocketChats
+	err := json.Unmarshal([]byte(allProjects), &rocketChats)
+	if err != nil {
+		return []byte(""), err
+	}
+	// process the data for output
+	data := []output.Data{}
+	for _, rocketchat := range rocketChats.RocketChats {
+		projectData := processRocketChat(rocketchat)
+		data = append(data, projectData)
+	}
+	dataMain := output.Table{
+		Header: []string{"NID", "NotificationName", "Channel", "Webhook"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
+}
+
+func processRocketChat(rocketchat api.NotificationRocketChat) []string {
+	// count the current dev environments in a project
+	data := []string{
+		fmt.Sprintf("%d", rocketchat.ID),
+		rocketchat.Name,
+		rocketchat.Channel,
+		rocketchat.Webhook,
+	}
+	return data
+}
+
+func processAllRocketChats(allProjects []byte) ([]byte, error) {
 	var projects []api.Project
-	err = json.Unmarshal([]byte(returnResult), &projects)
+	err := json.Unmarshal([]byte(allProjects), &projects)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -197,13 +109,12 @@ func ListAllRocketChats() ([]byte, error) {
 	for _, project := range projects {
 		for _, notif := range project.Notifications {
 			var rocketchat api.NotificationRocketChat
-			returnResult, _ = json.Marshal(notif)
-			err := json.Unmarshal([]byte(returnResult), &rocketchat)
+			rocketNotif, _ := json.Marshal(notif)
+			err := json.Unmarshal([]byte(rocketNotif), &rocketchat)
 			if err != nil {
 				return []byte(""), err
 			}
 			if rocketchat.ID != 0 {
-				// fmt.Println(slack.ID)
 				data = append(data, []string{
 					fmt.Sprintf("%d", rocketchat.ID),
 					project.Name,
@@ -218,11 +129,129 @@ func ListAllRocketChats() ([]byte, error) {
 		Header: []string{"NID", "Project", "NotificationName", "Channel", "Webhook"},
 		Data:   data,
 	}
-	returnResult, err = json.Marshal(dataMain)
+	return json.Marshal(dataMain)
+}
+
+// ListProjectSlacks will list all slack notifications for a project
+func ListProjectSlacks(projectName string) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	project := api.Project{
+		Name: projectName,
+	}
+	projectSlacks, err := lagoonAPI.GetSlackInfoForProject(project, graphql.SlackFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processProjectSlacks(projectSlacks)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnResult, nil
+}
+
+// ListAllSlacks will list all slack notifications on all projects
+func ListAllSlacks() ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
+		Query: `query {
+			allProjects {
+				name
+				id
+				notifications {
+					...Notification
+				}
+			}
+		}
+		fragment Notification on NotificationSlack {
+			id
+			name
+			webhook
+			channel
+		}`,
+		Variables:    map[string]interface{}{},
+		MappedResult: "allProjects",
+	}
+	allSlacks, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processAllSlacks(allSlacks)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processProjectSlacks(allProjects []byte) ([]byte, error) {
+	var rocketChats api.Slacks
+	err := json.Unmarshal([]byte(allProjects), &rocketChats)
+	if err != nil {
+		return []byte(""), err
+	}
+	// process the data for output
+	data := []output.Data{}
+	for _, slack := range rocketChats.Slacks {
+		projectData := processSlack(slack)
+		data = append(data, projectData)
+	}
+	dataMain := output.Table{
+		Header: []string{"NID", "NotificationName", "Channel", "Webhook"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
+}
+
+func processSlack(rocketchat api.NotificationSlack) []string {
+	// count the current dev environments in a project
+	data := []string{
+		fmt.Sprintf("%d", rocketchat.ID),
+		rocketchat.Name,
+		rocketchat.Channel,
+		rocketchat.Webhook,
+	}
+	return data
+}
+
+func processAllSlacks(allProjects []byte) ([]byte, error) {
+	var projects []api.Project
+	err := json.Unmarshal([]byte(allProjects), &projects)
+	if err != nil {
+		return []byte(""), err
+	}
+	// process the data for output
+	data := []output.Data{}
+	for _, project := range projects {
+		for _, notif := range project.Notifications {
+			var slack api.NotificationSlack
+			slackNotif, _ := json.Marshal(notif)
+			err := json.Unmarshal([]byte(slackNotif), &slack)
+			if err != nil {
+				return []byte(""), err
+			}
+			if slack.ID != 0 {
+				data = append(data, []string{
+					fmt.Sprintf("%d", slack.ID),
+					project.Name,
+					slack.Name,
+					slack.Channel,
+					slack.Webhook,
+				})
+			}
+		}
+	}
+	dataMain := output.Table{
+		Header: []string{"NID", "Project", "NotificationName", "Channel", "Webhook"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
 }
 
 // AddSlackNotification will add a slack notification to lagoon to be used by a project

@@ -36,8 +36,9 @@ func parseEnvVars(flags pflag.FlagSet) api.EnvVariable {
 }
 
 var addVariableCmd = &cobra.Command{
-	Use:   "variable",
-	Short: "Add variables on environments or projects",
+	Use:     "variable",
+	Aliases: []string{"v"},
+	Short:   "Add variables on environments or projects",
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
 		if cmdProjectName == "" {
@@ -98,9 +99,10 @@ var addVariableCmd = &cobra.Command{
 
 // var deleteVariableEnvCmd = &cobra.Command{
 var deleteVariableCmd = &cobra.Command{
-	Use:   "variable",
-	Short: "Delete a variable from an environment",
-	Long:  `This allows you to delete an environment variable from a project.`,
+	Use:     "variable",
+	Aliases: []string{"v"},
+	Short:   "Delete a variable from an environment",
+	Long:    `This allows you to delete an environment variable from a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
 		if cmdProjectName == "" {

@@ -12,7 +12,6 @@ import (
 
 // AddEnvironmentVariableToEnvironment will list all environments for a project
 func AddEnvironmentVariableToEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
-
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -74,7 +73,6 @@ func AddEnvironmentVariableToEnvironment(projectName string, environmentName str
 
 // DeleteEnvironmentVariableFromEnvironment .
 func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
-
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -169,8 +167,16 @@ func ListEnvironmentVariables(projectName string, environmentName string, reveal
 	if err != nil {
 		return []byte(""), err
 	}
+	returnResult, err := processEnvironmentVariables(environmentByName, projectName, revealValue)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processEnvironmentVariables(environmentByName []byte, projectName string, revealValue bool) ([]byte, error) {
 	var envVars api.Environment
-	err = json.Unmarshal([]byte(environmentByName), &envVars)
+	err := json.Unmarshal([]byte(environmentByName), &envVars)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -179,7 +185,7 @@ func ListEnvironmentVariables(projectName string, environmentName string, reveal
 		for _, environmentEnvVar := range envVars.EnvVariables {
 			envVarRow := []string{
 				fmt.Sprintf("%v", environmentEnvVar.ID),
-				project.Name,
+				projectName,
 				envVars.Name,
 				environmentEnvVar.Scope,
 				environmentEnvVar.Name,
@@ -191,15 +197,11 @@ func ListEnvironmentVariables(projectName string, environmentName string, reveal
 		}
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Project", "Environment", "Scope", "Variable Name"},
+		Header: []string{"ID", "Project", "Environment", "Scope", "VariableName"},
 		Data:   data,
 	}
 	if revealValue {
-		dataMain.Header = append(dataMain.Header, "Variable Value")
+		dataMain.Header = append(dataMain.Header, "VariableValue")
 	}
-	returnResult, err := json.Marshal(dataMain)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
+	return json.Marshal(dataMain)
 }

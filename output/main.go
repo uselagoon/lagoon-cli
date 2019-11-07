@@ -60,7 +60,8 @@ func RenderError(errorMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		fmt.Println(fmt.Sprintf("Error: %s", aurora.Yellow(trimQuotes(errorMsg))))
+		//fmt.Println(fmt.Sprintf("Error: %s", aurora.Yellow(trimQuotes(errorMsg))))
+		fmt.Println("Error:", trimQuotes(errorMsg))
 	}
 }
 

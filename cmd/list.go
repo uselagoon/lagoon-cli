@@ -41,9 +41,10 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listProjectCmd = &cobra.Command{
-	Use:   "projects",
-	Short: "Show your projects",
+var listProjectsCmd = &cobra.Command{
+	Use:     "projects",
+	Aliases: []string{"p"},
+	Short:   "Show your projects (alias: p)",
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := projects.ListAllProjects()
 		if err != nil {
@@ -66,9 +67,43 @@ var listProjectCmd = &cobra.Command{
 	},
 }
 
+var listProjectCmd = &cobra.Command{
+	Use:     "project-environments",
+	Aliases: []string{"pe"},
+	Short:   "List environments for a project (alias: pe)",
+	Run: func(cmd *cobra.Command, args []string) {
+		getProjectFlags := parseListFlags(*cmd.Flags())
+		if getProjectFlags.Project == "" {
+			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		returnedJSON, err := projects.ListEnvironmentsForProject(getProjectFlags.Project)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		if len(dataMain.Data) == 0 {
+			output.RenderError("no data returned", outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
 var listVariablesCmd = &cobra.Command{
-	Use:   "variables",
-	Short: "Show your variables for a project or environment",
+	Use:     "variables",
+	Aliases: []string{"v"},
+	Short:   "Show your variables for a project or environment (alias: v)",
 	Run: func(cmd *cobra.Command, args []string) {
 		getListFlags := parseListFlags(*cmd.Flags())
 		if getListFlags.Project == "" {
@@ -103,8 +138,9 @@ var listVariablesCmd = &cobra.Command{
 }
 
 var listDeploymentsCmd = &cobra.Command{
-	Use:   "deployments",
-	Short: "Show your deployments for an environment",
+	Use:     "deployments",
+	Aliases: []string{"d"},
+	Short:   "Show your deployments for an environment (alias: d)",
 	Run: func(cmd *cobra.Command, args []string) {
 		getListFlags := parseListFlags(*cmd.Flags())
 		if getListFlags.Project == "" || getListFlags.Environment == "" {
@@ -135,6 +171,7 @@ var listDeploymentsCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(listProjectCmd)
+	listCmd.AddCommand(listProjectsCmd)
 	listCmd.AddCommand(listVariablesCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listRocketChatsCmd)

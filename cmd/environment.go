@@ -29,8 +29,9 @@ import (
 // }
 
 var deleteEnvCmd = &cobra.Command{
-	Use:   "environment [project name] [environment name]",
-	Short: "Delete an environment",
+	Use:     "environment",
+	Aliases: []string{"e"},
+	Short:   "Delete an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		// environmentFlags := parseEnvironmentFlags(*cmd.Flags()) //@TODO re-enable this at some point if more environment based commands are made availab;e
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {

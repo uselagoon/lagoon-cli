@@ -52,13 +52,11 @@ var getProjectCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		returnedJSON, err := projects.ListEnvironmentsForProject(getProjectFlags.Project)
+		returnedJSON, err := projects.GetProjectInfo(getProjectFlags.Project)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
 		}
-
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		if err != nil {
