@@ -43,7 +43,12 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
       - deploy:
           requires:
             - build
