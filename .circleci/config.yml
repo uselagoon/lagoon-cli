@@ -49,6 +49,6 @@ workflows:
             - build
           filters:
             branches:
-              only: /.*/
+              ignore: /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
