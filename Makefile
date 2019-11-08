@@ -68,7 +68,6 @@ build-docker-linux:
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
 	golang go build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-linux-amd64
-	cp builds/lagoon-cli-${VERSION}-linux-amd64 ${ARTIFACT_DESTINATION}/lagoon
 
 build-docker-darwin:
 	docker run \
@@ -79,7 +78,6 @@ build-docker-darwin:
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
 	golang go build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-darwin-amd64
-	cp builds/lagoon-cli-${VERSION}-darwin-amd64 ${ARTIFACT_DESTINATION}/lagoon
 
 install-linux:
 	cp builds/lagoon-cli-${VERSION}-linux-amd64 ${ARTIFACT_DESTINATION}/lagoon

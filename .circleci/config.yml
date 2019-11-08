@@ -25,16 +25,13 @@ jobs:
           command: |
             make deps
             make build
-      - run: go get -u github.com/mitchellh/gox
-      - run: go get -u github.com/tcnksm/ghr
-      - run: go get -u github.com/stevenmatthewt/semantics
       - run:
           name: cross compile
           command: |
-            gox -os="linux darwin windows" -arch="amd64" -output="dist/lagooncli_{{.OS}}_{{.Arch}}"
-            cd dist/ && gzip *
+            make build-linux
+            make build-darwin
       - store_artifacts:
-          path: dist
+          path: builds
           name: Artifact storage
 workflows:
   version: 2
