@@ -31,14 +31,13 @@ jobs:
       - run:
           name: compile
           command: |
-            make VERSION=${CIRCLE_BRANCH} build-linux
-            make VERSION=${CIRCLE_BRANCH} build-darwin
+            make VERSION=${CIRCLE_TAG} build-linux
+            make VERSION=${CIRCLE_TAG} build-darwin
       - run:
           name: "Publish Release on GitHub"
           command: |
             GO111MODULE=auto go get github.com/tcnksm/ghr
-            VERSION=${CIRCLE_TAG}
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./builds/lagoon-cli-*
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ./builds/lagoon-cli-*
 workflows:
   version: 2
   build-deploy:
