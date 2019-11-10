@@ -3,7 +3,6 @@ package environments
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -228,7 +227,6 @@ func GetEnvironmentTasks(projectName string, environmentName string) ([]byte, er
 		MappedResult: "environmentByName",
 	}
 	environmentByName, err := lagoonAPI.Request(customRequest)
-	fmt.Println(string(environmentByName))
 	returnResult, err := processEnvironmentTasks(environmentByName)
 	if err != nil {
 		return []byte(""), err
