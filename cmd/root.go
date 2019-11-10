@@ -105,6 +105,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployEnvCmd)
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 	rootCmd.AddCommand(webCmd)
