@@ -645,6 +645,7 @@ type Environment struct {
 	MonitoringUrls       string                `json:"monitoringUrls,omitempty"`
 	EnvVariables         []EnvironmentVariable `json:"envVariables,omitempty"`
 	Backups              []Backup              `json:"backups,omitempty"`
+	Tasks                []Task                `json:"tasks,omitempty"`
 	Project              int                   `json:"project,omitempty"`
 }
 
