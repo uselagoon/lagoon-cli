@@ -13,7 +13,11 @@ lagoon config add [flags]
 ### Options
 
 ```
-  -h, --help   help for add
+  -g, --graphql string    Lagoon GraphQL endpoint
+  -h, --help              help for add
+  -H, --hostname string   Lagoon SSH hostname
+  -P, --port string       Lagoon SSH port
+  -t, --token string      Lagoon GraphQL token
 ```
 
 ### Options inherited from parent commands

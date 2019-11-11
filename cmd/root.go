@@ -78,7 +78,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 
 	rootCmd.PersistentFlags().BoolVarP(&versionFlag, "version", "", false, "Version information")
-	rootCmd.PersistentFlags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
+	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
 
 	rootCmd.Flags().MarkHidden("docs")
 

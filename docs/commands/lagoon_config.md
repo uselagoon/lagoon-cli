@@ -9,11 +9,7 @@ Configure Lagoon CLI
 ### Options
 
 ```
-  -g, --graphql string    Lagoon GraphQL endpoint
-  -h, --help              help for config
-  -H, --hostname string   Lagoon SSH hostname
-  -P, --port string       Lagoon SSH port
-  -t, --token string      Lagoon GraphQL token
+  -h, --help   help for config
 ```
 
 ### Options inherited from parent commands

@@ -45,7 +45,7 @@ var configCmd = &cobra.Command{
 }
 
 var configDefaultCmd = &cobra.Command{
-	Use:   "default [lagoon name]",
+	Use:   "default [-l lagoonname]",
 	Short: "Set the default Lagoon to use",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
@@ -73,8 +73,9 @@ var configDefaultCmd = &cobra.Command{
 }
 
 var configLagoonsCmd = &cobra.Command{
-	Use:   "list",
-	Short: "View all configured Lagoon instances",
+	Use:     "list",
+	Aliases: []string{"l"},
+	Short:   "View all configured Lagoon instances",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoons := viper.Get("lagoons")
 		lagoonsMap := reflect.ValueOf(lagoons).MapKeys()
@@ -112,8 +113,9 @@ var configLagoonsCmd = &cobra.Command{
 }
 
 var configAddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add information about an additional Lagoon instance to use",
+	Use:     "add",
+	Aliases: []string{"a"},
+	Short:   "Add information about an additional Lagoon instance to use",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
@@ -151,8 +153,9 @@ var configAddCmd = &cobra.Command{
 }
 
 var configDeleteCmd = &cobra.Command{
-	Use:   "delete [lagoon name]",
-	Short: "Delete a Lagoon instance configuration",
+	Use:     "delete [-l lagoonname]",
+	Aliases: []string{"d"},
+	Short:   "Delete a Lagoon instance configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 
@@ -177,8 +180,8 @@ func init() {
 	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configAddCmd)
 	configCmd.AddCommand(configDeleteCmd)
-	configCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
-	configCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
-	configCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
-	configCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
+	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
+	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
+	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
+	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
 }

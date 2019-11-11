@@ -7,7 +7,7 @@ Set the default Lagoon to use
 Set the default Lagoon to use
 
 ```
-lagoon config default [lagoon name] [flags]
+lagoon config default [-l lagoonname] [flags]
 ```
 
 ### Options
