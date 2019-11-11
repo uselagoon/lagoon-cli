@@ -72,14 +72,13 @@ var listProjectCmd = &cobra.Command{
 	Aliases: []string{"pe"},
 	Short:   "List environments for a project (alias: pe)",
 	Run: func(cmd *cobra.Command, args []string) {
-		getProjectFlags := parseListFlags(*cmd.Flags())
-		if getProjectFlags.Project == "" {
+		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
 			cmd.Help()
 			os.Exit(1)
 		}
 
-		returnedJSON, err := projects.ListEnvironmentsForProject(getProjectFlags.Project)
+		returnedJSON, err := projects.ListEnvironmentsForProject(cmdProjectName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -106,17 +105,17 @@ var listVariablesCmd = &cobra.Command{
 	Short:   "Show your variables for a project or environment (alias: v)",
 	Run: func(cmd *cobra.Command, args []string) {
 		getListFlags := parseListFlags(*cmd.Flags())
-		if getListFlags.Project == "" {
+		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
 			cmd.Help()
 			os.Exit(1)
 		}
 		var returnedJSON []byte
 		var err error
-		if getListFlags.Environment != "" {
-			returnedJSON, err = environments.ListEnvironmentVariables(getListFlags.Project, getListFlags.Environment, getListFlags.Reveal)
+		if cmdProjectEnvironment != "" {
+			returnedJSON, err = environments.ListEnvironmentVariables(cmdProjectName, cmdProjectEnvironment, getListFlags.Reveal)
 		} else {
-			returnedJSON, err = projects.ListProjectVariables(getListFlags.Project, getListFlags.Reveal)
+			returnedJSON, err = projects.ListProjectVariables(cmdProjectName, getListFlags.Reveal)
 		}
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -142,14 +141,44 @@ var listDeploymentsCmd = &cobra.Command{
 	Aliases: []string{"d"},
 	Short:   "Show your deployments for an environment (alias: d)",
 	Run: func(cmd *cobra.Command, args []string) {
-		getListFlags := parseListFlags(*cmd.Flags())
-		if getListFlags.Project == "" || getListFlags.Environment == "" {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			fmt.Println("Not enough arguments. Requires: project name and environment name")
 			cmd.Help()
 			os.Exit(1)
 		}
 
-		returnedJSON, err := environments.GetEnvironmentDeployments(getListFlags.Project, getListFlags.Environment)
+		returnedJSON, err := environments.GetEnvironmentDeployments(cmdProjectName, cmdProjectEnvironment)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		if len(dataMain.Data) == 0 {
+			output.RenderError("no data returned", outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+	},
+}
+
+var listTasksCmd = &cobra.Command{
+	Use:     "tasks",
+	Aliases: []string{"t"},
+	Short:   "Show your tasks for an environment (alias: t)",
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		returnedJSON, err := environments.GetEnvironmentTasks(cmdProjectName, cmdProjectEnvironment)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -174,6 +203,7 @@ func init() {
 	listCmd.AddCommand(listProjectsCmd)
 	listCmd.AddCommand(listVariablesCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
+	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listRocketChatsCmd)
 	listCmd.AddCommand(listSlackCmd)
 	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
