@@ -7,5 +7,5 @@ If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-com
 # Requirements
 To use this CLI, you need an account in the Lagoon that you wish to communicate with, and your SSH key needs to be associated to your account.
 
-## Usage
-@TODO
+# Usage
+See [Commands](commands/lagoon.md)

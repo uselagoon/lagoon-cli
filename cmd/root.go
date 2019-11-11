@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,6 +14,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 )
 
@@ -22,12 +24,19 @@ var forceAction bool
 var cmdSSHKey = ""
 var inputScanner = bufio.NewScanner(os.Stdin)
 var versionFlag bool
+var docsFlag bool
 
 var rootCmd = &cobra.Command{
 	Use:   "lagoon",
 	Short: "Command line integration for Lagoon",
 	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if docsFlag {
+			err := doc.GenMarkdownTree(cmd, "docs/commands")
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 		if versionFlag {
 			displayVersionInfo()
 		}
@@ -69,6 +78,9 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 
 	rootCmd.PersistentFlags().BoolVarP(&versionFlag, "version", "", false, "Version information")
+	rootCmd.PersistentFlags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
+
+	rootCmd.Flags().MarkHidden("docs")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}

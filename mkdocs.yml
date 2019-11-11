@@ -14,3 +14,4 @@ markdown_extensions:
 pages:
   - Getting Started: index.md
   - Configuration: config.md
+  - Commands: commands/lagoon.md
