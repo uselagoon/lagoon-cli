@@ -3,6 +3,8 @@ package environments
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
+	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
@@ -70,17 +72,43 @@ func processEnvironmentDeployments(environmentByName []byte) ([]byte, error) {
 	// process the data for output
 	data := []output.Data{}
 	for _, deployment := range projects.Deployments {
+		deploymentID := strconv.Itoa(deployment.ID)
+		remoteID := deployment.RemoteID
+		deploymentName := strings.Replace(deployment.Name, " ", "_", -1) //remove spaces to make friendly for parsing with awk
+		deploymentStatus := string(deployment.Status)
+		deploymentCreated := string(deployment.Created)
+		deploymentStarted := string(deployment.Started)
+		deploymentComplete := string(deployment.Completed)
+		if len(remoteID) == 0 {
+			remoteID = "-"
+		}
+		if len(deploymentID) == 0 {
+			deploymentID = "-"
+		}
+		if len(deploymentStatus) == 0 {
+			deploymentStatus = "-"
+		}
+		if len(deploymentCreated) == 0 {
+			deploymentCreated = "-"
+		}
+		if len(deploymentStarted) == 0 {
+			deploymentStarted = "-"
+		}
+		if len(deploymentComplete) == 0 {
+			deploymentComplete = "-"
+		}
 		data = append(data, []string{
-			deployment.RemoteID,
-			deployment.Name,
-			string(deployment.Status),
-			string(deployment.Created),
-			string(deployment.Started),
-			string(deployment.Completed),
+			deploymentID,
+			remoteID,
+			deploymentName,
+			deploymentStatus,
+			deploymentCreated,
+			deploymentStarted,
+			deploymentComplete,
 		})
 	}
 	dataMain := output.Table{
-		Header: []string{"RemoteID", "Name", "Status", "Created", "Started", "Completed"},
+		Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
