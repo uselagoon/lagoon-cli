@@ -1,19 +1,19 @@
-## lagoon list deployments
+## lagoon list environments
 
-Show your deployments for an environment (alias: d)
+List environments for a project (alias: pe)
 
 ### Synopsis
 
-Show your deployments for an environment (alias: d)
+List environments for a project (alias: pe)
 
 ```
-lagoon list deployments [flags]
+lagoon list environments [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for deployments
+  -h, --help   help for environments
 ```
 
 ### Options inherited from parent commands
