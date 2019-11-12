@@ -11,56 +11,8 @@ Once installed, to use the Lagoon CLI, run the following command
 lagoon <command>
 ```
 
-#### Commands
-
-##### `config`
-
-Allows you to configure Lagoon CLI to specify endpoints, such as your own Lagoon instance.
-
-##### `add`
-
-* Projects
-* Variables
-* Notifications
-
-##### `delete`
-
-* Projects
-* Environments
-* Variables
-* Notifications
-
-##### `list`
-
-* Projects
-* Environments
-* Variables
-* Notifications
-* Deployments
-* Tasks
-
-##### `get`
-
-* Projects
-* Deployments
-
-##### `update`
-
-* Projects
-* Notifications
-
-##### `info`
-
-* Projects
-* Deployments
-
-##### `deploy`
-
-* Environments
-
-##### `run`
-
-* Tasks
+### Commands
+For the full list of commands see the docs for [Lagoon CLI](https://amazeeio.github.io/lagoon-cli/commands/lagoon/)
 
 ## Build
 
