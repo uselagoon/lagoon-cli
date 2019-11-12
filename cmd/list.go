@@ -68,8 +68,8 @@ var listProjectsCmd = &cobra.Command{
 }
 
 var listProjectCmd = &cobra.Command{
-	Use:     "project-environments",
-	Aliases: []string{"pe"},
+	Use:     "environments",
+	Aliases: []string{"e"},
 	Short:   "List environments for a project (alias: pe)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
