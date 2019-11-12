@@ -126,8 +126,8 @@ func processEnvExtra(environment api.Environment) []string {
 	data := []string{
 		fmt.Sprintf("%v", envID),
 		fmt.Sprintf("%v", envName),
-		fmt.Sprintf("%v", envDeployType),
 		fmt.Sprintf("%v", envEnvironmentType),
+		fmt.Sprintf("%v", envDeployType),
 		fmt.Sprintf("%v", envCreated),
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
