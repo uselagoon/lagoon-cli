@@ -243,35 +243,14 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 	// process the data for output
 	data := []output.Data{}
 	for _, task := range environment.Tasks {
-		remoteID := task.RemoteID
-		taskID := strconv.Itoa(task.ID)
-		taskName := strings.Replace(task.Name, " ", "_", -1) //remove spaces to make friendly for parsing with awk
-		taskStatus := string(task.Status)
-		taskCreated := string(task.Created)
-		taskStarted := string(task.Started)
-		taskComplete := string(task.Completed)
-		taskService := task.Service
-		if len(remoteID) == 0 {
-			remoteID = "-"
-		}
-		if len(taskID) == 0 {
-			taskID = "-"
-		}
-		if len(taskStatus) == 0 {
-			taskStatus = "-"
-		}
-		if len(taskCreated) == 0 {
-			taskCreated = "-"
-		}
-		if len(taskStarted) == 0 {
-			taskStarted = "-"
-		}
-		if len(taskComplete) == 0 {
-			taskComplete = "-"
-		}
-		if len(taskService) == 0 {
-			taskService = "-"
-		}
+		remoteID := returnNonEmptyString(task.RemoteID)
+		taskID := returnNonEmptyString(strconv.Itoa(task.ID))
+		taskName := returnNonEmptyString(strings.Replace(task.Name, " ", "_", -1)) //remove spaces to make friendly for parsing with awk
+		taskStatus := returnNonEmptyString(string(task.Status))
+		taskCreated := returnNonEmptyString(string(task.Created))
+		taskStarted := returnNonEmptyString(string(task.Started))
+		taskComplete := returnNonEmptyString(string(task.Completed))
+		taskService := returnNonEmptyString(task.Service)
 		data = append(data, []string{
 			taskID,
 			remoteID,

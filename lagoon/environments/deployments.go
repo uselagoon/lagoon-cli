@@ -72,31 +72,13 @@ func processEnvironmentDeployments(environmentByName []byte) ([]byte, error) {
 	// process the data for output
 	data := []output.Data{}
 	for _, deployment := range projects.Deployments {
-		deploymentID := strconv.Itoa(deployment.ID)
-		remoteID := deployment.RemoteID
-		deploymentName := strings.Replace(deployment.Name, " ", "_", -1) //remove spaces to make friendly for parsing with awk
-		deploymentStatus := string(deployment.Status)
-		deploymentCreated := string(deployment.Created)
-		deploymentStarted := string(deployment.Started)
-		deploymentComplete := string(deployment.Completed)
-		if len(remoteID) == 0 {
-			remoteID = "-"
-		}
-		if len(deploymentID) == 0 {
-			deploymentID = "-"
-		}
-		if len(deploymentStatus) == 0 {
-			deploymentStatus = "-"
-		}
-		if len(deploymentCreated) == 0 {
-			deploymentCreated = "-"
-		}
-		if len(deploymentStarted) == 0 {
-			deploymentStarted = "-"
-		}
-		if len(deploymentComplete) == 0 {
-			deploymentComplete = "-"
-		}
+		deploymentID := returnNonEmptyString(strconv.Itoa(deployment.ID))
+		remoteID := returnNonEmptyString(deployment.RemoteID)
+		deploymentName := returnNonEmptyString(strings.Replace(deployment.Name, " ", "_", -1)) //remove spaces to make friendly for parsing with awk
+		deploymentStatus := returnNonEmptyString(string(deployment.Status))
+		deploymentCreated := returnNonEmptyString(string(deployment.Created))
+		deploymentStarted := returnNonEmptyString(string(deployment.Started))
+		deploymentComplete := returnNonEmptyString(string(deployment.Completed))
 		data = append(data, []string{
 			deploymentID,
 			remoteID,

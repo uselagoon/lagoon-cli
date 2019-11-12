@@ -203,3 +203,21 @@ var ProjectNameID = `fragment Project on Project {
 	id
 	name
 }`
+
+var EnvironmentByNameFragment = `fragment Environment on Environment {
+	id
+	name
+	route
+	routes
+	deployType
+	environmentType
+	openshiftProjectName
+	updated
+	created
+	deleted
+	monitoringUrls
+	deployTitle
+	deployBaseRef
+	deployHeadRef
+	autoIdle
+}`
