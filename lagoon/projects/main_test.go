@@ -81,7 +81,7 @@ func TestProjectInfo(t *testing.T) {
 		{"deployType":"pullrequest","environmentType":"development","id":6,"name":"PR-175","openshiftProjectName":"high-cotton-pr-175","route":""},
 		{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
 		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"doopdd","pullrequests":"false","storageCalc":1,"subfolder":null}`
-	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5"]]}`
+	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments","DevEnvLimit","ProductionEnv","AutoIdle"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5","5","doopdd","1"]]}`
 
 	returnResult, err := processProjectInfo([]byte(projectInfo))
 	if err != nil {
