@@ -27,9 +27,10 @@ var versionFlag bool
 var docsFlag bool
 
 var rootCmd = &cobra.Command{
-	Use:   "lagoon",
-	Short: "Command line integration for Lagoon",
-	Long:  `Lagoon CLI. Manage your Lagoon hosted projects.`,
+	Use:               "lagoon",
+	Short:             "Command line integration for Lagoon",
+	Long:              `Lagoon CLI. Manage your Lagoon hosted projects.`,
+	DisableAutoGenTag: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
