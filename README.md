@@ -53,12 +53,20 @@ make VERSION=v0.0.1 ...
 ```
 
 ## Install
-The best way to install is by downloading one of the pre-compiled binaries from the releases page - [Lagoon CLI releases](https://github.com/amazeeio/lagoon-cli/releases)
-```
 # MacOS
+The preferred method is installation via [Homebrew](https://brew.sh/).
+```
+brew tap amazeeio/lagoon-cli
+brew install lagoon
+```
+
+Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/amazeeio/lagoon-cli/releases)
+```
 VERSION=0.1.0 sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/${VERSION}/lagoon-cli-${VERSION}-darwin-amd64" -o /usr/local/bin/lagoon
+```
 
 # Linux
+```
 VERSION=0.1.0 sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/${VERSION}/lagoon-cli-${VERSION}-linux-amd64" -o /usr/local/bin/lagoon
 ```
 
