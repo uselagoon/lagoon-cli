@@ -31,6 +31,8 @@ var notificationNewName string
 var notificationWebhook string
 var notificationChannel string
 
+var deployBranchName string
+
 var outputOptions = output.Options{
 	Header: false,
 	CSV:    false,
