@@ -38,6 +38,7 @@ jobs:
           command: |
             GO111MODULE=auto go get github.com/tcnksm/ghr
             rm ./builds/README.md
+            for BUILD in $(ls builds); do tar --transform="flags=r;s|${BUILD}|lagoon|" -czf builds/${BUILD}.tar.gz -C builds ${BUILD}; done
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ./builds/
 workflows:
   version: 2
