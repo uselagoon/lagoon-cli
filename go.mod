@@ -11,7 +11,7 @@ require (
 	github.com/manifoldco/promptui v0.3.2
 	github.com/mattn/go-runewidth v0.0.5 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/olekukonko/tablewriter v0.0.1
+	github.com/olekukonko/tablewriter v0.0.2
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
@@ -24,4 +24,4 @@ require (
 
 // use shreddedbacon fork which has better table formatting for kubectl style tables
 // https://github.com/olekukonko/tablewriter/pull/144
-replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20191104214435-fac6022f4869
+// replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20191104214435-fac6022f4869
