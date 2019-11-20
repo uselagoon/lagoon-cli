@@ -33,7 +33,7 @@ func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
 var deployCmd = &cobra.Command{
 	Use:     "deploy",
 	Aliases: []string{"d"},
-	Short:   "Add a project, or add notifications and variables to projects or environments",
+	Short:   "deploy a branch or environment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},

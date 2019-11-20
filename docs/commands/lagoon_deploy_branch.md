@@ -1,15 +1,20 @@
-## lagoon deploy
+## lagoon deploy branch
 
-deploy a branch or environment
+Deploy a latest branch
 
 ### Synopsis
 
-deploy a branch or environment
+Deploy a latest branch
+
+```
+lagoon deploy branch [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for deploy
+  -b, --branch string   branch name
+  -h, --help            help for branch
 ```
 
 ### Options inherited from parent commands
@@ -30,6 +35,5 @@ deploy a branch or environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon deploy branch](lagoon_deploy_branch.md)	 - Deploy a latest branch
+* [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
 

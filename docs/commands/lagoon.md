@@ -32,7 +32,7 @@ lagoon [flags]
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 * [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
-* [lagoon deploy](lagoon_deploy.md)	 - Deploy a latest branch
+* [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
 * [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
