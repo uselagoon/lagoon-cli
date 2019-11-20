@@ -30,15 +30,24 @@ func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
 	return parsedFlags
 }
 
-var deployEnvCmd = &cobra.Command{
-	Use:   "deploy [project name] [branch name]",
+var deployCmd = &cobra.Command{
+	Use:     "deploy",
+	Aliases: []string{"d"},
+	Short:   "Add a project, or add notifications and variables to projects or environments",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+	},
+}
+
+var deployBranchCmd = &cobra.Command{
+	Use:   "branch",
 	Short: "Deploy a latest branch",
 	Long:  "Deploy a latest branch",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		deployBranch := parseDeployFlags(*cmd.Flags())
 		if cmdProjectName == "" || deployBranch.Branch == "" {
-			fmt.Println("Not enough arguments. Requires: lagoon name and branch name")
+			fmt.Println("Not enough arguments. Requires: project name and branch name")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -60,6 +69,11 @@ var deployEnvCmd = &cobra.Command{
 		}
 
 	},
+}
+
+func init() {
+	deployCmd.AddCommand(deployBranchCmd)
+	deployBranchCmd.Flags().StringVarP(&deployBranchName, "branch", "b", "", "branch name")
 }
 
 /* @TODO

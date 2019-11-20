@@ -119,7 +119,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(runCmd)
-	rootCmd.AddCommand(deployEnvCmd)
+	rootCmd.AddCommand(deployCmd)
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(versionCmd)
