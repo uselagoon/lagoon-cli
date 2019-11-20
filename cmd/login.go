@@ -28,7 +28,7 @@ var loginCmd = &cobra.Command{
 	},
 }
 
-func publicKey(path string) (ssh.AuthMethod, func() error) {
+func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	noopCloseFunc := func() error { return nil }
 
 	key, err := ioutil.ReadFile(path)
@@ -36,17 +36,18 @@ func publicKey(path string) (ssh.AuthMethod, func() error) {
 		panic(err)
 	}
 
-	// Connect to SSH agent to ask for unencrypted private keys
-	if sshAgentConn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
-		sshAgent := agent.NewClient(sshAgentConn)
+	if skipAgent != true {
+		// Connect to SSH agent to ask for unencrypted private keys
+		if sshAgentConn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
+			sshAgent := agent.NewClient(sshAgentConn)
 
-		keys, _ := sshAgent.List()
-		if len(keys) > 0 {
-			// There are key(s) in the agent
-			//defer sshAgentConn.Close()
-			return ssh.PublicKeysCallback(sshAgent.Signers), sshAgentConn.Close
+			keys, _ := sshAgent.List()
+			if len(keys) > 0 {
+				// There are key(s) in the agent
+				//defer sshAgentConn.Close()
+				return ssh.PublicKeysCallback(sshAgent.Signers), sshAgentConn.Close
+			}
 		}
-		fmt.Println("no agent")
 	}
 
 	// Try to look for an unencrypted private key
@@ -70,13 +71,15 @@ func publicKey(path string) (ssh.AuthMethod, func() error) {
 
 func loginToken() error {
 	homeDir, _ := os.UserHomeDir()
+	skipAgent := false
 
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
 	if cmdSSHKey != "" {
 		privateKey = cmdSSHKey
+		skipAgent = true
 	}
 
-	authMethod, closeSSHAgent := publicKey(privateKey)
+	authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
 	config := &ssh.ClientConfig{
 		User: "lagoon",
 		Auth: []ssh.AuthMethod{
