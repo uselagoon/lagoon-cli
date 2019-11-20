@@ -271,7 +271,7 @@ func validateToken(lagoon string) {
 	if valid == false {
 		loginErr := loginToken()
 		if loginErr != nil {
-			fmt.Println("Unable to refresh token, you may need to run `lagoon login` first")
+			fmt.Println("Unable to refresh token, you may need to run `lagoon login` first, error was", loginErr.Error())
 			os.Exit(1)
 		}
 	}
