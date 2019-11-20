@@ -125,9 +125,9 @@ var configAddCmd = &cobra.Command{
 		}
 
 		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".hostname", lagoonConfig.Token)
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".port", lagoonConfig.Token)
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".graphql", lagoonConfig.Token)
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".hostname", lagoonConfig.Hostname)
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".port", lagoonConfig.Port)
+			viper.Set("lagoons."+lagoonConfig.Lagoon+".graphql", lagoonConfig.GraphQL)
 			if lagoonConfig.Token != "" {
 				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
 			}
