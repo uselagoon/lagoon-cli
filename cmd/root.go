@@ -120,6 +120,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployCmd)
+	rootCmd.AddCommand(pygmyCmd)
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(versionCmd)
