@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/fubarhouse/pygmy-go v0.0.0-20191122051332-d8aace3aea92
 	github.com/helloyi/go-sshclient v0.0.0-20190617151846-7e5120a78b77
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/logrusorgru/aurora v0.0.0-20191017060258-dc85c304c434
