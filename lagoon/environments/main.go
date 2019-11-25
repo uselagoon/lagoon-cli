@@ -123,6 +123,7 @@ func processEnvExtra(environment api.Environment) []string {
 	envDeployTitle := returnNonEmptyString(string(environment.DeployTitle))
 	envDeployBaseRef := returnNonEmptyString(string(environment.DeployBaseRef))
 	envDeployHeadRef := returnNonEmptyString(string(environment.DeployHeadRef))
+	envAutoIdle := *environment.AutoIdle
 	data := []string{
 		fmt.Sprintf("%v", envID),
 		fmt.Sprintf("%v", envName),
@@ -132,7 +133,7 @@ func processEnvExtra(environment api.Environment) []string {
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
 		fmt.Sprintf("%v", envMonitoringUrls),
-		fmt.Sprintf("%v", *environment.AutoIdle),
+		fmt.Sprintf("%v", envAutoIdle),
 		fmt.Sprintf("%v", envDeployTitle),
 		fmt.Sprintf("%v", envDeployBaseRef),
 		fmt.Sprintf("%v", envDeployHeadRef),
