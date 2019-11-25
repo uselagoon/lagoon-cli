@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -33,6 +35,9 @@ func (api *Interface) AddUser(user User) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -60,6 +65,9 @@ func (api *Interface) UpdateUser(user UpdateUser) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -83,6 +91,9 @@ func (api *Interface) DeleteUser(user User) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -103,6 +114,9 @@ func (api *Interface) GetUserBySSHKey(sshKey SSHKeyValue) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["userBySshKey"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -136,6 +150,9 @@ func (api *Interface) AddSSHKey(sshKey AddSSHKey) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -156,6 +173,9 @@ func (api *Interface) DeleteSSHKey(sshKey DeleteSSHKey) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteSshKey"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }

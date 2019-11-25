@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -25,6 +27,9 @@ func (api *Interface) UpdateTask(task UpdateTask) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateTask"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }

@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -29,6 +31,9 @@ func (api *Interface) AddBackup(backup AddBackup) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -49,6 +54,9 @@ func (api *Interface) DeleteBackup(backup DeleteBackup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteBackup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -73,6 +81,9 @@ func (api *Interface) UpdateRestore(update UpdateRestore) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateRestore"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -101,6 +112,9 @@ func (api *Interface) GetAllEnvironmentBackups() ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["allEnvironments"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -133,6 +147,9 @@ func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) ([]byte,
 	jsonBytes, err := json.Marshal(reMappedResult["environmentByOpenshiftProjectName"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
