@@ -188,10 +188,10 @@ func initConfig() {
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
 	cmdProject, _ = app.GetLocalProject()
-	if cmdProject.Name != "" {
+	if cmdProject.Name != "" && cmdProjectName == "" {
 		cmdProjectName = cmdProject.Name
 	}
-	if cmdProject.Environment != "" {
+	if cmdProject.Environment != "" && cmdProjectEnvironment == "" {
 		cmdProjectEnvironment = cmdProject.Environment
 	}
 
