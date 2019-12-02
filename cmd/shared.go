@@ -15,6 +15,18 @@ var variableValue string
 var variableName string
 var variableScope string
 
+// user vars
+var userFirstName string
+var userLastName string
+var userEmail string
+var pubKeyFile string
+var nameInPubKeyFile bool
+var sshKeyName string
+
+// group vars
+var groupName string
+var groupRole string
+
 var jsonPatch string
 var revealValue bool
 var listAllProjects bool
