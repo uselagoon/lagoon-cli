@@ -66,3 +66,26 @@ func AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error) {
 	}
 	return returnResult, nil
 }
+
+// DeleteUser function
+func DeleteUser(user api.User) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
+		Query: `mutation deleteUser ($email: String!) {
+				deleteUser(input:{user: {email: $email}})
+			}`,
+		Variables: map[string]interface{}{
+			"email": user.Email,
+		},
+		MappedResult: "deleteUser",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}

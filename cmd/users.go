@@ -27,19 +27,6 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseGroup(flags pflag.FlagSet) api.Group {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.Group{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
-
 func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 	b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
 	if err != nil {
@@ -101,38 +88,6 @@ var addUserCmd = &cobra.Command{
 	},
 }
 
-var addGroupCmd = &cobra.Command{
-	Use:     "group",
-	Aliases: []string{"g"},
-	Short:   "Add group to lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		groupFlags := parseGroup(*cmd.Flags())
-		if groupFlags.Name == "" {
-			fmt.Println("Not enough arguments. Requires: group name")
-			cmd.Help()
-			os.Exit(1)
-		}
-		var customReqResult []byte
-		var err error
-		customReqResult, err = users.AddGroup(groupFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
-		}
-		output.RenderResult(resultData, outputOptions)
-	},
-}
-
 var addUserSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"uk"},
@@ -166,6 +121,31 @@ var addUserSSHKeyCmd = &cobra.Command{
 	},
 }
 
+var delUserCmd = &cobra.Command{
+	Use:     "user",
+	Aliases: []string{"u"},
+	Short:   "Delete user from lagoon",
+	Run: func(cmd *cobra.Command, args []string) {
+		userFlags := parseUser(*cmd.Flags())
+		if userFlags.Email == "" {
+			fmt.Println("Not enough arguments. Requires: email address")
+			cmd.Help()
+			os.Exit(1)
+		}
+		var customReqResult []byte
+		var err error
+		customReqResult, err = users.DeleteUser(userFlags)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		resultData := output.Result{
+			Result: string(customReqResult),
+		}
+		output.RenderResult(resultData, outputOptions)
+	},
+}
+
 func init() {
 	addUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "Firstname of the user")
 	addUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "Lastname of the user")
@@ -173,5 +153,5 @@ func init() {
 	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey (optional, if not provided will try use what is in the pubkey file)")
 	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "file location to the public key to add")
-	addGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	delUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 }
