@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -75,7 +76,7 @@ var addUserCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			output.RenderError("Must define an email address", outputOptions)
+			fmt.Println("Not enough arguments. Requires: email address")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -107,7 +108,7 @@ var addGroupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		groupFlags := parseGroup(*cmd.Flags())
 		if groupFlags.Name == "" {
-			output.RenderError("Must define a group name", outputOptions)
+			fmt.Println("Not enough arguments. Requires: group name")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -139,7 +140,7 @@ var addUserSSHKeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			output.RenderError("Must define an email address", outputOptions)
+			fmt.Println("Not enough arguments. Requires: email address")
 			cmd.Help()
 			os.Exit(1)
 		}
