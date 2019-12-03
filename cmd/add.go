@@ -16,6 +16,11 @@ var addCmd = &cobra.Command{
 
 func init() {
 	addCmd.AddCommand(addVariableCmd)
+	addCmd.AddCommand(addUserCmd)
+	addCmd.AddCommand(addGroupCmd)
+	addCmd.AddCommand(addUserToGroupCmd)
+	addCmd.AddCommand(addProjectToGroupCmd)
+	addCmd.AddCommand(addUserSSHKeyCmd)
 	addCmd.AddCommand(addSlackNotificationCmd)
 	addCmd.AddCommand(addProjectSlackNotificationCmd)
 	addCmd.AddCommand(addRocketChatNotificationCmd)
