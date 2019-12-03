@@ -1,15 +1,20 @@
-## lagoon get
+## lagoon get project-key
 
-Get info on a project, or deployment
+Get a projects key
 
 ### Synopsis
 
-Get info on a project, or deployment
+Get a projects key
+
+```
+lagoon get project-key [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for get
+  -h, --help     help for project-key
+      --reveal   Reveal the variable values
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +35,5 @@ Get info on a project, or deployment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon get deployment](lagoon_get_deployment.md)	 - Get build log by remote id
-* [lagoon get environment](lagoon_get_environment.md)	 - Details about an environment
-* [lagoon get project](lagoon_get_project.md)	 - Details about a project
-* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects key
+* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
 

@@ -3,10 +3,12 @@ package projects
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/output"
+	"golang.org/x/crypto/ssh"
 )
 
 // ListAllProjects will list all projects
@@ -262,4 +264,60 @@ func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdatePro
 		Patch: project,
 	}
 	return projectUpdate, nil
+}
+
+// GetProjectKey will get basic info about a project
+func GetProjectKey(projectName string, revealValue bool) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	// get project info from lagoon
+	project := api.Project{
+		Name: projectName,
+	}
+	keyFragment := `fragment Project on Project {
+		privateKey
+	}`
+	projectByName, err := lagoonAPI.GetProjectByName(project, keyFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processProjectKey(projectByName, revealValue)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processProjectKey(projectByName []byte, revealValue bool) ([]byte, error) {
+	var project api.Project
+	err := json.Unmarshal([]byte(projectByName), &project)
+	if err != nil {
+		return []byte(""), err
+	}
+	signer, err := ssh.ParsePrivateKey([]byte(project.PrivateKey))
+	if err != nil {
+		fmt.Println("Error was:", err.Error())
+		return []byte(""), err
+	}
+	publicKey := signer.PublicKey()
+	// get the key, but strip the newlines we don't need
+	projectData := []string{
+		strings.TrimSuffix(string(ssh.MarshalAuthorizedKey(publicKey)), "\n"),
+	}
+	if revealValue {
+		projectData = append(projectData, strings.TrimSuffix(project.PrivateKey, "\n"))
+	}
+	var data []output.Data
+	data = append(data, projectData)
+	dataMain := output.Table{
+		Header: []string{"PublicKey"},
+		Data:   data,
+	}
+	if revealValue {
+		dataMain.Header = append(dataMain.Header, "PrivateKey")
+	}
+	return json.Marshal(dataMain)
 }
