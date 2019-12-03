@@ -43,7 +43,8 @@ func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 	}
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
-		keyName = splitKey[2]
+		//strip new line
+		keyName = strings.TrimSuffix(splitKey[2], "\n")
 	} else if keyName == "" && len(splitKey) == 2 {
 		output.RenderError("no name provided", outputOptions)
 		os.Exit(1)
