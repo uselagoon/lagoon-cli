@@ -54,7 +54,7 @@ var deleteProjectCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deleting %s", projectName))
 		}
 
-		if yesNo() {
+		if yesNo("Are you sure?") {
 			deleteResult, err := projects.DeleteProject(projectName)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)

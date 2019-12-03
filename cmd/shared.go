@@ -27,6 +27,9 @@ var sshKeyName string
 var groupName string
 var groupRole string
 
+// import vars
+var importFile string
+
 var jsonPatch string
 var revealValue bool
 var listAllProjects bool

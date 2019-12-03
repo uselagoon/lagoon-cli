@@ -165,7 +165,7 @@ var configDeleteCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		fmt.Println(fmt.Sprintf("Deleting config for lagoon: %s", lagoonConfig.Lagoon))
-		if yesNo() {
+		if yesNo("Are you sure?") {
 			err := unset(lagoonConfig.Lagoon)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)

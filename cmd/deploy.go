@@ -56,7 +56,7 @@ var deployBranchCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
-		if yesNo() {
+		if yesNo("Are you sure?") {
 			deployResult, err := environments.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)

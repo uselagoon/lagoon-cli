@@ -120,6 +120,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployCmd)
+	rootCmd.AddCommand(importCmd)
 	// rootCmd.AddCommand(sshEnvCmd) //@TODO
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(versionCmd)
@@ -201,10 +202,10 @@ func initConfig() {
 
 }
 
-func yesNo() bool {
+func yesNo(message string) bool {
 	if forceAction != true {
 		prompt := promptui.Select{
-			Label: "Select[Yes/No]",
+			Label: message + "; Select[Yes/No]",
 			Items: []string{"No", "Yes"},
 		}
 		_, result, err := prompt.Run()

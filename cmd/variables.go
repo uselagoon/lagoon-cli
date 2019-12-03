@@ -122,7 +122,7 @@ var deleteVariableCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if yesNo() {
+		if yesNo("Are you sure?") {
 			var deleteResult []byte
 			var err error
 			if cmdProjectEnvironment != "" {
