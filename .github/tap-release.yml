@@ -1,4 +1,5 @@
-asset: lagoon-cli-$STABLE_VERSION-darwin-amd64.tar.gz
+#asset: lagoon-cli-$STABLE_VERSION-darwin-amd64.tar.gz
+url: "https://github.com/amazeeio/lagoon-cli/releases/download/$STABLE_VERSION/lagoon-cli-${STABLE_VERSION}-darwin-amd64.tar.gz"
 tap: amazeeio/homebrew-lagoon-cli/lagoon.rb
 template: >
   class Lagoon < Formula
@@ -11,6 +12,6 @@ template: >
     bottle :unneeded
 
     def install
-      prefix.install "lagoon"
+      bin.install "lagoon"
     end
   end
