@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var sshInteractive bool
+var sshConnString bool
 var sshService string
 var sshContainer string
 
@@ -28,7 +28,9 @@ var sshEnvCmd = &cobra.Command{
 			"port":     viper.GetString("lagoons." + cmdLagoon + ".port"),
 			"username": cmdProjectName + "-" + cmdProjectEnvironment,
 		}
-		if sshInteractive {
+		if sshConnString {
+			fmt.Println(ssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
+		} else {
 			// get private key that the cli is using
 			homeDir, _ := os.UserHomeDir()
 			privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
@@ -37,8 +39,6 @@ var sshEnvCmd = &cobra.Command{
 			}
 			// start an interactive ssh session
 			ssh.InteractiveSSH(sshConfig, sshService, sshContainer, privateKey)
-		} else {
-			fmt.Println(ssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
 		}
 
 	},
@@ -47,5 +47,5 @@ var sshEnvCmd = &cobra.Command{
 func init() {
 	sshEnvCmd.Flags().StringVarP(&sshService, "service", "s", "", "specify a specific service name")
 	sshEnvCmd.Flags().StringVarP(&sshContainer, "container", "c", "", "specify a specific container name")
-	sshEnvCmd.Flags().BoolVarP(&sshInteractive, "interactive", "", false, "Start interactive terminal")
+	sshEnvCmd.Flags().BoolVarP(&sshConnString, "conn-string", "", false, "Display the full ssh connection string")
 }

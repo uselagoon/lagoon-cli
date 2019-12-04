@@ -2,34 +2,81 @@ package ssh
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
 
-	"github.com/helloyi/go-sshclient"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // InteractiveSSH .
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, privKey string) {
-	client, err := sshclient.DialWithKey(lagoon["hostname"]+":"+lagoon["port"], lagoon["username"], privKey)
+	pk, _ := ioutil.ReadFile(privKey)
+	signer, err := ssh.ParsePrivateKey(pk)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
-	defer client.Close()
-
-	// with a terminal config
-	config := &sshclient.TerminalConfig{
-		Term:   "xterm",
-		Height: 40,
-		Weight: 80,
-		Modes: ssh.TerminalModes{
-			ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
-			ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
+	// ignore insecure hostkey, changes in lagoon
+	config := &ssh.ClientConfig{
+		User:            lagoon["username"],
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(signer),
 		},
 	}
-	if err := client.Terminal(config).Start(); err != nil {
-		fmt.Println(err)
-		return
+	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
+	if err != nil {
+		panic("Failed to dial: " + err.Error())
 	}
+
+	// start the session
+	session, err := client.NewSession()
+	if err != nil {
+		panic("Failed to create session: " + err.Error())
+	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	session.Stdin = os.Stdin
+	modes := ssh.TerminalModes{
+		ssh.ECHO:          1,     // enable echoing
+		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
+		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
+	}
+	fileDescriptor := int(os.Stdin.Fd())
+	if terminal.IsTerminal(fileDescriptor) {
+		originalState, err := terminal.MakeRaw(fileDescriptor)
+		if err != nil {
+			log.Fatalf("failed to start shell: %s", err)
+		}
+		defer terminal.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		if err != nil {
+			log.Fatalf("failed to start shell: %s", err)
+		}
+		err = session.RequestPty("xterm-256color", termHeight, termWidth, modes)
+		if err != nil {
+			log.Fatalf("failed to start shell: %s", err)
+		}
+	}
+	var connString string
+	if sshService != "" {
+		connString = fmt.Sprintf("%s service=%s", connString, sshService)
+	}
+	if sshContainer != "" && sshService != "" {
+		connString = fmt.Sprintf("%s container=%s", connString, sshContainer)
+	}
+	err = session.Start(connString)
+	if err != nil {
+		log.Fatalf("failed to start shell: %s", err)
+	}
+	// err = session.Run("service=nginx")
+	// if err != nil {
+	// 	log.Fatalf("failed to start shell: %s", err)
+	// }
+	session.Wait()
+
 }
 
 // GenerateSSHConnectionString .

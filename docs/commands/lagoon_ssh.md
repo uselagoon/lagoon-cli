@@ -13,9 +13,9 @@ lagoon ssh [flags]
 ### Options
 
 ```
+      --conn-string        Display the full ssh connection string
   -c, --container string   specify a specific container name
   -h, --help               help for ssh
-      --interactive        Start interactive terminal
   -s, --service string     specify a specific service name
 ```
 
