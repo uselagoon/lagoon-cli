@@ -48,16 +48,16 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	if terminal.IsTerminal(fileDescriptor) {
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
-			log.Fatalf("failed to start shell: %s", err)
+			log.Fatalf("%s", err)
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
 		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
 		if err != nil {
-			log.Fatalf("failed to start shell: %s", err)
+			log.Fatalf("%s", err)
 		}
 		err = session.RequestPty("xterm-256color", termHeight, termWidth, modes)
 		if err != nil {
-			log.Fatalf("failed to start shell: %s", err)
+			log.Fatalf("%s", err)
 		}
 	}
 	var connString string
@@ -71,10 +71,6 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	if err != nil {
 		log.Fatalf("failed to start shell: %s", err)
 	}
-	// err = session.Run("service=nginx")
-	// if err != nil {
-	// 	log.Fatalf("failed to start shell: %s", err)
-	// }
 	session.Wait()
 
 }
