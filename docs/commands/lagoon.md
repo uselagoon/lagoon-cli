@@ -37,6 +37,7 @@ lagoon [flags]
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
+* [lagoon ssh](lagoon_ssh.md)	 - Display the SSH command to access a specific environment in a project
 * [lagoon update](lagoon_update.md)	 - Update project, environment, or notification
 * [lagoon version](lagoon_version.md)	 - Version information
 * [lagoon web](lagoon_web.md)	 - Launch the web user interface
