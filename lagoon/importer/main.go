@@ -18,30 +18,31 @@ type lagoonImport struct {
 	Groups     []api.Group                  `json:"groups"`
 	Slack      []api.NotificationSlack      `json:"slack"`
 	RocketChat []api.NotificationRocketChat `json:"rocketchat"`
-	Users      []struct {
-		User struct {
-			Email      string `json:"email"`
-			SSHKey     string `json:"sshkey"`
-			KeyName    string `json:"keyname,omitempty"`
-			SSHKeyFile string `json:"sshkeyfile,omitempty"`
-		} `json:"user"`
-		Groups []addUserToGroup `json:"groups"`
-	} `json:"users"`
-	Projects []struct {
-		Project api.ProjectPatch `json:"project"`
-		// Project struct {
-		// 	Name                  string `yaml:"name"`
-		// 	GitURL                string `yaml:"gitUrl"`
-		// 	Openshift             int    `yaml:"openshift"`
-		// 	Branches              string `yaml:"branches"`
-		// 	ProductionEnvironment string `yaml:"productionEnvironment"`
-		// } `json:"project"`
-		Groups        []string `json:"groups"`
-		Notifications struct {
-			Slack      []string `json:"slack"`
-			RocketChat []string `json:"rocketchat"`
-		} `json:"notifications"`
-	} `json:"projects"`
+	Users      []lagoonUsers                `json:"users"`
+	Projects   []lagoonProjects             `json:"projects"`
+}
+
+type lagoonProjects struct {
+	Project       api.ProjectPatch    `json:"project"`
+	Groups        []string            `json:"groups"`
+	Notifications lagoonNotifications `json:"notifications"`
+}
+
+type lagoonUsers struct {
+	User   lagoonUser       `json:"user"`
+	Groups []addUserToGroup `json:"groups"`
+}
+
+type lagoonNotifications struct {
+	Slack      []string `json:"slack"`
+	RocketChat []string `json:"rocketchat"`
+}
+
+type lagoonUser struct {
+	Email      string `json:"email"`
+	SSHKey     string `json:"sshkey"`
+	KeyName    string `json:"keyname,omitempty"`
+	SSHKeyFile string `json:"sshkeyfile,omitempty"`
 }
 
 type addUserToGroup struct {
@@ -92,176 +93,35 @@ func ImportData(importFile string, forceAction bool) {
 		os.Exit(1)
 	}
 	// @TODO: do a platform-owner only check and fail sooner, tell user import is only for platform-owners currently
+	// start with adding groups
 	for _, group := range importedData.Groups {
-		fmt.Println("Adding group", group.Name)
-		_, err := users.AddGroup(group)
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
-		// fmt.Println(string(customReqResult))
+		addGroup(group, forceAction)
 	}
+	// next add users and any keys, then add them to any groups they need to be in
 	for _, user := range importedData.Users {
-		fmt.Println("Adding user", user.User.Email)
-		addUser := api.User{
-			Email: user.User.Email,
-		}
-		_, err := users.AddUser(addUser)
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
-		splitKey := strings.Split(user.User.SSHKey, " ")
-		var keyType api.SSHKeyType
-		// default to ssh-rsa, otherwise check if ssh-ed25519
-		// will fail if neither are right
-		keyType = api.SSHRsa
-		if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
-			keyType = api.SSHEd25519
-		}
-		// if the sshkey has a comment/name in it, we can use that, otherwise define one using `keyname`
-		keyName := user.User.KeyName
-		if keyName == "" && len(splitKey) == 3 {
-			//strip new line
-			keyName = strings.TrimSuffix(splitKey[2], "\n")
-		} else if keyName == "" && len(splitKey) == 2 {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
-		sshKey := api.SSHKey{
-			KeyType:  keyType,
-			KeyValue: splitKey[1],
-			Name:     keyName,
-		}
-		_, err = users.AddSSHKeyToUser(addUser, sshKey)
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
+		addUser(user.User, forceAction)
+		addKeyToUser(user.User, forceAction)
 		for _, group := range user.Groups {
-			var roleType api.GroupRole
-			roleType = api.GuestRole
-			if strings.EqualFold(string(group.Role), "guest") {
-				roleType = api.GuestRole
-			} else if strings.EqualFold(string(group.Role), "reporter") {
-				roleType = api.ReporterRole
-			} else if strings.EqualFold(string(group.Role), "developer") {
-				roleType = api.DeveloperRole
-			} else if strings.EqualFold(string(group.Role), "maintainer") {
-				roleType = api.MaintainerRole
-			} else if strings.EqualFold(string(group.Role), "owner") {
-				roleType = api.OwnerRole
-			}
-			userGroupRole := api.UserGroupRole{
-				User: addUser,
-				Group: api.Group{
-					Name: group.Name,
-				},
-				Role: roleType,
-			}
-			var err error
-			fmt.Println("Adding user", user.User.Email, "to group", group.Name)
-			_, err = users.AddUserToGroup(userGroupRole)
-			if err != nil {
-				fmt.Println(err)
-				if !yesNo("Continue?", forceAction) {
-					os.Exit(1)
-				}
-			}
+			addUserGroup(user.User, group, forceAction)
 		}
 	}
+	// create any notification providers
 	for _, slack := range importedData.Slack {
-		fmt.Println("Adding slack", slack.Name)
-		_, err := projects.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
-		// fmt.Println(string(customReqResult))
+		addSlack(slack, forceAction)
 	}
 	for _, rocketchat := range importedData.RocketChat {
-		fmt.Println("Adding rocketchat", rocketchat.Name)
-		_, err := projects.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-		}
-		// fmt.Println(string(customReqResult))
+		addRocketChat(rocketchat, forceAction)
 	}
+	// now add the projects
 	for _, project := range importedData.Projects {
-		jsonPatch, _ := json.Marshal(project.Project)
-		fmt.Println("Adding project", project.Project.Name)
-		addResult, err := projects.AddProject(project.Project.Name, string(jsonPatch))
-		if err != nil {
-			fmt.Println(err)
-			if !yesNo("Continue?", forceAction) {
-				os.Exit(1)
-			}
-			//os.Exit(1)
-		} else {
-			var addedProject api.Project
-			err = json.Unmarshal([]byte(addResult), &addedProject)
-			if err != nil {
-				fmt.Println(err)
-				if !yesNo("Continue?", forceAction) {
-					os.Exit(1)
-				}
-				//os.Exit(1)
-			}
-			// fmt.Println(addedProject)
-		}
+		addProject(project.Project, forceAction)
+		// add them to any groups they need to be in
 		for _, group := range project.Groups {
-			fmt.Println("Adding project", project.Project.Name, "to group", group)
-			projectGroup := api.ProjectGroups{
-				Project: api.Project{
-					Name: project.Project.Name,
-				},
-				Groups: []api.Group{
-					api.Group{
-						Name: group,
-					},
-				},
-			}
-			_, err = users.AddProjectToGroup(projectGroup)
-			if err != nil {
-				fmt.Println(err)
-				if !yesNo("Continue?", forceAction) {
-					os.Exit(1)
-				}
-			}
+			addGroupProject(project.Project.Name, group, forceAction)
 		}
-		for _, slack := range project.Notifications.Slack {
-			fmt.Println("Adding slack", slack, "to project", project.Project.Name)
-			_, err = projects.AddSlackNotificationToProject(project.Project.Name, slack)
-			if err != nil {
-				fmt.Println(err)
-				if !yesNo("Continue?", forceAction) {
-					os.Exit(1)
-				}
-			}
-		}
-		for _, rocketchat := range project.Notifications.RocketChat {
-			fmt.Println("Adding rocketchat", rocketchat, "to project", project.Project.Name)
-			_, err = projects.AddRocketChatNotificationToProject(project.Project.Name, rocketchat)
-			if err != nil {
-				fmt.Println(err)
-				if !yesNo("Continue?", forceAction) {
-					os.Exit(1)
-				}
-			}
-		}
+		// then add any notification services to the project if required
+		addSlacks(project.Notifications.Slack, project.Project.Name, forceAction)
+		addRocketChats(project.Notifications.RocketChat, project.Project.Name, forceAction)
 	}
 }
 
@@ -278,4 +138,198 @@ func yesNo(message string, forceAction bool) bool {
 		return result == "Yes"
 	}
 	return true
+}
+
+func addRocketChats(rocketchats []string, name string, action bool) {
+	for _, rocketchat := range rocketchats {
+		fmt.Println("Adding rocketchat", rocketchat, "to project", name)
+		_, err := projects.AddRocketChatNotificationToProject(name, rocketchat)
+		if err != nil {
+			fmt.Println(err)
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
+		}
+	}
+}
+
+func addSlacks(slacks []string, name string, action bool) {
+	for _, slack := range slacks {
+		fmt.Println("Adding slack", slack, "to project", name)
+		_, err := projects.AddSlackNotificationToProject(name, slack)
+		if err != nil {
+			fmt.Println(err)
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
+		}
+	}
+}
+
+func addGroupProject(name string, group string, action bool) {
+	fmt.Println("Adding project", name, "to group", group)
+	projectGroup := api.ProjectGroups{
+		Project: api.Project{
+			Name: name,
+		},
+		Groups: []api.Group{
+			api.Group{
+				Name: group,
+			},
+		},
+	}
+	_, err := users.AddProjectToGroup(projectGroup)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addProject(project api.ProjectPatch, action bool) {
+	jsonPatch, _ := json.Marshal(project)
+	fmt.Println("Adding project", project.Name)
+	addResult, err := projects.AddProject(project.Name, string(jsonPatch))
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+		//os.Exit(1)
+	} else {
+		var addedProject api.Project
+		err = json.Unmarshal([]byte(addResult), &addedProject)
+		if err != nil {
+			fmt.Println(err)
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
+			//os.Exit(1)
+		}
+		// fmt.Println(addedProject)
+	}
+}
+
+func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
+	fmt.Println("Adding rocketchat", rocketchat.Name)
+	_, err := projects.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addSlack(slack api.NotificationSlack, action bool) {
+	fmt.Println("Adding slack", slack.Name)
+	_, err := projects.AddRocketChatNotification(slack.Name, slack.Channel, slack.Webhook)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addGroup(group api.Group, action bool) {
+	fmt.Println("Adding group", group.Name)
+	_, err := users.AddGroup(group)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addUser(user lagoonUser, action bool) {
+	fmt.Println("Adding user", user.Email)
+	userData := api.User{
+		Email: user.Email,
+	}
+	_, err := users.AddUser(userData)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addKeyToUser(user lagoonUser, action bool) {
+	userData := api.User{
+		Email: user.Email,
+	}
+	splitKey := strings.Split(user.SSHKey, " ")
+	var keyType api.SSHKeyType
+	// default to ssh-rsa, otherwise check if ssh-ed25519 as we only support these in lagoon
+	// will fail if neither are right
+	keyType = api.SSHRsa
+	if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
+		keyType = api.SSHEd25519
+	}
+	// if the sshkey has a comment/name in it, we can use that, otherwise define one using `keyname`
+	keyName := user.KeyName
+	if keyName == "" && len(splitKey) == 3 {
+		//strip new line
+		keyName = strings.TrimSuffix(splitKey[2], "\n")
+	} else if keyName == "" && len(splitKey) == 2 {
+		fmt.Println("No keyname defined")
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+	sshKey := api.SSHKey{
+		KeyType:  keyType,
+		KeyValue: splitKey[1],
+		Name:     keyName,
+	}
+	fmt.Println("Adding key to user", user.Email)
+	_, err := users.AddSSHKeyToUser(userData, sshKey)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addUserGroup(user lagoonUser, group addUserToGroup, action bool) {
+	userData := api.User{
+		Email: user.Email,
+	}
+	var roleType api.GroupRole
+	switch strings.ToLower(string(group.Role)) {
+	case "guest":
+		roleType = api.GuestRole
+	case "reporter":
+		roleType = api.ReporterRole
+	case "developer":
+		roleType = api.DeveloperRole
+	case "maintainer":
+		roleType = api.MaintainerRole
+	case "owner":
+		roleType = api.OwnerRole
+	default:
+		// default to guest if unable to determine from provided role
+		roleType = api.GuestRole
+	}
+	userGroupRole := api.UserGroupRole{
+		User: userData,
+		Group: api.Group{
+			Name: group.Name,
+		},
+		Role: roleType,
+	}
+	var err error
+	fmt.Println("Adding user", user.Email, "to group", group.Name, "with role", roleType)
+	_, err = users.AddUserToGroup(userGroupRole)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
 }
