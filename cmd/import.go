@@ -15,13 +15,13 @@ var example = `groups:
 users:
   - user:
       email: usera@example.com
-      sshkey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC+qXkqFFmZiQzEE9yhwEbHSuge187PRbH+MhEo3xyKpSODSa5Arp3P/ZPjxOOPm/KU2m9S/k4MKwvtZehqQtTDss9KaDZcZmwdYQSyJDgUzcAcMtEAFO8+9bVDIzgRXsRwsgkaJM627BRrutjpaaAryMMQJyuF/QMDwAfZ6ZBKNw== usera@macbook.local
+      sshkey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG/1WiXC+XSpGQsTBYhWMy8WCIIGGtq26GKHeXy9vySf usera@macbook.local
     groups:
       - name: example-com
         role: owner
   - user:
       email: userb@example.com
-      sshkey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC19Ap4udFpuIW7OGP3E0xSMr30c56uzp26thVmonvPWunU6pwcdV/hGioShSSUEWZdUwPhhCkUG4c/IrD0g6W6ZG/8JoLkUkIQ0OMSRl6zDGy0woTrbURyktwHLfzV12WLFmJR6l7egHov/FgNVx4gRRvVLIEwfpbGHvNCG6lQnQ== userb@macbook.local
+      sshkey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ3qUs3GlmILI4ozHhCXPVq1WEv3gb0Mtc5FGu4l+qCl userb@macbook.local
     groups:
       - name: example-com
         role: developer
