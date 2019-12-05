@@ -2,7 +2,6 @@ package ssh
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -11,20 +10,7 @@ import (
 )
 
 // InteractiveSSH .
-func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, privKey string) {
-	pk, _ := ioutil.ReadFile(privKey)
-	signer, err := ssh.ParsePrivateKey(pk)
-	if err != nil {
-		panic(err)
-	}
-	// ignore insecure hostkey, changes in lagoon
-	config := &ssh.ClientConfig{
-		User:            lagoon["username"],
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeys(signer),
-		},
-	}
+func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
 		panic("Failed to dial: " + err.Error())

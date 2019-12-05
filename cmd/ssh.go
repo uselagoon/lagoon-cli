@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/ssh"
+	lagoonssh "github.com/amazeeio/lagoon-cli/lagoon/ssh"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh"
 )
 
 var sshConnString bool
@@ -29,16 +30,29 @@ var sshEnvCmd = &cobra.Command{
 			"username": cmdProjectName + "-" + cmdProjectEnvironment,
 		}
 		if sshConnString {
-			fmt.Println(ssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
+			fmt.Println(lagoonssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
 		} else {
 			// get private key that the cli is using
 			homeDir, _ := os.UserHomeDir()
+			skipAgent := false
+
 			privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
 			if cmdSSHKey != "" {
 				privateKey = cmdSSHKey
+				skipAgent = true
 			}
 			// start an interactive ssh session
-			ssh.InteractiveSSH(sshConfig, sshService, sshContainer, privateKey)
+			authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
+			config := &ssh.ClientConfig{
+				User: sshConfig["username"],
+				Auth: []ssh.AuthMethod{
+					authMethod,
+				},
+				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+			}
+			fmt.Println(config.Auth[0])
+			defer closeSSHAgent()
+			lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
 		}
 
 	},
