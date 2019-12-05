@@ -73,7 +73,6 @@ func loginToken() error {
 		privateKey = cmdSSHKey
 		skipAgent = true
 	}
-
 	authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
 	config := &ssh.ClientConfig{
 		User: "lagoon",
