@@ -23,7 +23,7 @@ var webCmd = &cobra.Command{
 
 		urlBuilder := strings.Builder{}
 		urlBuilder.WriteString(viper.GetString("lagoons." + cmdLagoon + ".ui"))
-		urlBuilder.WriteString(fmt.Sprintf("/project?name=%s", projectName))
+		urlBuilder.WriteString(fmt.Sprintf("/projects/%s", projectName))
 
 		url := urlBuilder.String()
 		fmt.Println(fmt.Sprintf("Opening %s", url))
