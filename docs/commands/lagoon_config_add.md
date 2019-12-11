@@ -16,8 +16,10 @@ lagoon config add [flags]
   -g, --graphql string    Lagoon GraphQL endpoint
   -h, --help              help for add
   -H, --hostname string   Lagoon SSH hostname
+  -k, --kibana string     Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)
   -P, --port string       Lagoon SSH port
   -t, --token string      Lagoon GraphQL token
+  -u, --ui string         Lagoon UI location (https://ui-lagoon-master.ch.amazee.io)
 ```
 
 ### Options inherited from parent commands
