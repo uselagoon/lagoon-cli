@@ -9,6 +9,8 @@ var lagoonHostname string
 var lagoonPort string
 var lagoonGraphQL string
 var lagoonToken string
+var lagoonUI string
+var lagoonKibana string
 
 // variable vars
 var variableValue string
