@@ -122,6 +122,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(deployCmd)
 	rootCmd.AddCommand(sshEnvCmd)
 	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(kibanaCmd)
 	rootCmd.AddCommand(versionCmd)
 }
 
