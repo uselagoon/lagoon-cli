@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/ghodss/yaml v1.0.0
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/logrusorgru/aurora v0.0.0-20191017060258-dc85c304c434
 	github.com/machinebox/graphql v0.2.2

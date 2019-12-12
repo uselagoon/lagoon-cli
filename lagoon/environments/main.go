@@ -147,3 +147,35 @@ func returnNonEmptyString(value string) string {
 	}
 	return value
 }
+
+// AddOrUpdateEnvironment .
+func AddOrUpdateEnvironment(projectName string, environmentName string, jsonPatch string) ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	} // get project info from lagoon, we need the project ID for later
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectNameID)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+	environment := api.AddUpdateEnvironment{}
+	err = json.Unmarshal([]byte(jsonPatch), &environment.Patch)
+	if err != nil {
+		return []byte(""), err
+	}
+	environment.Name = environmentName
+
+	projectAddResult, err := lagoonAPI.AddOrUpdateEnvironment(projectInfo.ID, environment)
+	if err != nil {
+		return []byte(""), err
+	}
+	return projectAddResult, nil
+}

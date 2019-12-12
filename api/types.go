@@ -65,9 +65,10 @@ type EnvVariableScope string
 
 // . .
 const (
-	BuildVar   EnvVariableScope = "BUILD"
-	RuntimeVar EnvVariableScope = "RUNTIME"
-	GlobalVar  EnvVariableScope = "GLOBAL"
+	BuildVar             EnvVariableScope = "BUILD"
+	RuntimeVar           EnvVariableScope = "RUNTIME"
+	GlobalVar            EnvVariableScope = "GLOBAL"
+	ContainerRegistryVar EnvVariableScope = "CONTAINER_REGISTRY"
 )
 
 // TaskStatusType .
@@ -193,6 +194,20 @@ type NotificationSlack struct {
 	Name    string `json:"name,omitempty"`
 	Webhook string `json:"webhook,omitempty"`
 	Channel string `json:"channel,omitempty"`
+}
+
+// NotificationMicrosoftTeams struct.
+type NotificationMicrosoftTeams struct {
+	ID      int    `json:"id,omitempty"`
+	Name    string `json:"name,omitempty"`
+	Webhook string `json:"webhook,omitempty"`
+}
+
+// NotificationEmail struct.
+type NotificationEmail struct {
+	ID           int    `json:"id,omitempty"`
+	Name         string `json:"name,omitempty"`
+	EmailAddress string `json:"emailAddress,omitempty"`
 }
 
 // UnassignedNotification struct.

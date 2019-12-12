@@ -8,6 +8,7 @@ import (
 	//"io/ioutil"
 	"net/http"
 	"regexp"
+
 	//"strings"
 	"crypto/tls"
 	"encoding/json"
@@ -50,7 +51,7 @@ type Client interface {
 	RemoveUserFromGroup(UserGroup) ([]byte, error)
 	// Environments
 	GetEnvironmentByName(EnvironmentByName, string) ([]byte, error)
-	AddOrUpdateEnvironment(AddUpdateEnvironment) ([]byte, error)
+	AddOrUpdateEnvironment(int, AddUpdateEnvironment) ([]byte, error)
 	UpdateEnvironment(UpdateEnvironment) ([]byte, error)
 	DeleteEnvironment(DeleteEnvironment) ([]byte, error)
 	SetEnvironmentServices(SetEnvironmentServices) ([]byte, error)

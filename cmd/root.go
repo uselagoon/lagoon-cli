@@ -121,6 +121,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployCmd)
 	rootCmd.AddCommand(importCmd)
+	rootCmd.AddCommand(parseCmd)
 	rootCmd.AddCommand(sshEnvCmd)
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(versionCmd)

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/lagoon/importer"
+	"github.com/amazeeio/lagoon-cli/lagoon/parser"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -83,7 +84,29 @@ var importCmd = &cobra.Command{
 	},
 }
 
+var parseCmd = &cobra.Command{
+	Use:     "parse",
+	Aliases: []string{"p"},
+	Short:   "Parse lagoon output to import yml",
+	Run: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		if showExample {
+			fmt.Println(example)
+			os.Exit(0)
+		}
+		if importFile == "" {
+			fmt.Println("Not enough arguments. Requires: path to file to import")
+			cmd.Help()
+			os.Exit(1)
+		}
+		if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
+			parser.ParseJSONToImport(importFile)
+		}
+	},
+}
+
 func init() {
 	importCmd.Flags().BoolVarP(&showExample, "example", "", false, "display example yaml")
 	importCmd.Flags().StringVarP(&importFile, "import", "I", "", "path to the file to import")
+	parseCmd.Flags().StringVarP(&importFile, "import", "I", "", "path to the file to import")
 }

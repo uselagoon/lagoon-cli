@@ -35,7 +35,7 @@ func (api *Interface) GetEnvironmentByName(environment EnvironmentByName, fragme
 }
 
 // AddOrUpdateEnvironment .
-func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) ([]byte, error) {
+func (api *Interface) AddOrUpdateEnvironment(project int, environment AddUpdateEnvironment) ([]byte, error) {
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $project: Int!, $deployType: DeployType!, $deployBaseRef: String!, $deployHeadRef: String, $deployTitle: String, $environmentType: EnvType!, $openshiftProjectName: String!) {
 		addOrUpdateEnvironment(input: {
@@ -63,15 +63,9 @@ func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (
 			}
 		}
 	}`)
-	req.Var("name", environment.Name)
 	generateVars(req, environment.Patch)
-	// req.Var("project", environment.Patch.Project)
-	// req.Var("deployType", environment.Patch.DeployType)
-	// req.Var("deployBaseRef", environment.Patch.DeployBaseRef)
-	// req.Var("deployHeadRef", environment.Patch.DeployHeadRef)
-	// req.Var("deployTitle", environment.Patch.DeployTitle)
-	// req.Var("environmentType", environment.Patch.EnvironmentType)
-	// req.Var("openshiftProjectName", environment.Patch.OpenshiftProjectName)
+	req.Var("name", environment.Name)
+	req.Var("project", project)
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err

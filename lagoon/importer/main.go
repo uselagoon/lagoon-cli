@@ -8,47 +8,83 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/lagoon/users"
+	"github.com/ghodss/yaml"
 	"github.com/manifoldco/promptui"
-	"gopkg.in/yaml.v2"
 )
 
-type lagoonImport struct {
-	Groups     []api.Group                  `json:"groups"`
-	Slack      []api.NotificationSlack      `json:"slack"`
-	RocketChat []api.NotificationRocketChat `json:"rocketchat"`
-	Users      []lagoonUsers                `json:"users"`
-	Projects   []lagoonProjects             `json:"projects"`
+// LagoonImport .
+type LagoonImport struct {
+	Groups         []api.Group                      `json:"groups,omitempty"`
+	Slack          []api.NotificationSlack          `json:"slack,omitempty"`
+	RocketChat     []api.NotificationRocketChat     `json:"rocketchat,omitempty"`
+	MicrosoftTeams []api.NotificationMicrosoftTeams `json:"microsoftteams,omitempty"`
+	Email          []api.NotificationEmail          `json:"email,omitempty"`
+	Users          []LagoonUsers                    `json:"users,omitempty"`
+	Projects       []LagoonProjects                 `json:"projects,omitempty"`
 }
 
-type lagoonProjects struct {
-	Project       api.ProjectPatch    `json:"project"`
-	Groups        []string            `json:"groups"`
-	Notifications lagoonNotifications `json:"notifications"`
+// LagoonProjects .
+type LagoonProjects struct {
+	Project       ExtendedProject     `json:"project,omitempty"`
+	Groups        []string            `json:"groups,omitempty"`
+	Notifications LagoonNotifications `json:"notifications,omitempty"`
+	Variables     []api.EnvVariable   `json:"variables,omitempty"`
+	Environments  []LagoonEnvironment `json:"environments,omitempty"`
 }
 
-type lagoonUsers struct {
-	User   lagoonUser       `json:"user"`
-	Groups []addUserToGroup `json:"groups"`
+// ExtendedProject .
+type ExtendedProject struct {
+	*api.ProjectPatch
+	Groups        []AddUserToGroup `json:"groups,omitempty"`
+	Notifications []interface{}    `json:"notifications,omitempty"`
 }
 
-type lagoonNotifications struct {
-	Slack      []string `json:"slack"`
-	RocketChat []string `json:"rocketchat"`
+// LagoonEnvironment .
+type LagoonEnvironment struct {
+	ID                   int               `json:"id,omitempty"`
+	Name                 string            `json:"name,omitempty"`
+	DeployType           api.DeployType    `json:"deployType,omitempty"`
+	DeployTitle          string            `json:"deployTitle,omitempty"`
+	DeployBaseRef        string            `json:"deployBaseRef,omitempty"`
+	DeployHeadRef        string            `json:"deployHeadRef,omitempty"`
+	AutoIdle             *int              `json:"autoIdle,omitempty"`
+	EnvironmentType      api.EnvType       `json:"environmentType,omitempty"`
+	OpenshiftProjectName string            `json:"openshiftProjectName,omitempty"`
+	Variables            []api.EnvVariable `json:"variables,omitempty"`
+	Project              int               `json:"project,omitempty"`
 }
 
-type lagoonUser struct {
-	Email      string `json:"email"`
-	SSHKey     string `json:"sshkey"`
+// LagoonUsers .
+type LagoonUsers struct {
+	User   LagoonUser       `json:"user,omitempty"`
+	Groups []AddUserToGroup `json:"groups,omitempty"`
+}
+
+// LagoonNotifications .
+type LagoonNotifications struct {
+	Slack          []string `json:"slack,omitempty"`
+	RocketChat     []string `json:"rocketchat,omitempty"`
+	Email          []string `json:"email,omitempty"`
+	MicrosoftTeams []string `json:"microsoftteams,omitempty"`
+}
+
+// LagoonUser .
+type LagoonUser struct {
+	Email      string `json:"email,omitempty"`
+	SSHKey     string `json:"sshkey,omitempty"`
 	KeyName    string `json:"keyname,omitempty"`
 	SSHKeyFile string `json:"sshkeyfile,omitempty"`
 }
 
-type addUserToGroup struct {
-	User api.User `json:"user"`
-	Name string   `json:"name"`
-	Role string   `json:"role"`
+// AddUserToGroup .
+type AddUserToGroup struct {
+	User    api.User         `json:"user,omitempty"`
+	Name    string           `json:"name,omitempty"`
+	Members []AddUserToGroup `json:"members,omitempty"`
+	Role    string           `json:"role,omitempty"`
 }
 
 // example
@@ -85,7 +121,7 @@ func ImportData(importFile string, forceAction bool) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	importedData := lagoonImport{}
+	importedData := LagoonImport{}
 
 	err = yaml.Unmarshal([]byte(yamlData), &importedData)
 	if err != nil {
@@ -114,10 +150,26 @@ func ImportData(importFile string, forceAction bool) {
 	}
 	// now add the projects
 	for _, project := range importedData.Projects {
-		addProject(project.Project, forceAction)
+		fmt.Println(project.Project.ProductionEnvironment)
+		var lagoonProject api.ProjectPatch
+		projectBytes, _ := json.Marshal(project.Project)
+		json.Unmarshal(projectBytes, &lagoonProject)
+		addProject(lagoonProject, forceAction)
 		// add them to any groups they need to be in
 		for _, group := range project.Groups {
 			addGroupProject(project.Project.Name, group, forceAction)
+		}
+		for _, environment := range project.Environments {
+			addEnvironmentToProject(project.Project.Name, environment, forceAction)
+			for _, variable := range environment.Variables {
+				varBytes, _ := json.Marshal(variable)
+				var newVariable api.EnvVariable
+				json.Unmarshal(varBytes, &newVariable)
+				addEnvironmentVariable(project.Project.Name, environment.Name, newVariable, forceAction)
+			}
+		}
+		for _, variable := range project.Variables {
+			addProjectVariable(project.Project.Name, variable, forceAction)
 		}
 		// then add any notification services to the project if required
 		addSlacks(project.Notifications.Slack, project.Project.Name, forceAction)
@@ -224,7 +276,7 @@ func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
 
 func addSlack(slack api.NotificationSlack, action bool) {
 	fmt.Println("Adding slack", slack.Name)
-	_, err := projects.AddRocketChatNotification(slack.Name, slack.Channel, slack.Webhook)
+	_, err := projects.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
 	if err != nil {
 		fmt.Println(err)
 		if !yesNo("Continue?", action) {
@@ -244,7 +296,7 @@ func addGroup(group api.Group, action bool) {
 	}
 }
 
-func addUser(user lagoonUser, action bool) {
+func addUser(user LagoonUser, action bool) {
 	fmt.Println("Adding user", user.Email)
 	userData := api.User{
 		Email: user.Email,
@@ -258,7 +310,7 @@ func addUser(user lagoonUser, action bool) {
 	}
 }
 
-func addKeyToUser(user lagoonUser, action bool) {
+func addKeyToUser(user LagoonUser, action bool) {
 	userData := api.User{
 		Email: user.Email,
 	}
@@ -296,7 +348,7 @@ func addKeyToUser(user lagoonUser, action bool) {
 	}
 }
 
-func addUserGroup(user lagoonUser, group addUserToGroup, action bool) {
+func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	userData := api.User{
 		Email: user.Email,
 	}
@@ -332,4 +384,87 @@ func addUserGroup(user lagoonUser, group addUserToGroup, action bool) {
 			os.Exit(1)
 		}
 	}
+}
+
+func addProjectVariable(projectName string, variable api.EnvVariable, action bool) {
+	fmt.Println("Adding variable", variable.Name, "scoped", variable.Scope, "to project", projectName)
+	var envScope api.EnvVariableScope
+	switch strings.ToLower(string(variable.Scope)) {
+	case "global":
+		envScope = api.GlobalVar
+	case "build":
+		envScope = api.BuildVar
+	case "runtime":
+		envScope = api.RuntimeVar
+	case "container_registry":
+		envScope = api.ContainerRegistryVar
+	default:
+		envScope = api.RuntimeVar
+	}
+	variable.Scope = envScope
+	_, err := projects.AddEnvironmentVariableToProject(projectName, variable)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addEnvironmentVariable(projectName string, environmentName string, variable api.EnvVariable, action bool) {
+	fmt.Println("Adding variable", variable.Name, "scoped", variable.Scope, "to project", projectName, "environment", environmentName)
+	var envScope api.EnvVariableScope
+	switch strings.ToLower(string(variable.Scope)) {
+	case "global":
+		envScope = api.GlobalVar
+	case "build":
+		envScope = api.BuildVar
+	case "runtime":
+		envScope = api.RuntimeVar
+	case "container_registry":
+		envScope = api.ContainerRegistryVar
+	default:
+		envScope = api.RuntimeVar
+	}
+	variable.Scope = envScope
+	_, err := environments.AddEnvironmentVariableToEnvironment(projectName, environmentName, variable)
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+}
+
+func addEnvironmentToProject(projectName string, environment LagoonEnvironment, action bool) {
+	fmt.Println("Adding environment", environment.Name, "to project", projectName)
+	var deployType api.DeployType
+	switch strings.ToLower(string(environment.DeployType)) {
+	case "branch":
+		deployType = api.Branch
+	case "pullrequest":
+		deployType = api.PullRequest
+	default:
+		deployType = api.Branch
+	}
+	environment.DeployType = deployType
+	var envType api.EnvType
+	switch strings.ToLower(string(environment.EnvironmentType)) {
+	case "development":
+		envType = api.DevelopmentEnv
+	case "production":
+		envType = api.ProductionEnv
+	default:
+		envType = api.DevelopmentEnv
+	}
+	environment.EnvironmentType = envType
+	envBytes, _ := json.Marshal(environment)
+	_, err := environments.AddOrUpdateEnvironment(projectName, environment.Name, string(envBytes))
+	if err != nil {
+		fmt.Println(err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	}
+
 }
