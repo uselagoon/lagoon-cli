@@ -26,11 +26,6 @@ var loginCmd = &cobra.Command{
 func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	noopCloseFunc := func() error { return nil }
 
-	key, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-
 	if skipAgent != true {
 		// Connect to SSH agent to ask for unencrypted private keys
 		if sshAgentConn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
@@ -43,6 +38,11 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 				return ssh.PublicKeysCallback(sshAgent.Signers), sshAgentConn.Close
 			}
 		}
+	}
+
+	key, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
 	}
 
 	// Try to look for an unencrypted private key
