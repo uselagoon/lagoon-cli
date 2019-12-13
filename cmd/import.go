@@ -66,6 +66,7 @@ projects:
 var importCmd = &cobra.Command{
 	Use:     "import",
 	Aliases: []string{"i"},
+	Hidden:  true,
 	Short:   "Import a config from a yaml file",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
@@ -87,6 +88,7 @@ var importCmd = &cobra.Command{
 var parseCmd = &cobra.Command{
 	Use:     "parse",
 	Aliases: []string{"p"},
+	Hidden:  true,
 	Short:   "Parse lagoon output to import yml",
 	Run: func(cmd *cobra.Command, args []string) {
 		// validateToken(viper.GetString("current")) // get a new token if the current one is invalid
@@ -108,6 +110,7 @@ var parseCmd = &cobra.Command{
 var exportCmd = &cobra.Command{
 	Use:     "export",
 	Aliases: []string{"e"},
+	Hidden:  true,
 	Short:   "Export lagoon output to yml",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
