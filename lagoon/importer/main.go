@@ -1,5 +1,11 @@
 package importer
 
+/*
+Usage:
+
+lagoon import -I /path/to/file.yaml
+
+*/
 import (
 	"encoding/json"
 	"fmt"
@@ -93,33 +99,6 @@ type AddUserToGroup struct {
 	Members []AddUserToGroup `json:"members,omitempty"`
 	Role    string           `json:"role,omitempty"`
 }
-
-// example
-// var yamlData = `
-// groups:
-//   - name: example-com
-// users:
-//   - user:
-//       email: usera@example.com
-//       sshkey: ~/usera.pub
-//     groups:
-//       - name: example-com
-//         role: owner
-//   - user:
-//       email: userb@example.com
-//       sshkey: ~/userb.pub
-//     groups:
-//       - name: example-com
-//         role: developere
-// projects:
-//   - name: example-com
-//     giturl: git@github.com:example/example-com.git
-//     openshift: 1
-//     branches: "master|develop|staging"
-//     productionenvironment: master
-//     groups:
-//       - example-com
-// `
 
 // ImportData func
 func ImportData(importFile string, forceAction bool) {

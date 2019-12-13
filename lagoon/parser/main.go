@@ -1,5 +1,15 @@
 package parser
 
+/*
+Usage:
+
+lagoon export -p $projectname --force
+lagoon export --force
+
+lagoon parse -I /path/to/file.json
+
+*/
+
 import (
 	"encoding/json"
 	"fmt"
@@ -12,17 +22,25 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-// type lagoonImport struct {
-// 	Data struct {
-// 		AllProjects []importer.ExtendedProject `json:"-"`
-// 	} `json:"data"`
-// }
-
 type lagoonImport struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-// ParseJSONImport .
+// ParseJSONImport given a file path that contains a full all projects data dump from lagoon, parse it into something that the importer can use
+/*
+{
+	"data": {
+		"allProjects": [
+			{
+				"name": "credentialstest-project1",
+			},
+			{
+				"name": "credentialstest-project1",
+			}
+		]
+	}
+}
+*/
 func ParseJSONImport(jsonFile string) importer.LagoonImport {
 	jsonStr, err := ioutil.ReadFile(jsonFile) // just pass the file name
 	if err != nil {
@@ -124,6 +142,7 @@ func processParser(lagoonDataBytes []byte) []byte {
 	return yamlBytes
 }
 
+// A bunch of append if missing funcs for different types
 func appendIfMissingRocket(slice []api.NotificationRocketChat, i api.NotificationRocketChat) []api.NotificationRocketChat {
 	for _, ele := range slice {
 		if ele == i {
@@ -205,7 +224,7 @@ func appendIfMissingUsers(slice []importer.LagoonUsers, i importer.LagoonUsers) 
 	return append(slice, i)
 }
 
-// ParseProject .
+// ParseProject given a specific project name, get the json dump, then parse it to the import format
 func ParseProject(projectName string) ([]byte, error) {
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -306,7 +325,7 @@ func ParseProject(projectName string) ([]byte, error) {
 	return returnResult, nil
 }
 
-// ParseAllProjects .
+// ParseAllProjects export all projects from lagoon and parse them to the import format
 func ParseAllProjects() ([]byte, error) {
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
