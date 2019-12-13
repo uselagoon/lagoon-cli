@@ -34,7 +34,6 @@ lagoon [flags]
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
 * [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
-* [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
