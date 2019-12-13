@@ -17,18 +17,20 @@ import (
 
 // LagoonImport .
 type LagoonImport struct {
-	Groups         []api.Group                      `json:"groups,omitempty"`
-	Slack          []api.NotificationSlack          `json:"slack,omitempty"`
-	RocketChat     []api.NotificationRocketChat     `json:"rocketchat,omitempty"`
-	MicrosoftTeams []api.NotificationMicrosoftTeams `json:"microsoftteams,omitempty"`
-	Email          []api.NotificationEmail          `json:"email,omitempty"`
-	Users          []LagoonUsers                    `json:"users,omitempty"`
-	Projects       []LagoonProjects                 `json:"projects,omitempty"`
+	Groups        []api.Group `json:"groups,omitempty"`
+	Notifications struct {
+		Slack          []api.NotificationSlack          `json:"slack,omitempty"`
+		RocketChat     []api.NotificationRocketChat     `json:"rocketchat,omitempty"`
+		MicrosoftTeams []api.NotificationMicrosoftTeams `json:"microsoftteams,omitempty"`
+		Email          []api.NotificationEmail          `json:"email,omitempty"`
+	} `json:"notifications,omitempty"`
+	Users    []LagoonUsers    `json:"users,omitempty"`
+	Projects []LagoonProjects `json:"projects,omitempty"`
 }
 
 // LagoonProjects .
 type LagoonProjects struct {
-	Project       ExtendedProject     `json:"project,omitempty"`
+	Project       api.ProjectPatch    `json:"project,omitempty"`
 	Groups        []string            `json:"groups,omitempty"`
 	Notifications LagoonNotifications `json:"notifications,omitempty"`
 	Variables     []api.EnvVariable   `json:"variables,omitempty"`
@@ -73,7 +75,12 @@ type LagoonNotifications struct {
 
 // LagoonUser .
 type LagoonUser struct {
-	Email      string `json:"email,omitempty"`
+	Email   string              `json:"email,omitempty"`
+	SSHKeys []LagoonUserSSHKeys `json:"sshkeys,omitempty"`
+}
+
+// LagoonUserSSHKeys .
+type LagoonUserSSHKeys struct {
 	SSHKey     string `json:"sshkey,omitempty"`
 	KeyName    string `json:"keyname,omitempty"`
 	SSHKeyFile string `json:"sshkeyfile,omitempty"`
@@ -81,7 +88,7 @@ type LagoonUser struct {
 
 // AddUserToGroup .
 type AddUserToGroup struct {
-	User    api.User         `json:"user,omitempty"`
+	User    *api.User        `json:"user,omitempty"`
 	Name    string           `json:"name,omitempty"`
 	Members []AddUserToGroup `json:"members,omitempty"`
 	Role    string           `json:"role,omitempty"`
@@ -136,25 +143,29 @@ func ImportData(importFile string, forceAction bool) {
 	// next add users and any keys, then add them to any groups they need to be in
 	for _, user := range importedData.Users {
 		addUser(user.User, forceAction)
-		addKeyToUser(user.User, forceAction)
+		addKeysToUser(user.User, forceAction)
 		for _, group := range user.Groups {
 			addUserGroup(user.User, group, forceAction)
 		}
 	}
 	// create any notification providers
-	for _, slack := range importedData.Slack {
+	for _, slack := range importedData.Notifications.Slack {
 		addSlack(slack, forceAction)
 	}
-	for _, rocketchat := range importedData.RocketChat {
+	for _, rocketchat := range importedData.Notifications.RocketChat {
 		addRocketChat(rocketchat, forceAction)
 	}
 	// now add the projects
 	for _, project := range importedData.Projects {
-		fmt.Println(project.Project.ProductionEnvironment)
 		var lagoonProject api.ProjectPatch
 		projectBytes, _ := json.Marshal(project.Project)
 		json.Unmarshal(projectBytes, &lagoonProject)
 		addProject(lagoonProject, forceAction)
+		if lagoonProject.PrivateKey != "" {
+			// if our import has a private key, patch the project with it after adding the project.
+			// seems adding projects won't add the key if it is already defined
+			updateProject(lagoonProject.Name, api.ProjectPatch{PrivateKey: lagoonProject.PrivateKey, Name: lagoonProject.Name}, forceAction)
+		}
 		// add them to any groups they need to be in
 		for _, group := range project.Groups {
 			addGroupProject(project.Project.Name, group, forceAction)
@@ -197,7 +208,7 @@ func addRocketChats(rocketchats []string, name string, action bool) {
 		fmt.Println("Adding rocketchat", rocketchat, "to project", name)
 		_, err := projects.AddRocketChatNotificationToProject(name, rocketchat)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("\t", err)
 			if !yesNo("Continue?", action) {
 				os.Exit(1)
 			}
@@ -210,7 +221,7 @@ func addSlacks(slacks []string, name string, action bool) {
 		fmt.Println("Adding slack", slack, "to project", name)
 		_, err := projects.AddSlackNotificationToProject(name, slack)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("\t", err)
 			if !yesNo("Continue?", action) {
 				os.Exit(1)
 			}
@@ -232,9 +243,30 @@ func addGroupProject(name string, group string, action bool) {
 	}
 	_, err := users.AddProjectToGroup(projectGroup)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
+		}
+	}
+}
+
+func updateProject(projectName string, project api.ProjectPatch, action bool) {
+	jsonPatch, _ := json.Marshal(project)
+	fmt.Println("updating project", project.Name)
+	updateResult, err := projects.UpdateProject(project.Name, string(jsonPatch))
+	if err != nil {
+		fmt.Println("\t", err)
+		if !yesNo("Continue?", action) {
+			os.Exit(1)
+		}
+	} else {
+		var addedProject api.Project
+		err = json.Unmarshal([]byte(updateResult), &addedProject)
+		if err != nil {
+			fmt.Println("\t", err)
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
 		}
 	}
 }
@@ -244,22 +276,19 @@ func addProject(project api.ProjectPatch, action bool) {
 	fmt.Println("Adding project", project.Name)
 	addResult, err := projects.AddProject(project.Name, string(jsonPatch))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
-		//os.Exit(1)
 	} else {
 		var addedProject api.Project
 		err = json.Unmarshal([]byte(addResult), &addedProject)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("\t", err)
 			if !yesNo("Continue?", action) {
 				os.Exit(1)
 			}
-			//os.Exit(1)
 		}
-		// fmt.Println(addedProject)
 	}
 }
 
@@ -267,7 +296,7 @@ func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
 	fmt.Println("Adding rocketchat", rocketchat.Name)
 	_, err := projects.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -278,7 +307,7 @@ func addSlack(slack api.NotificationSlack, action bool) {
 	fmt.Println("Adding slack", slack.Name)
 	_, err := projects.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -289,7 +318,7 @@ func addGroup(group api.Group, action bool) {
 	fmt.Println("Adding group", group.Name)
 	_, err := users.AddGroup(group)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -303,47 +332,49 @@ func addUser(user LagoonUser, action bool) {
 	}
 	_, err := users.AddUser(userData)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
 	}
 }
 
-func addKeyToUser(user LagoonUser, action bool) {
+func addKeysToUser(user LagoonUser, action bool) {
 	userData := api.User{
 		Email: user.Email,
 	}
-	splitKey := strings.Split(user.SSHKey, " ")
-	var keyType api.SSHKeyType
-	// default to ssh-rsa, otherwise check if ssh-ed25519 as we only support these in lagoon
-	// will fail if neither are right
-	keyType = api.SSHRsa
-	if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
-		keyType = api.SSHEd25519
-	}
-	// if the sshkey has a comment/name in it, we can use that, otherwise define one using `keyname`
-	keyName := user.KeyName
-	if keyName == "" && len(splitKey) == 3 {
-		//strip new line
-		keyName = strings.TrimSuffix(splitKey[2], "\n")
-	} else if keyName == "" && len(splitKey) == 2 {
-		fmt.Println("No keyname defined")
-		if !yesNo("Continue?", action) {
-			os.Exit(1)
+	for _, key := range user.SSHKeys {
+		splitKey := strings.Split(key.SSHKey, " ")
+		var keyType api.SSHKeyType
+		// default to ssh-rsa, otherwise check if ssh-ed25519 as we only support these in lagoon
+		// will fail if neither are right
+		keyType = api.SSHRsa
+		if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
+			keyType = api.SSHEd25519
 		}
-	}
-	sshKey := api.SSHKey{
-		KeyType:  keyType,
-		KeyValue: splitKey[1],
-		Name:     keyName,
-	}
-	fmt.Println("Adding key to user", user.Email)
-	_, err := users.AddSSHKeyToUser(userData, sshKey)
-	if err != nil {
-		fmt.Println(err)
-		if !yesNo("Continue?", action) {
-			os.Exit(1)
+		// if the sshkey has a comment/name in it, we can use that, otherwise define one using `keyname`
+		keyName := key.KeyName
+		if keyName == "" && len(splitKey) == 3 {
+			//strip new line
+			keyName = strings.TrimSuffix(splitKey[2], "\n")
+		} else if keyName == "" && len(splitKey) == 2 {
+			fmt.Println("No keyname defined")
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
+		}
+		sshKey := api.SSHKey{
+			KeyType:  keyType,
+			KeyValue: splitKey[1],
+			Name:     keyName,
+		}
+		fmt.Println("Adding key to user", user.Email)
+		_, err := users.AddSSHKeyToUser(userData, sshKey)
+		if err != nil {
+			fmt.Println("\t", err)
+			if !yesNo("Continue?", action) {
+				os.Exit(1)
+			}
 		}
 	}
 }
@@ -379,7 +410,7 @@ func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	fmt.Println("Adding user", user.Email, "to group", group.Name, "with role", roleType)
 	_, err = users.AddUserToGroup(userGroupRole)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -404,7 +435,7 @@ func addProjectVariable(projectName string, variable api.EnvVariable, action boo
 	variable.Scope = envScope
 	_, err := projects.AddEnvironmentVariableToProject(projectName, variable)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -429,7 +460,7 @@ func addEnvironmentVariable(projectName string, environmentName string, variable
 	variable.Scope = envScope
 	_, err := environments.AddEnvironmentVariableToEnvironment(projectName, environmentName, variable)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}
@@ -461,7 +492,7 @@ func addEnvironmentToProject(projectName string, environment LagoonEnvironment, 
 	envBytes, _ := json.Marshal(environment)
 	_, err := environments.AddOrUpdateEnvironment(projectName, environment.Name, string(envBytes))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("\t", err)
 		if !yesNo("Continue?", action) {
 			os.Exit(1)
 		}

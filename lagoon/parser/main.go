@@ -7,59 +7,79 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/lagoon/importer"
 	"github.com/ghodss/yaml"
 )
 
+// type lagoonImport struct {
+// 	Data struct {
+// 		AllProjects []importer.ExtendedProject `json:"-"`
+// 	} `json:"data"`
+// }
+
 type lagoonImport struct {
-	Data struct {
-		AllProjects []importer.ExtendedProject `json:"allProjects"`
-	} `json:"data"`
+	Data map[string]interface{} `json:"data"`
 }
 
-// ParseJSONToImport .
-func ParseJSONToImport(jsonFile string) importer.LagoonImport {
+// ParseJSONImport .
+func ParseJSONImport(jsonFile string) importer.LagoonImport {
 	jsonStr, err := ioutil.ReadFile(jsonFile) // just pass the file name
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	var lagoonImport lagoonImport
+	var lagoonImporter lagoonImport
 	var returnLagoonImport importer.LagoonImport
-	json.Unmarshal([]byte(jsonStr), &lagoonImport)
+	json.Unmarshal([]byte(jsonStr), &lagoonImporter)
+	var lagoonData []importer.ExtendedProject
+	lagoonDataBytes, _ := json.Marshal(lagoonImporter)
+	json.Unmarshal(lagoonDataBytes, &lagoonData)
+	for _, projects := range lagoonImporter.Data {
+		lagoonDataBytes, _ := json.Marshal(projects)
+		yamlBytes := processParser(lagoonDataBytes)
+		fmt.Println(string(yamlBytes))
+		return returnLagoonImport
+	}
+	return returnLagoonImport
+}
+
+func processParser(lagoonDataBytes []byte) []byte {
+	var returnLagoonImport importer.LagoonImport
 	var lagoonUsers []importer.LagoonUsers
-	for ind, project := range lagoonImport.Data.AllProjects {
+	var lagoonData []importer.ExtendedProject
+	json.Unmarshal(lagoonDataBytes, &lagoonData)
+	for ind, project := range lagoonData {
 		var lagoonProject importer.ExtendedProject
 		projectBytes, _ := json.Marshal(project)
 		json.Unmarshal(projectBytes, &lagoonProject)
-		var projectPatch importer.ExtendedProject
+		var projectPatch api.ProjectPatch
 		json.Unmarshal(projectBytes, &projectPatch)
-		projectPatch.Groups = nil
-		projectPatch.Notifications = nil
 		returnLagoonImport.Projects = append(returnLagoonImport.Projects, importer.LagoonProjects{Project: projectPatch})
 		for _, k := range lagoonProject.Groups {
 			returnLagoonImport.Projects[ind].Groups = appendIfMissingGroup(returnLagoonImport.Projects[ind].Groups, k.Name)
 			for _, m := range k.Members {
+				var userKeys []importer.LagoonUserSSHKeys
+				for _, key := range m.User.SSHKeys {
+					userKeys = append(userKeys, importer.LagoonUserSSHKeys{SSHKey: string(key.KeyType) + " " + key.KeyValue, KeyName: key.Name})
+				}
 				lagoonUser := importer.LagoonUsers{
 					User: importer.LagoonUser{
-						Email: m.User.Email,
+						Email:   m.User.Email,
+						SSHKeys: userKeys,
 					},
 				}
 				lagoonUserGroupRole := importer.AddUserToGroup{
 					Name: k.Name,
-					Role: k.Role,
+					Role: m.Role,
 				}
 				lagoonUser.Groups = appendIfMissingGroups(lagoonUser.Groups, lagoonUserGroupRole)
 				lagoonUsers = appendIfMissingUsers(lagoonUsers, lagoonUser)
 			}
 		}
-		// returnLagoonImport.Users = lagoonUser
-		// for _, u := range lagoonUsers {
-		returnLagoonImport.Users = lagoonUsers //appendIfMissingUsers(returnLagoonImport.Users, u)
-		// }
+		returnLagoonImport.Users = lagoonUsers
 		for _, k := range lagoonProject.Groups {
-			// returnLagoonImport.Groups = appendIfMissingGroups(returnLagoonImport.Groups, k)
-			returnLagoonImport.Groups = append(returnLagoonImport.Groups, api.Group{Name: k.Name})
+			returnLagoonImport.Groups = appendIfMissingGroups2(returnLagoonImport.Groups, api.Group{Name: k.Name})
 		}
 		for _, k := range project.Notifications {
 			// fmt.Println(k)
@@ -77,40 +97,31 @@ func ParseJSONToImport(jsonFile string) importer.LagoonImport {
 				var rocketNotification api.NotificationRocketChat
 				notifBytes, _ := json.Marshal(notification)
 				json.Unmarshal(notifBytes, &rocketNotification)
-				returnLagoonImport.RocketChat = appendIfMissingRocket(returnLagoonImport.RocketChat, rocketNotification)
+				returnLagoonImport.Notifications.RocketChat = appendIfMissingRocket(returnLagoonImport.Notifications.RocketChat, rocketNotification)
 				returnLagoonImport.Projects[ind].Notifications.RocketChat = append(returnLagoonImport.Projects[ind].Notifications.RocketChat, notification.Name)
 			case "NotificationSlack":
 				var slackNotification api.NotificationSlack
 				notifBytes, _ := json.Marshal(notification)
 				json.Unmarshal(notifBytes, &slackNotification)
-				returnLagoonImport.Slack = appendIfMissingSlack(returnLagoonImport.Slack, slackNotification)
+				returnLagoonImport.Notifications.Slack = appendIfMissingSlack(returnLagoonImport.Notifications.Slack, slackNotification)
 				returnLagoonImport.Projects[ind].Notifications.Slack = append(returnLagoonImport.Projects[ind].Notifications.Slack, notification.Name)
 			case "NotificationEmail":
 				var emailNotification api.NotificationEmail
 				notifBytes, _ := json.Marshal(notification)
 				json.Unmarshal(notifBytes, &emailNotification)
-				returnLagoonImport.Email = appendIfMissingEmail(returnLagoonImport.Email, emailNotification)
+				returnLagoonImport.Notifications.Email = appendIfMissingEmail(returnLagoonImport.Notifications.Email, emailNotification)
 				returnLagoonImport.Projects[ind].Notifications.Email = append(returnLagoonImport.Projects[ind].Notifications.Email, notification.Name)
 			case "NotificationMicrosoftTeams":
 				var teamsNotification api.NotificationMicrosoftTeams
 				notifBytes, _ := json.Marshal(notification)
 				json.Unmarshal(notifBytes, &teamsNotification)
-				returnLagoonImport.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.MicrosoftTeams, teamsNotification)
+				returnLagoonImport.Notifications.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.Notifications.MicrosoftTeams, teamsNotification)
 				returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams = append(returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams, notification.Name)
 			}
 		}
 	}
-	for _, k := range returnLagoonImport.Projects {
-		fmt.Println(k.Notifications, k.Project.Name, k.Project.ID, k.Project.Name, k.Groups)
-		// fmt.Println(k.Project.Name)
-	}
-	// for _, k := range returnLagoonImport.RocketChat {
-	// 	fmt.Println(k)
-	// }
 	yamlBytes, _ := yaml.Marshal(returnLagoonImport)
-	fmt.Println(string(yamlBytes))
-	// fmt.Println(returnLagoonImport.Users)
-	return returnLagoonImport
+	return yamlBytes
 }
 
 func appendIfMissingRocket(slice []api.NotificationRocketChat, i api.NotificationRocketChat) []api.NotificationRocketChat {
@@ -167,9 +178,18 @@ func appendIfMissingGroups(slice []importer.AddUserToGroup, i importer.AddUserTo
 	return append(slice, i)
 }
 
+func appendIfMissingGroups2(slice []api.Group, i api.Group) []api.Group {
+	for _, ele := range slice {
+		if ele.Name == i.Name {
+			return slice
+		}
+	}
+	return append(slice, i)
+}
+
 func appendIfMissingUser(slice []importer.LagoonUser, i importer.LagoonUser) []importer.LagoonUser {
 	for _, ele := range slice {
-		if ele == i {
+		if ele.Email == i.Email {
 			return slice
 		}
 	}
@@ -178,9 +198,210 @@ func appendIfMissingUser(slice []importer.LagoonUser, i importer.LagoonUser) []i
 
 func appendIfMissingUsers(slice []importer.LagoonUsers, i importer.LagoonUsers) []importer.LagoonUsers {
 	for _, ele := range slice {
-		if ele.User == i.User {
+		if ele.User.Email == i.User.Email {
 			return slice
 		}
 	}
 	return append(slice, i)
+}
+
+// ParseProject .
+func ParseProject(projectName string) ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
+		Query: `fragment NotificationSlack on NotificationSlack {
+			webhook
+		  name
+			channel
+		}
+		fragment NotificationRocket on NotificationRocketChat {
+			webhook
+		  name
+			channel
+		}
+		# fragment NotificationEmail on NotificationEmail {
+		# 	emailAddress
+		#   name
+		# }
+		# fragment NotificationTeams on NotificationMicrosoftTeams {
+		# 	webhook
+		#   name
+		# }
+		query Projects ($name: String!) {
+			projectByName(name: $name) {
+			name
+			autoIdle
+			branches
+			pullrequests
+			privateKey
+			productionEnvironment
+			activeSystemsDeploy
+			activeSystemsTask
+			activeSystemsRemove
+			activeSystemsPromote
+			storageCalc
+			openshiftProjectPattern
+			developmentEnvironmentsLimit
+			gitUrl
+			autoIdle
+			groups{
+			  name
+			  members{
+				user{
+				  email
+				  sshKeys{
+					name
+					keyType
+					keyValue
+				  }
+				  firstName
+				  lastName
+				}
+				role
+			  }
+			}
+			notifications {
+			  __typename
+			  ...NotificationRocket
+			  ...NotificationSlack
+			  # ...NotificationEmail
+			  # ...NotificationTeams
+			}
+			openshift{
+			  id
+			}
+			envVariables {
+			  name
+			  scope
+			  value
+			}
+			environments {
+			  id
+			  name
+			  openshiftProjectName
+			  autoIdle
+			  envVariables {
+				name
+				scope
+				value
+			  }
+			}
+		  }
+		}`,
+		Variables: map[string]interface{}{
+			"name": projectName,
+		},
+		MappedResult: "projectByName",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	retData := string("[" + string(returnResult) + "]")
+	yamlBytes := processParser([]byte(retData))
+	fmt.Println(string(yamlBytes))
+	return returnResult, nil
+}
+
+// ParseAllProjects .
+func ParseAllProjects() ([]byte, error) {
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+	customReq := api.CustomRequest{
+		Query: `fragment NotificationSlack on NotificationSlack {
+			webhook
+		  name
+			channel
+		}
+		fragment NotificationRocket on NotificationRocketChat {
+			webhook
+		  name
+			channel
+		}
+		# fragment NotificationEmail on NotificationEmail {
+		# 	emailAddress
+		#   name
+		# }
+		# fragment NotificationTeams on NotificationMicrosoftTeams {
+		# 	webhook
+		#   name
+		# }
+		query Projects {
+			allProjects {
+			name
+			autoIdle
+			branches
+			pullrequests
+			privateKey
+			productionEnvironment
+			activeSystemsDeploy
+			activeSystemsTask
+			activeSystemsRemove
+			activeSystemsPromote
+			storageCalc
+			openshiftProjectPattern
+			developmentEnvironmentsLimit
+			gitUrl
+			autoIdle
+			groups{
+			  name
+			  members{
+				user{
+				  email
+				  sshKeys{
+					name
+					keyType
+					keyValue
+				  }
+				  firstName
+				  lastName
+				}
+				role
+			  }
+			}
+			notifications {
+			  __typename
+			  ...NotificationRocket
+			  ...NotificationSlack
+			  # ...NotificationEmail
+			  # ...NotificationTeams
+			}
+			openshift{
+			  id
+			}
+			envVariables {
+			  name
+			  scope
+			  value
+			}
+			environments {
+			  id
+			  name
+			  openshiftProjectName
+			  autoIdle
+			  envVariables {
+				name
+				scope
+				value
+			  }
+			}
+		  }
+		}`,
+		Variables:    map[string]interface{}{},
+		MappedResult: "allProjects",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	// fmt.Println(string(returnResult))
+	// _ = processParser(returnResult)
+	yamlBytes := processParser([]byte(returnResult))
+	fmt.Println(string(yamlBytes))
+	return returnResult, nil
 }

@@ -89,7 +89,7 @@ var parseCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Parse lagoon output to import yml",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		// validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		if showExample {
 			fmt.Println(example)
 			os.Exit(0)
@@ -100,8 +100,28 @@ var parseCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
-			parser.ParseJSONToImport(importFile)
+			parser.ParseJSONImport(importFile)
 		}
+	},
+}
+
+var exportCmd = &cobra.Command{
+	Use:     "export",
+	Aliases: []string{"e"},
+	Short:   "Export lagoon output to yml",
+	Run: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		if cmdProjectName == "" {
+			if yesNo("Are you sure you want to export lagoon output for all projects?") {
+				_, _ = parser.ParseAllProjects()
+				// fmt.Println(string(data))
+			}
+		} else {
+			if yesNo("Are you sure you want to export lagoon output for " + cmdProjectName + "?") {
+				_, _ = parser.ParseProject(cmdProjectName)
+			}
+		}
+
 	},
 }
 
