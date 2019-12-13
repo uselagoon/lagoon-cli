@@ -7,7 +7,7 @@ Delete a Lagoon instance configuration
 Delete a Lagoon instance configuration
 
 ```
-lagoon config delete [-l lagoonname] [flags]
+lagoon config delete [flags]
 ```
 
 ### Options

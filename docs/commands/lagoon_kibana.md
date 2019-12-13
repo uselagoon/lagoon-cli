@@ -1,19 +1,19 @@
-## lagoon config default
+## lagoon kibana
 
-Set the default Lagoon to use
+Launch the kibana interface
 
 ### Synopsis
 
-Set the default Lagoon to use
+Launch the kibana interface
 
 ```
-lagoon config default [flags]
+lagoon kibana [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -h, --help   help for kibana
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +34,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

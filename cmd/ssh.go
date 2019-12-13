@@ -50,7 +50,6 @@ var sshEnvCmd = &cobra.Command{
 				},
 				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 			}
-			fmt.Println(config.Auth[0])
 			defer closeSSHAgent()
 			lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
 		}

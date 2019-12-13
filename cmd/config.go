@@ -21,6 +21,8 @@ type LagoonConfigFlags struct {
 	Port     string `json:"port,omitempty"`
 	GraphQL  string `json:"graphql,omitempty"`
 	Token    string `json:"token,omitempty"`
+	UI       string `json:"ui,omitempty"`
+	Kibana   string `json:"kibana,omitempty"`
 }
 
 func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
@@ -45,7 +47,7 @@ var configCmd = &cobra.Command{
 }
 
 var configDefaultCmd = &cobra.Command{
-	Use:   "default [-l lagoonname]",
+	Use:   "default",
 	Short: "Set the default Lagoon to use",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
@@ -68,7 +70,6 @@ var configDefaultCmd = &cobra.Command{
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
-		//fmt.Println(fmt.Sprintf("Updating default lagoon to %s", lagoonName))
 	},
 }
 
@@ -86,6 +87,8 @@ var configLagoonsCmd = &cobra.Command{
 				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Hostname"), viper.GetString("lagoons."+lagoon.String()+".hostname")))
 				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("GraphQL"), viper.GetString("lagoons."+lagoon.String()+".graphql")))
 				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Port"), viper.GetInt("lagoons."+lagoon.String()+".port")))
+				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("UI"), viper.GetInt("lagoons."+lagoon.String()+".ui")))
+				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Kibana"), viper.GetInt("lagoons."+lagoon.String()+".kibana")))
 			}
 			fmt.Println("\nYour default Lagoon is:")
 			fmt.Println(fmt.Sprintf("%s: %s\n", aurora.Yellow("Name"), viper.Get("default")))
@@ -99,6 +102,8 @@ var configLagoonsCmd = &cobra.Command{
 					"hostname": viper.GetString("lagoons." + lagoon.String() + ".hostname"),
 					"graphql":  viper.GetString("lagoons." + lagoon.String() + ".graphql"),
 					"port":     viper.GetString("lagoons." + lagoon.String() + ".port"),
+					"ui":       viper.GetString("lagoons." + lagoon.String() + ".ui"),
+					"kibana":   viper.GetString("lagoons." + lagoon.String() + ".Kibana"),
 				}
 				lagoonsData = append(lagoonsData, lagoonMapData)
 			}
@@ -128,6 +133,12 @@ var configAddCmd = &cobra.Command{
 			viper.Set("lagoons."+lagoonConfig.Lagoon+".hostname", lagoonConfig.Hostname)
 			viper.Set("lagoons."+lagoonConfig.Lagoon+".port", lagoonConfig.Port)
 			viper.Set("lagoons."+lagoonConfig.Lagoon+".graphql", lagoonConfig.GraphQL)
+			if lagoonConfig.UI != "" {
+				viper.Set("lagoons."+lagoonConfig.Lagoon+".ui", lagoonConfig.UI)
+			}
+			if lagoonConfig.Kibana != "" {
+				viper.Set("lagoons."+lagoonConfig.Lagoon+".kibana", lagoonConfig.Kibana)
+			}
 			if lagoonConfig.Token != "" {
 				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
 			}
@@ -143,6 +154,8 @@ var configAddCmd = &cobra.Command{
 					"hostname": lagoonConfig.Hostname,
 					"graphql":  lagoonConfig.GraphQL,
 					"port":     lagoonConfig.Port,
+					"ui":       lagoonConfig.UI,
+					"kibana":   lagoonConfig.Kibana,
 				},
 			}
 			output.RenderResult(resultData, outputOptions)
@@ -153,7 +166,7 @@ var configAddCmd = &cobra.Command{
 }
 
 var configDeleteCmd = &cobra.Command{
-	Use:     "delete [-l lagoonname]",
+	Use:     "delete",
 	Aliases: []string{"d"},
 	Short:   "Delete a Lagoon instance configuration",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -184,4 +197,6 @@ func init() {
 	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
 	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
 	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
+	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "", "Lagoon UI location (https://ui-lagoon-master.ch.amazee.io)")
+	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
 }

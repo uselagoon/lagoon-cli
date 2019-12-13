@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,16 +15,37 @@ var webCmd = &cobra.Command{
 	Use:   "web",
 	Short: "Launch the web user interface",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if len(args) < 1 {
+		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
 			os.Exit(1)
 		}
-		projectName := args[0]
 
 		urlBuilder := strings.Builder{}
 		urlBuilder.WriteString(viper.GetString("lagoons." + cmdLagoon + ".ui"))
-		urlBuilder.WriteString(fmt.Sprintf("/project?name=%s", projectName))
+		if viper.GetString("lagoons."+cmdLagoon+".ui") != "" {
+			urlBuilder.WriteString(fmt.Sprintf("/projects/%s", cmdProjectName))
+		} else {
+			output.RenderError("unable to determine url for ui, is one set?", outputOptions)
+			os.Exit(1)
+		}
+
+		url := urlBuilder.String()
+		fmt.Println(fmt.Sprintf("Opening %s", url))
+		_ = browser.OpenURL(url)
+	},
+}
+
+var kibanaCmd = &cobra.Command{
+	Use:   "kibana",
+	Short: "Launch the kibana interface",
+	Run: func(cmd *cobra.Command, args []string) {
+		urlBuilder := strings.Builder{}
+		urlBuilder.WriteString(viper.GetString("lagoons." + cmdLagoon + ".kibana"))
+		if viper.GetString("lagoons."+cmdLagoon+".ui") == "" {
+			output.RenderError("unable to determine url for kibana, is one set?", outputOptions)
+			os.Exit(1)
+		}
 
 		url := urlBuilder.String()
 		fmt.Println(fmt.Sprintf("Opening %s", url))
