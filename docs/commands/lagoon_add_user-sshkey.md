@@ -1,19 +1,22 @@
-## lagoon config default
+## lagoon add user-sshkey
 
-Set the default Lagoon to use
+Add sshkey to a user
 
 ### Synopsis
 
-Set the default Lagoon to use
+Add sshkey to a user
 
 ```
-lagoon config default [flags]
+lagoon add user-sshkey [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -E, --email string     Email address of the user
+  -h, --help             help for user-sshkey
+  -N, --keyname string   Name of the sshkey (optional, if not provided will try use what is in the pubkey file)
+  -K, --pubkey string    file location to the public key to add
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +37,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

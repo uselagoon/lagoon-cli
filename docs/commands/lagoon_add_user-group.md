@@ -1,19 +1,22 @@
-## lagoon config default
+## lagoon add user-group
 
-Set the default Lagoon to use
+Add user to a group in lagoon
 
 ### Synopsis
 
-Set the default Lagoon to use
+Add user to a group in lagoon
 
 ```
-lagoon config default [flags]
+lagoon add user-group [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -E, --email string   Email address of the user
+  -h, --help           help for user-group
+  -N, --name string    Name of the group
+  -R, --role string    Role in the group [owner, maintainer, developer, reporter, guest]
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +37,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

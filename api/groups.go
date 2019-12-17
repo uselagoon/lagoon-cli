@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -24,6 +26,9 @@ func (api *Interface) AddGroup(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -49,6 +54,9 @@ func (api *Interface) AddGroupWithParent(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -77,6 +85,9 @@ func (api *Interface) UpdateGroup(group UpdateGroup) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -99,6 +110,9 @@ func (api *Interface) DeleteGroup(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -127,6 +141,9 @@ func (api *Interface) AddUserToGroup(user AddUserToGroup) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -150,6 +167,9 @@ func (api *Interface) AddGroupToProject(group ProjectToGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addUserToGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -175,6 +195,9 @@ func (api *Interface) RemoveGroupFromProject(group ProjectToGroup) ([]byte, erro
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -199,6 +222,9 @@ func (api *Interface) RemoveUserFromGroup(user UserGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["removeUserFromGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }

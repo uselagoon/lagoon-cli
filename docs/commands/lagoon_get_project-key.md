@@ -1,19 +1,20 @@
-## lagoon config default
+## lagoon get project-key
 
-Set the default Lagoon to use
+Get a projects key
 
 ### Synopsis
 
-Set the default Lagoon to use
+Get a projects key
 
 ```
-lagoon config default [flags]
+lagoon get project-key [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -h, --help     help for project-key
+      --reveal   Reveal the variable values
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +35,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
 

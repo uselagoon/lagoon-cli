@@ -37,25 +37,18 @@ var deleteProjectCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Delete a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		var projectName string
-		if len(args) < 1 {
-			if cmdProject.Name != "" {
-				projectName = cmdProject.Name
-			} else {
-				fmt.Println("Not enough arguments. Requires: project name")
-				cmd.Help()
-				os.Exit(1)
-			}
-		} else {
-			projectName = args[0]
+		if cmdProjectName == "" {
+			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
+			os.Exit(1)
 		}
 
 		if !outputOptions.JSON {
-			fmt.Println(fmt.Sprintf("Deleting %s", projectName))
+			fmt.Println(fmt.Sprintf("Deleting %s", cmdProjectName))
 		}
 
 		if yesNo() {
-			deleteResult, err := projects.DeleteProject(projectName)
+			deleteResult, err := projects.DeleteProject(cmdProjectName)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)

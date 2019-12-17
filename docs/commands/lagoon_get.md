@@ -34,4 +34,5 @@ Get info on a project, or deployment
 * [lagoon get deployment](lagoon_get_deployment.md)	 - Get build log by remote id
 * [lagoon get environment](lagoon_get_environment.md)	 - Details about an environment
 * [lagoon get project](lagoon_get_project.md)	 - Details about a project
+* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects key
 

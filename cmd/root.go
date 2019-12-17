@@ -120,9 +120,10 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployCmd)
-	rootCmd.AddCommand(pygmyCmd)
-	// rootCmd.AddCommand(sshEnvCmd) //@TODO
+	rootCmd.AddCommand(devCmd)
+	rootCmd.AddCommand(sshEnvCmd)
 	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(kibanaCmd)
 	rootCmd.AddCommand(versionCmd)
 }
 
@@ -189,10 +190,10 @@ func initConfig() {
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
 	cmdProject, _ = app.GetLocalProject()
-	if cmdProject.Name != "" {
+	if cmdProject.Name != "" && cmdProjectName == "" {
 		cmdProjectName = cmdProject.Name
 	}
-	if cmdProject.Environment != "" {
+	if cmdProject.Environment != "" && cmdProjectEnvironment == "" {
 		cmdProjectEnvironment = cmdProject.Environment
 	}
 

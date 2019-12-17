@@ -37,9 +37,9 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             GO111MODULE=auto go get github.com/tcnksm/ghr
-            for BUILD in $(ls builds); do tar --transform="flags=r;s|${BUILD}|lagoon|" -czf builds/${BUILD}.tar.gz -C builds ${BUILD}; done
             BODY=$(cat builds/release_template.md | sed 's@CIRCLE_TAG@'"${CIRCLE_TAG}"'@g')
             rm ./builds/README.md ./builds/release_template.md
+            for BUILD in $(ls builds); do tar --transform="flags=r;s|${BUILD}|lagoon|" -czf builds/${BUILD}.tar.gz -C builds ${BUILD}; done
             ghr -n "Lagoon CLI v${CIRCLE_TAG}" -b "${BODY}" -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ./builds/
 workflows:
   version: 2

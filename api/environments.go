@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -25,6 +27,9 @@ func (api *Interface) GetEnvironmentByName(environment EnvironmentByName, fragme
 	jsonBytes, err := json.Marshal(reMappedResult["environmentByName"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -76,6 +81,9 @@ func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -101,6 +109,9 @@ func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) ([]byte, 
 	if err != nil {
 		return []byte(""), err
 	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
+	}
 	return jsonBytes, nil
 }
 
@@ -123,6 +134,9 @@ func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) ([]byte, 
 	jsonBytes, err := json.Marshal(reMappedResult["deleteEnvironment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }
@@ -148,6 +162,9 @@ func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices)
 	jsonBytes, err := json.Marshal(reMappedResult["setEnvironmentServices"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if string(jsonBytes) == "null" {
+		return []byte(""), errors.New("graphql: returned null")
 	}
 	return jsonBytes, nil
 }

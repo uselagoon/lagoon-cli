@@ -136,9 +136,41 @@ var getEnvironmentCmd = &cobra.Command{
 	},
 }
 
+var getProjectKeyCmd = &cobra.Command{
+	Use:   "project-key",
+	Short: "Get a projects key",
+	Run: func(cmd *cobra.Command, args []string) {
+		getProjectFlags := parseGetFlags(*cmd.Flags())
+		if getProjectFlags.Project == "" {
+			fmt.Println("Not enough arguments. Requires: project name")
+			cmd.Help()
+			os.Exit(1)
+		}
+		returnedJSON, err := projects.GetProjectKey(getProjectFlags.Project, revealValue)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		if len(dataMain.Data) == 0 {
+			output.RenderError("no data returned", outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
 func init() {
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getDeploymentCmd)
 	getCmd.AddCommand(getEnvironmentCmd)
+	getCmd.AddCommand(getProjectKeyCmd)
+	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

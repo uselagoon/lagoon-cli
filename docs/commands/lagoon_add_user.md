@@ -1,19 +1,22 @@
-## lagoon config default
+## lagoon add user
 
-Set the default Lagoon to use
+Add user to lagoon
 
 ### Synopsis
 
-Set the default Lagoon to use
+Add user to lagoon
 
 ```
-lagoon config default [flags]
+lagoon add user [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -E, --email string       Email address of the user
+  -F, --firstName string   Firstname of the user
+  -h, --help               help for user
+  -L, --lastName string    Lastname of the user
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +37,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

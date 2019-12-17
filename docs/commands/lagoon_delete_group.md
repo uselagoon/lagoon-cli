@@ -1,19 +1,20 @@
-## lagoon config default
+## lagoon delete group
 
-Set the default Lagoon to use
+Delete group from lagoon
 
 ### Synopsis
 
-Set the default Lagoon to use
+Delete group from lagoon
 
 ```
-lagoon config default [flags]
+lagoon delete group [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -h, --help          help for group
+  -N, --name string   Name of the group
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +35,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 
