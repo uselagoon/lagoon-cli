@@ -22,6 +22,7 @@ github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7
 github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfcXa63jLwjI0eiQQMgzzUDFVpN/nH/eA=
 github.com/cpuguy83/go-md2man v1.0.10 h1:BSKMNlYxDvnunlTymqtgONjNnaRV1sTpcovwwjF22jk=
 github.com/cpuguy83/go-md2man v1.0.10/go.mod h1:SmD6nW6nTyfqj6ABTjUi3V3JVMnlJmwcJI5acqYI6dE=
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
@@ -36,13 +37,8 @@ github.com/docker/go-units v0.4.0 h1:3uh0PgVws3nIA0Q+MwDC8yjEPf9zjRfZZWXZYDct3Tw
 github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
-github.com/fubarhouse/pygmy v0.0.0-20190806115455-1074d358cc2c h1:sOdFmttkj4Ch/nRdl905S/kqV+8mdsirJ41CoVmIjPQ=
-github.com/fubarhouse/pygmy-go v0.0.0-20191122051332-d8aace3aea92 h1:pXyBY6ZdgUYlnFd7dkos+sclrYYKvJ/o0r8giI/YjRE=
-github.com/fubarhouse/pygmy-go v0.0.0-20191122051332-d8aace3aea92/go.mod h1:OllS2JQ3ltcR8MgE25qbRgJ/bMOLgOYxjJEosfwW5r4=
-github.com/fubarhouse/pygmy-go v0.0.0-20191122104014-5623c7440d9a h1:vQL8GSND106xvbvqXIZvSve7ikIC/4ZSb+yAmqAzmRc=
-github.com/fubarhouse/pygmy-go v0.0.0-20191122104014-5623c7440d9a/go.mod h1:OllS2JQ3ltcR8MgE25qbRgJ/bMOLgOYxjJEosfwW5r4=
-github.com/fubarhouse/pygmy-go v0.0.0-20191212224158-b025519053a5 h1:apMrtpKmyo1ShYCOFkKNE5JfVIVymfCp5zFjD//421I=
-github.com/fubarhouse/pygmy-go v0.0.0-20191212224158-b025519053a5/go.mod h1:OllS2JQ3ltcR8MgE25qbRgJ/bMOLgOYxjJEosfwW5r4=
+github.com/fubarhouse/pygmy-go v0.0.0-20191217045747-74419bb4e21d h1:fUhZ73nog2WuXwKL0f7v4bQeizPtrDJfN9wUEZm+niQ=
+github.com/fubarhouse/pygmy-go v0.0.0-20191217045747-74419bb4e21d/go.mod h1:OllS2JQ3ltcR8MgE25qbRgJ/bMOLgOYxjJEosfwW5r4=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
@@ -155,6 +151,7 @@ github.com/spf13/viper v1.4.0/go.mod h1:PTJ7Z/lr49W6bUbkmS1V3by4uWynFiR9p7+dSq/y
 github.com/spf13/viper v1.5.0 h1:GpsTwfsQ27oS/Aha/6d1oD7tpKIqWnOA6tgOX9HHkt4=
 github.com/spf13/viper v1.5.0/go.mod h1:AkYRkVJF8TkSG/xet6PzXX+l39KhhXa2pdqVSxnTcn4=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
