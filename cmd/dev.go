@@ -47,10 +47,12 @@ var devRestartCmd = &cobra.Command{
 	Long:  `This command will trigger the Down and Up commands`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		devConfig.Key, _ = cmd.Flags().GetString("key")
+		key, _ := cmd.Flags().GetString("key")
 		devConfig.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		devConfig.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
+		fmt.Println(devConfig.Services)
 		pygmy.Restart(devConfig)
+		pygmy.SshKeyAdd(devConfig, key)
 	},
 }
 
@@ -72,10 +74,11 @@ configurations designed for use with Amazee.io local development.
 It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		devConfig.Key, _ = cmd.Flags().GetString("key")
+		key, _ := cmd.Flags().GetString("key")
 		devConfig.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		devConfig.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 		pygmy.Up(devConfig)
+		pygmy.SshKeyAdd(devConfig, key)
 	},
 }
 
@@ -99,22 +102,22 @@ var devVersionCmd = &cobra.Command{
 }
 
 func init() {
-	devCmd.AddCommand(pygmyCleanCmd)
-	devCmd.AddCommand(pygmyRestartCmd)
-	devCmd.AddCommand(pygmyStatusCmd)
-	devCmd.AddCommand(pygmyStopCmd)
-	devCmd.AddCommand(pygmyUpCmd)
-	devCmd.AddCommand(pygmyUpdateCmd)
-	devCmd.AddCommand(pygmyVersionCmd)
+	devCmd.AddCommand(devCleanCmd)
+	devCmd.AddCommand(devRestartCmd)
+	devCmd.AddCommand(devStatusCmd)
+	devCmd.AddCommand(devStopCmd)
+	devCmd.AddCommand(devUpCmd)
+	devCmd.AddCommand(devUpdateCmd)
+	devCmd.AddCommand(devVersionCmd)
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
-	pygmyUpCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	pygmyUpCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
-	pygmyUpCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+	devUpCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	devUpCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	devUpCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
-	pygmyRestartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	pygmyRestartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
-	pygmyRestartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+	devRestartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	devRestartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	devRestartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 }
