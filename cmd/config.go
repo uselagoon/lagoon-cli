@@ -87,8 +87,8 @@ var configLagoonsCmd = &cobra.Command{
 				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Hostname"), viper.GetString("lagoons."+lagoon.String()+".hostname")))
 				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("GraphQL"), viper.GetString("lagoons."+lagoon.String()+".graphql")))
 				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Port"), viper.GetInt("lagoons."+lagoon.String()+".port")))
-				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("UI"), viper.GetInt("lagoons."+lagoon.String()+".ui")))
-				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Kibana"), viper.GetInt("lagoons."+lagoon.String()+".kibana")))
+				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("UI"), viper.GetString("lagoons."+lagoon.String()+".ui")))
+				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Kibana"), viper.GetString("lagoons."+lagoon.String()+".kibana")))
 			}
 			fmt.Println("\nYour default Lagoon is:")
 			fmt.Println(fmt.Sprintf("%s: %s\n", aurora.Yellow("Name"), viper.Get("default")))
