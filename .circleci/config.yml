@@ -48,7 +48,8 @@ workflows:
       - build:
           filters:
             branches:
-              only: /.*/
+              # only: /.*/
+              ignore: gh-pages
             tags:
               only: /^\d+\.\d+\.\d+$/
       - deploy:
