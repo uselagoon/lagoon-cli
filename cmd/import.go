@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
@@ -74,13 +75,26 @@ var importCmd = &cobra.Command{
 			fmt.Println(example)
 			os.Exit(0)
 		}
-		if importFile == "" {
-			fmt.Println("Not enough arguments. Requires: path to file to import")
-			cmd.Help()
-			os.Exit(1)
-		}
-		if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
-			importer.ImportData(importFile, forceAction)
+		stat, _ := os.Stdin.Stat()
+		if (stat.Mode() & os.ModeCharDevice) == 0 {
+			// check if we are getting data froms stdin
+			scanner := bufio.NewScanner(os.Stdin)
+			for scanner.Scan() {
+				fmt.Println(scanner.Text())
+			}
+			if err := scanner.Err(); err != nil {
+				fmt.Fprintln(os.Stderr, "reading standard input:", err)
+			}
+		} else {
+			// otherwise we can read from a file
+			if importFile == "" {
+				fmt.Println("Not enough arguments. Requires: path to file to import")
+				cmd.Help()
+				os.Exit(1)
+			}
+			if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
+				importer.ImportData(importFile, forceAction)
+			}
 		}
 	},
 }
@@ -91,17 +105,24 @@ var parseCmd = &cobra.Command{
 	Hidden:  true,
 	Short:   "Parse lagoon output to import yml",
 	Run: func(cmd *cobra.Command, args []string) {
-		// validateToken(viper.GetString("current")) // get a new token if the current one is invalid
-		if showExample {
-			fmt.Println(example)
-			os.Exit(0)
-		}
-		if importFile == "" {
-			fmt.Println("Not enough arguments. Requires: path to file to import")
-			cmd.Help()
-			os.Exit(1)
-		}
-		if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
+		stat, _ := os.Stdin.Stat()
+		if (stat.Mode() & os.ModeCharDevice) == 0 {
+			// check if we are getting data froms stdin
+			fmt.Println("data is being piped to stdin")
+			scanner := bufio.NewScanner(os.Stdin)
+			for scanner.Scan() {
+				fmt.Println(scanner.Text()) // Println will add back the final '\n'
+			}
+			if err := scanner.Err(); err != nil {
+				fmt.Fprintln(os.Stderr, "reading standard input:", err)
+			}
+		} else {
+			// otherwise we can read from a file
+			if importFile == "" {
+				fmt.Println("Not enough arguments. Requires: path to file to import")
+				cmd.Help()
+				os.Exit(1)
+			}
 			parser.ParseJSONImport(importFile)
 		}
 	},
