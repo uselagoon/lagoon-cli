@@ -167,7 +167,7 @@ func init() {
 	updateProjectCmd.Flags().MarkHidden("activeSystemsPromote")
 	updateProjectCmd.Flags().MarkHidden("openshiftProjectPattern")
 	updateProjectCmd.Flags().MarkHidden("developmentEnvironmentsLimit")
-	updateProjectCmd.Flags().MarkHidden("openshift")
+	//updateProjectCmd.Flags().MarkHidden("openshift")
 
 	addCmd.AddCommand(addProjectCmd)
 	addProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
@@ -195,5 +195,5 @@ func init() {
 	addProjectCmd.Flags().MarkHidden("activeSystemsPromote")
 	addProjectCmd.Flags().MarkHidden("openshiftProjectPattern")
 	addProjectCmd.Flags().MarkHidden("developmentEnvironmentsLimit")
-	addProjectCmd.Flags().MarkHidden("openshift")
+	//addProjectCmd.Flags().MarkHidden("openshift")
 }
