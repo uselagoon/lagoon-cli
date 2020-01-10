@@ -270,7 +270,7 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 }
 
 // RunCustomTask will trigger a drush archive dump task
-func RunCustomTask(projectName string, environmentName string, task string) ([]byte, error) {
+func RunCustomTask(projectName string, environmentName string, task api.Task) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -309,15 +309,24 @@ func RunCustomTask(projectName string, environmentName string, task string) ([]b
 
 	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
-		Query: `mutation runCacheClear ($environment: Int!) {
-			taskDrushCacheClear(environment: $environment) {
+		Query: `mutation addTask ($environment: Int!, $name: String!, $command: String!, $service: String!) {
+			addTask(input:{
+			environment: $environment
+			command: $command
+			execute:true
+			name: $name
+			service: $service
+		  }) {
 				id
 			}
 		}`,
 		Variables: map[string]interface{}{
 			"environment": environmentInfo.ID,
+			"name":        task.Name,
+			"service":     task.Service,
+			"command":     task.Command,
 		},
-		MappedResult: "taskDrushCacheClear",
+		MappedResult: "addTask",
 	}
 	returnResult, err := lagoonAPI.Request(customReq)
 	if err != nil {

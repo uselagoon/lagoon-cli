@@ -18,4 +18,5 @@ func init() {
 	runCmd.AddCommand(runDrushArchiveDump)
 	runCmd.AddCommand(runDrushSQLDump)
 	runCmd.AddCommand(runDrushCacheClear)
+	runCmd.AddCommand(runCustomTask)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
@@ -95,4 +96,50 @@ var runDrushCacheClear = &cobra.Command{
 		}
 		output.RenderResult(resultData, outputOptions)
 	},
+}
+
+var runCustomTask = &cobra.Command{
+	Use:     "custom",
+	Aliases: []string{"c"},
+	Short:   "Run a custom command on an environment",
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" || taskCommand == "" {
+			fmt.Println("Not enough arguments. Requires: project name, environment name, and command")
+			cmd.Help()
+			os.Exit(1)
+		}
+		task := api.Task{
+			Name:    taskName,
+			Command: taskCommand,
+			Service: taskService,
+		}
+		taskResult, err := environments.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		var resultMap map[string]interface{}
+		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		resultData := output.Result{
+			Result:     "success",
+			ResultData: resultMap,
+		}
+		output.RenderResult(resultData, outputOptions)
+	},
+}
+
+var (
+	taskName    string
+	taskService string
+	taskCommand string
+)
+
+func init() {
+	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
+	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
+	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
 }
