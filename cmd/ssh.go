@@ -19,6 +19,7 @@ var sshEnvCmd = &cobra.Command{
 	Short: "Display the SSH command to access a specific environment in a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			fmt.Println("Not enough arguments. Requires: project name and environment name")
 			cmd.Help()
@@ -51,14 +52,22 @@ var sshEnvCmd = &cobra.Command{
 				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 			}
 			defer closeSSHAgent()
-			lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
+			if sshCommand != "" {
+				lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
+			} else {
+				lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
+			}
 		}
 
 	},
 }
+var (
+	sshCommand string
+)
 
 func init() {
 	sshEnvCmd.Flags().StringVarP(&sshService, "service", "s", "", "specify a specific service name")
 	sshEnvCmd.Flags().StringVarP(&sshContainer, "container", "c", "", "specify a specific container name")
 	sshEnvCmd.Flags().BoolVarP(&sshConnString, "conn-string", "", false, "Display the full ssh connection string")
+	sshEnvCmd.Flags().StringVarP(&sshCommand, "command", "C", "", "Command to run on remote")
 }

@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -58,7 +59,61 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 		log.Fatalf("failed to start shell: %s", err)
 	}
 	session.Wait()
+}
 
+// RunSSHCommand .
+func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) {
+	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
+	if err != nil {
+		panic("Failed to dial: " + err.Error())
+	}
+
+	// start the session
+	session, err := client.NewSession()
+	if err != nil {
+		panic("Failed to create session: " + err.Error())
+	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	session.Stdin = os.Stdin
+	modes := ssh.TerminalModes{
+		ssh.ECHO:          1,     // enable echoing
+		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
+		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
+	}
+	fileDescriptor := int(os.Stdin.Fd())
+	if terminal.IsTerminal(fileDescriptor) {
+		originalState, err := terminal.MakeRaw(fileDescriptor)
+		if err != nil {
+			log.Fatalf("%s", err)
+		}
+		defer terminal.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		if err != nil {
+			log.Fatalf("%s", err)
+		}
+		err = session.RequestPty("xterm-256color", termHeight, termWidth, modes)
+		if err != nil {
+			log.Fatalf("%s", err)
+		}
+	}
+	var connString string
+	if sshService != "" {
+		connString = fmt.Sprintf("%s service=%s", connString, sshService)
+	}
+	if sshContainer != "" && sshService != "" {
+		connString = fmt.Sprintf("%s container=%s", connString, sshContainer)
+	}
+	var b bytes.Buffer
+	session.Stdout = &b
+
+	err = session.Run(connString + " " + command)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Println(b.String())
 }
 
 // GenerateSSHConnectionString .

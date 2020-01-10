@@ -13,6 +13,7 @@ lagoon ssh [flags]
 ### Options
 
 ```
+  -C, --command string     Display the full ssh connection string
       --conn-string        Display the full ssh connection string
   -c, --container string   specify a specific container name
   -h, --help               help for ssh
