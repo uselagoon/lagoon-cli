@@ -1,15 +1,23 @@
-## lagoon run
+## lagoon run custom
 
-Run a task against an environment
+Run a custom command on an environment
 
 ### Synopsis
 
-Run a task against an environment
+Run a custom command on an environment
+
+```
+lagoon run custom [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for run
+  -c, --command string   The command to run in the task
+  -h, --help             help for custom
+  -N, --name string      Name of the task that will show in the UI (default: Custom Task) (default "Custom Task")
+  -s, --script string    Path to bash script to run (will use this before command(-c) if both are defined)
+  -S, --service string   Name of the service (cli, nginx, other) that should run the task (default: cli) (default "cli")
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +38,5 @@ Run a task against an environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon run custom](lagoon_run_custom.md)	 - Run a custom command on an environment
-* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)	 - Run a drush archive dump on an environment
-* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)	 - Run a drush cache clear on an environment
-* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)	 - Run a drush sql dump on an environment
+* [lagoon run](lagoon_run.md)	 - Run a task against an environment
 
