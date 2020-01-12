@@ -268,3 +268,69 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 	}
 	return json.Marshal(dataMain)
 }
+
+// RunCustomTask will trigger a drush archive dump task
+func RunCustomTask(projectName string, environmentName string, task api.Task) ([]byte, error) {
+	// set up a lagoonapi client
+	lagoonAPI, err := graphql.LagoonAPI()
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// get project info from lagoon, we need the project ID for later
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// get the environment info from lagoon, we need the environment ID for later
+	// we consume the project ID here
+	environment := api.EnvironmentByName{
+		Name:    environmentName,
+		Project: projectInfo.ID,
+	}
+	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	if err != nil {
+		return []byte(""), err
+	}
+	var environmentInfo api.Environment
+	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// run the query to add the environment variable to lagoon
+	customReq := api.CustomRequest{
+		Query: `mutation addTask ($environment: Int!, $name: String!, $command: String!, $service: String!) {
+			addTask(input:{
+			environment: $environment
+			command: $command
+			execute:true
+			name: $name
+			service: $service
+		  }) {
+				id
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"environment": environmentInfo.ID,
+			"name":        task.Name,
+			"service":     task.Service,
+			"command":     task.Command,
+		},
+		MappedResult: "addTask",
+	}
+	returnResult, err := lagoonAPI.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
