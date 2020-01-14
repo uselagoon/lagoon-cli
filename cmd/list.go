@@ -205,7 +205,7 @@ var listUsersCmd = &cobra.Command{
 	Short:   "List all users (alias: u)",
 	Long:    `List all users in groups in lagoon, this only shows users that are in groups.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := users.ListUsers()
+		returnedJSON, err := users.ListUsers(groupName)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -235,5 +235,6 @@ func init() {
 	listCmd.AddCommand(listRocketChatsCmd)
 	listCmd.AddCommand(listSlackCmd)
 	listCmd.AddCommand(listUsersCmd)
+	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 }

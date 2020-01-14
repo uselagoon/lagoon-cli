@@ -148,15 +148,15 @@ func ModifyUser(user api.User, patch api.User) ([]byte, error) {
 }
 
 // ListUsers function
-func ListUsers() ([]byte, error) {
+func ListUsers(groupName string) ([]byte, error) {
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
 		return []byte(""), err
 	}
 	customReq := api.CustomRequest{
-		Query: `query allGroups {
-				allGroups{
+		Query: `query allGroups ($name: String) {
+				allGroups (name: $name) {
 			  		name
 			  		id
 			  		members{
@@ -170,7 +170,9 @@ func ListUsers() ([]byte, error) {
 			  		}
 				}
 		  	}`,
-		Variables:    map[string]interface{}{},
+		Variables: map[string]interface{}{
+			"name": groupName,
+		},
 		MappedResult: "allGroups",
 	}
 	listUsers, err := lagoonAPI.Request(customReq)
