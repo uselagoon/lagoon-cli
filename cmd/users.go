@@ -216,7 +216,7 @@ var getUserKeysCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := users.ListUserSSHKeys(userEmail, false)
+		returnedJSON, err := users.ListUserSSHKeys(groupName, userEmail, false)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -241,7 +241,7 @@ var getAllUserKeysCmd = &cobra.Command{
 	Short: "Get all user SSH keys",
 	Long:  `Get sall user SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := users.ListUserSSHKeys(userEmail, true)
+		returnedJSON, err := users.ListUserSSHKeys(groupName, userEmail, true)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -279,4 +279,6 @@ func init() {
 	updateUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
 	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
+	getUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to check users in (if not specified, will default to all groups)")
+	getAllUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 }
