@@ -1,10 +1,10 @@
 ## lagoon update user
 
-Modify a user user lagoon
+Modify a user in lagoon (change name, or email address)
 
 ### Synopsis
 
-Modify a user user lagoon
+Modify a user in lagoon (change name, or email address)
 
 ```
 lagoon update user [flags]

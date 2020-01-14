@@ -1,10 +1,10 @@
 ## lagoon get user-sshkeys
 
-Get user SSH keys
+Get a users SSH keys
 
 ### Synopsis
 
-Get user SSH keys
+Get s users SSH keys. This will only work for users that are part of a group
 
 ```
 lagoon get user-sshkeys [flags]
@@ -15,6 +15,7 @@ lagoon get user-sshkeys [flags]
 ```
   -E, --email string   New email address of the user
   -h, --help           help for user-sshkeys
+  -N, --name string    Name of the group to check users in (if not specified, will default to all groups)
 ```
 
 ### Options inherited from parent commands

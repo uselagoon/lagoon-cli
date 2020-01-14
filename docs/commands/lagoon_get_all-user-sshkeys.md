@@ -4,7 +4,7 @@ Get all user SSH keys
 
 ### Synopsis
 
-Get all user SSH keys
+Get sall user SSH keys. This will only work for users that are part of a group
 
 ```
 lagoon get all-user-sshkeys [flags]
@@ -13,7 +13,8 @@ lagoon get all-user-sshkeys [flags]
 ### Options
 
 ```
-  -h, --help   help for all-user-sshkeys
+  -h, --help          help for all-user-sshkeys
+  -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
 ```
 
 ### Options inherited from parent commands

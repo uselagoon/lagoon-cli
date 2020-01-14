@@ -13,7 +13,8 @@ lagoon list users [flags]
 ### Options
 
 ```
-  -h, --help   help for users
+  -h, --help          help for users
+  -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
 ```
 
 ### Options inherited from parent commands
