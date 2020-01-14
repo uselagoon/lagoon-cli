@@ -207,9 +207,10 @@ var updateUserCmd = &cobra.Command{
 }
 
 var getUserKeysCmd = &cobra.Command{
+	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:   "user-sshkeys",
 	Short: "Get a users SSH keys",
-	Long:  `Get s users SSH keys. This will only work for users that are part of a group`,
+	Long:  `Get a users SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if userEmail == "" {
 			fmt.Println("Not enough arguments. Requires: email address")
@@ -237,9 +238,10 @@ var getUserKeysCmd = &cobra.Command{
 }
 
 var getAllUserKeysCmd = &cobra.Command{
+	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:   "all-user-sshkeys",
 	Short: "Get all user SSH keys",
-	Long:  `Get sall user SSH keys. This will only work for users that are part of a group`,
+	Long:  `Get all user SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := users.ListUserSSHKeys(groupName, userEmail, true)
 		if err != nil {

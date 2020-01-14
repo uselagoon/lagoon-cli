@@ -200,6 +200,7 @@ var listTasksCmd = &cobra.Command{
 }
 
 var listUsersCmd = &cobra.Command{
+	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "users",
 	Aliases: []string{"u"},
 	Short:   "List all users (alias: u)",

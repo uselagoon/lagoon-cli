@@ -149,6 +149,7 @@ func ModifyUser(user api.User, patch api.User) ([]byte, error) {
 
 // ListUsers function
 func ListUsers(groupName string) ([]byte, error) {
+	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
@@ -241,6 +242,7 @@ func processUserList(listUsers []byte) ([]byte, error) {
 
 // ListUserSSHKeys function
 func ListUserSSHKeys(groupName string, email string, allUsers bool) ([]byte, error) {
+	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	// set up a lagoonapi client
 	lagoonAPI, err := graphql.LagoonAPI()
 	if err != nil {
