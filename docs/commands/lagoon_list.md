@@ -37,5 +37,6 @@ List projects, deployments, variables or notifications
 * [lagoon list rocketchat](lagoon_list_rocketchat.md)	 - Rocketchat details about a project (alias: r)
 * [lagoon list slack](lagoon_list_slack.md)	 - Slack details about a project (alias: s)
 * [lagoon list tasks](lagoon_list_tasks.md)	 - Show your tasks for an environment (alias: t)
+* [lagoon list users](lagoon_list_users.md)	 - List all users (alias: u)
 * [lagoon list variables](lagoon_list_variables.md)	 - Show your variables for a project or environment (alias: v)
 

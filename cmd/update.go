@@ -17,4 +17,5 @@ var updateCmd = &cobra.Command{
 func init() {
 	updateCmd.AddCommand(updateSlackNotificationCmd)
 	updateCmd.AddCommand(updateRocketChatNotificationCmd)
+	updateCmd.AddCommand(updateUserCmd)
 }

@@ -24,4 +24,5 @@ func init() {
 	deleteCmd.AddCommand(deleteSlackNotificationCmd)
 	deleteCmd.AddCommand(deleteProjectRocketChatNotificationCmd)
 	deleteCmd.AddCommand(deleteRocketChatNotificationCmd)
+	deleteCmd.AddCommand(delSSHKeyCmd)
 }

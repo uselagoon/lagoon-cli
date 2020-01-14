@@ -21,3 +21,7 @@ require (
 // use shreddedbacon fork which has better table formatting for kubectl style tables
 // https://github.com/olekukonko/tablewriter/pull/144
 // replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20191104214435-fac6022f4869
+// use this version for fixes to formatting of end header
+replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20200114082035-d810c4a558bf
+
+// replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter

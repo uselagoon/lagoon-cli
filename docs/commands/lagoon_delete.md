@@ -41,5 +41,6 @@ Delete a project, or delete notifications and variables from projects or environ
 * [lagoon delete slack](lagoon_delete_slack.md)	 - Delete a slack notification from lagoon
 * [lagoon delete user](lagoon_delete_user.md)	 - Delete user from lagoon
 * [lagoon delete user-group](lagoon_delete_user-group.md)	 - Delete user from a group in lagoon
+* [lagoon delete user-sshkey](lagoon_delete_user-sshkey.md)	 - Delete sshkey from lagoon
 * [lagoon delete variable](lagoon_delete_variable.md)	 - Delete a variable from an environment
 
