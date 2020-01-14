@@ -83,3 +83,21 @@ install-linux:
 	cp builds/lagoon-cli-${VERSION}-linux-amd64 ${ARTIFACT_DESTINATION}/lagoon
 install-darwin:
 	cp builds/lagoon-cli-${VERSION}-darwin-amd64 ${ARTIFACT_DESTINATION}/lagoon
+
+release-patch: 
+	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags)))
+	git tag $(VERSION)
+	mkdocs gh-deploy
+	git push origin master --tags
+
+release-minor: 
+	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -m $(shell git describe --abbrev=0 --tags)))
+	git tag $(VERSION)
+	mkdocs gh-deploy
+	git push origin master --tags
+
+release-major: 
+	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -M $(shell git describe --abbrev=0 --tags)))
+	git tag $(VERSION)
+	mkdocs gh-deploy
+	git push origin master --tags
