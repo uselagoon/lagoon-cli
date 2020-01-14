@@ -352,10 +352,3 @@ func processUserKeysList(listUsers []ExtendedSSHKey, email string) ([]byte, erro
 	}
 	return json.Marshal(dataMain)
 }
-
-func returnNonEmptyString(value string) string {
-	if len(value) == 0 {
-		value = "-"
-	}
-	return value
-}
