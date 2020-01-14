@@ -1,15 +1,23 @@
-## lagoon update
+## lagoon update user
 
-Update project, environment, or notification
+Modify a user user lagoon
 
 ### Synopsis
 
-Update project, environment, or notification
+Modify a user user lagoon
+
+```
+lagoon update user [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -C, --current-email string   Current email address of the user
+  -E, --email string           New email address of the user
+  -F, --firstName string       New firstname of the user
+  -h, --help                   help for user
+  -L, --lastName string        New lastname of the user
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +38,5 @@ Update project, environment, or notification
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Modify a user user lagoon
+* [lagoon update](lagoon_update.md)	 - Update project, environment, or notification
 

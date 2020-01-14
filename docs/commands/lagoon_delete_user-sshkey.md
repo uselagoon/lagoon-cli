@@ -1,15 +1,20 @@
-## lagoon update
+## lagoon delete user-sshkey
 
-Update project, environment, or notification
+Delete sshkey from lagoon
 
 ### Synopsis
 
-Update project, environment, or notification
+Delete sshkey from lagoon
+
+```
+lagoon delete user-sshkey [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -h, --help             help for user-sshkey
+  -N, --keyname string   Name of the sshkey
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +35,5 @@ Update project, environment, or notification
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Modify a user user lagoon
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 

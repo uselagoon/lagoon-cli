@@ -1,15 +1,20 @@
-## lagoon update
+## lagoon get user-sshkeys
 
-Update project, environment, or notification
+Get user SSH keys
 
 ### Synopsis
 
-Update project, environment, or notification
+Get user SSH keys
+
+```
+lagoon get user-sshkeys [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -E, --email string   New email address of the user
+  -h, --help           help for user-sshkeys
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +35,5 @@ Update project, environment, or notification
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Modify a user user lagoon
+* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
 

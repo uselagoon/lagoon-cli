@@ -1,15 +1,19 @@
-## lagoon update
+## lagoon list users
 
-Update project, environment, or notification
+List all users (alias: u)
 
 ### Synopsis
 
-Update project, environment, or notification
+List all users in groups in lagoon, this only shows users that are in groups.
+
+```
+lagoon list users [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -h, --help   help for users
 ```
 
 ### Options inherited from parent commands
@@ -30,9 +34,5 @@ Update project, environment, or notification
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Modify a user user lagoon
+* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 
