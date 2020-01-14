@@ -171,6 +171,8 @@ func init() {
 	getCmd.AddCommand(getDeploymentCmd)
 	getCmd.AddCommand(getEnvironmentCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
+	getCmd.AddCommand(getUserKeysCmd)
+	getCmd.AddCommand(getAllUserKeysCmd)
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

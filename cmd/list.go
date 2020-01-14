@@ -7,6 +7,7 @@ import (
 
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
+	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -198,6 +199,33 @@ var listTasksCmd = &cobra.Command{
 	},
 }
 
+var listUsersCmd = &cobra.Command{
+	Use:     "users",
+	Aliases: []string{"u"},
+	Short:   "List all users (alias: u)",
+	Long:    `List all users in groups in lagoon, this only shows users that are in groups.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		returnedJSON, err := users.ListUsers()
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		if len(dataMain.Data) == 0 {
+			output.RenderError("no data returned", outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listProjectCmd)
 	listCmd.AddCommand(listProjectsCmd)
@@ -206,5 +234,6 @@ func init() {
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listRocketChatsCmd)
 	listCmd.AddCommand(listSlackCmd)
+	listCmd.AddCommand(listUsersCmd)
 	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 }
