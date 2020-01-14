@@ -123,18 +123,19 @@ func processParser(lagoonDataBytes []byte) []byte {
 				json.Unmarshal(notifBytes, &slackNotification)
 				returnLagoonImport.Notifications.Slack = appendIfMissingSlack(returnLagoonImport.Notifications.Slack, slackNotification)
 				returnLagoonImport.Projects[ind].Notifications.Slack = append(returnLagoonImport.Projects[ind].Notifications.Slack, notification.Name)
-			case "NotificationEmail":
-				var emailNotification api.NotificationEmail
-				notifBytes, _ := json.Marshal(notification)
-				json.Unmarshal(notifBytes, &emailNotification)
-				returnLagoonImport.Notifications.Email = appendIfMissingEmail(returnLagoonImport.Notifications.Email, emailNotification)
-				returnLagoonImport.Projects[ind].Notifications.Email = append(returnLagoonImport.Projects[ind].Notifications.Email, notification.Name)
-			case "NotificationMicrosoftTeams":
-				var teamsNotification api.NotificationMicrosoftTeams
-				notifBytes, _ := json.Marshal(notification)
-				json.Unmarshal(notifBytes, &teamsNotification)
-				returnLagoonImport.Notifications.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.Notifications.MicrosoftTeams, teamsNotification)
-				returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams = append(returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams, notification.Name)
+				// @TODO: enable once 1.2.0+ lagoon is more widespread
+				// case "NotificationEmail":
+				// 	var emailNotification api.NotificationEmail
+				// 	notifBytes, _ := json.Marshal(notification)
+				// 	json.Unmarshal(notifBytes, &emailNotification)
+				// 	returnLagoonImport.Notifications.Email = appendIfMissingEmail(returnLagoonImport.Notifications.Email, emailNotification)
+				// 	returnLagoonImport.Projects[ind].Notifications.Email = append(returnLagoonImport.Projects[ind].Notifications.Email, notification.Name)
+				// case "NotificationMicrosoftTeams":
+				// 	var teamsNotification api.NotificationMicrosoftTeams
+				// 	notifBytes, _ := json.Marshal(notification)
+				// 	json.Unmarshal(notifBytes, &teamsNotification)
+				// 	returnLagoonImport.Notifications.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.Notifications.MicrosoftTeams, teamsNotification)
+				// 	returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams = append(returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams, notification.Name)
 			}
 		}
 	}
@@ -241,6 +242,7 @@ func ParseProject(projectName string) ([]byte, error) {
 		  name
 			channel
 		}
+		# @TODO: enable once 1.2.0+ lagoon is more widespread
 		# fragment NotificationEmail on NotificationEmail {
 		# 	emailAddress
 		#   name
@@ -286,6 +288,7 @@ func ParseProject(projectName string) ([]byte, error) {
 			  __typename
 			  ...NotificationRocket
 			  ...NotificationSlack
+			  # @TODO: enable once 1.2.0+ lagoon is more widespread
 			  # ...NotificationEmail
 			  # ...NotificationTeams
 			}
@@ -342,6 +345,7 @@ func ParseAllProjects() ([]byte, error) {
 		  name
 			channel
 		}
+		# @TODO: enable once 1.2.0+ lagoon is more widespread
 		# fragment NotificationEmail on NotificationEmail {
 		# 	emailAddress
 		#   name
@@ -387,6 +391,7 @@ func ParseAllProjects() ([]byte, error) {
 			  __typename
 			  ...NotificationRocket
 			  ...NotificationSlack
+			  # @TODO: enable once 1.2.0+ lagoon is more widespread
 			  # ...NotificationEmail
 			  # ...NotificationTeams
 			}
