@@ -34,4 +34,5 @@ Update project, environment, or notification
 * [lagoon update project](lagoon_update_project.md)	 - Update a project
 * [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
 * [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
+* [lagoon update user](lagoon_update_user.md)	 - Modify a user in lagoon (change name, or email address)
 
