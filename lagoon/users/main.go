@@ -4,20 +4,25 @@ import (
 	"github.com/amazeeio/lagoon-cli/api"
 )
 
+// ExtendedSSHKey .
 type ExtendedSSHKey struct {
 	*api.SSHKey
 	Email string `json:"email"`
 }
+
+// UserGroup .
 type UserGroup struct {
 	Name string `json:"name"`
 	ID   string `json:"id"`
 	Role string `json:"role"`
 }
 
-type UsersData struct {
+// Data .
+type Data struct {
 	User []UserData
 }
 
+// UserData .
 type UserData struct {
 	ID        string       `json:"id"`
 	Email     string       `json:"email"`
@@ -27,12 +32,14 @@ type UserData struct {
 	Groups    []UserGroup  `json:"groups"`
 }
 
+// GroupMembers .
 type GroupMembers []struct {
 	ID      string   `json:"id"`
 	Members []Member `json:"members"`
 	Name    string   `json:"name"`
 }
 
+// Member .
 type Member struct {
 	Role string `json:"role"`
 	User struct {
@@ -51,7 +58,8 @@ func returnNonEmptyString(value string) string {
 	return value
 }
 
-func (ud *UsersData) AddItem(userData UserData) {
+// AddItem .
+func (ud *Data) AddItem(userData UserData) {
 	ud.User = append(ud.User, userData)
 }
 
