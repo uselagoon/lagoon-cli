@@ -9,7 +9,6 @@ lagoon import -I /path/to/file.yaml
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -101,15 +100,15 @@ type AddUserToGroup struct {
 }
 
 // ImportData func
-func ImportData(importFile string, forceAction bool) {
-	yamlData, err := ioutil.ReadFile(importFile) // just pass the file name
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func ImportData(yamlData string, forceAction bool) {
+	// yamlData, err := ioutil.ReadFile(importFile) // just pass the file name
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	os.Exit(1)
+	// }
 	importedData := LagoonImport{}
 
-	err = yaml.Unmarshal([]byte(yamlData), &importedData)
+	err := yaml.Unmarshal([]byte(yamlData), &importedData)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -167,7 +166,7 @@ func ImportData(importFile string, forceAction bool) {
 	}
 }
 
-func yesNo(message string, forceAction bool) bool {
+func confirmation(message string, forceAction bool) bool {
 	if forceAction != true {
 		prompt := promptui.Select{
 			Label: message + "; Select[Yes/No]",
@@ -188,7 +187,7 @@ func addRocketChats(rocketchats []string, name string, action bool) {
 		_, err := projects.AddRocketChatNotificationToProject(name, rocketchat)
 		if err != nil {
 			fmt.Println("\t", err)
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -201,7 +200,7 @@ func addSlacks(slacks []string, name string, action bool) {
 		_, err := projects.AddSlackNotificationToProject(name, slack)
 		if err != nil {
 			fmt.Println("\t", err)
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -223,7 +222,7 @@ func addGroupProject(name string, group string, action bool) {
 	_, err := users.AddProjectToGroup(projectGroup)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -235,7 +234,7 @@ func updateProject(projectName string, project api.ProjectPatch, action bool) {
 	updateResult, err := projects.UpdateProject(project.Name, string(jsonPatch))
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	} else {
@@ -243,7 +242,7 @@ func updateProject(projectName string, project api.ProjectPatch, action bool) {
 		err = json.Unmarshal([]byte(updateResult), &addedProject)
 		if err != nil {
 			fmt.Println("\t", err)
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -256,7 +255,7 @@ func addProject(project api.ProjectPatch, action bool) {
 	addResult, err := projects.AddProject(project.Name, string(jsonPatch))
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	} else {
@@ -264,7 +263,7 @@ func addProject(project api.ProjectPatch, action bool) {
 		err = json.Unmarshal([]byte(addResult), &addedProject)
 		if err != nil {
 			fmt.Println("\t", err)
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -276,7 +275,7 @@ func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
 	_, err := projects.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -287,7 +286,7 @@ func addSlack(slack api.NotificationSlack, action bool) {
 	_, err := projects.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -298,7 +297,7 @@ func addGroup(group api.Group, action bool) {
 	_, err := users.AddGroup(group)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -312,7 +311,7 @@ func addUser(user LagoonUser, action bool) {
 	_, err := users.AddUser(userData)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -338,7 +337,7 @@ func addKeysToUser(user LagoonUser, action bool) {
 			keyName = strings.TrimSuffix(splitKey[2], "\n")
 		} else if keyName == "" && len(splitKey) == 2 {
 			fmt.Println("No keyname defined")
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -351,7 +350,7 @@ func addKeysToUser(user LagoonUser, action bool) {
 		_, err := users.AddSSHKeyToUser(userData, sshKey)
 		if err != nil {
 			fmt.Println("\t", err)
-			if !yesNo("Continue?", action) {
+			if !confirmation("Continue?", action) {
 				os.Exit(1)
 			}
 		}
@@ -390,7 +389,7 @@ func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	_, err = users.AddUserToGroup(userGroupRole)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -415,7 +414,7 @@ func addProjectVariable(projectName string, variable api.EnvVariable, action boo
 	_, err := projects.AddEnvironmentVariableToProject(projectName, variable)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -440,7 +439,7 @@ func addEnvironmentVariable(projectName string, environmentName string, variable
 	_, err := environments.AddEnvironmentVariableToEnvironment(projectName, environmentName, variable)
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}
@@ -472,7 +471,7 @@ func addEnvironmentToProject(projectName string, environment LagoonEnvironment, 
 	_, err := environments.AddOrUpdateEnvironment(projectName, environment.Name, string(envBytes))
 	if err != nil {
 		fmt.Println("\t", err)
-		if !yesNo("Continue?", action) {
+		if !confirmation("Continue?", action) {
 			os.Exit(1)
 		}
 	}

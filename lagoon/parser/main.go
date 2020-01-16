@@ -13,8 +13,6 @@ lagoon parse -I /path/to/file.json
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
 	"github.com/amazeeio/lagoon-cli/graphql"
@@ -41,15 +39,15 @@ type lagoonImport struct {
 	}
 }
 */
-func ParseJSONImport(jsonFile string) importer.LagoonImport {
-	jsonStr, err := ioutil.ReadFile(jsonFile) // just pass the file name
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func ParseJSONImport(jsonData string) importer.LagoonImport {
+	// jsonStr, err := ioutil.ReadFile(jsonFile) // just pass the file name
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	os.Exit(1)
+	// }
 	var lagoonImporter lagoonImport
 	var returnLagoonImport importer.LagoonImport
-	json.Unmarshal([]byte(jsonStr), &lagoonImporter)
+	json.Unmarshal([]byte(jsonData), &lagoonImporter)
 	var lagoonData []importer.ExtendedProject
 	lagoonDataBytes, _ := json.Marshal(lagoonImporter)
 	json.Unmarshal(lagoonDataBytes, &lagoonData)

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 
@@ -69,31 +68,29 @@ var importCmd = &cobra.Command{
 	Aliases: []string{"i"},
 	Hidden:  true,
 	Short:   "Import a config from a yaml file",
+	Long: `Import a config from a yaml file or from stdin, if using a file you will be prompted if you want to continue if you encounter any errors.
+With stdin, there are no prompts and imports will fail if there are any errors.
+You can avoid these and force it to continue on errors by specifying the '--force' flag`,
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		if showExample {
 			fmt.Println(example)
 			os.Exit(0)
 		}
+		importData, err := readStdInOrFile(importFile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {
-			// check if we are getting data froms stdin
-			scanner := bufio.NewScanner(os.Stdin)
-			for scanner.Scan() {
-				fmt.Println(scanner.Text())
-			}
-			if err := scanner.Err(); err != nil {
-				fmt.Fprintln(os.Stderr, "reading standard input:", err)
-			}
+			// if using stdin, then we need to force action as any prompts just fail as they expect stdin
+			importer.ImportData(importData, forceAction)
 		} else {
-			// otherwise we can read from a file
-			if importFile == "" {
-				fmt.Println("Not enough arguments. Requires: path to file to import")
-				cmd.Help()
-				os.Exit(1)
-			}
-			if yesNo("Are you sure you want to import this file, it is potentially dangerous") {
-				importer.ImportData(importFile, forceAction)
+			// else we can prompt for failures
+			if yesNo("Are you sure you want to import this data, it is potentially dangerous") {
+				importer.ImportData(importData, forceAction)
 			}
 		}
 	},
@@ -103,28 +100,16 @@ var parseCmd = &cobra.Command{
 	Use:     "parse",
 	Aliases: []string{"p"},
 	Hidden:  true,
-	Short:   "Parse lagoon output to import yml",
+	Short:   "Parse lagoon output to import yaml",
+	Long: `Parse lagoon output to import yaml
+If given the raw JSON output from a lagoon query, this will parse it into a yaml format that can then be used to import.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		stat, _ := os.Stdin.Stat()
-		if (stat.Mode() & os.ModeCharDevice) == 0 {
-			// check if we are getting data froms stdin
-			fmt.Println("data is being piped to stdin")
-			scanner := bufio.NewScanner(os.Stdin)
-			for scanner.Scan() {
-				fmt.Println(scanner.Text()) // Println will add back the final '\n'
-			}
-			if err := scanner.Err(); err != nil {
-				fmt.Fprintln(os.Stderr, "reading standard input:", err)
-			}
-		} else {
-			// otherwise we can read from a file
-			if importFile == "" {
-				fmt.Println("Not enough arguments. Requires: path to file to import")
-				cmd.Help()
-				os.Exit(1)
-			}
-			parser.ParseJSONImport(importFile)
+		importJSON, err := readStdInOrFile(importFile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
+		parser.ParseJSONImport(importJSON)
 	},
 }
 
@@ -132,7 +117,9 @@ var exportCmd = &cobra.Command{
 	Use:     "export",
 	Aliases: []string{"e"},
 	Hidden:  true,
-	Short:   "Export lagoon output to yml",
+	Short:   "Export lagoon output to yaml",
+	Long: `Export lagoon output to yaml
+You can specify to export a specific project by using the '-p <project-name>' flag`,
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		if cmdProjectName == "" {

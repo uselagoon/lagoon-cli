@@ -1,6 +1,12 @@
 package cmd
 
 import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
@@ -55,4 +61,37 @@ var outputOptions = output.Options{
 	CSV:    false,
 	JSON:   false,
 	Pretty: false,
+}
+
+// read stdin or file, if the input is stdin it will try read from it, if a path is provided it will read that instead
+// returns the
+func readStdInOrFile(filePath string) (string, error) {
+	// var err error
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) == 0 {
+		// check if we are getting data froms stdin
+		scanner := bufio.NewScanner(os.Stdin)
+		taskCommand = ""
+		// read the buff into a string
+		for scanner.Scan() {
+			taskCommand = taskCommand + scanner.Text() + "\n"
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "reading standard input:", err)
+			// return "", err
+		}
+		// return string(taskCommand), err
+	} else {
+		// otherwise we can read from a file
+		if filePath != "" {
+			taskCommandBytes, err := ioutil.ReadFile(filePath) // just pass the file name
+			if err != nil {
+				return "", err
+			}
+			taskCommand = string(taskCommandBytes)
+		} else {
+			return "", errors.New("no path provided")
+		}
+	}
+	return string(taskCommand), nil
 }
