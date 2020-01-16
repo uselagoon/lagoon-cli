@@ -192,8 +192,8 @@ func processUserList(listUsers []byte) ([]byte, error) {
 	}
 	// process the data for output
 	data := []output.Data{}
-	userDataStep1 := UsersData{}
-	userDataStep2 := UsersData{}
+	userDataStep1 := Data{}
+	userDataStep2 := Data{}
 
 	// initial sort to change group members to members with groups
 	for _, group := range groupMembers {

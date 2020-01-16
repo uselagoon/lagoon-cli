@@ -204,6 +204,7 @@ var ProjectNameID = `fragment Project on Project {
 	name
 }`
 
+// EnvironmentByNameFragment .
 var EnvironmentByNameFragment = `fragment Environment on Environment {
 	id
 	name
