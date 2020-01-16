@@ -10,6 +10,8 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
+var noDataError = "no data returned from the lagoon api"
+
 // DeployEnvironmentBranch .
 func DeployEnvironmentBranch(projectName string, branchName string) ([]byte, error) {
 	lagoonAPI, err := graphql.LagoonAPI()

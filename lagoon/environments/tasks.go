@@ -238,7 +238,7 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 	var environment api.Environment
 	err := json.Unmarshal([]byte(environmentByName), &environment)
 	if err != nil {
-		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+		return []byte(""), errors.New(noDataError) // @TODO could be a permissions thing when no data is returned
 	}
 	// process the data for output
 	data := []output.Data{}

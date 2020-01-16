@@ -60,7 +60,7 @@ var listProjectsCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -92,7 +92,7 @@ var listProjectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -130,7 +130,7 @@ var listVariablesCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -161,7 +161,7 @@ var listDeploymentsCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -192,7 +192,7 @@ var listTasksCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -219,7 +219,7 @@ var listUsersCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)

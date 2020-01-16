@@ -64,7 +64,7 @@ var getProjectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -89,7 +89,7 @@ var getDeploymentCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if string(returnedJSON) == "null" {
-			output.RenderError("No data returned from lagoon, remote id might be wrong", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		var deployment api.Deployment
@@ -128,7 +128,7 @@ var getEnvironmentCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -158,7 +158,7 @@ var getProjectKeyCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)

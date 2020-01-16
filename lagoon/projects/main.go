@@ -11,6 +11,8 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+var noDataError = "no data returned from the lagoon api"
+
 // ListAllProjects will list all projects
 func ListAllProjects() ([]byte, error) {
 	// set up a lagoonapi client

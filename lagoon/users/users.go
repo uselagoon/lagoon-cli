@@ -188,7 +188,7 @@ func processUserList(listUsers []byte) ([]byte, error) {
 	var groupMembers GroupMembers
 	err := json.Unmarshal([]byte(listUsers), &groupMembers)
 	if err != nil {
-		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+		return []byte(""), errors.New(noDataError) // @TODO could be a permissions thing when no data is returned
 	}
 	// process the data for output
 	data := []output.Data{}
@@ -296,7 +296,7 @@ func processReturnedUserKeysList(listUsers []byte) ([]ExtendedSSHKey, error) {
 	userDataStep1 := []ExtendedSSHKey{}
 	err := json.Unmarshal([]byte(listUsers), &groupMembers)
 	if err != nil {
-		return userDataStep1, errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+		return userDataStep1, errors.New(noDataError) // @TODO could be a permissions thing when no data is returned
 	}
 	// initial sort to change group members to members with groups
 	for _, group := range groupMembers {

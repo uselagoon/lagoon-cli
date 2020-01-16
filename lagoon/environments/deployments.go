@@ -67,7 +67,7 @@ func processEnvironmentDeployments(environmentByName []byte) ([]byte, error) {
 	var projects api.Project
 	err := json.Unmarshal([]byte(environmentByName), &projects)
 	if err != nil {
-		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+		return []byte(""), errors.New(noDataError) // @TODO could be a permissions thing when no data is returned
 	}
 	// process the data for output
 	data := []output.Data{}

@@ -45,7 +45,7 @@ var listRocketChatsCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)

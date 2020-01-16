@@ -53,3 +53,5 @@ var outputOptions = output.Options{
 	JSON:   false,
 	Pretty: false,
 }
+
+var noDataError = "no data returned from the lagoon api"

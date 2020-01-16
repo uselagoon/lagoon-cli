@@ -4,6 +4,8 @@ import (
 	"github.com/amazeeio/lagoon-cli/api"
 )
 
+var noDataError = "no data returned from the lagoon api"
+
 // ExtendedSSHKey .
 type ExtendedSSHKey struct {
 	*api.SSHKey
