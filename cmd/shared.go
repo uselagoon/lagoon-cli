@@ -95,3 +95,14 @@ func readStdInOrFile(filePath string) (string, error) {
 	}
 	return string(taskCommand), nil
 }
+
+var debugEnable bool
+
+var noDataError = "no data returned from the lagoon api"
+
+func handleError(err error) {
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+}

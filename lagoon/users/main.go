@@ -2,22 +2,66 @@ package users
 
 import (
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/graphql"
 )
 
+// Users .
+type Users struct {
+	debug bool
+	api   api.Client
+}
+
+// Client .
+type Client interface {
+	AddGroup(api.Group) ([]byte, error)
+	AddUserToGroup(api.UserGroupRole) ([]byte, error)
+	AddProjectToGroup(api.ProjectGroups) ([]byte, error)
+	RemoveUserFromGroup(api.UserGroup) ([]byte, error)
+	RemoveGroupsFromProject(api.ProjectGroups) ([]byte, error)
+	DeleteGroup(api.Group) ([]byte, error)
+	ListUsers(string) ([]byte, error)
+	AddUser(api.User) ([]byte, error)
+	AddSSHKeyToUser(api.User, api.SSHKey) ([]byte, error)
+	DeleteSSHKey(string) ([]byte, error)
+	DeleteUser(api.User) ([]byte, error)
+	ModifyUser(api.User, api.User) ([]byte, error)
+	ListUserSSHKeys(string, string, bool) ([]byte, error)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(debug)
+	if err != nil {
+		return &Users{}, err
+	}
+	return &Users{
+		debug: debug,
+		api:   lagoonAPI,
+	}, nil
+
+}
+
+var noDataError = "no data returned from the lagoon api"
+
+// ExtendedSSHKey .
 type ExtendedSSHKey struct {
 	*api.SSHKey
 	Email string `json:"email"`
 }
+
+// UserGroup .
 type UserGroup struct {
 	Name string `json:"name"`
 	ID   string `json:"id"`
 	Role string `json:"role"`
 }
 
-type UsersData struct {
+// Data .
+type Data struct {
 	User []UserData
 }
 
+// UserData .
 type UserData struct {
 	ID        string       `json:"id"`
 	Email     string       `json:"email"`
@@ -27,12 +71,14 @@ type UserData struct {
 	Groups    []UserGroup  `json:"groups"`
 }
 
+// GroupMembers .
 type GroupMembers []struct {
 	ID      string   `json:"id"`
 	Members []Member `json:"members"`
 	Name    string   `json:"name"`
 }
 
+// Member .
 type Member struct {
 	Role string `json:"role"`
 	User struct {
@@ -51,7 +97,8 @@ func returnNonEmptyString(value string) string {
 	return value
 }
 
-func (ud *UsersData) AddItem(userData UserData) {
+// AddItem .
+func (ud *Data) AddItem(userData UserData) {
 	ud.User = append(ud.User, userData)
 }
 

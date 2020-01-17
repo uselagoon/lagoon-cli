@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
@@ -41,12 +40,9 @@ var deleteEnvCmd = &cobra.Command{
 		}
 		fmt.Println(fmt.Sprintf("Deleting %s-%s", cmdProjectName, cmdProjectEnvironment))
 
-		if yesNo("Are you sure?") {
-			projectByName, err := environments.DeleteEnvironment(cmdProjectName, cmdProjectEnvironment)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+		if yesNo() {
+			projectByName, err := eClient.DeleteEnvironment(cmdProjectName, cmdProjectEnvironment)
+			handleError(err)
 			resultData := output.Result{
 				Result: string(projectByName),
 			}

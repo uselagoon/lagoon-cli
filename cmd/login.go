@@ -41,9 +41,7 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	}
 
 	key, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
+	handleError(err)
 
 	// Try to look for an unencrypted private key
 	signer, err := ssh.ParsePrivateKey(key)

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -47,12 +46,9 @@ var deleteProjectCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deleting %s", cmdProjectName))
 		}
 
-		if yesNo("Are you sure?") {
-			deleteResult, err := projects.DeleteProject(cmdProjectName)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+		if yesNo() {
+			deleteResult, err := pClient.DeleteProject(cmdProjectName)
+			handleError(err)
 			resultData := output.Result{
 				Result: string(deleteResult),
 			}
@@ -74,18 +70,11 @@ var addProjectCmd = &cobra.Command{
 		}
 
 		jsonPatch, _ := json.Marshal(projectFlags)
-		addResult, err := projects.AddProject(cmdProjectName, string(jsonPatch))
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddProject(cmdProjectName, string(jsonPatch))
+		handleError(err)
 		var addedProject api.Project
 		err = json.Unmarshal([]byte(addResult), &addedProject)
-
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -115,17 +104,11 @@ var updateProjectCmd = &cobra.Command{
 		}
 
 		jsonPatch, _ := json.Marshal(projectFlags)
-		projectUpdateID, err := projects.UpdateProject(cmdProjectName, string(jsonPatch))
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		projectUpdateID, err := pClient.UpdateProject(cmdProjectName, string(jsonPatch))
+		handleError(err)
 		var updatedProject api.Project
 		err = json.Unmarshal([]byte(projectUpdateID), &updatedProject)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
@@ -146,7 +129,7 @@ func init() {
 	// @TODO this seems needlessly busy, maybe see if cobra supports grouping flags and applying them to commands easier?
 	updateProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "g", "", "GitURL of the project")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "privateKey", "I", "", "Private key to use for the project")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder Usefull if you have multiple Lagoon projects per Git Repository")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsTask, "activeSystemsTask", "T", "", "Which internal Lagoon System is responsible for tasks ")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsDeploy, "activeSystemsDeploy", "D", "", "Which internal Lagoon System is responsible for deploying ")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsRemove, "activeSystemsRemove", "R", "", "Which internal Lagoon System is responsible for promoting")
@@ -174,7 +157,7 @@ func init() {
 
 	addProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "g", "", "GitURL of the project")
 	addProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "privateKey", "I", "", "Private key to use for the project")
-	addProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder Usefull if you have multiple Lagoon projects per Git Repository")
+	addProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
 	addProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsTask, "activeSystemsTask", "T", "", "Which internal Lagoon System is responsible for tasks ")
 	addProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsDeploy, "activeSystemsDeploy", "D", "", "Which internal Lagoon System is responsible for deploying ")
 	addProjectCmd.Flags().StringVarP(&projectPatch.ActiveSystemsRemove, "activeSystemsRemove", "R", "", "Which internal Lagoon System is responsible for promoting")

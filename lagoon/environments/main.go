@@ -10,13 +10,46 @@ import (
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
-// DeployEnvironmentBranch .
-func DeployEnvironmentBranch(projectName string, branchName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+// Environments .
+type Environments struct {
+	debug bool
+	api   api.Client
+}
 
+// Client .
+type Client interface {
+	DeployEnvironmentBranch(string, string) ([]byte, error)
+	DeleteEnvironment(string, string) ([]byte, error)
+	GetDeploymentLog(string) ([]byte, error)
+	GetEnvironmentInfo(string, string) ([]byte, error)
+	ListEnvironmentVariables(string, string, bool) ([]byte, error)
+	GetEnvironmentDeployments(string, string) ([]byte, error)
+	GetEnvironmentTasks(string, string) ([]byte, error)
+	RunDrushArchiveDump(string, string) ([]byte, error)
+	RunDrushSQLDump(string, string) ([]byte, error)
+	RunDrushCacheClear(string, string) ([]byte, error)
+	RunCustomTask(string, string, api.Task) ([]byte, error)
+	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
+	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(debug)
+	if err != nil {
+		return &Environments{}, err
+	}
+	return &Environments{
+		debug: debug,
+		api:   lagoonAPI,
+	}, nil
+
+}
+
+var noDataError = "no data returned from the lagoon api"
+
+// DeployEnvironmentBranch .
+func (e *Environments) DeployEnvironmentBranch(projectName string, branchName string) ([]byte, error) {
 	customRequest := api.CustomRequest{
 		Query: `mutation ($project: String!, $branch: String!){
 			deployEnvironmentBranch(
@@ -32,38 +65,28 @@ func DeployEnvironmentBranch(projectName string, branchName string) ([]byte, err
 		},
 		MappedResult: "deployEnvironmentBranch",
 	}
-	returnResult, err := lagoonAPI.Request(customRequest)
+	returnResult, err := e.api.Request(customRequest)
 	return returnResult, err
 }
 
 // DeleteEnvironment .
-func DeleteEnvironment(projectName string, environmentName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) DeleteEnvironment(projectName string, environmentName string) ([]byte, error) {
 	evironment := api.DeleteEnvironment{
 		Name:    environmentName,
 		Project: projectName,
 		Execute: true,
 	}
-	returnResult, err := lagoonAPI.DeleteEnvironment(evironment)
+	returnResult, err := e.api.DeleteEnvironment(evironment)
 	return returnResult, err
 }
 
 // GetEnvironmentInfo will get basic info about a project
-func GetEnvironmentInfo(projectName string, environmentName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (e *Environments) GetEnvironmentInfo(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -78,7 +101,7 @@ func GetEnvironmentInfo(projectName string, environmentName string) ([]byte, err
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, graphql.EnvironmentByNameFragment)
+	environmentByName, err := e.api.GetEnvironmentByName(environment, graphql.EnvironmentByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}

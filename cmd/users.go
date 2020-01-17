@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -29,10 +28,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 
 func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 	b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
+	handleError(err)
 	splitKey := strings.Split(string(b), " ")
 	var keyType api.SSHKeyType
 	// default to ssh-rsa, otherwise check if ssh-ed25519
@@ -70,17 +66,11 @@ var addUserCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.AddUser(userFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.AddUser(userFlags)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -103,17 +93,11 @@ var addUserSSHKeyCmd = &cobra.Command{
 		userSSHKey := parseSSHKeyFile(pubKeyFile, sshKeyName)
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.AddSSHKeyToUser(userFlags, userSSHKey)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.AddSSHKeyToUser(userFlags, userSSHKey)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -134,11 +118,8 @@ var delSSHKeyCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.DeleteSSHKey(sshKeyName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.DeleteSSHKey(sshKeyName)
+		handleError(err)
 		resultData := output.Result{
 			Result: string(customReqResult),
 		}
@@ -159,11 +140,8 @@ var delUserCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.DeleteUser(userFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.DeleteUser(userFlags)
+		handleError(err)
 		resultData := output.Result{
 			Result: string(customReqResult),
 		}
@@ -187,17 +165,11 @@ var updateUserCmd = &cobra.Command{
 		currentUser := api.User{
 			Email: currentUserEmail,
 		}
-		customReqResult, err = users.ModifyUser(currentUser, userFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.ModifyUser(currentUser, userFlags)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -217,19 +189,13 @@ var getUserKeysCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := users.ListUserSSHKeys(groupName, userEmail, false)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := uClient.ListUserSSHKeys(groupName, userEmail, false)
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -243,19 +209,13 @@ var getAllUserKeysCmd = &cobra.Command{
 	Short: "Get all user SSH keys",
 	Long:  `Get all user SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := users.ListUserSSHKeys(groupName, userEmail, true)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := uClient.ListUserSSHKeys(groupName, userEmail, true)
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)

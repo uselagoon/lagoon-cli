@@ -3,13 +3,15 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/app"
 	"github.com/amazeeio/lagoon-cli/graphql"
+	"github.com/amazeeio/lagoon-cli/lagoon/environments"
+	"github.com/amazeeio/lagoon-cli/lagoon/projects"
+	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/manifoldco/promptui"
 	"github.com/mitchellh/go-homedir"
@@ -35,7 +37,8 @@ var rootCmd = &cobra.Command{
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
 			if err != nil {
-				log.Fatal(err)
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 		}
 		if versionFlag {
@@ -77,6 +80,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "Output as CSV (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 
 	rootCmd.PersistentFlags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
@@ -199,6 +203,23 @@ func initConfig() {
 		cmdProjectEnvironment = cmdProject.Environment
 	}
 
+	// set up the clients
+	eClient, err = environments.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	uClient, err = users.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	pClient, err = projects.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
 	// }
@@ -259,6 +280,11 @@ func unset(key string) error {
 	}
 	return nil
 }
+
+// global the clients
+var eClient environments.Client
+var uClient users.Client
+var pClient projects.Client
 
 // FormatType .
 type FormatType string

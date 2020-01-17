@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
@@ -19,11 +18,8 @@ var listRocketChatsCmd = &cobra.Command{
 		var returnedJSON []byte
 		var err error
 		if listAllProjects {
-			returnedJSON, err = projects.ListAllRocketChats()
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			returnedJSON, err = pClient.ListAllRocketChats()
+			handleError(err)
 		} else {
 			notificationFlags := parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
@@ -31,21 +27,14 @@ var listRocketChatsCmd = &cobra.Command{
 				cmd.Help()
 				os.Exit(1)
 			}
-
-			returnedJSON, err = projects.ListProjectRocketChats(notificationFlags.Project)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			returnedJSON, err = pClient.ListProjectRocketChats(notificationFlags.Project)
+			handleError(err)
 		}
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -63,18 +52,11 @@ var addRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		addResult, err := projects.AddRocketChatNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddRocketChatNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(addResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -94,17 +76,11 @@ var addProjectRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		addResult, err := projects.AddRocketChatNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddRocketChatNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(addResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -124,17 +100,11 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteRocketChatNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		deleteResult, err := pClient.DeleteRocketChatNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
+		handleError(err)
 		var addedProject api.NotificationSlack
 		err = json.Unmarshal([]byte(deleteResult), &addedProject)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result: "success",
 		}
@@ -152,15 +122,8 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteRocketChatNotification(notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		deleteResult, err := pClient.DeleteRocketChatNotification(notificationFlags.NotificationName)
+		handleError(err)
 		resultData := output.Result{
 			Result: string(deleteResult),
 		}
@@ -188,23 +151,14 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 		notificationFlags.NotificationOldName = oldName
 		if jsonPatch == "" {
 			jsonPatchBytes, err := json.Marshal(notificationFlags)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 			jsonPatch = string(jsonPatchBytes)
 		}
-		updateResult, err := projects.UpdateRocketChatNotification(notificationFlags.NotificationOldName, jsonPatch)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		updateResult, err := pClient.UpdateRocketChatNotification(notificationFlags.NotificationOldName, jsonPatch)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(updateResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,

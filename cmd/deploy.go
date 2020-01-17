@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -56,12 +55,9 @@ var deployBranchCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
-		if yesNo("Are you sure?") {
-			deployResult, err := environments.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+		if yesNo() {
+			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
+			handleError(err)
 			resultData := output.Result{
 				Result: string(deployResult),
 			}

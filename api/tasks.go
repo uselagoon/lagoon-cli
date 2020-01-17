@@ -19,6 +19,9 @@ func (api *Interface) UpdateTask(task UpdateTask) ([]byte, error) {
 		}
 	}` + taskFragment)
 	generateVars(req, task)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -27,6 +30,9 @@ func (api *Interface) UpdateTask(task UpdateTask) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateTask"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

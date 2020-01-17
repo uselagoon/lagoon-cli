@@ -58,10 +58,7 @@ var configDefaultCmd = &cobra.Command{
 		}
 		viper.Set("default", strings.TrimSpace(string(lagoonConfig.Lagoon)))
 		err := viper.WriteConfig()
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 
 		resultData := output.Result{
 			Result: "success",
