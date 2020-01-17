@@ -3,12 +3,12 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
@@ -23,17 +23,11 @@ var runDrushArchiveDump = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		taskResult, err := environments.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -52,17 +46,11 @@ var runDrushSQLDump = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		taskResult, err := environments.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -81,17 +69,11 @@ var runDrushCacheClear = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		taskResult, err := environments.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -125,15 +107,14 @@ Path:
 				taskCommand = taskCommand + scanner.Text() + "\n"
 			}
 			if err := scanner.Err(); err != nil {
-				fmt.Fprintln(os.Stderr, "reading standard input:", err)
+				// fmt.Fprintln(os.Stderr, "reading standard input:", err)
+				handleError(errors.New("reading standard input:" + err.Error()))
 			}
 		} else {
 			// otherwise we can read from a file
 			if taskCommandFile != "" {
 				taskCommandBytes, err := ioutil.ReadFile(taskCommandFile) // just pass the file name
-				if err != nil {
-					fmt.Print(err)
-				}
+				handleError(err)
 				taskCommand = string(taskCommandBytes)
 			}
 		}
@@ -148,17 +129,11 @@ Path:
 			Command: taskCommand,
 			Service: taskService,
 		}
-		taskResult, err := environments.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,

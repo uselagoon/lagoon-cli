@@ -14,6 +14,7 @@ lagoon [flags]
 
 ```
       --all-projects         All projects (if supported)
+      --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
       --force                Force (if supported)
   -h, --help                 help for lagoon

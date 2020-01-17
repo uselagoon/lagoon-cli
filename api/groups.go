@@ -18,6 +18,9 @@ func (api *Interface) AddGroup(group AddGroup) ([]byte, error) {
 		}
 	}` + groupFragment)
 	generateVars(req, group)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -26,6 +29,9 @@ func (api *Interface) AddGroup(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -46,6 +52,9 @@ func (api *Interface) AddGroupWithParent(group AddGroup) ([]byte, error) {
 	}` + groupFragment)
 	req.Var("name", group.Name)
 	req.Var("parentGroupName", group.ParentGroup.Name)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -54,6 +63,9 @@ func (api *Interface) AddGroupWithParent(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -76,6 +88,9 @@ func (api *Interface) UpdateGroup(group UpdateGroup) ([]byte, error) {
 	}` + groupFragment)
 	req.Var("name", group.Group.Name)
 	req.Var("patch", group.Patch)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -84,6 +99,9 @@ func (api *Interface) UpdateGroup(group UpdateGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -102,6 +120,9 @@ func (api *Interface) DeleteGroup(group AddGroup) ([]byte, error) {
 		})
 	}`)
 	generateVars(req, group)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -110,6 +131,9 @@ func (api *Interface) DeleteGroup(group AddGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -132,6 +156,9 @@ func (api *Interface) AddUserToGroup(user AddUserToGroup) ([]byte, error) {
 	req.Var("userEmail", user.User.Email)
 	req.Var("groupName", user.Group)
 	req.Var("role", user.Role)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -140,6 +167,9 @@ func (api *Interface) AddUserToGroup(user AddUserToGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addUserToGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -159,6 +189,9 @@ func (api *Interface) AddGroupToProject(group ProjectToGroup) ([]byte, error) {
 		}
 	}` + projectFragment)
 	generateVars(req, group)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -167,6 +200,9 @@ func (api *Interface) AddGroupToProject(group ProjectToGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addUserToGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -186,6 +222,9 @@ func (api *Interface) RemoveGroupFromProject(group ProjectToGroup) ([]byte, erro
 		}
 	}` + projectFragment)
 	generateVars(req, group)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -194,6 +233,9 @@ func (api *Interface) RemoveGroupFromProject(group ProjectToGroup) ([]byte, erro
 	jsonBytes, err := json.Marshal(reMappedResult["removeGroupsFromProject"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -214,6 +256,9 @@ func (api *Interface) RemoveUserFromGroup(user UserGroup) ([]byte, error) {
 	}` + groupFragment)
 	req.Var("userEmail", user.User.Email)
 	req.Var("groupName", user.Group)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -222,6 +267,9 @@ func (api *Interface) RemoveUserFromGroup(user UserGroup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["removeUserFromGroup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

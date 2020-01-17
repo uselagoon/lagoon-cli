@@ -26,6 +26,9 @@ func (api *Interface) AddUser(user User) ([]byte, error) {
 	req.Var("lastName", user.LastName)
 	req.Var("comment", user.Comment)
 	req.Var("gitlabId", user.GitlabID)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -34,6 +37,9 @@ func (api *Interface) AddUser(user User) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addUser"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -56,6 +62,9 @@ func (api *Interface) UpdateUser(user UpdateUser) ([]byte, error) {
 	}` + userFragment)
 	req.Var("email", user.User.Email)
 	req.Var("patch", user.Patch)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -64,6 +73,9 @@ func (api *Interface) UpdateUser(user UpdateUser) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateUser"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -82,6 +94,9 @@ func (api *Interface) DeleteUser(user User) ([]byte, error) {
 		})
 	}`)
 	req.Var("email", user.Email)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -90,6 +105,9 @@ func (api *Interface) DeleteUser(user User) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteUser"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -106,6 +124,9 @@ func (api *Interface) GetUserBySSHKey(sshKey SSHKeyValue) ([]byte, error) {
 		}
 	}` + userFragment)
 	req.Var("sshKey", sshKey)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -114,6 +135,9 @@ func (api *Interface) GetUserBySSHKey(sshKey SSHKeyValue) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["userBySshKey"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -141,6 +165,9 @@ func (api *Interface) AddSSHKey(sshKey AddSSHKey) ([]byte, error) {
 	req.Var("keyValue", sshKey.KeyValue)
 	req.Var("keyType", sshKey.KeyType)
 	req.Var("userEmail", sshKey.User.Email)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -149,6 +176,9 @@ func (api *Interface) AddSSHKey(sshKey AddSSHKey) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addSshKey"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -165,6 +195,9 @@ func (api *Interface) DeleteSSHKey(sshKey DeleteSSHKey) ([]byte, error) {
 		})
 	}`)
 	req.Var("name", sshKey.Name)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -173,6 +206,9 @@ func (api *Interface) DeleteSSHKey(sshKey DeleteSSHKey) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteSshKey"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

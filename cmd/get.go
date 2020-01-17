@@ -6,8 +6,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -52,7 +50,7 @@ var getProjectCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := projects.GetProjectInfo(getProjectFlags.Project)
+		returnedJSON, err := pClient.GetProjectInfo(getProjectFlags.Project)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -82,8 +80,7 @@ var getDeploymentCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		returnedJSON, err := environments.GetDeploymentLog(getProjectFlags.RemoteID)
+		returnedJSON, err := eClient.GetDeploymentLog(getProjectFlags.RemoteID)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -116,17 +113,11 @@ var getEnvironmentCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := environments.GetEnvironmentInfo(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := eClient.GetEnvironmentInfo(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
 			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
@@ -146,17 +137,11 @@ var getProjectKeyCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := projects.GetProjectKey(getProjectFlags.Project, revealValue)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := pClient.GetProjectKey(getProjectFlags.Project, revealValue)
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
 			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)

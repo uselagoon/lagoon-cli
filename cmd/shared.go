@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
@@ -54,4 +56,13 @@ var outputOptions = output.Options{
 	Pretty: false,
 }
 
+var debugEnable bool
+
 var noDataError = "no data returned from the lagoon api"
+
+func handleError(err error) {
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+}

@@ -2,16 +2,10 @@ package users
 
 import (
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/graphql"
 )
 
 // AddGroup function
-func AddGroup(group api.Group) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddGroup(group api.Group) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addGroup ($name: String!) {
 			addGroup(input:{name: $name}) {
@@ -23,7 +17,7 @@ func AddGroup(group api.Group) ([]byte, error) {
 		},
 		MappedResult: "addGroup",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -31,12 +25,7 @@ func AddGroup(group api.Group) ([]byte, error) {
 }
 
 // AddGroupWithParent function
-func AddGroupWithParent(group api.Group, parent api.Group) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddGroupWithParent(group api.Group, parent api.Group) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addGroup ($name: String!, $parent: GroupInput) {
 			addGroup(input:{name: $name}) {
@@ -49,7 +38,7 @@ func AddGroupWithParent(group api.Group, parent api.Group) ([]byte, error) {
 		},
 		MappedResult: "addGroup",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -57,12 +46,7 @@ func AddGroupWithParent(group api.Group, parent api.Group) ([]byte, error) {
 }
 
 // AddUserToGroup function
-func AddUserToGroup(userGroup api.UserGroupRole) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddUserToGroup(userGroup api.UserGroupRole) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addUserToGroup($email: String!, $group: String!, $role: GroupRole!) {
 				addUserToGroup(input:{
@@ -85,7 +69,7 @@ func AddUserToGroup(userGroup api.UserGroupRole) ([]byte, error) {
 		},
 		MappedResult: "addUser",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -93,12 +77,7 @@ func AddUserToGroup(userGroup api.UserGroupRole) ([]byte, error) {
 }
 
 // AddProjectToGroup function
-func AddProjectToGroup(groups api.ProjectGroups) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddProjectToGroup(groups api.ProjectGroups) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addGroupsToProject($project: String!, $groups: [GroupInput!]!) {
 			addGroupsToProject(input:{
@@ -114,7 +93,7 @@ func AddProjectToGroup(groups api.ProjectGroups) ([]byte, error) {
 		},
 		MappedResult: "addGroupsToProject",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -122,12 +101,7 @@ func AddProjectToGroup(groups api.ProjectGroups) ([]byte, error) {
 }
 
 // DeleteGroup function
-func DeleteGroup(group api.Group) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) DeleteGroup(group api.Group) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation deleteGroup ($name: String!) {
 				deleteGroup(input:{group:{name: $name}})
@@ -137,7 +111,7 @@ func DeleteGroup(group api.Group) ([]byte, error) {
 		},
 		MappedResult: "deleteGroup",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -145,12 +119,7 @@ func DeleteGroup(group api.Group) ([]byte, error) {
 }
 
 // RemoveUserFromGroup function
-func RemoveUserFromGroup(userGroup api.UserGroup) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) RemoveUserFromGroup(userGroup api.UserGroup) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation removeUserFromGroup ($email: String!, $group: String!) {
 				removeUserFromGroup(input:{group:{name: $group} user:{email: $email}}) {
@@ -163,7 +132,7 @@ func RemoveUserFromGroup(userGroup api.UserGroup) ([]byte, error) {
 		},
 		MappedResult: "removeUserFromGroup",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -171,12 +140,7 @@ func RemoveUserFromGroup(userGroup api.UserGroup) ([]byte, error) {
 }
 
 // RemoveGroupsFromProject function
-func RemoveGroupsFromProject(groups api.ProjectGroups) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) RemoveGroupsFromProject(groups api.ProjectGroups) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation removeGroupsFromProject ($project: String!, $groups: [GroupInput!]!) {
 				removeGroupsFromProject(input:{groups: $groups project:{name: $project}}) {
@@ -189,7 +153,7 @@ func RemoveGroupsFromProject(groups api.ProjectGroups) ([]byte, error) {
 		},
 		MappedResult: "removeGroupsFromProject",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}

@@ -12,17 +12,12 @@ import (
 )
 
 // GetEnvironmentDeployments .
-func GetEnvironmentDeployments(projectName string, environmentName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) GetEnvironmentDeployments(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectNameID)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectNameID)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -55,7 +50,7 @@ func GetEnvironmentDeployments(projectName string, environmentName string) ([]by
 		},
 		MappedResult: "environmentByName",
 	}
-	environmentByName, err := lagoonAPI.Request(customRequest)
+	environmentByName, err := e.api.Request(customRequest)
 	returnResult, err := processEnvironmentDeployments(environmentByName)
 	if err != nil {
 		return []byte(""), err
@@ -97,12 +92,7 @@ func processEnvironmentDeployments(environmentByName []byte) ([]byte, error) {
 }
 
 // GetDeploymentLog .
-func GetDeploymentLog(deploymentID string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) GetDeploymentLog(deploymentID string) ([]byte, error) {
 	customRequest := api.CustomRequest{
 		Query: `query ($id: String!){
 			deploymentByRemoteId(
@@ -117,6 +107,6 @@ func GetDeploymentLog(deploymentID string) ([]byte, error) {
 		},
 		MappedResult: "deploymentByRemoteId",
 	}
-	deploymentByRemoteID, err := lagoonAPI.Request(customRequest)
+	deploymentByRemoteID, err := e.api.Request(customRequest)
 	return deploymentByRemoteID, err
 }

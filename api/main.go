@@ -3,11 +3,14 @@ package api
 import (
 	//"bytes"
 	"context"
+	"fmt"
+
 	//"errors"
 	//"fmt"
 	//"io/ioutil"
 	"net/http"
 	"regexp"
+
 	//"strings"
 	"crypto/tls"
 	"encoding/json"
@@ -24,6 +27,7 @@ type Client interface {
 	Request(CustomRequest) ([]byte, error)
 	SanitizeGroupName(string) string
 	SanitizeProjectName(string) string
+	Debug(bool)
 	// Users
 	AddUser(User) ([]byte, error)
 	UpdateUser(UpdateUser) ([]byte, error)
@@ -79,6 +83,7 @@ type Interface struct {
 	token           string
 	jwtAudience     string
 	graphQLEndpoint string
+	debug           bool
 	netClient       *http.Client
 	graphqlClient   *graphql.Client
 }
@@ -155,6 +160,11 @@ func (api *Interface) SanitizeProjectName(name string) string {
 	return sanitizeName(name)
 }
 
+// Debug .
+func (api *Interface) Debug(debug bool) {
+	api.debug = debug
+}
+
 func sanitizeName(name string) string {
 	var re = regexp.MustCompile(`[^a-zA-Z0-9-]`)
 	sanitizedName := re.ReplaceAllString(name, `$1-$2`)
@@ -167,6 +177,9 @@ func (api *Interface) Request(request CustomRequest) ([]byte, error) {
 	for varName, varValue := range request.Variables {
 		req.Var(string(varName), varValue)
 	}
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -175,6 +188,9 @@ func (api *Interface) Request(request CustomRequest) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult[request.MappedResult])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	return jsonBytes, nil
 }
@@ -188,4 +204,32 @@ func generateVars(request *graphql.Request, jsonData interface{}) {
 	for varName, varValue := range dat {
 		request.Var(string(varName), varValue)
 	}
+}
+
+// DebugData .
+type DebugData struct {
+	Query string     `json:"query"`
+	Vars  []DebugVar `json:"variables"`
+}
+
+// DebugVar .
+type DebugVar struct {
+	Name  string      `json:"name"`
+	Value interface{} `json:"value"`
+}
+
+// debug the query and variables that are sent for the request
+func debugRequest(req *graphql.Request) {
+	data := DebugData{
+		Query: req.Query(),
+	}
+	for n, v := range req.Vars() {
+		data.Vars = append(data.Vars, DebugVar{Name: n, Value: v})
+	}
+	jsonData, _ := json.Marshal(data)
+	fmt.Println("Request:", string(jsonData))
+}
+
+func debugResponse(resp []byte) {
+	fmt.Println("Response:", string(resp))
 }

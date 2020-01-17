@@ -6,17 +6,11 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/output"
 )
 
 // AddUser function
-func AddUser(user api.User) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddUser(user api.User) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addUser ($firstname: String, $lastname: String, $email: String!) {
 				addUser(input:{firstName: $firstname, lastName: $lastname, email: $email}) {
@@ -30,7 +24,7 @@ func AddUser(user api.User) ([]byte, error) {
 		},
 		MappedResult: "addUser",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -38,12 +32,7 @@ func AddUser(user api.User) ([]byte, error) {
 }
 
 // AddSSHKeyToUser function
-func AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation addSshKey ($email: String!, $keyname: String!, $keyvalue: String!, $keytype: SshKeyType!) {
 				addSshKey(input:{
@@ -65,7 +54,7 @@ func AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error) {
 		},
 		MappedResult: "addSshKey",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -73,12 +62,7 @@ func AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error) {
 }
 
 // DeleteSSHKey function
-func DeleteSSHKey(keyName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) DeleteSSHKey(keyName string) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation deleteSshKey ($keyname: String!) {
 				deleteSshKey(input:{name: $keyname})
@@ -88,7 +72,7 @@ func DeleteSSHKey(keyName string) ([]byte, error) {
 		},
 		MappedResult: "deleteSshKey",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -96,12 +80,7 @@ func DeleteSSHKey(keyName string) ([]byte, error) {
 }
 
 // DeleteUser function
-func DeleteUser(user api.User) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) DeleteUser(user api.User) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation deleteUser ($email: String!) {
 				deleteUser(input:{user: {email: $email}})
@@ -111,7 +90,7 @@ func DeleteUser(user api.User) ([]byte, error) {
 		},
 		MappedResult: "deleteUser",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -119,12 +98,7 @@ func DeleteUser(user api.User) ([]byte, error) {
 }
 
 // ModifyUser function
-func ModifyUser(user api.User, patch api.User) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (u *Users) ModifyUser(user api.User, patch api.User) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `mutation updateUser ($email: String!, $patch: UpdateUserPatchInput!) {
 				updateUser(input:{
@@ -140,7 +114,7 @@ func ModifyUser(user api.User, patch api.User) ([]byte, error) {
 		},
 		MappedResult: "updateUser",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -148,13 +122,8 @@ func ModifyUser(user api.User, patch api.User) ([]byte, error) {
 }
 
 // ListUsers function
-func ListUsers(groupName string) ([]byte, error) {
+func (u *Users) ListUsers(groupName string) ([]byte, error) {
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
 	customReq := api.CustomRequest{
 		Query: `query allGroups ($name: String) {
 				allGroups (name: $name) {
@@ -176,7 +145,7 @@ func ListUsers(groupName string) ([]byte, error) {
 		},
 		MappedResult: "allGroups",
 	}
-	listUsers, err := lagoonAPI.Request(customReq)
+	listUsers, err := u.api.Request(customReq)
 	returnResult, err := processUserList(listUsers)
 	if err != nil {
 		return []byte(""), err
@@ -241,13 +210,8 @@ func processUserList(listUsers []byte) ([]byte, error) {
 }
 
 // ListUserSSHKeys function
-func ListUserSSHKeys(groupName string, email string, allUsers bool) ([]byte, error) {
+func (u *Users) ListUserSSHKeys(groupName string, email string, allUsers bool) ([]byte, error) {
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
 	customReq := api.CustomRequest{
 		Query: `query allGroups ($name: String) {
 				allGroups (name: $name) {
@@ -274,7 +238,7 @@ func ListUserSSHKeys(groupName string, email string, allUsers bool) ([]byte, err
 		},
 		MappedResult: "allGroups",
 	}
-	listUsers, err := lagoonAPI.Request(customReq)
+	listUsers, err := u.api.Request(customReq)
 	returnedKeys, err := processReturnedUserKeysList(listUsers)
 	var returnResult []byte
 	if allUsers {

@@ -2,7 +2,44 @@ package users
 
 import (
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/graphql"
 )
+
+// Users .
+type Users struct {
+	debug bool
+	api   api.Client
+}
+
+// Client .
+type Client interface {
+	AddGroup(api.Group) ([]byte, error)
+	AddUserToGroup(api.UserGroupRole) ([]byte, error)
+	AddProjectToGroup(api.ProjectGroups) ([]byte, error)
+	RemoveUserFromGroup(api.UserGroup) ([]byte, error)
+	RemoveGroupsFromProject(api.ProjectGroups) ([]byte, error)
+	DeleteGroup(api.Group) ([]byte, error)
+	ListUsers(string) ([]byte, error)
+	AddUser(api.User) ([]byte, error)
+	AddSSHKeyToUser(api.User, api.SSHKey) ([]byte, error)
+	DeleteSSHKey(string) ([]byte, error)
+	DeleteUser(api.User) ([]byte, error)
+	ModifyUser(api.User, api.User) ([]byte, error)
+	ListUserSSHKeys(string, string, bool) ([]byte, error)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(debug)
+	if err != nil {
+		return &Users{}, err
+	}
+	return &Users{
+		debug: debug,
+		api:   lagoonAPI,
+	}, nil
+
+}
 
 var noDataError = "no data returned from the lagoon api"
 
