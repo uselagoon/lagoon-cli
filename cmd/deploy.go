@@ -55,7 +55,7 @@ var deployBranchCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
-		if yesNo() {
+		if yesNo("Continue with deployment?") {
 			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
 			handleError(err)
 			resultData := output.Result{

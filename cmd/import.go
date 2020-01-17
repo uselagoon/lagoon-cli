@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/importer"
-	"github.com/amazeeio/lagoon-cli/lagoon/parser"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -86,11 +84,11 @@ You can avoid these and force it to continue on errors by specifying the '--forc
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {
 			// if using stdin, then we need to force action as any prompts just fail as they expect stdin
-			importer.ImportData(importData, forceAction)
+			iClient.ImportData(importData, forceAction)
 		} else {
 			// else we can prompt for failures
 			if yesNo("Are you sure you want to import this data, it is potentially dangerous") {
-				importer.ImportData(importData, forceAction)
+				iClient.ImportData(importData, forceAction)
 			}
 		}
 	},
@@ -109,7 +107,7 @@ If given the raw JSON output from a lagoon query, this will parse it into a yaml
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		parser.ParseJSONImport(importJSON)
+		parClient.ParseJSONImport(importJSON)
 	},
 }
 
@@ -124,12 +122,12 @@ You can specify to export a specific project by using the '-p <project-name>' fl
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		if cmdProjectName == "" {
 			if yesNo("Are you sure you want to export lagoon output for all projects?") {
-				_, _ = parser.ParseAllProjects()
+				_, _ = parClient.ParseAllProjects()
 				// fmt.Println(string(data))
 			}
 		} else {
 			if yesNo("Are you sure you want to export lagoon output for " + cmdProjectName + "?") {
-				_, _ = parser.ParseProject(cmdProjectName)
+				_, _ = parClient.ParseProject(cmdProjectName)
 			}
 		}
 

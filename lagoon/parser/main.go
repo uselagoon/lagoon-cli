@@ -20,6 +20,31 @@ import (
 	"github.com/ghodss/yaml"
 )
 
+// Parser .
+type Parser struct {
+	debug bool
+	api   api.Client
+}
+
+// Client .
+type Client interface {
+	ParseJSONImport(string) importer.LagoonImport
+	ParseProject(string) ([]byte, error)
+	ParseAllProjects() ([]byte, error)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(debug)
+	if err != nil {
+		return &Parser{}, err
+	}
+	return &Parser{
+		debug: debug,
+		api:   lagoonAPI,
+	}, nil
+}
+
 type lagoonImport struct {
 	Data map[string]interface{} `json:"data"`
 }
@@ -39,7 +64,7 @@ type lagoonImport struct {
 	}
 }
 */
-func ParseJSONImport(jsonData string) importer.LagoonImport {
+func (p *Parser) ParseJSONImport(jsonData string) importer.LagoonImport {
 	// jsonStr, err := ioutil.ReadFile(jsonFile) // just pass the file name
 	// if err != nil {
 	// 	fmt.Println(err)
@@ -224,11 +249,7 @@ func appendIfMissingUsers(slice []importer.LagoonUsers, i importer.LagoonUsers) 
 }
 
 // ParseProject given a specific project name, get the json dump, then parse it to the import format
-func ParseProject(projectName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Parser) ParseProject(projectName string) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `fragment NotificationSlack on NotificationSlack {
 			webhook
@@ -316,7 +337,7 @@ func ParseProject(projectName string) ([]byte, error) {
 		},
 		MappedResult: "projectByName",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := p.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -327,11 +348,7 @@ func ParseProject(projectName string) ([]byte, error) {
 }
 
 // ParseAllProjects export all projects from lagoon and parse them to the import format
-func ParseAllProjects() ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Parser) ParseAllProjects() ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `fragment NotificationSlack on NotificationSlack {
 			webhook
@@ -417,7 +434,7 @@ func ParseAllProjects() ([]byte, error) {
 		Variables:    map[string]interface{}{},
 		MappedResult: "allProjects",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := p.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}

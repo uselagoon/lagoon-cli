@@ -31,6 +31,7 @@ type Client interface {
 	RunCustomTask(string, string, api.Task) ([]byte, error)
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
+	AddOrUpdateEnvironment(string, string, string) ([]byte, error)
 }
 
 // New .
@@ -172,15 +173,12 @@ func returnNonEmptyString(value string) string {
 }
 
 // AddOrUpdateEnvironment .
-func AddOrUpdateEnvironment(projectName string, environmentName string, jsonPatch string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	} // get project info from lagoon, we need the project ID for later
+func (e *Environments) AddOrUpdateEnvironment(projectName string, environmentName string, jsonPatch string) ([]byte, error) {
+	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectNameID)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectNameID)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -196,7 +194,7 @@ func AddOrUpdateEnvironment(projectName string, environmentName string, jsonPatc
 	}
 	environment.Name = environmentName
 
-	projectAddResult, err := lagoonAPI.AddOrUpdateEnvironment(projectInfo.ID, environment)
+	projectAddResult, err := e.api.AddOrUpdateEnvironment(projectInfo.ID, environment)
 	if err != nil {
 		return []byte(""), err
 	}

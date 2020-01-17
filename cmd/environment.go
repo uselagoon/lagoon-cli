@@ -40,7 +40,7 @@ var deleteEnvCmd = &cobra.Command{
 		}
 		fmt.Println(fmt.Sprintf("Deleting %s-%s", cmdProjectName, cmdProjectEnvironment))
 
-		if yesNo() {
+		if yesNo("Are you sure you want to delete?") {
 			projectByName, err := eClient.DeleteEnvironment(cmdProjectName, cmdProjectEnvironment)
 			handleError(err)
 			resultData := output.Result{

@@ -20,6 +20,42 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+// Importer .
+type Importer struct {
+	debug   bool
+	eClient environments.Client
+	pClient projects.Client
+	uClient users.Client
+}
+
+// Client .
+type Client interface {
+	ImportData(string, bool)
+	addGroup(api.Group, bool)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	eClient, err := environments.New(debug)
+	if err != nil {
+		return &Importer{}, err
+	}
+	uClient, err := users.New(debug)
+	if err != nil {
+		return &Importer{}, err
+	}
+	pClient, err := projects.New(debug)
+	if err != nil {
+		return &Importer{}, err
+	}
+	return &Importer{
+		debug:   debug,
+		eClient: eClient,
+		pClient: pClient,
+		uClient: uClient,
+	}, nil
+}
+
 // LagoonImport .
 type LagoonImport struct {
 	Groups        []api.Group `json:"groups,omitempty"`
@@ -100,7 +136,7 @@ type AddUserToGroup struct {
 }
 
 // ImportData func
-func ImportData(yamlData string, forceAction bool) {
+func (i *Importer) ImportData(yamlData string, forceAction bool) {
 	// yamlData, err := ioutil.ReadFile(importFile) // just pass the file name
 	// if err != nil {
 	// 	fmt.Println(err)
@@ -116,53 +152,53 @@ func ImportData(yamlData string, forceAction bool) {
 	// @TODO: do a platform-owner only check and fail sooner, tell user import is only for platform-owners currently
 	// start with adding groups
 	for _, group := range importedData.Groups {
-		addGroup(group, forceAction)
+		i.addGroup(group, forceAction)
 	}
 	// next add users and any keys, then add them to any groups they need to be in
 	for _, user := range importedData.Users {
-		addUser(user.User, forceAction)
-		addKeysToUser(user.User, forceAction)
+		i.addUser(user.User, forceAction)
+		i.addKeysToUser(user.User, forceAction)
 		for _, group := range user.Groups {
-			addUserGroup(user.User, group, forceAction)
+			i.addUserGroup(user.User, group, forceAction)
 		}
 	}
 	// create any notification providers
 	for _, slack := range importedData.Notifications.Slack {
-		addSlack(slack, forceAction)
+		i.addSlack(slack, forceAction)
 	}
 	for _, rocketchat := range importedData.Notifications.RocketChat {
-		addRocketChat(rocketchat, forceAction)
+		i.addRocketChat(rocketchat, forceAction)
 	}
 	// now add the projects
 	for _, project := range importedData.Projects {
 		var lagoonProject api.ProjectPatch
 		projectBytes, _ := json.Marshal(project.Project)
 		json.Unmarshal(projectBytes, &lagoonProject)
-		addProject(lagoonProject, forceAction)
+		i.addProject(lagoonProject, forceAction)
 		if lagoonProject.PrivateKey != "" {
 			// if our import has a private key, patch the project with it after adding the project.
 			// seems adding projects won't add the key if it is already defined
-			updateProject(lagoonProject.Name, api.ProjectPatch{PrivateKey: lagoonProject.PrivateKey, Name: lagoonProject.Name}, forceAction)
+			i.updateProject(lagoonProject.Name, api.ProjectPatch{PrivateKey: lagoonProject.PrivateKey, Name: lagoonProject.Name}, forceAction)
 		}
 		// add them to any groups they need to be in
 		for _, group := range project.Groups {
-			addGroupProject(project.Project.Name, group, forceAction)
+			i.addGroupProject(project.Project.Name, group, forceAction)
 		}
 		for _, environment := range project.Environments {
-			addEnvironmentToProject(project.Project.Name, environment, forceAction)
+			i.addEnvironmentToProject(project.Project.Name, environment, forceAction)
 			for _, variable := range environment.Variables {
 				varBytes, _ := json.Marshal(variable)
 				var newVariable api.EnvVariable
 				json.Unmarshal(varBytes, &newVariable)
-				addEnvironmentVariable(project.Project.Name, environment.Name, newVariable, forceAction)
+				i.addEnvironmentVariable(project.Project.Name, environment.Name, newVariable, forceAction)
 			}
 		}
 		for _, variable := range project.Variables {
-			addProjectVariable(project.Project.Name, variable, forceAction)
+			i.addProjectVariable(project.Project.Name, variable, forceAction)
 		}
 		// then add any notification services to the project if required
-		addSlacks(project.Notifications.Slack, project.Project.Name, forceAction)
-		addRocketChats(project.Notifications.RocketChat, project.Project.Name, forceAction)
+		i.addSlacks(project.Notifications.Slack, project.Project.Name, forceAction)
+		i.addRocketChats(project.Notifications.RocketChat, project.Project.Name, forceAction)
 	}
 }
 
@@ -181,10 +217,10 @@ func confirmation(message string, forceAction bool) bool {
 	return true
 }
 
-func addRocketChats(rocketchats []string, name string, action bool) {
+func (i *Importer) addRocketChats(rocketchats []string, name string, action bool) {
 	for _, rocketchat := range rocketchats {
 		fmt.Println("Adding rocketchat", rocketchat, "to project", name)
-		_, err := projects.AddRocketChatNotificationToProject(name, rocketchat)
+		_, err := i.pClient.AddRocketChatNotificationToProject(name, rocketchat)
 		if err != nil {
 			fmt.Println("\t", err)
 			if !confirmation("Continue?", action) {
@@ -194,10 +230,10 @@ func addRocketChats(rocketchats []string, name string, action bool) {
 	}
 }
 
-func addSlacks(slacks []string, name string, action bool) {
+func (i *Importer) addSlacks(slacks []string, name string, action bool) {
 	for _, slack := range slacks {
 		fmt.Println("Adding slack", slack, "to project", name)
-		_, err := projects.AddSlackNotificationToProject(name, slack)
+		_, err := i.pClient.AddSlackNotificationToProject(name, slack)
 		if err != nil {
 			fmt.Println("\t", err)
 			if !confirmation("Continue?", action) {
@@ -207,7 +243,7 @@ func addSlacks(slacks []string, name string, action bool) {
 	}
 }
 
-func addGroupProject(name string, group string, action bool) {
+func (i *Importer) addGroupProject(name string, group string, action bool) {
 	fmt.Println("Adding project", name, "to group", group)
 	projectGroup := api.ProjectGroups{
 		Project: api.Project{
@@ -219,7 +255,7 @@ func addGroupProject(name string, group string, action bool) {
 			},
 		},
 	}
-	_, err := users.AddProjectToGroup(projectGroup)
+	_, err := i.uClient.AddProjectToGroup(projectGroup)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -228,10 +264,10 @@ func addGroupProject(name string, group string, action bool) {
 	}
 }
 
-func updateProject(projectName string, project api.ProjectPatch, action bool) {
+func (i *Importer) updateProject(projectName string, project api.ProjectPatch, action bool) {
 	jsonPatch, _ := json.Marshal(project)
 	fmt.Println("updating project", project.Name)
-	updateResult, err := projects.UpdateProject(project.Name, string(jsonPatch))
+	updateResult, err := i.pClient.UpdateProject(project.Name, string(jsonPatch))
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -249,10 +285,10 @@ func updateProject(projectName string, project api.ProjectPatch, action bool) {
 	}
 }
 
-func addProject(project api.ProjectPatch, action bool) {
+func (i *Importer) addProject(project api.ProjectPatch, action bool) {
 	jsonPatch, _ := json.Marshal(project)
 	fmt.Println("Adding project", project.Name)
-	addResult, err := projects.AddProject(project.Name, string(jsonPatch))
+	addResult, err := i.pClient.AddProject(project.Name, string(jsonPatch))
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -270,9 +306,9 @@ func addProject(project api.ProjectPatch, action bool) {
 	}
 }
 
-func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
+func (i *Importer) addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
 	fmt.Println("Adding rocketchat", rocketchat.Name)
-	_, err := projects.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
+	_, err := i.pClient.AddRocketChatNotification(rocketchat.Name, rocketchat.Channel, rocketchat.Webhook)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -281,9 +317,9 @@ func addRocketChat(rocketchat api.NotificationRocketChat, action bool) {
 	}
 }
 
-func addSlack(slack api.NotificationSlack, action bool) {
+func (i *Importer) addSlack(slack api.NotificationSlack, action bool) {
 	fmt.Println("Adding slack", slack.Name)
-	_, err := projects.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
+	_, err := i.pClient.AddSlackNotification(slack.Name, slack.Channel, slack.Webhook)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -292,9 +328,9 @@ func addSlack(slack api.NotificationSlack, action bool) {
 	}
 }
 
-func addGroup(group api.Group, action bool) {
+func (i *Importer) addGroup(group api.Group, action bool) {
 	fmt.Println("Adding group", group.Name)
-	_, err := users.AddGroup(group)
+	_, err := i.uClient.AddGroup(group)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -303,12 +339,12 @@ func addGroup(group api.Group, action bool) {
 	}
 }
 
-func addUser(user LagoonUser, action bool) {
+func (i *Importer) addUser(user LagoonUser, action bool) {
 	fmt.Println("Adding user", user.Email)
 	userData := api.User{
 		Email: user.Email,
 	}
-	_, err := users.AddUser(userData)
+	_, err := i.uClient.AddUser(userData)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -317,7 +353,7 @@ func addUser(user LagoonUser, action bool) {
 	}
 }
 
-func addKeysToUser(user LagoonUser, action bool) {
+func (i *Importer) addKeysToUser(user LagoonUser, action bool) {
 	userData := api.User{
 		Email: user.Email,
 	}
@@ -347,7 +383,7 @@ func addKeysToUser(user LagoonUser, action bool) {
 			Name:     keyName,
 		}
 		fmt.Println("Adding key to user", user.Email)
-		_, err := users.AddSSHKeyToUser(userData, sshKey)
+		_, err := i.uClient.AddSSHKeyToUser(userData, sshKey)
 		if err != nil {
 			fmt.Println("\t", err)
 			if !confirmation("Continue?", action) {
@@ -357,7 +393,7 @@ func addKeysToUser(user LagoonUser, action bool) {
 	}
 }
 
-func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
+func (i *Importer) addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	userData := api.User{
 		Email: user.Email,
 	}
@@ -386,7 +422,7 @@ func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	}
 	var err error
 	fmt.Println("Adding user", user.Email, "to group", group.Name, "with role", roleType)
-	_, err = users.AddUserToGroup(userGroupRole)
+	_, err = i.uClient.AddUserToGroup(userGroupRole)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -395,7 +431,7 @@ func addUserGroup(user LagoonUser, group AddUserToGroup, action bool) {
 	}
 }
 
-func addProjectVariable(projectName string, variable api.EnvVariable, action bool) {
+func (i *Importer) addProjectVariable(projectName string, variable api.EnvVariable, action bool) {
 	fmt.Println("Adding variable", variable.Name, "scoped", variable.Scope, "to project", projectName)
 	var envScope api.EnvVariableScope
 	switch strings.ToLower(string(variable.Scope)) {
@@ -411,7 +447,7 @@ func addProjectVariable(projectName string, variable api.EnvVariable, action boo
 		envScope = api.RuntimeVar
 	}
 	variable.Scope = envScope
-	_, err := projects.AddEnvironmentVariableToProject(projectName, variable)
+	_, err := i.pClient.AddEnvironmentVariableToProject(projectName, variable)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -420,7 +456,7 @@ func addProjectVariable(projectName string, variable api.EnvVariable, action boo
 	}
 }
 
-func addEnvironmentVariable(projectName string, environmentName string, variable api.EnvVariable, action bool) {
+func (i *Importer) addEnvironmentVariable(projectName string, environmentName string, variable api.EnvVariable, action bool) {
 	fmt.Println("Adding variable", variable.Name, "scoped", variable.Scope, "to project", projectName, "environment", environmentName)
 	var envScope api.EnvVariableScope
 	switch strings.ToLower(string(variable.Scope)) {
@@ -436,7 +472,7 @@ func addEnvironmentVariable(projectName string, environmentName string, variable
 		envScope = api.RuntimeVar
 	}
 	variable.Scope = envScope
-	_, err := environments.AddEnvironmentVariableToEnvironment(projectName, environmentName, variable)
+	_, err := i.eClient.AddEnvironmentVariableToEnvironment(projectName, environmentName, variable)
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {
@@ -445,7 +481,7 @@ func addEnvironmentVariable(projectName string, environmentName string, variable
 	}
 }
 
-func addEnvironmentToProject(projectName string, environment LagoonEnvironment, action bool) {
+func (i *Importer) addEnvironmentToProject(projectName string, environment LagoonEnvironment, action bool) {
 	fmt.Println("Adding environment", environment.Name, "to project", projectName)
 	var deployType api.DeployType
 	switch strings.ToLower(string(environment.DeployType)) {
@@ -468,7 +504,7 @@ func addEnvironmentToProject(projectName string, environment LagoonEnvironment, 
 	}
 	environment.EnvironmentType = envType
 	envBytes, _ := json.Marshal(environment)
-	_, err := environments.AddOrUpdateEnvironment(projectName, environment.Name, string(envBytes))
+	_, err := i.eClient.AddOrUpdateEnvironment(projectName, environment.Name, string(envBytes))
 	if err != nil {
 		fmt.Println("\t", err)
 		if !confirmation("Continue?", action) {

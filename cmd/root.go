@@ -10,6 +10,8 @@ import (
 	"github.com/amazeeio/lagoon-cli/app"
 	"github.com/amazeeio/lagoon-cli/graphql"
 	"github.com/amazeeio/lagoon-cli/lagoon/environments"
+	"github.com/amazeeio/lagoon-cli/lagoon/importer"
+	"github.com/amazeeio/lagoon-cli/lagoon/parser"
 	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
@@ -219,6 +221,16 @@ func initConfig() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+	iClient, err = importer.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	parClient, err = parser.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
@@ -285,6 +297,8 @@ func unset(key string) error {
 var eClient environments.Client
 var uClient users.Client
 var pClient projects.Client
+var iClient importer.Client
+var parClient parser.Client
 
 // FormatType .
 type FormatType string
