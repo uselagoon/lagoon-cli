@@ -54,6 +54,7 @@ var outputOptions = output.Options{
 	CSV:    false,
 	JSON:   false,
 	Pretty: false,
+	Debug:  false,
 }
 
 var debugEnable bool

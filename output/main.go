@@ -25,6 +25,7 @@ type Options struct {
 	CSV    bool
 	JSON   bool
 	Pretty bool
+	Debug  bool
 }
 
 // Result .
@@ -91,6 +92,9 @@ func RenderResult(result Result, opts Options) {
 
 // RenderOutput .
 func RenderOutput(data Table, opts Options) {
+	if opts.Debug {
+		fmt.Println(fmt.Sprintf("%s", aurora.Yellow("Final result:")))
+	}
 	if opts.JSON {
 		// really basic tabledata to json implementation
 		var rawData []interface{}

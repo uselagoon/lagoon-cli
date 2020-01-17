@@ -4,6 +4,7 @@ import (
 	//"bytes"
 	"context"
 	"fmt"
+	"strings"
 
 	//"errors"
 	//"fmt"
@@ -17,6 +18,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/logrusorgru/aurora"
 	"github.com/machinebox/graphql"
 )
 
@@ -227,9 +229,9 @@ func debugRequest(req *graphql.Request) {
 		data.Vars = append(data.Vars, DebugVar{Name: n, Value: v})
 	}
 	jsonData, _ := json.Marshal(data)
-	fmt.Println("Request:", string(jsonData))
+	fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Request"), strings.Replace(string(jsonData), "\\t", "", -1)))
 }
 
 func debugResponse(resp []byte) {
-	fmt.Println("Response:", string(resp))
+	fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Response"), string(resp)))
 }

@@ -216,6 +216,7 @@ func initConfig() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+	outputOptions.Debug = debugEnable
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
