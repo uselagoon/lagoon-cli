@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 )
@@ -19,11 +18,8 @@ var listSlackCmd = &cobra.Command{
 		var returnedJSON []byte
 		var err error
 		if listAllProjects {
-			returnedJSON, err = projects.ListAllSlacks()
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			returnedJSON, err = pClient.ListAllSlacks()
+			handleError(err)
 		} else {
 			notificationFlags := parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
@@ -32,20 +28,14 @@ var listSlackCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			returnedJSON, err = projects.ListProjectSlacks(notificationFlags.Project)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			returnedJSON, err = pClient.ListProjectSlacks(notificationFlags.Project)
+			handleError(err)
 		}
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -64,18 +54,11 @@ var addSlackNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		addResult, err := projects.AddSlackNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddSlackNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(addResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -95,17 +78,11 @@ var addProjectSlackNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		addResult, err := projects.AddSlackNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddSlackNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(addResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -125,17 +102,11 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteSlackNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		deleteResult, err := pClient.DeleteSlackNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
+		handleError(err)
 		var addedProject api.NotificationSlack
 		err = json.Unmarshal([]byte(deleteResult), &addedProject)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result: "success",
 		}
@@ -154,11 +125,8 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := projects.DeleteSlackNotification(notificationFlags.NotificationName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		deleteResult, err := pClient.DeleteSlackNotification(notificationFlags.NotificationName)
+		handleError(err)
 		resultData := output.Result{
 			Result: string(deleteResult),
 		}
@@ -186,23 +154,14 @@ var updateSlackNotificationCmd = &cobra.Command{
 		notificationFlags.NotificationOldName = oldName
 		if jsonPatch == "" {
 			jsonPatchBytes, err := json.Marshal(notificationFlags)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 			jsonPatch = string(jsonPatchBytes)
 		}
-		updateResult, err := projects.UpdateSlackNotification(notificationFlags.NotificationOldName, jsonPatch)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		updateResult, err := pClient.UpdateSlackNotification(notificationFlags.NotificationOldName, jsonPatch)
+		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(updateResult), &resultMap)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,

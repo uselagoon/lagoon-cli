@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -57,11 +56,8 @@ var deployBranchCmd = &cobra.Command{
 		}
 
 		if yesNo() {
-			deployResult, err := environments.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
+			handleError(err)
 			resultData := output.Result{
 				Result: string(deployResult),
 			}

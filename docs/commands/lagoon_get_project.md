@@ -20,6 +20,7 @@ lagoon get project [flags]
 
 ```
       --all-projects         All projects (if supported)
+      --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
       --force                Force (if supported)
   -l, --lagoon string        The Lagoon instance to interact with

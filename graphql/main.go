@@ -7,12 +7,13 @@ import (
 )
 
 // LagoonAPI .
-func LagoonAPI() (api.Client, error) {
+func LagoonAPI(debug bool) (api.Client, error) {
 	lagoon := viper.GetString("current")
 	lagoonAPI, err := api.NewWithToken(
 		viper.GetString("lagoons."+lagoon+".token"),
 		viper.GetString("lagoons."+lagoon+".graphql"),
 	)
+	lagoonAPI.Debug(debug)
 	if err != nil {
 		return nil, err
 	}

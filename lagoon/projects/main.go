@@ -11,14 +11,58 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-// ListAllProjects will list all projects
-func ListAllProjects() ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
+// Projects .
+type Projects struct {
+	debug bool
+	api   api.Client
+}
+
+// Client .
+type Client interface {
+	ListAllProjects() ([]byte, error)
+	ListEnvironmentsForProject(string) ([]byte, error)
+	ListProjectVariables(string, bool) ([]byte, error)
+	GetProjectKey(string, bool) ([]byte, error)
+	GetProjectInfo(string) ([]byte, error)
+	ListAllRocketChats() ([]byte, error)
+	ListProjectRocketChats(string) ([]byte, error)
+	ListAllSlacks() ([]byte, error)
+	ListProjectSlacks(string) ([]byte, error)
+	AddRocketChatNotification(string, string, string) ([]byte, error)
+	AddRocketChatNotificationToProject(string, string) ([]byte, error)
+	DeleteRocketChatNotificationFromProject(string, string) ([]byte, error)
+	UpdateRocketChatNotification(string, string) ([]byte, error)
+	DeleteRocketChatNotification(string) ([]byte, error)
+	AddSlackNotification(string, string, string) ([]byte, error)
+	AddSlackNotificationToProject(string, string) ([]byte, error)
+	DeleteSlackNotificationFromProject(string, string) ([]byte, error)
+	UpdateSlackNotification(string, string) ([]byte, error)
+	DeleteSlackNotification(string) ([]byte, error)
+	DeleteProject(string) ([]byte, error)
+	AddProject(string, string) ([]byte, error)
+	UpdateProject(string, string) ([]byte, error)
+	AddEnvironmentVariableToProject(string, api.EnvVariable) ([]byte, error)
+	DeleteEnvironmentVariableFromProject(string, api.EnvVariable) ([]byte, error)
+}
+
+// New .
+func New(debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(debug)
 	if err != nil {
-		return []byte(""), err
+		return &Projects{}, err
 	}
-	allProjects, err := lagoonAPI.GetAllProjects(graphql.AllProjectsFragment)
+	return &Projects{
+		debug: debug,
+		api:   lagoonAPI,
+	}, nil
+
+}
+
+var noDataError = "no data returned from the lagoon api"
+
+// ListAllProjects will list all projects
+func (p *Projects) ListAllProjects() ([]byte, error) {
+	allProjects, err := p.api.GetAllProjects(graphql.AllProjectsFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -66,17 +110,12 @@ func processProject(project api.Project) []string {
 }
 
 // GetProjectInfo will get basic info about a project
-func GetProjectInfo(projectName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) GetProjectInfo(projectName string) ([]byte, error) {
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := p.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -131,17 +170,12 @@ func processProjectExtra(project api.Project) []string {
 }
 
 // ListEnvironmentsForProject will list all environments for a project
-func ListEnvironmentsForProject(projectName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) ListEnvironmentsForProject(projectName string) ([]byte, error) {
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := p.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -188,18 +222,14 @@ func processEnvironmentsList(projectByName []byte) ([]byte, error) {
 }
 
 // AddProject .
-func AddProject(projectName string, jsonPatch string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) AddProject(projectName string, jsonPatch string) ([]byte, error) {
 	project := api.ProjectPatch{}
-	err = json.Unmarshal([]byte(jsonPatch), &project)
+	err := json.Unmarshal([]byte(jsonPatch), &project)
 	if err != nil {
 		return []byte(""), err
 	}
 	project.Name = projectName
-	projectAddResult, err := lagoonAPI.AddProject(project, graphql.ProjectByNameFragment)
+	projectAddResult, err := p.api.AddProject(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -207,29 +237,21 @@ func AddProject(projectName string, jsonPatch string) ([]byte, error) {
 }
 
 // DeleteProject .
-func DeleteProject(projectName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) DeleteProject(projectName string) ([]byte, error) {
 	project := api.Project{
 		Name: projectName,
 	}
-	returnResult, err := lagoonAPI.DeleteProject(project)
+	returnResult, err := p.api.DeleteProject(project)
 	return returnResult, err
 }
 
 // UpdateProject .
-func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
 	// get the project id from name
 	projectBName := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(projectBName, graphql.ProjectByNameFragment)
+	projectByName, err := p.api.GetProjectByName(projectBName, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -237,7 +259,7 @@ func UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	returnResult, err := lagoonAPI.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
+	returnResult, err := p.api.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -267,12 +289,7 @@ func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdatePro
 }
 
 // GetProjectKey will get basic info about a project
-func GetProjectKey(projectName string, revealValue bool) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (p *Projects) GetProjectKey(projectName string, revealValue bool) ([]byte, error) {
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
@@ -280,7 +297,7 @@ func GetProjectKey(projectName string, revealValue bool) ([]byte, error) {
 	keyFragment := `fragment Project on Project {
 		privateKey
 	}`
-	projectByName, err := lagoonAPI.GetProjectByName(project, keyFragment)
+	projectByName, err := p.api.GetProjectByName(project, keyFragment)
 	if err != nil {
 		return []byte(""), err
 	}

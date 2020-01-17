@@ -22,13 +22,14 @@ lagoon update project [flags]
   -E, --productionEnvironment string   Which environment(the name) should be marked as the production environment
   -m, --pullrequests string            Which Pull Requests should be deployed
   -C, --storageCalc int                Should storage for this environment be calculated
-  -s, --subfolder string               Set if the .lagoon.yml should be found in a subfolder Usefull if you have multiple Lagoon projects per Git Repository
+  -s, --subfolder string               Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 
 ### Options inherited from parent commands
 
 ```
       --all-projects         All projects (if supported)
+      --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
       --force                Force (if supported)
   -l, --lagoon string        The Lagoon instance to interact with

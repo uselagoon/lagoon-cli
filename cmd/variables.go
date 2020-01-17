@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -48,10 +46,7 @@ var addVariableCmd = &cobra.Command{
 		}
 		if jsonPatch != "" {
 			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 		}
 		if envVarFlags.Name == "" || envVarFlags.Value == "" || envVarFlags.Scope == "" {
 			output.RenderError("Must define a variable name, value and scope", outputOptions)
@@ -71,23 +66,17 @@ var addVariableCmd = &cobra.Command{
 		var err error
 		returnResultData := map[string]interface{}{}
 		if cmdProjectEnvironment != "" {
-			customReqResult, err = environments.AddEnvironmentVariableToEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
+			customReqResult, err = eClient.AddEnvironmentVariableToEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
 			returnResultData["Project"] = cmdProjectName
 			returnResultData["Environment"] = cmdProjectEnvironment
 		} else {
-			customReqResult, err = projects.AddEnvironmentVariableToProject(cmdProjectName, envVarFlags)
+			customReqResult, err = pClient.AddEnvironmentVariableToProject(cmdProjectName, envVarFlags)
 			returnResultData["Project"] = cmdProjectName
 		}
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		var updatedVariable api.EnvVariable
 		err = json.Unmarshal([]byte(customReqResult), &updatedVariable)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		returnResultData["ID"] = strconv.Itoa(updatedVariable.ID)
 		resultData := output.Result{
 			Result:     "success",
@@ -112,10 +101,7 @@ var deleteVariableCmd = &cobra.Command{
 		}
 		if jsonPatch != "" {
 			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 		}
 		if envVarFlags.Name == "" {
 			output.RenderError("Must define a variable name", outputOptions)
@@ -126,14 +112,11 @@ var deleteVariableCmd = &cobra.Command{
 			var deleteResult []byte
 			var err error
 			if cmdProjectEnvironment != "" {
-				deleteResult, err = environments.DeleteEnvironmentVariableFromEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
+				deleteResult, err = eClient.DeleteEnvironmentVariableFromEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
 			} else {
-				deleteResult, err = projects.DeleteEnvironmentVariableFromProject(cmdProjectName, envVarFlags)
+				deleteResult, err = pClient.DeleteEnvironmentVariableFromProject(cmdProjectName, envVarFlags)
 			}
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 			resultData := output.Result{
 				Result: string(deleteResult),
 			}

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -48,11 +47,8 @@ var deleteProjectCmd = &cobra.Command{
 		}
 
 		if yesNo() {
-			deleteResult, err := projects.DeleteProject(cmdProjectName)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			deleteResult, err := pClient.DeleteProject(cmdProjectName)
+			handleError(err)
 			resultData := output.Result{
 				Result: string(deleteResult),
 			}
@@ -74,18 +70,11 @@ var addProjectCmd = &cobra.Command{
 		}
 
 		jsonPatch, _ := json.Marshal(projectFlags)
-		addResult, err := projects.AddProject(cmdProjectName, string(jsonPatch))
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		addResult, err := pClient.AddProject(cmdProjectName, string(jsonPatch))
+		handleError(err)
 		var addedProject api.Project
 		err = json.Unmarshal([]byte(addResult), &addedProject)
-
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -115,17 +104,11 @@ var updateProjectCmd = &cobra.Command{
 		}
 
 		jsonPatch, _ := json.Marshal(projectFlags)
-		projectUpdateID, err := projects.UpdateProject(cmdProjectName, string(jsonPatch))
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		projectUpdateID, err := pClient.UpdateProject(cmdProjectName, string(jsonPatch))
+		handleError(err)
 		var updatedProject api.Project
 		err = json.Unmarshal([]byte(projectUpdateID), &updatedProject)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{

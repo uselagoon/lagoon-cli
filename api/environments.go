@@ -19,6 +19,9 @@ func (api *Interface) GetEnvironmentByName(environment EnvironmentByName, fragme
 		}
 	}` + fragment)
 	generateVars(req, environment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -27,6 +30,9 @@ func (api *Interface) GetEnvironmentByName(environment EnvironmentByName, fragme
 	jsonBytes, err := json.Marshal(reMappedResult["environmentByName"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -72,6 +78,9 @@ func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (
 	// req.Var("deployTitle", environment.Patch.DeployTitle)
 	// req.Var("environmentType", environment.Patch.EnvironmentType)
 	// req.Var("openshiftProjectName", environment.Patch.OpenshiftProjectName)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -80,6 +89,9 @@ func (api *Interface) AddOrUpdateEnvironment(environment AddUpdateEnvironment) (
 	jsonBytes, err := json.Marshal(reMappedResult["addOrUpdateEnvironment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -100,6 +112,9 @@ func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) ([]byte, 
 		}
 	}`)
 	generateVars(req, environment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -108,6 +123,9 @@ func (api *Interface) UpdateEnvironment(environment UpdateEnvironment) ([]byte, 
 	jsonBytes, err := json.Marshal(reMappedResult["updateEnvironment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -126,6 +144,9 @@ func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) ([]byte, 
 		})
 	}`)
 	generateVars(req, environment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -134,6 +155,9 @@ func (api *Interface) DeleteEnvironment(environment DeleteEnvironment) ([]byte, 
 	jsonBytes, err := json.Marshal(reMappedResult["deleteEnvironment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -154,6 +178,9 @@ func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices)
 		}
 	}`)
 	generateVars(req, environment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -162,6 +189,9 @@ func (api *Interface) SetEnvironmentServices(environment SetEnvironmentServices)
 	jsonBytes, err := json.Marshal(reMappedResult["setEnvironmentServices"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

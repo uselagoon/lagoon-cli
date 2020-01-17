@@ -12,18 +12,12 @@ import (
 )
 
 // RunDrushArchiveDump will trigger a drush archive dump task
-func RunDrushArchiveDump(projectName string, environmentName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) RunDrushArchiveDump(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -39,7 +33,7 @@ func RunDrushArchiveDump(projectName string, environmentName string) ([]byte, er
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	environmentByName, err := e.api.GetEnvironmentByName(environment, "")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -61,7 +55,7 @@ func RunDrushArchiveDump(projectName string, environmentName string) ([]byte, er
 		},
 		MappedResult: "taskDrushArchiveDump",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -69,18 +63,12 @@ func RunDrushArchiveDump(projectName string, environmentName string) ([]byte, er
 }
 
 // RunDrushSQLDump will trigger a drush archive dump task
-func RunDrushSQLDump(projectName string, environmentName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) RunDrushSQLDump(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -96,7 +84,7 @@ func RunDrushSQLDump(projectName string, environmentName string) ([]byte, error)
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	environmentByName, err := e.api.GetEnvironmentByName(environment, "")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -118,7 +106,7 @@ func RunDrushSQLDump(projectName string, environmentName string) ([]byte, error)
 		},
 		MappedResult: "taskDrushSqlDump",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -126,18 +114,12 @@ func RunDrushSQLDump(projectName string, environmentName string) ([]byte, error)
 }
 
 // RunDrushCacheClear will trigger a drush archive dump task
-func RunDrushCacheClear(projectName string, environmentName string) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) RunDrushCacheClear(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -153,7 +135,7 @@ func RunDrushCacheClear(projectName string, environmentName string) ([]byte, err
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	environmentByName, err := e.api.GetEnvironmentByName(environment, "")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -175,7 +157,7 @@ func RunDrushCacheClear(projectName string, environmentName string) ([]byte, err
 		},
 		MappedResult: "taskDrushCacheClear",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -183,17 +165,12 @@ func RunDrushCacheClear(projectName string, environmentName string) ([]byte, err
 }
 
 // GetEnvironmentTasks .
-func GetEnvironmentTasks(projectName string, environmentName string) ([]byte, error) {
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) GetEnvironmentTasks(projectName string, environmentName string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectNameID)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectNameID)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -226,7 +203,7 @@ func GetEnvironmentTasks(projectName string, environmentName string) ([]byte, er
 		},
 		MappedResult: "environmentByName",
 	}
-	environmentByName, err := lagoonAPI.Request(customRequest)
+	environmentByName, err := e.api.Request(customRequest)
 	returnResult, err := processEnvironmentTasks(environmentByName)
 	if err != nil {
 		return []byte(""), err
@@ -238,7 +215,7 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 	var environment api.Environment
 	err := json.Unmarshal([]byte(environmentByName), &environment)
 	if err != nil {
-		return []byte(""), errors.New("no data returned from lagoon") // @TODO could be a permissions thing when no data is returned
+		return []byte(""), errors.New(noDataError) // @TODO could be a permissions thing when no data is returned
 	}
 	// process the data for output
 	data := []output.Data{}
@@ -270,18 +247,12 @@ func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 }
 
 // RunCustomTask will trigger a drush archive dump task
-func RunCustomTask(projectName string, environmentName string, task api.Task) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) RunCustomTask(projectName string, environmentName string, task api.Task) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -297,7 +268,7 @@ func RunCustomTask(projectName string, environmentName string, task api.Task) ([
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	environmentByName, err := e.api.GetEnvironmentByName(environment, "")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -328,7 +299,7 @@ func RunCustomTask(projectName string, environmentName string, task api.Task) ([
 		},
 		MappedResult: "addTask",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}

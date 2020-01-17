@@ -22,6 +22,9 @@ func (api *Interface) AddBackup(backup AddBackup) ([]byte, error) {
 		}
 	}` + backupFragment)
 	generateVars(req, backup)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -30,6 +33,9 @@ func (api *Interface) AddBackup(backup AddBackup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addBackup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -46,6 +52,9 @@ func (api *Interface) DeleteBackup(backup DeleteBackup) ([]byte, error) {
 		})
 	}`)
 	generateVars(req, backup)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -54,6 +63,9 @@ func (api *Interface) DeleteBackup(backup DeleteBackup) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteBackup"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -73,6 +85,9 @@ func (api *Interface) UpdateRestore(update UpdateRestore) ([]byte, error) {
 		}
 	}` + restoreFragment)
 	generateVars(req, update)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -81,6 +96,9 @@ func (api *Interface) UpdateRestore(update UpdateRestore) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["updateRestore"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -104,6 +122,9 @@ func (api *Interface) GetAllEnvironmentBackups() ([]byte, error) {
 			}
 		}
 	}` + backupFragment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -112,6 +133,9 @@ func (api *Interface) GetAllEnvironmentBackups() ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["allEnvironments"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -139,6 +163,9 @@ func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) ([]byte,
 		}
 	}`)
 	generateVars(req, backups)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -147,6 +174,9 @@ func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) ([]byte,
 	jsonBytes, err := json.Marshal(reMappedResult["environmentByOpenshiftProjectName"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

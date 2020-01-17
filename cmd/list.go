@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
-	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -47,20 +44,13 @@ var listProjectsCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Show your projects (alias: p)",
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := projects.ListAllProjects()
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-
+		returnedJSON, err := pClient.ListAllProjects()
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -78,21 +68,13 @@ var listProjectCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		returnedJSON, err := projects.ListEnvironmentsForProject(cmdProjectName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-
+		returnedJSON, err := pClient.ListEnvironmentsForProject(cmdProjectName)
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -114,23 +96,16 @@ var listVariablesCmd = &cobra.Command{
 		var returnedJSON []byte
 		var err error
 		if cmdProjectEnvironment != "" {
-			returnedJSON, err = environments.ListEnvironmentVariables(cmdProjectName, cmdProjectEnvironment, getListFlags.Reveal)
+			returnedJSON, err = eClient.ListEnvironmentVariables(cmdProjectName, cmdProjectEnvironment, getListFlags.Reveal)
 		} else {
-			returnedJSON, err = projects.ListProjectVariables(cmdProjectName, getListFlags.Reveal)
+			returnedJSON, err = pClient.ListProjectVariables(cmdProjectName, getListFlags.Reveal)
 		}
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-
+		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -147,21 +122,14 @@ var listDeploymentsCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		returnedJSON, err := environments.GetEnvironmentDeployments(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := eClient.GetEnvironmentDeployments(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -178,21 +146,14 @@ var listTasksCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-
-		returnedJSON, err := environments.GetEnvironmentTasks(cmdProjectName, cmdProjectEnvironment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := eClient.GetEnvironmentTasks(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
 
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -206,20 +167,14 @@ var listUsersCmd = &cobra.Command{
 	Short:   "List all users (alias: u)",
 	Long:    `List all users in groups in lagoon, this only shows users that are in groups.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := users.ListUsers(groupName)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		returnedJSON, err := uClient.ListUsers(groupName)
+		handleError(err)
 
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError("no data returned", outputOptions)
+			output.RenderError(noDataError, outputOptions)
 			os.Exit(1)
 		}
 		output.RenderOutput(dataMain, outputOptions)

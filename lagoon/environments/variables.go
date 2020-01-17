@@ -11,18 +11,12 @@ import (
 )
 
 // AddEnvironmentVariableToEnvironment will list all environments for a project
-func AddEnvironmentVariableToEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) AddEnvironmentVariableToEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectByNameFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -38,7 +32,7 @@ func AddEnvironmentVariableToEnvironment(projectName string, environmentName str
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, "")
+	environmentByName, err := e.api.GetEnvironmentByName(environment, "")
 	if err != nil {
 		return []byte(""), err
 	}
@@ -64,7 +58,7 @@ func AddEnvironmentVariableToEnvironment(projectName string, environmentName str
 		},
 		MappedResult: "addEnvVariable",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -72,18 +66,12 @@ func AddEnvironmentVariableToEnvironment(projectName string, environmentName str
 }
 
 // DeleteEnvironmentVariableFromEnvironment .
-func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
-
+func (e *Environments) DeleteEnvironmentVariableFromEnvironment(projectName string, environmentName string, envVar api.EnvVariable) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -98,7 +86,7 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 		Name:    environmentName,
 		Project: projectInfo.ID,
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, graphql.EnvironmentVariablesFragment)
+	environmentByName, err := e.api.GetEnvironmentByName(environment, graphql.EnvironmentVariablesFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -128,7 +116,7 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 		},
 		MappedResult: "deleteEnvVariable",
 	}
-	returnResult, err := lagoonAPI.Request(customReq)
+	returnResult, err := e.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -136,17 +124,12 @@ func DeleteEnvironmentVariableFromEnvironment(projectName string, environmentNam
 }
 
 // ListEnvironmentVariables will list the environment variables for a project and all environments attached
-func ListEnvironmentVariables(projectName string, environmentName string, revealValue bool) ([]byte, error) {
-	// set up a lagoonapi client
-	lagoonAPI, err := graphql.LagoonAPI()
-	if err != nil {
-		return []byte(""), err
-	}
+func (e *Environments) ListEnvironmentVariables(projectName string, environmentName string, revealValue bool) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := lagoonAPI.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -163,7 +146,7 @@ func ListEnvironmentVariables(projectName string, environmentName string, reveal
 	if revealValue {
 		queryFragment = graphql.EnvironmentEnvVarsRevealed
 	}
-	environmentByName, err := lagoonAPI.GetEnvironmentByName(environment, queryFragment)
+	environmentByName, err := e.api.GetEnvironmentByName(environment, queryFragment)
 	if err != nil {
 		return []byte(""), err
 	}

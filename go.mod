@@ -6,7 +6,8 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/logrusorgru/aurora v0.0.0-20191017060258-dc85c304c434
-	github.com/machinebox/graphql v0.2.2
+	// use latest version of graphql
+	github.com/machinebox/graphql v0.0.0-20180711000000-3a9253180225
 	github.com/manifoldco/promptui v0.3.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.2
@@ -23,5 +24,7 @@ require (
 // replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20191104214435-fac6022f4869
 // use this version for fixes to formatting of end header
 replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20200114082035-d810c4a558bf
+
+// replace github.com/machinebox/graphql => ../../shreddedbacon/graphql
 
 // replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter

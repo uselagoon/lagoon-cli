@@ -33,6 +33,9 @@ func (api *Interface) GetOpenShiftInfoForProject(project Project) ([]byte, error
 		}
 	}`)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -41,6 +44,9 @@ func (api *Interface) GetOpenShiftInfoForProject(project Project) ([]byte, error
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -66,6 +72,9 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 		}
 	}` + fragment)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -74,6 +83,9 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 	jsonBytes, err := json.Marshal(reMappedResult["addProject"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -96,6 +108,9 @@ func (api *Interface) UpdateProject(project UpdateProject, fragment string) ([]b
 		}
 	}` + fragment)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -104,6 +119,9 @@ func (api *Interface) UpdateProject(project UpdateProject, fragment string) ([]b
 	jsonBytes, err := json.Marshal(reMappedResult["updateProject"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -120,6 +138,9 @@ func (api *Interface) DeleteProject(project Project) ([]byte, error) {
 		})
 	}`)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -128,6 +149,9 @@ func (api *Interface) DeleteProject(project Project) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["deleteProject"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -144,6 +168,9 @@ func (api *Interface) GetProductionEnvironmentForProject(project Project) ([]byt
 		}
 	}`)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -152,6 +179,9 @@ func (api *Interface) GetProductionEnvironmentForProject(project Project) ([]byt
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -172,6 +202,9 @@ func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environme
 		}
 	}`)
 	generateVars(req, environment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -180,6 +213,9 @@ func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environme
 	jsonBytes, err := json.Marshal(reMappedResult["environmentByOpenshiftProjectName"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -203,6 +239,9 @@ func (api *Interface) GetProjectsByGitURL(project Project) ([]byte, error) {
 		}
 	}`)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -211,6 +250,9 @@ func (api *Interface) GetProjectsByGitURL(project Project) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["allProjects"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -230,6 +272,9 @@ func (api *Interface) GetProjectByName(project Project, fragment string) ([]byte
 		}
 	}` + fragment)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -238,6 +283,9 @@ func (api *Interface) GetProjectByName(project Project, fragment string) ([]byte
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -256,6 +304,9 @@ func (api *Interface) GetAllProjects(fragment string) ([]byte, error) {
 			...Project
 		}
 	}` + fragment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -264,6 +315,9 @@ func (api *Interface) GetAllProjects(fragment string) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["allProjects"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -285,6 +339,9 @@ func (api *Interface) GetRocketChatInfoForProject(project Project, fragment stri
 		}
 	}` + fragment)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -293,6 +350,9 @@ func (api *Interface) GetRocketChatInfoForProject(project Project, fragment stri
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -314,6 +374,9 @@ func (api *Interface) GetSlackInfoForProject(project Project, fragment string) (
 		}
 	}` + fragment)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -322,6 +385,9 @@ func (api *Interface) GetSlackInfoForProject(project Project, fragment string) (
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -341,6 +407,9 @@ func (api *Interface) GetActiveSystemForProject(project Project, task string) ([
 	}` + notificationsSlackFragment)
 	generateVars(req, project)
 	req.Var("task", task)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -349,6 +418,9 @@ func (api *Interface) GetActiveSystemForProject(project Project, task string) ([
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -367,6 +439,9 @@ func (api *Interface) GetEnvironmentsForProject(project Project) ([]byte, error)
 		}
 	}`)
 	generateVars(req, project)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -375,6 +450,9 @@ func (api *Interface) GetEnvironmentsForProject(project Project) ([]byte, error)
 	jsonBytes, err := json.Marshal(reMappedResult["project"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -391,6 +469,9 @@ func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) ([]byte, er
 		}
 	}` + deploymentFragment)
 	generateVars(req, deployment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -399,6 +480,9 @@ func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) ([]byte, er
 	jsonBytes, err := json.Marshal(reMappedResult["deploymentByRemoteId"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -424,6 +508,9 @@ func (api *Interface) AddDeployment(deployment Deployment) ([]byte, error) {
 		}
 	}` + deploymentFragment)
 	generateVars(req, deployment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -432,6 +519,9 @@ func (api *Interface) AddDeployment(deployment Deployment) ([]byte, error) {
 	jsonBytes, err := json.Marshal(reMappedResult["addDeployment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")
@@ -451,6 +541,9 @@ func (api *Interface) UpdateDeployment(deployment UpdateDeployment) ([]byte, err
 		}
 	}` + deploymentFragment)
 	generateVars(req, deployment)
+	if api.debug {
+		debugRequest(req)
+	}
 	returnType, err := api.RunQuery(req, Data{})
 	if err != nil {
 		return []byte(""), err
@@ -459,6 +552,9 @@ func (api *Interface) UpdateDeployment(deployment UpdateDeployment) ([]byte, err
 	jsonBytes, err := json.Marshal(reMappedResult["updateDeployment"])
 	if err != nil {
 		return []byte(""), err
+	}
+	if api.debug {
+		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
 		return []byte(""), errors.New("graphql: returned null")

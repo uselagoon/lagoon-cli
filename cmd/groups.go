@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/lagoon/users"
 	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -39,17 +38,11 @@ var addGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.AddGroup(groupFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.AddGroup(groupFlags)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -92,17 +85,11 @@ var addUserToGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.AddUserToGroup(userGroupRole)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.AddUserToGroup(userGroupRole)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -133,17 +120,11 @@ var addProjectToGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.AddProjectToGroup(projectGroup)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.AddProjectToGroup(projectGroup)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -172,17 +153,11 @@ var delUserFromGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.RemoveUserFromGroup(userGroupRole)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.RemoveUserFromGroup(userGroupRole)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -213,17 +188,11 @@ var delProjectFromGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.RemoveGroupsFromProject(projectGroup)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.RemoveGroupsFromProject(projectGroup)
+		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
@@ -244,11 +213,8 @@ var delGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = users.DeleteGroup(groupFlags)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		customReqResult, err = uClient.DeleteGroup(groupFlags)
+		handleError(err)
 		resultData := output.Result{
 			Result: string(customReqResult),
 		}
