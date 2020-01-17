@@ -26,11 +26,20 @@ type Parser struct {
 	api   api.Client
 }
 
+// SkipExport .
+type SkipExport struct {
+	Users         bool
+	Groups        bool
+	Notifications bool
+	Slack         bool
+	RocketChat    bool
+}
+
 // Client .
 type Client interface {
 	ParseJSONImport(string) importer.LagoonImport
-	ParseProject(string) ([]byte, error)
-	ParseAllProjects() ([]byte, error)
+	ParseProject(string, SkipExport) ([]byte, error)
+	ParseAllProjects(SkipExport) ([]byte, error)
 }
 
 // New .
@@ -78,14 +87,21 @@ func (p *Parser) ParseJSONImport(jsonData string) importer.LagoonImport {
 	json.Unmarshal(lagoonDataBytes, &lagoonData)
 	for _, projects := range lagoonImporter.Data {
 		lagoonDataBytes, _ := json.Marshal(projects)
-		yamlBytes := processParser(lagoonDataBytes)
+		skip := SkipExport{
+			Users:         false,
+			Groups:        false,
+			Notifications: false,
+			Slack:         false,
+			RocketChat:    false,
+		}
+		yamlBytes := processParser(lagoonDataBytes, skip)
 		fmt.Println(string(yamlBytes))
 		return returnLagoonImport
 	}
 	return returnLagoonImport
 }
 
-func processParser(lagoonDataBytes []byte) []byte {
+func processParser(lagoonDataBytes []byte, skip SkipExport) []byte {
 	var returnLagoonImport importer.LagoonImport
 	var lagoonUsers []importer.LagoonUsers
 	var lagoonData []importer.ExtendedProject
@@ -97,68 +113,78 @@ func processParser(lagoonDataBytes []byte) []byte {
 		var projectPatch api.ProjectPatch
 		json.Unmarshal(projectBytes, &projectPatch)
 		returnLagoonImport.Projects = append(returnLagoonImport.Projects, importer.LagoonProjects{Project: projectPatch})
-		for _, k := range lagoonProject.Groups {
-			returnLagoonImport.Projects[ind].Groups = appendIfMissingGroup(returnLagoonImport.Projects[ind].Groups, k.Name)
-			for _, m := range k.Members {
-				var userKeys []importer.LagoonUserSSHKeys
-				for _, key := range m.User.SSHKeys {
-					userKeys = append(userKeys, importer.LagoonUserSSHKeys{SSHKey: string(key.KeyType) + " " + key.KeyValue, KeyName: key.Name})
+		if !skip.Users {
+			for _, k := range lagoonProject.Groups {
+				returnLagoonImport.Projects[ind].Groups = appendIfMissingGroup(returnLagoonImport.Projects[ind].Groups, k.Name)
+				for _, m := range k.Members {
+					var userKeys []importer.LagoonUserSSHKeys
+					for _, key := range m.User.SSHKeys {
+						userKeys = append(userKeys, importer.LagoonUserSSHKeys{SSHKey: string(key.KeyType) + " " + key.KeyValue, KeyName: key.Name})
+					}
+					lagoonUser := importer.LagoonUsers{
+						User: importer.LagoonUser{
+							Email:   m.User.Email,
+							SSHKeys: userKeys,
+						},
+					}
+					lagoonUserGroupRole := importer.AddUserToGroup{
+						Name: k.Name,
+						Role: m.Role,
+					}
+					lagoonUser.Groups = appendIfMissingGroups(lagoonUser.Groups, lagoonUserGroupRole)
+					lagoonUsers = appendIfMissingUsers(lagoonUsers, lagoonUser)
 				}
-				lagoonUser := importer.LagoonUsers{
-					User: importer.LagoonUser{
-						Email:   m.User.Email,
-						SSHKeys: userKeys,
-					},
-				}
-				lagoonUserGroupRole := importer.AddUserToGroup{
-					Name: k.Name,
-					Role: m.Role,
-				}
-				lagoonUser.Groups = appendIfMissingGroups(lagoonUser.Groups, lagoonUserGroupRole)
-				lagoonUsers = appendIfMissingUsers(lagoonUsers, lagoonUser)
 			}
 		}
 		returnLagoonImport.Users = lagoonUsers
-		for _, k := range lagoonProject.Groups {
-			returnLagoonImport.Groups = appendIfMissingGroups2(returnLagoonImport.Groups, api.Group{Name: k.Name})
-		}
-		for _, k := range project.Notifications {
-			// fmt.Println(k)
-			var notification struct {
-				TypeName     string `json:"__typename"`
-				Name         string `json:"name"`
-				Webhook      string `json:"webhook,omitempty"`
-				Channel      string `json:"channel,omitempty"`
-				EmailAddress string `json:"emailAddress,omitempty"`
+		if !skip.Groups {
+			for _, k := range lagoonProject.Groups {
+				returnLagoonImport.Groups = appendIfMissingGroups2(returnLagoonImport.Groups, api.Group{Name: k.Name})
 			}
-			notifBytes, _ := json.Marshal(k)
-			json.Unmarshal(notifBytes, &notification)
-			switch notification.TypeName {
-			case "NotificationRocketChat":
-				var rocketNotification api.NotificationRocketChat
-				notifBytes, _ := json.Marshal(notification)
-				json.Unmarshal(notifBytes, &rocketNotification)
-				returnLagoonImport.Notifications.RocketChat = appendIfMissingRocket(returnLagoonImport.Notifications.RocketChat, rocketNotification)
-				returnLagoonImport.Projects[ind].Notifications.RocketChat = append(returnLagoonImport.Projects[ind].Notifications.RocketChat, notification.Name)
-			case "NotificationSlack":
-				var slackNotification api.NotificationSlack
-				notifBytes, _ := json.Marshal(notification)
-				json.Unmarshal(notifBytes, &slackNotification)
-				returnLagoonImport.Notifications.Slack = appendIfMissingSlack(returnLagoonImport.Notifications.Slack, slackNotification)
-				returnLagoonImport.Projects[ind].Notifications.Slack = append(returnLagoonImport.Projects[ind].Notifications.Slack, notification.Name)
-				// @TODO: enable once 1.2.0+ lagoon is more widespread
-				// case "NotificationEmail":
-				// 	var emailNotification api.NotificationEmail
-				// 	notifBytes, _ := json.Marshal(notification)
-				// 	json.Unmarshal(notifBytes, &emailNotification)
-				// 	returnLagoonImport.Notifications.Email = appendIfMissingEmail(returnLagoonImport.Notifications.Email, emailNotification)
-				// 	returnLagoonImport.Projects[ind].Notifications.Email = append(returnLagoonImport.Projects[ind].Notifications.Email, notification.Name)
-				// case "NotificationMicrosoftTeams":
-				// 	var teamsNotification api.NotificationMicrosoftTeams
-				// 	notifBytes, _ := json.Marshal(notification)
-				// 	json.Unmarshal(notifBytes, &teamsNotification)
-				// 	returnLagoonImport.Notifications.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.Notifications.MicrosoftTeams, teamsNotification)
-				// 	returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams = append(returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams, notification.Name)
+		}
+		if !skip.Notifications {
+			for _, k := range project.Notifications {
+				// fmt.Println(k)
+				var notification struct {
+					TypeName     string `json:"__typename"`
+					Name         string `json:"name"`
+					Webhook      string `json:"webhook,omitempty"`
+					Channel      string `json:"channel,omitempty"`
+					EmailAddress string `json:"emailAddress,omitempty"`
+				}
+				notifBytes, _ := json.Marshal(k)
+				json.Unmarshal(notifBytes, &notification)
+				switch notification.TypeName {
+				case "NotificationRocketChat":
+					if !skip.RocketChat {
+						var rocketNotification api.NotificationRocketChat
+						notifBytes, _ := json.Marshal(notification)
+						json.Unmarshal(notifBytes, &rocketNotification)
+						returnLagoonImport.Notifications.RocketChat = appendIfMissingRocket(returnLagoonImport.Notifications.RocketChat, rocketNotification)
+						returnLagoonImport.Projects[ind].Notifications.RocketChat = append(returnLagoonImport.Projects[ind].Notifications.RocketChat, notification.Name)
+					}
+				case "NotificationSlack":
+					if !skip.Slack {
+						var slackNotification api.NotificationSlack
+						notifBytes, _ := json.Marshal(notification)
+						json.Unmarshal(notifBytes, &slackNotification)
+						returnLagoonImport.Notifications.Slack = appendIfMissingSlack(returnLagoonImport.Notifications.Slack, slackNotification)
+						returnLagoonImport.Projects[ind].Notifications.Slack = append(returnLagoonImport.Projects[ind].Notifications.Slack, notification.Name)
+					}
+					// @TODO: enable once 1.2.0+ lagoon is more widespread
+					// case "NotificationEmail":
+					// 	var emailNotification api.NotificationEmail
+					// 	notifBytes, _ := json.Marshal(notification)
+					// 	json.Unmarshal(notifBytes, &emailNotification)
+					// 	returnLagoonImport.Notifications.Email = appendIfMissingEmail(returnLagoonImport.Notifications.Email, emailNotification)
+					// 	returnLagoonImport.Projects[ind].Notifications.Email = append(returnLagoonImport.Projects[ind].Notifications.Email, notification.Name)
+					// case "NotificationMicrosoftTeams":
+					// 	var teamsNotification api.NotificationMicrosoftTeams
+					// 	notifBytes, _ := json.Marshal(notification)
+					// 	json.Unmarshal(notifBytes, &teamsNotification)
+					// 	returnLagoonImport.Notifications.MicrosoftTeams = appendIfMissingTeams(returnLagoonImport.Notifications.MicrosoftTeams, teamsNotification)
+					// 	returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams = append(returnLagoonImport.Projects[ind].Notifications.MicrosoftTeams, notification.Name)
+				}
 			}
 		}
 	}
@@ -249,7 +275,7 @@ func appendIfMissingUsers(slice []importer.LagoonUsers, i importer.LagoonUsers) 
 }
 
 // ParseProject given a specific project name, get the json dump, then parse it to the import format
-func (p *Parser) ParseProject(projectName string) ([]byte, error) {
+func (p *Parser) ParseProject(projectName string, skip SkipExport) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `fragment NotificationSlack on NotificationSlack {
 			webhook
@@ -289,6 +315,7 @@ func (p *Parser) ParseProject(projectName string) ([]byte, error) {
 			autoIdle
 			groups{
 			  name
+			  id
 			  members{
 				user{
 				  email
@@ -342,13 +369,13 @@ func (p *Parser) ParseProject(projectName string) ([]byte, error) {
 		return []byte(""), err
 	}
 	retData := string("[" + string(returnResult) + "]")
-	yamlBytes := processParser([]byte(retData))
+	yamlBytes := processParser([]byte(retData), skip)
 	fmt.Println(string(yamlBytes))
 	return returnResult, nil
 }
 
 // ParseAllProjects export all projects from lagoon and parse them to the import format
-func (p *Parser) ParseAllProjects() ([]byte, error) {
+func (p *Parser) ParseAllProjects(skip SkipExport) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `fragment NotificationSlack on NotificationSlack {
 			webhook
@@ -388,6 +415,7 @@ func (p *Parser) ParseAllProjects() ([]byte, error) {
 			autoIdle
 			groups{
 			  name
+			  id
 			  members{
 				user{
 				  email
@@ -440,7 +468,7 @@ func (p *Parser) ParseAllProjects() ([]byte, error) {
 	}
 	// fmt.Println(string(returnResult))
 	// _ = processParser(returnResult)
-	yamlBytes := processParser([]byte(returnResult))
+	yamlBytes := processParser([]byte(returnResult), skip)
 	fmt.Println(string(yamlBytes))
 	return returnResult, nil
 }

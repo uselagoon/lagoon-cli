@@ -140,7 +140,15 @@ users:
     - keyname: auto-add via api
       sshkey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJb1H5vylsg8y84ye1m+UPD6A4aS9IOJ51nIYFUUFqyM
 `
-	returnResult := processParser([]byte(allProjects))
+
+	skip := SkipExport{
+		Users:         false,
+		Groups:        false,
+		Notifications: false,
+		Slack:         false,
+		RocketChat:    false,
+	}
+	returnResult := processParser([]byte(allProjects), skip)
 	if string(returnResult) != allProjectsSuccess {
 		checkEqual(t, string(returnResult), allProjectsSuccess, "allProject processing failed")
 	}

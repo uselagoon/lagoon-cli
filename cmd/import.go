@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/amazeeio/lagoon-cli/lagoon/parser"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -120,22 +121,42 @@ var exportCmd = &cobra.Command{
 You can specify to export a specific project by using the '-p <project-name>' flag`,
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		skip := parser.SkipExport{
+			Users:         skipUsers,
+			Groups:        skipGroups,
+			Notifications: skipNotifs,
+			Slack:         skipSlack,
+			RocketChat:    skipRocket,
+		}
 		if cmdProjectName == "" {
 			if yesNo("Are you sure you want to export lagoon output for all projects?") {
-				_, _ = parClient.ParseAllProjects()
+				_, _ = parClient.ParseAllProjects(skip)
 				// fmt.Println(string(data))
 			}
 		} else {
 			if yesNo("Are you sure you want to export lagoon output for " + cmdProjectName + "?") {
-				_, _ = parClient.ParseProject(cmdProjectName)
+				_, _ = parClient.ParseProject(cmdProjectName, skip)
 			}
 		}
 
 	},
 }
 
+var (
+	skipUsers  bool
+	skipGroups bool
+	skipNotifs bool
+	skipSlack  bool
+	skipRocket bool
+)
+
 func init() {
 	importCmd.Flags().BoolVarP(&showExample, "example", "", false, "display example yaml")
 	importCmd.Flags().StringVarP(&importFile, "import", "I", "", "path to the file to import")
 	parseCmd.Flags().StringVarP(&importFile, "import", "I", "", "path to the file to import")
+	exportCmd.Flags().BoolVarP(&skipUsers, "skip-users", "", false, "Skip exporting of users")
+	exportCmd.Flags().BoolVarP(&skipGroups, "skip-groups", "", false, "Skip exporting of groups")
+	exportCmd.Flags().BoolVarP(&skipNotifs, "skip-notifications", "", false, "Skip exporting of notifications")
+	exportCmd.Flags().BoolVarP(&skipSlack, "skip-slack", "", false, "Skip exporting of slack notifications")
+	exportCmd.Flags().BoolVarP(&skipRocket, "skip-rocketchat", "", false, "Skip exporting of rocket notifications")
 }
