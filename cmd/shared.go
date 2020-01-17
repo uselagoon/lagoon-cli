@@ -61,6 +61,7 @@ var outputOptions = output.Options{
 	CSV:    false,
 	JSON:   false,
 	Pretty: false,
+	Debug:  false,
 }
 
 // read stdin or file, if the input is stdin it will try read from it, if a path is provided it will read that instead

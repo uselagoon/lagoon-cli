@@ -221,6 +221,7 @@ func initConfig() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+<<<<<<< HEAD
 	iClient, err = importer.New(debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
@@ -231,6 +232,9 @@ func initConfig() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+=======
+	outputOptions.Debug = debugEnable
+>>>>>>> master
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
