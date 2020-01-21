@@ -144,14 +144,6 @@ func init() {
 	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
-	updateProjectCmd.Flags().MarkHidden("activeSystemsTask")
-	updateProjectCmd.Flags().MarkHidden("activeSystemsDeploy")
-	updateProjectCmd.Flags().MarkHidden("activeSystemsRemove")
-	updateProjectCmd.Flags().MarkHidden("activeSystemsPromote")
-	updateProjectCmd.Flags().MarkHidden("openshiftProjectPattern")
-	updateProjectCmd.Flags().MarkHidden("developmentEnvironmentsLimit")
-	updateProjectCmd.Flags().MarkHidden("openshift")
-
 	addCmd.AddCommand(addProjectCmd)
 	addProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
@@ -172,11 +164,4 @@ func init() {
 	addProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
-	addProjectCmd.Flags().MarkHidden("activeSystemsTask")
-	addProjectCmd.Flags().MarkHidden("activeSystemsDeploy")
-	addProjectCmd.Flags().MarkHidden("activeSystemsRemove")
-	addProjectCmd.Flags().MarkHidden("activeSystemsPromote")
-	addProjectCmd.Flags().MarkHidden("openshiftProjectPattern")
-	addProjectCmd.Flags().MarkHidden("developmentEnvironmentsLimit")
-	addProjectCmd.Flags().MarkHidden("openshift")
 }
