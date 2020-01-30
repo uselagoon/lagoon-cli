@@ -46,6 +46,14 @@ make all-docker-linux
 make all-docker-darwin
 ```
 
+### Releasing
+New releases can be created by running one of the following, this will create the version bump and update the `gh-pages` branch
+```
+make release-patch
+make release-minor
+make release-major
+```
+
 ### Notes
 Versions can also be defined, and the binaries will be version tagged
 ```
