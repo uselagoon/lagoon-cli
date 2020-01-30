@@ -61,14 +61,7 @@ brew install lagoon
 ```
 
 Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/amazeeio/lagoon-cli/releases)
-```
-VERSION=0.1.0 sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/${VERSION}/lagoon-cli-${VERSION}-darwin-amd64" -o /usr/local/bin/lagoon
-```
 
-# Linux
-```
-VERSION=0.1.0 sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/${VERSION}/lagoon-cli-${VERSION}-linux-amd64" -o /usr/local/bin/lagoon
-```
 
 If you are building from source, you can install with one of the following commands
 ```
