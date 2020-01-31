@@ -59,6 +59,7 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 	if fragment == "" {
 		fragment = projectFragment
 	}
+	//@TODO: Make this use the actual AddProjectInput type instead of defining everything here
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $gitUrl: String!, $openshift: Int!, $productionEnvironment: String!, 
 		$id: Int, $privateKey: String, $subfolder: String, $openshiftProjectPattern: String, 
