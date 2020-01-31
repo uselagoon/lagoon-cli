@@ -60,13 +60,28 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 		fragment = projectFragment
 	}
 	req := graphql.NewRequest(`
-	mutation ($name: String!, $gitUrl: String!, $openshift: Int!, $productionEnvironment: String!, $id: Int) {
+	mutation ($name: String!, $gitUrl: String!, $openshift: Int!, $productionEnvironment: String!, 
+		$id: Int, $privateKey: String, $subfolder: String, $openshiftProjectPattern: String, 
+		$activeSystemsDeploy: String, $activeSystemsPromote: String, $activeSystemsRemove: String, $activeSystemsTask: String,
+		$branches: String, $pullrequests: String, $availability: ProjectAvailability, $autoIdle: Int, $developmentEnvironmentsLimit: Int) {
 		addProject(input: {
 			name: $name,
 			gitUrl: $gitUrl,
 			openshift: $openshift,
 			productionEnvironment: $productionEnvironment,
 			id: $id,
+			privateKey: $privateKey,
+			subfolder: $subfolder,
+			openshiftProjectPattern: $openshiftProjectPattern,
+			activeSystemsDeploy: $activeSystemsDeploy,
+			activeSystemsPromote: $activeSystemsPromote,
+			activeSystemsRemove: $activeSystemsRemove,
+			activeSystemsTask: $activeSystemsTask,
+			branches: $branches,
+			pullrequests: $pullrequests,
+			availability: $availability,
+			autoIdle: $autoIdle,
+			developmentEnvironmentsLimit: $developmentEnvironmentsLimit
 		}) {
 			...Project
 		}
