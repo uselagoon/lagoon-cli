@@ -205,34 +205,6 @@ func initConfig() {
 		cmdProjectEnvironment = cmdProject.Environment
 	}
 
-	// set up the clients
-	eClient, err = environments.New(debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	uClient, err = users.New(debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	pClient, err = projects.New(debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	iClient, err = importer.New(debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	parClient, err = parser.New(debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	outputOptions.Debug = debugEnable
-
 	// if !outputOptions.CSV && !outputOptions.JSON {
 	// 	fmt.Println("Using Lagoon:", cmdLagoon)
 	// }
@@ -320,4 +292,32 @@ func validateToken(lagoon string) {
 			os.Exit(1)
 		}
 	}
+	// set up the clients
+	var err error
+	eClient, err = environments.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	uClient, err = users.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	pClient, err = projects.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	iClient, err = importer.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	parClient, err = parser.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	outputOptions.Debug = debugEnable
 }
