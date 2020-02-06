@@ -5,6 +5,7 @@ Add a rocketchat notification to a project
 ### Synopsis
 
 Add a rocketchat notification to a project
+This command is used to add an existing rocketchat notification in lagoon to a project.
 
 ```
 lagoon add project-rocketchat [flags]

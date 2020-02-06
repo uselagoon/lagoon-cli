@@ -5,6 +5,8 @@ Add a new rocketchat notification
 ### Synopsis
 
 Add a new rocketchat notification
+This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.
 
 ```
 lagoon add rocketchat [flags]

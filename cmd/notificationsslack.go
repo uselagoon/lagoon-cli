@@ -47,6 +47,9 @@ var addSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
 	Short:   "Add a new slack notification",
+	Long: `Add a new slack notification
+This command is used to set up a new slack notification in lagoon. This requires information to talk to slack like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to slack though, you need to use project-slack for that.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
@@ -71,6 +74,8 @@ var addProjectSlackNotificationCmd = &cobra.Command{
 	Use:     "project-slack",
 	Aliases: []string{"ps"},
 	Short:   "Add a slack notification to a project",
+	Long: `Add a slack notification to a project
+This command is used to add an existing slack notification in lagoon to a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {

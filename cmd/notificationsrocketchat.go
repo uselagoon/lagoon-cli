@@ -45,6 +45,9 @@ var addRocketChatNotificationCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
 	Short:   "Add a new rocketchat notification",
+	Long: `Add a new rocketchat notification
+This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
@@ -69,6 +72,8 @@ var addProjectRocketChatNotificationCmd = &cobra.Command{
 	Use:     "project-rocketchat",
 	Aliases: []string{"pr"},
 	Short:   "Add a rocketchat notification to a project",
+	Long: `Add a rocketchat notification to a project
+This command is used to add an existing rocketchat notification in lagoon to a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
