@@ -58,6 +58,57 @@ var listProjectsCmd = &cobra.Command{
 	},
 }
 
+var listGroupsCmd = &cobra.Command{
+	Use:     "groups",
+	Aliases: []string{"g"},
+	Short:   "Show groups (alias: g)",
+	Run: func(cmd *cobra.Command, args []string) {
+		returnedJSON, err := uClient.ListGroups("")
+		handleError(err)
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		handleError(err)
+		if len(dataMain.Data) == 0 {
+			output.RenderError(noDataError, outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
+var listGroupProjectsCmd = &cobra.Command{
+	Use:     "group-projects",
+	Aliases: []string{"gp"},
+	Short:   "Show projects in a group groups (alias: gp)",
+	Run: func(cmd *cobra.Command, args []string) {
+		if !listAllProjects {
+			if groupName == "" {
+				fmt.Println("Not enough arguments. Requires: group name")
+				cmd.Help()
+				os.Exit(1)
+			}
+		}
+		var returnedJSON []byte
+		var err error
+		if listAllProjects {
+			returnedJSON, err = uClient.ListGroupProjects("", listAllProjects)
+		} else {
+			returnedJSON, err = uClient.ListGroupProjects(groupName, listAllProjects)
+		}
+		handleError(err)
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		handleError(err)
+		if len(dataMain.Data) == 0 {
+			output.RenderError(noDataError, outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
 var listProjectCmd = &cobra.Command{
 	Use:     "environments",
 	Aliases: []string{"e"},
@@ -191,6 +242,9 @@ func init() {
 	listCmd.AddCommand(listRocketChatsCmd)
 	listCmd.AddCommand(listSlackCmd)
 	listCmd.AddCommand(listUsersCmd)
+	listCmd.AddCommand(listGroupsCmd)
+	listCmd.AddCommand(listGroupProjectsCmd)
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
+	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 }
