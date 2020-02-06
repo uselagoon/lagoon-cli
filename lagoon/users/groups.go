@@ -159,3 +159,26 @@ func (u *Users) RemoveGroupsFromProject(groups api.ProjectGroups) ([]byte, error
 	}
 	return returnResult, nil
 }
+
+// ListGroups function
+func (u *Users) ListGroups(name string) ([]byte, error) {
+	customReq := api.CustomRequest{
+		Query: `query allGroups ($name: String) {
+			allGroups(name: $name) {
+			  projects {
+				id
+				name
+			  }
+			}
+		  }`,
+		Variables: map[string]interface{}{
+			"name": name,
+		},
+		MappedResult: "allGroups",
+	}
+	returnResult, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
