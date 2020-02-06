@@ -7,6 +7,17 @@ to work against [Amazee.io](https://www.amazee.io/) instance.
 
 If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-compose.yml` that references your project in lagoon, then you don't need to specify your project name on the command line as the CLI can read these files to determine the project. You can still define a project name though if you want to target a different project.
 
+## Install
+The preferred method is installation via [Homebrew](https://brew.sh/).
+```
+brew tap amazeeio/lagoon-cli
+brew install lagoon
+```
+
+Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/amazeeio/lagoon-cli/releases)
+
+If you are building from source, see the Build section below
+
 ### Usage
 Once installed, to use the Lagoon CLI, run the following command
 ```
@@ -54,28 +65,19 @@ make release-minor
 make release-major
 ```
 
+### Install
+```
+make ARTIFACT_DESTINATION=/usr/local/bin install-linux
+make ARTIFACT_DESTINATION=/usr/local/bin install-darwin
+```
+
 ### Notes
 Versions can also be defined, and the binaries will be version tagged
 ```
 make VERSION=v0.0.1 ...
 ```
 
-## Install
-# MacOS
-The preferred method is installation via [Homebrew](https://brew.sh/).
-```
-brew tap amazeeio/lagoon-cli
-brew install lagoon
-```
 
-Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/amazeeio/lagoon-cli/releases)
-
-
-If you are building from source, you can install with one of the following commands
-```
-make ARTIFACT_DESTINATION=/usr/local/bin install-linux
-make ARTIFACT_DESTINATION=/usr/local/bin install-darwin
-```
 
 ### Acknowledgements
 
