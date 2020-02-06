@@ -1,7 +1,11 @@
 package users
 
 import (
+	"encoding/json"
+	"strconv"
+
 	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/output"
 )
 
 // AddGroup function
@@ -165,20 +169,104 @@ func (u *Users) ListGroups(name string) ([]byte, error) {
 	customReq := api.CustomRequest{
 		Query: `query allGroups ($name: String) {
 			allGroups(name: $name) {
-			  projects {
 				id
 				name
-			  }
 			}
-		  }`,
+		}`,
 		Variables: map[string]interface{}{
 			"name": name,
 		},
 		MappedResult: "allGroups",
 	}
-	returnResult, err := u.api.Request(customReq)
+	reqResult, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processListGroups(reqResult)
 	if err != nil {
 		return []byte(""), err
 	}
 	return returnResult, nil
+}
+
+func processListGroups(groupData []byte) ([]byte, error) {
+	var data []output.Data
+	var groups []struct {
+		ID   string
+		Name string
+	}
+	err := json.Unmarshal(groupData, &groups)
+	if err != nil {
+		return []byte(""), err
+	}
+	for _, group := range groups {
+		data = append(data, []string{group.ID, group.Name})
+	}
+	dataMain := output.Table{
+		Header: []string{"ID", "Name"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
+}
+
+// ListGroupProjects function
+func (u *Users) ListGroupProjects(name string, allProjects bool) ([]byte, error) {
+	customReq := api.CustomRequest{
+		Query: `query allGroups ($name: String) {
+			allGroups(name: $name) {
+				id
+				name
+				projects {
+					id
+					name
+				}
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"name": name,
+		},
+		MappedResult: "allGroups",
+	}
+	reqResult, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processListGroupProjects(reqResult, allProjects)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func processListGroupProjects(groupData []byte, allProjects bool) ([]byte, error) {
+	var data []output.Data
+	var groups []struct {
+		Name     string
+		ID       string
+		Projects []struct {
+			ID   int
+			Name string
+		}
+	}
+	err := json.Unmarshal(groupData, &groups)
+	if err != nil {
+		return []byte(""), err
+	}
+	for _, group := range groups {
+		for _, project := range group.Projects {
+			projectData := []string{strconv.Itoa(project.ID), project.Name}
+			if allProjects {
+				projectData = append(projectData, group.Name)
+			}
+			data = append(data, projectData)
+		}
+	}
+	dataMain := output.Table{
+		Header: []string{"ID", "ProjectName"},
+		Data:   data,
+	}
+	if allProjects {
+		dataMain.Header = append(dataMain.Header, "GroupName")
+	}
+	return json.Marshal(dataMain)
 }
