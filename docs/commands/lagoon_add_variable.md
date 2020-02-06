@@ -1,10 +1,10 @@
 ## lagoon add variable
 
-Add variables on environments or projects
+Add a variable to an environment or project
 
 ### Synopsis
 
-Add variables on environments or projects
+Add a variable to an environment or project
 
 ```
 lagoon add variable [flags]

@@ -1,10 +1,10 @@
 ## lagoon delete project-group
 
-Delete project from a group in lagoon
+Delete a project from a group in lagoon
 
 ### Synopsis
 
-Delete project from a group in lagoon
+Delete a project from a group in lagoon
 
 ```
 lagoon delete project-group [flags]

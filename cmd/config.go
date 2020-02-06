@@ -47,8 +47,9 @@ var configCmd = &cobra.Command{
 }
 
 var configDefaultCmd = &cobra.Command{
-	Use:   "default",
-	Short: "Set the default Lagoon to use",
+	Use:     "default",
+	Aliases: []string{"d"},
+	Short:   "Set the default Lagoon to use",
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
@@ -121,7 +122,7 @@ var configAddCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
-			fmt.Println("Not enough arguments. Requires: lagoon name")
+			fmt.Println("Missing arguments: Lagoon name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -170,7 +171,7 @@ var configDeleteCmd = &cobra.Command{
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 
 		if lagoonConfig.Lagoon == "" {
-			fmt.Println("Not enough arguments. Requires: lagoon name")
+			fmt.Println("Missing arguments: Lagoon name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

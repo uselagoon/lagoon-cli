@@ -1,10 +1,10 @@
 ## lagoon list variables
 
-Show your variables for a project or environment (alias: v)
+List variables for a project or environment (alias: v)
 
 ### Synopsis
 
-Show your variables for a project or environment (alias: v)
+List variables for a project or environment (alias: v)
 
 ```
 lagoon list variables [flags]

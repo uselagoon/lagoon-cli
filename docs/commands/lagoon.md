@@ -34,13 +34,13 @@ lagoon [flags]
 * [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 * [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
 * [lagoon ssh](lagoon_ssh.md)	 - Display the SSH command to access a specific environment in a project
-* [lagoon update](lagoon_update.md)	 - Update project, environment, or notification
+* [lagoon update](lagoon_update.md)	 - Update a resource
 * [lagoon version](lagoon_version.md)	 - Version information
 * [lagoon web](lagoon_web.md)	 - Launch the web user interface
 

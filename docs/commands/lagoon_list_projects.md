@@ -1,10 +1,10 @@
 ## lagoon list projects
 
-Show your projects (alias: p)
+List all projects you have access to (alias: p)
 
 ### Synopsis
 
-Show your projects (alias: p)
+List all projects you have access to (alias: p)
 
 ```
 lagoon list projects [flags]

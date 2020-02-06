@@ -1,10 +1,10 @@
 ## lagoon add user-sshkey
 
-Add sshkey to a user
+Add an sshkey to a user
 
 ### Synopsis
 
-Add sshkey to a user
+Add an sshkey to a user
 
 ```
 lagoon add user-sshkey [flags]

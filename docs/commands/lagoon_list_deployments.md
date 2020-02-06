@@ -1,10 +1,10 @@
 ## lagoon list deployments
 
-Show your deployments for an environment (alias: d)
+List deployments for an environment (alias: d)
 
 ### Synopsis
 
-Show your deployments for an environment (alias: d)
+List deployments for an environment (alias: d)
 
 ```
 lagoon list deployments [flags]

@@ -34,7 +34,7 @@ var deleteEnvCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// environmentFlags := parseEnvironmentFlags(*cmd.Flags()) //@TODO re-enable this at some point if more environment based commands are made availab;e
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

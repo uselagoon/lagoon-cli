@@ -36,5 +36,5 @@ lagoon get all-user-sshkeys [flags]
 
 ### SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

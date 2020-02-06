@@ -1,10 +1,10 @@
 ## lagoon add user
 
-Add user to lagoon
+Add a user to lagoon
 
 ### Synopsis
 
-Add user to lagoon
+Add a user to lagoon
 
 ```
 lagoon add user [flags]

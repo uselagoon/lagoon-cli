@@ -13,7 +13,7 @@ import (
 var listRocketChatsCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
-	Short:   "Rocketchat details about a project (alias: r)",
+	Short:   "List Rocketchat details about a project (alias: r)",
 	Run: func(cmd *cobra.Command, args []string) {
 		var returnedJSON []byte
 		var err error
@@ -23,7 +23,7 @@ var listRocketChatsCmd = &cobra.Command{
 		} else {
 			notificationFlags := parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
-				fmt.Println("Not enough arguments. Requires: project name")
+				fmt.Println("Missing arguments: Project name is not defined")
 				cmd.Help()
 				os.Exit(1)
 			}
@@ -48,7 +48,7 @@ var addRocketChatNotificationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
-			fmt.Println("Not enough arguments. Requires: notifcation name, channel, and webhook url")
+			fmt.Println("Missing arguments: Notifcation name, channel, or webhook url are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -72,7 +72,7 @@ var addProjectRocketChatNotificationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -96,7 +96,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Not enough arguments. Requires: project name and notifcation name")
+			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -118,7 +118,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Not enough arguments. Requires: notifcation name")
+			fmt.Println("Missing arguments: Notifcation name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -138,7 +138,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Not enough arguments. Requires: current notifcation name")
+			fmt.Println("Missing arguments: Current notifcation name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

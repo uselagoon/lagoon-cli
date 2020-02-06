@@ -40,5 +40,5 @@ lagoon update rocketchat [flags]
 
 ### SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update project, environment, or notification
+* [lagoon update](lagoon_update.md)	 - Update a resource
 

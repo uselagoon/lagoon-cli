@@ -42,7 +42,7 @@ var listCmd = &cobra.Command{
 var listProjectsCmd = &cobra.Command{
 	Use:     "projects",
 	Aliases: []string{"p"},
-	Short:   "Show your projects (alias: p)",
+	Short:   "List all projects you have access to (alias: p)",
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := pClient.ListAllProjects()
 		handleError(err)
@@ -61,7 +61,7 @@ var listProjectsCmd = &cobra.Command{
 var listGroupsCmd = &cobra.Command{
 	Use:     "groups",
 	Aliases: []string{"g"},
-	Short:   "Show groups (alias: g)",
+	Short:   "List groups you have access to (alias: g)",
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := uClient.ListGroups("")
 		handleError(err)
@@ -80,11 +80,11 @@ var listGroupsCmd = &cobra.Command{
 var listGroupProjectsCmd = &cobra.Command{
 	Use:     "group-projects",
 	Aliases: []string{"gp"},
-	Short:   "Show projects in a group groups (alias: gp)",
+	Short:   "List projects in a group (alias: gp)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if !listAllProjects {
 			if groupName == "" {
-				fmt.Println("Not enough arguments. Requires: group name")
+				fmt.Println("Missing arguments: Group name is not defined")
 				cmd.Help()
 				os.Exit(1)
 			}
@@ -115,7 +115,7 @@ var listProjectCmd = &cobra.Command{
 	Short:   "List environments for a project (alias: pe)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -136,11 +136,11 @@ var listProjectCmd = &cobra.Command{
 var listVariablesCmd = &cobra.Command{
 	Use:     "variables",
 	Aliases: []string{"v"},
-	Short:   "Show your variables for a project or environment (alias: v)",
+	Short:   "List variables for a project or environment (alias: v)",
 	Run: func(cmd *cobra.Command, args []string) {
 		getListFlags := parseListFlags(*cmd.Flags())
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -166,10 +166,10 @@ var listVariablesCmd = &cobra.Command{
 var listDeploymentsCmd = &cobra.Command{
 	Use:     "deployments",
 	Aliases: []string{"d"},
-	Short:   "Show your deployments for an environment (alias: d)",
+	Short:   "List deployments for an environment (alias: d)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -190,10 +190,10 @@ var listDeploymentsCmd = &cobra.Command{
 var listTasksCmd = &cobra.Command{
 	Use:     "tasks",
 	Aliases: []string{"t"},
-	Short:   "Show your tasks for an environment (alias: t)",
+	Short:   "List tasks for an environment (alias: t)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -215,7 +215,7 @@ var listUsersCmd = &cobra.Command{
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "users",
 	Aliases: []string{"u"},
-	Short:   "List all users (alias: u)",
+	Short:   "List all users in groups (alias: u)",
 	Long:    `List all users in groups in lagoon, this only shows users that are in groups.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := uClient.ListUsers(groupName)

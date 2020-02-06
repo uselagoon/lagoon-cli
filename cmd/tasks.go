@@ -19,7 +19,7 @@ var runDrushArchiveDump = &cobra.Command{
 	Short:   "Run a drush archive dump on an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -42,7 +42,7 @@ var runDrushSQLDump = &cobra.Command{
 	Short:   "Run a drush sql dump on an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -65,7 +65,7 @@ var runDrushCacheClear = &cobra.Command{
 	Short:   "Run a drush cache clear on an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -120,7 +120,7 @@ Path:
 		}
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || taskCommand == "" {
-			fmt.Println("Not enough arguments. Requires: project name, environment name, and command")
+			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

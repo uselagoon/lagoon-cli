@@ -15,8 +15,9 @@ import (
 )
 
 var loginCmd = &cobra.Command{
-	Use:   "login",
-	Short: "Log into a Lagoon instance",
+	Use:     "login",
+	Short:   "Log into a Lagoon instance",
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		fmt.Println("Token fetched and saved.")
