@@ -1,6 +1,6 @@
 ---
 name: Permissions error
-about: Suggest an idea for this project
+about: Raise a permissions error (read the important information inside)
 title: ''
 labels: ''
 assignees: ''
