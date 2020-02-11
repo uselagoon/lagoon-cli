@@ -112,7 +112,7 @@ var listGroupProjectsCmd = &cobra.Command{
 var listProjectCmd = &cobra.Command{
 	Use:     "environments",
 	Aliases: []string{"e"},
-	Short:   "List environments for a project (alias: pe)",
+	Short:   "List environments for a project (alias: e)",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
 			fmt.Println("Not enough arguments. Requires: project name")
