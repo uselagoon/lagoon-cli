@@ -67,6 +67,35 @@ var deployBranchCmd = &cobra.Command{
 	},
 }
 
+var deployPromoteCmd = &cobra.Command{
+	Use:   "promote",
+	Short: "Promote an environment",
+	Long:  "Promote one environment to another",
+	Run: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		deployBranch := parseDeployFlags(*cmd.Flags())
+		if cmdProjectName == "" || deployBranch.Branch == "" {
+			fmt.Println("Not enough arguments. Requires: project name and branch name")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		if !outputOptions.JSON {
+			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
+		}
+
+		if yesNo() {
+			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
+			handleError(err)
+			resultData := output.Result{
+				Result: string(deployResult),
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+
+	},
+}
+
 func init() {
 	deployCmd.AddCommand(deployBranchCmd)
 	deployBranchCmd.Flags().StringVarP(&deployBranchName, "branch", "b", "", "branch name")
