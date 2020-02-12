@@ -31,6 +31,7 @@ type Client interface {
 	RunCustomTask(string, string, api.Task) ([]byte, error)
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
+	PromoteEnvironment(string, string, string) ([]byte, error)
 }
 
 // New .
@@ -169,4 +170,32 @@ func returnNonEmptyString(value string) string {
 		value = "-"
 	}
 	return value
+}
+
+// PromoteEnvironment .
+func (e *Environments) PromoteEnvironment(projectName string, sourceEnv string, destEnv string) ([]byte, error) {
+	customRequest := api.CustomRequest{
+		Query: `mutation deployEnvironmentPromote ($project: String!, $sourceEnv: String!, $destEnv: String!){
+		deployEnvironmentPromote(input:{
+			sourceEnvironment:{
+				name: $sourceEnv
+				project:{
+					name: $project
+				}
+			}
+			project:{
+				name: $project
+			}
+			destinationEnvironment: $destEnv
+			})
+		}`,
+		Variables: map[string]interface{}{
+			"project":   projectName,
+			"sourceEnv": sourceEnv,
+			"destEnv":   destEnv,
+		},
+		MappedResult: "deployEnvironmentPromote",
+	}
+	returnResult, err := e.api.Request(customRequest)
+	return returnResult, err
 }
