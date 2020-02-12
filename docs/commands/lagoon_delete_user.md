@@ -1,10 +1,10 @@
 ## lagoon delete user
 
-Delete user from lagoon
+Delete a user from lagoon
 
 ### Synopsis
 
-Delete user from lagoon
+Delete a user from lagoon
 
 ```
 lagoon delete user [flags]

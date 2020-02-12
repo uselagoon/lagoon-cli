@@ -33,20 +33,22 @@ func parseGetFlags(flags pflag.FlagSet) GetFlags {
 }
 
 var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get info on a project, or deployment",
+	Use:     "get",
+	Aliases: []string{"g"},
+	Short:   "Get info on a resource",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
 }
 
 var getProjectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Details about a project",
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Get details about a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		getProjectFlags := parseGetFlags(*cmd.Flags())
 		if getProjectFlags.Project == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -71,12 +73,13 @@ var getProjectCmd = &cobra.Command{
 }
 
 var getDeploymentCmd = &cobra.Command{
-	Use:   "deployment [remote id]",
-	Short: "Get build log by remote id",
+	Use:     "deployment",
+	Aliases: []string{"d"},
+	Short:   "Get a build log by remote id",
 	Run: func(cmd *cobra.Command, args []string) {
 		getProjectFlags := parseGetFlags(*cmd.Flags())
 		if getProjectFlags.RemoteID == "" {
-			fmt.Println("Not enough arguments. Requires: remote id")
+			fmt.Println("Missing arguments: Remote ID is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -105,11 +108,12 @@ var getDeploymentCmd = &cobra.Command{
 }
 
 var getEnvironmentCmd = &cobra.Command{
-	Use:   "environment",
-	Short: "Details about an environment",
+	Use:     "environment",
+	Aliases: []string{"e"},
+	Short:   "Get details about an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -128,12 +132,13 @@ var getEnvironmentCmd = &cobra.Command{
 }
 
 var getProjectKeyCmd = &cobra.Command{
-	Use:   "project-key",
-	Short: "Get a projects key",
+	Use:     "project-key",
+	Aliases: []string{"pk"},
+	Short:   "Get a projects public key",
 	Run: func(cmd *cobra.Command, args []string) {
 		getProjectFlags := parseGetFlags(*cmd.Flags())
 		if getProjectFlags.Project == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

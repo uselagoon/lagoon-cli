@@ -39,14 +39,15 @@ var deployCmd = &cobra.Command{
 }
 
 var deployBranchCmd = &cobra.Command{
-	Use:   "branch",
-	Short: "Deploy a latest branch",
-	Long:  "Deploy a latest branch",
+	Use:     "branch",
+	Short:   "Deploy a latest branch",
+	Long:    "Deploy a latest branch",
+	Aliases: []string{"b"},
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		deployBranch := parseDeployFlags(*cmd.Flags())
 		if cmdProjectName == "" || deployBranch.Branch == "" {
-			fmt.Println("Not enough arguments. Requires: project name and branch name")
+			fmt.Println("Missing arguments: Project name or branch name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

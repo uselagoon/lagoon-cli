@@ -1,10 +1,10 @@
 ## lagoon list slack
 
-Slack details about a project (alias: s)
+List Slack details about a project (alias: s)
 
 ### Synopsis
 
-Slack details about a project (alias: s)
+List Slack details about a project (alias: s)
 
 ```
 lagoon list slack [flags]

@@ -1,10 +1,10 @@
 ## lagoon get project
 
-Details about a project
+Get details about a project
 
 ### Synopsis
 
-Details about a project
+Get details about a project
 
 ```
 lagoon get project [flags]
@@ -35,5 +35,5 @@ lagoon get project [flags]
 
 ### SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

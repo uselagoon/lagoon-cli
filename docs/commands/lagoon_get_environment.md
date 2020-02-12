@@ -1,10 +1,10 @@
 ## lagoon get environment
 
-Details about an environment
+Get details about an environment
 
 ### Synopsis
 
-Details about an environment
+Get details about an environment
 
 ```
 lagoon get environment [flags]
@@ -35,5 +35,5 @@ lagoon get environment [flags]
 
 ### SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

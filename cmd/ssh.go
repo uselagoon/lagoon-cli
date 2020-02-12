@@ -15,13 +15,14 @@ var sshService string
 var sshContainer string
 
 var sshEnvCmd = &cobra.Command{
-	Use:   "ssh",
-	Short: "Display the SSH command to access a specific environment in a project",
+	Use:     "ssh",
+	Aliases: []string{"s"},
+	Short:   "Display the SSH command to access a specific environment in a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Not enough arguments. Requires: project name and environment name")
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

@@ -1,13 +1,13 @@
 ## lagoon get deployment
 
-Get build log by remote id
+Get a build log by remote id
 
 ### Synopsis
 
-Get build log by remote id
+Get a build log by remote id
 
 ```
-lagoon get deployment [remote id] [flags]
+lagoon get deployment [flags]
 ```
 
 ### Options
@@ -36,5 +36,5 @@ lagoon get deployment [remote id] [flags]
 
 ### SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

@@ -12,11 +12,12 @@ import (
 )
 
 var webCmd = &cobra.Command{
-	Use:   "web",
-	Short: "Launch the web user interface",
+	Use:     "web",
+	Aliases: []string{"w"},
+	Short:   "Launch the web user interface",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -37,8 +38,9 @@ var webCmd = &cobra.Command{
 }
 
 var kibanaCmd = &cobra.Command{
-	Use:   "kibana",
-	Short: "Launch the kibana interface",
+	Use:     "kibana",
+	Aliases: []string{"k"},
+	Short:   "Launch the kibana interface",
 	Run: func(cmd *cobra.Command, args []string) {
 		urlBuilder := strings.Builder{}
 		urlBuilder.WriteString(viper.GetString("lagoons." + cmdLagoon + ".kibana"))

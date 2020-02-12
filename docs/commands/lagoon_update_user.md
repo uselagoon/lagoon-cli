@@ -1,10 +1,10 @@
 ## lagoon update user
 
-Modify a user in lagoon (change name, or email address)
+Update a user in lagoon
 
 ### Synopsis
 
-Modify a user in lagoon (change name, or email address)
+Update a user in lagoon (change name, or email address)
 
 ```
 lagoon update user [flags]
@@ -39,5 +39,5 @@ lagoon update user [flags]
 
 ### SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update project, environment, or notification
+* [lagoon update](lagoon_update.md)	 - Update a resource
 

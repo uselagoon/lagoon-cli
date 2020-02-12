@@ -1,10 +1,10 @@
 ## lagoon add group
 
-Add group to lagoon
+Add a group to lagoon
 
 ### Synopsis
 
-Add group to lagoon
+Add a group to lagoon
 
 ```
 lagoon add group [flags]

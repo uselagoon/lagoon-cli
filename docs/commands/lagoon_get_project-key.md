@@ -1,10 +1,10 @@
 ## lagoon get project-key
 
-Get a projects key
+Get a projects public key
 
 ### Synopsis
 
-Get a projects key
+Get a projects public key
 
 ```
 lagoon get project-key [flags]
@@ -36,5 +36,5 @@ lagoon get project-key [flags]
 
 ### SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a project, or deployment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

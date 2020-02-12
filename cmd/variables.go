@@ -36,11 +36,11 @@ func parseEnvVars(flags pflag.FlagSet) api.EnvVariable {
 var addVariableCmd = &cobra.Command{
 	Use:     "variable",
 	Aliases: []string{"v"},
-	Short:   "Add variables on environments or projects",
+	Short:   "Add a variable to an environment or project",
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -95,7 +95,7 @@ var deleteVariableCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		envVarFlags := parseEnvVars(*cmd.Flags())
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

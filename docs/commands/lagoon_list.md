@@ -32,14 +32,14 @@ List projects, deployments, variables or notifications
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon list deployments](lagoon_list_deployments.md)	 - Show your deployments for an environment (alias: d)
+* [lagoon list deployments](lagoon_list_deployments.md)	 - List deployments for an environment (alias: d)
 * [lagoon list environments](lagoon_list_environments.md)	 - List environments for a project (alias: pe)
-* [lagoon list group-projects](lagoon_list_group-projects.md)	 - Show projects in a group groups (alias: gp)
-* [lagoon list groups](lagoon_list_groups.md)	 - Show groups (alias: g)
-* [lagoon list projects](lagoon_list_projects.md)	 - Show your projects (alias: p)
-* [lagoon list rocketchat](lagoon_list_rocketchat.md)	 - Rocketchat details about a project (alias: r)
-* [lagoon list slack](lagoon_list_slack.md)	 - Slack details about a project (alias: s)
-* [lagoon list tasks](lagoon_list_tasks.md)	 - Show your tasks for an environment (alias: t)
-* [lagoon list users](lagoon_list_users.md)	 - List all users (alias: u)
-* [lagoon list variables](lagoon_list_variables.md)	 - Show your variables for a project or environment (alias: v)
+* [lagoon list group-projects](lagoon_list_group-projects.md)	 - List projects in a group (alias: gp)
+* [lagoon list groups](lagoon_list_groups.md)	 - List groups you have access to (alias: g)
+* [lagoon list projects](lagoon_list_projects.md)	 - List all projects you have access to (alias: p)
+* [lagoon list rocketchat](lagoon_list_rocketchat.md)	 - List Rocketchat details about a project (alias: r)
+* [lagoon list slack](lagoon_list_slack.md)	 - List Slack details about a project (alias: s)
+* [lagoon list tasks](lagoon_list_tasks.md)	 - List tasks for an environment (alias: t)
+* [lagoon list users](lagoon_list_users.md)	 - List all users in groups (alias: u)
+* [lagoon list variables](lagoon_list_variables.md)	 - List variables for a project or environment (alias: v)
 
