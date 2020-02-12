@@ -5,6 +5,7 @@ Add a slack notification to a project
 ### Synopsis
 
 Add a slack notification to a project
+This command is used to add an existing slack notification in lagoon to a project.
 
 ```
 lagoon add project-slack [flags]

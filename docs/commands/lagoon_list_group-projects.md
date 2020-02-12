@@ -1,10 +1,10 @@
 ## lagoon list group-projects
 
-Show projects in a group groups (alias: gp)
+List projects in a group (alias: gp)
 
 ### Synopsis
 
-Show projects in a group groups (alias: gp)
+List projects in a group (alias: gp)
 
 ```
 lagoon list group-projects [flags]

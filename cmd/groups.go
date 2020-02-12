@@ -28,11 +28,11 @@ func parseGroup(flags pflag.FlagSet) api.Group {
 var addGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
-	Short:   "Add group to lagoon",
+	Short:   "Add a group to lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		groupFlags := parseGroup(*cmd.Flags())
 		if groupFlags.Name == "" {
-			fmt.Println("Not enough arguments. Requires: group name")
+			fmt.Println("Missing arguments: Group name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -54,7 +54,7 @@ var addGroupCmd = &cobra.Command{
 var addUserToGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
-	Short:   "Add user to a group in lagoon",
+	Short:   "Add a user to a group in lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		var roleType api.GroupRole
 		roleType = api.GuestRole
@@ -79,7 +79,7 @@ var addUserToGroupCmd = &cobra.Command{
 			Role: roleType,
 		}
 		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" || userGroupRole.Role == "" {
-			output.RenderError("Must define an email address", outputOptions)
+			output.RenderError("Missing arguments: Email address, group name, or role is not defined", outputOptions)
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -101,7 +101,7 @@ var addUserToGroupCmd = &cobra.Command{
 var addProjectToGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
-	Short:   "Add project to a group in lagoon",
+	Short:   "Add a project to a group in lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectGroup := api.ProjectGroups{
 			Project: api.Project{
@@ -114,7 +114,7 @@ var addProjectToGroupCmd = &cobra.Command{
 			},
 		}
 		if projectGroup.Project.Name == "" || len(projectGroup.Groups) == 0 {
-			output.RenderError("Must define a project name and group", outputOptions)
+			output.RenderError("Missing arguments: Project name or group name is not defined", outputOptions)
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -136,7 +136,7 @@ var addProjectToGroupCmd = &cobra.Command{
 var delUserFromGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
-	Short:   "Delete user from a group in lagoon",
+	Short:   "Delete a user from a group in lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		userGroupRole := api.UserGroup{
 			User: api.User{
@@ -147,7 +147,7 @@ var delUserFromGroupCmd = &cobra.Command{
 			},
 		}
 		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" {
-			output.RenderError("Must define an email address and group name", outputOptions)
+			output.RenderError("Missing arguments: Email address or group name is not defined", outputOptions)
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -169,7 +169,7 @@ var delUserFromGroupCmd = &cobra.Command{
 var delProjectFromGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
-	Short:   "Delete project from a group in lagoon",
+	Short:   "Delete a project from a group in lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectGroup := api.ProjectGroups{
 			Project: api.Project{
@@ -182,7 +182,7 @@ var delProjectFromGroupCmd = &cobra.Command{
 			},
 		}
 		if projectGroup.Project.Name == "" || len(projectGroup.Groups) == 0 {
-			output.RenderError("Must define a project name and group", outputOptions)
+			output.RenderError("Missing arguments: Project name or group name is not defined", outputOptions)
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -203,11 +203,11 @@ var delProjectFromGroupCmd = &cobra.Command{
 var delGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
-	Short:   "Delete group from lagoon",
+	Short:   "Delete a group from lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		groupFlags := parseGroup(*cmd.Flags())
 		if groupFlags.Name == "" {
-			fmt.Println("Not enough arguments. Requires: group name")
+			fmt.Println("Missing arguments: Group name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

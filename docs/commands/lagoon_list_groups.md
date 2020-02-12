@@ -1,10 +1,10 @@
 ## lagoon list groups
 
-Show groups (alias: g)
+List groups you have access to (alias: g)
 
 ### Synopsis
 
-Show groups (alias: g)
+List groups you have access to (alias: g)
 
 ```
 lagoon list groups [flags]

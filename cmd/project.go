@@ -37,7 +37,7 @@ var deleteProjectCmd = &cobra.Command{
 	Short:   "Delete a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -64,7 +64,7 @@ var addProjectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		projectFlags := parseProjectFlags(*cmd.Flags())
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -98,7 +98,7 @@ var updateProjectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		projectFlags := parseProjectFlags(*cmd.Flags())
 		if cmdProjectName == "" {
-			fmt.Println("Not enough arguments. Requires: project name")
+			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

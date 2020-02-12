@@ -1,10 +1,10 @@
 ## lagoon delete user-group
 
-Delete user from a group in lagoon
+Delete a user from a group in lagoon
 
 ### Synopsis
 
-Delete user from a group in lagoon
+Delete a user from a group in lagoon
 
 ```
 lagoon delete user-group [flags]

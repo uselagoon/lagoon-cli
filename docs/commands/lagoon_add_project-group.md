@@ -1,10 +1,10 @@
 ## lagoon add project-group
 
-Add project to a group in lagoon
+Add a project to a group in lagoon
 
 ### Synopsis
 
-Add project to a group in lagoon
+Add a project to a group in lagoon
 
 ```
 lagoon add project-group [flags]

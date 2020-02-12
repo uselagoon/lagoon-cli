@@ -1,10 +1,10 @@
 ## lagoon list rocketchat
 
-Rocketchat details about a project (alias: r)
+List Rocketchat details about a project (alias: r)
 
 ### Synopsis
 
-Rocketchat details about a project (alias: r)
+List Rocketchat details about a project (alias: r)
 
 ```
 lagoon list rocketchat [flags]

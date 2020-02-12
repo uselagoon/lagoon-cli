@@ -8,7 +8,7 @@ import (
 var updateCmd = &cobra.Command{
 	Use:     "update",
 	Aliases: []string{"u"},
-	Short:   "Update project, environment, or notification",
+	Short:   "Update a resource",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},

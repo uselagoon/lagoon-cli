@@ -1,10 +1,10 @@
 ## lagoon delete group
 
-Delete group from lagoon
+Delete a group from lagoon
 
 ### Synopsis
 
-Delete group from lagoon
+Delete a group from lagoon
 
 ```
 lagoon delete group [flags]

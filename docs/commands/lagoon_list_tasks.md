@@ -1,10 +1,10 @@
 ## lagoon list tasks
 
-Show your tasks for an environment (alias: t)
+List tasks for an environment (alias: t)
 
 ### Synopsis
 
-Show your tasks for an environment (alias: t)
+List tasks for an environment (alias: t)
 
 ```
 lagoon list tasks [flags]

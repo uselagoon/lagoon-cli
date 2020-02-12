@@ -5,6 +5,8 @@ Add a new slack notification
 ### Synopsis
 
 Add a new slack notification
+This command is used to set up a new slack notification in lagoon. This requires information to talk to slack like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to slack though, you need to use project-slack for that.
 
 ```
 lagoon add slack [flags]

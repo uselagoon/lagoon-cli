@@ -56,11 +56,11 @@ func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 var addUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
-	Short:   "Add user to lagoon",
+	Short:   "Add a user to lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			fmt.Println("Not enough arguments. Requires: email address")
+			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -82,11 +82,11 @@ var addUserCmd = &cobra.Command{
 var addUserSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"uk"},
-	Short:   "Add sshkey to a user",
+	Short:   "Add an sshkey to a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			fmt.Println("Not enough arguments. Requires: email address")
+			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -109,10 +109,10 @@ var addUserSSHKeyCmd = &cobra.Command{
 var delSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"u"},
-	Short:   "Delete sshkey from lagoon",
+	Short:   "Delete an sshkey from lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		if sshKeyName == "" {
-			fmt.Println("Not enough arguments. Requires: ssh key name")
+			fmt.Println("Missing arguments: SSH key name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -130,11 +130,11 @@ var delSSHKeyCmd = &cobra.Command{
 var delUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
-	Short:   "Delete user from lagoon",
+	Short:   "Delete a user from lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			fmt.Println("Not enough arguments. Requires: email address")
+			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -152,11 +152,12 @@ var delUserCmd = &cobra.Command{
 var updateUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
-	Short:   "Modify a user in lagoon (change name, or email address)",
+	Short:   "Update a user in lagoon",
+	Long:    "Update a user in lagoon (change name, or email address)",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
-			fmt.Println("Not enough arguments. Requires: email address")
+			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -180,12 +181,13 @@ var updateUserCmd = &cobra.Command{
 
 var getUserKeysCmd = &cobra.Command{
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
-	Use:   "user-sshkeys",
-	Short: "Get a users SSH keys",
-	Long:  `Get a users SSH keys. This will only work for users that are part of a group`,
+	Use:     "user-sshkeys",
+	Aliases: []string{"us"},
+	Short:   "Get a users SSH keys",
+	Long:    `Get a users SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if userEmail == "" {
-			fmt.Println("Not enough arguments. Requires: email address")
+			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -205,9 +207,10 @@ var getUserKeysCmd = &cobra.Command{
 
 var getAllUserKeysCmd = &cobra.Command{
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
-	Use:   "all-user-sshkeys",
-	Short: "Get all user SSH keys",
-	Long:  `Get all user SSH keys. This will only work for users that are part of a group`,
+	Use:     "all-user-sshkeys",
+	Aliases: []string{"aus"},
+	Short:   "Get all user SSH keys",
+	Long:    `Get all user SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
 		returnedJSON, err := uClient.ListUserSSHKeys(groupName, userEmail, true)
 		handleError(err)

@@ -1,6 +1,6 @@
 ## lagoon list users
 
-List all users (alias: u)
+List all users in groups (alias: u)
 
 ### Synopsis
 
