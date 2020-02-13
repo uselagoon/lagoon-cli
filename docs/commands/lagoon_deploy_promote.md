@@ -1,15 +1,21 @@
-## lagoon deploy
+## lagoon deploy promote
 
-deploy a branch or environment
+Promote an environment
 
 ### Synopsis
 
-deploy a branch or environment
+Promote one environment to another
+
+```
+lagoon deploy promote [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for deploy
+  -d, --destination string   destination environment name
+  -h, --help                 help for promote
+  -s, --source string        source environment name
 ```
 
 ### Options inherited from parent commands
@@ -31,7 +37,5 @@ deploy a branch or environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon deploy branch](lagoon_deploy_branch.md)	 - Deploy a latest branch
-* [lagoon deploy promote](lagoon_deploy_promote.md)	 - Promote an environment
+* [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
 
