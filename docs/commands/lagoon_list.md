@@ -33,7 +33,7 @@ List projects, deployments, variables or notifications
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
 * [lagoon list deployments](lagoon_list_deployments.md)	 - List deployments for an environment (alias: d)
-* [lagoon list environments](lagoon_list_environments.md)	 - List environments for a project (alias: pe)
+* [lagoon list environments](lagoon_list_environments.md)	 - List environments for a project (alias: e)
 * [lagoon list group-projects](lagoon_list_group-projects.md)	 - List projects in a group (alias: gp)
 * [lagoon list groups](lagoon_list_groups.md)	 - List groups you have access to (alias: g)
 * [lagoon list projects](lagoon_list_projects.md)	 - List all projects you have access to (alias: p)

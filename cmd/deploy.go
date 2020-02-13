@@ -13,7 +13,9 @@ import (
 
 // DeployFlags .
 type DeployFlags struct {
-	Branch string `json:"branch,omitempty"`
+	Branch      string `json:"branch,omitempty"`
+	Source      string `json:"source,omitempty"`
+	Destination string `json:"destination,omitempty"`
 }
 
 func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
@@ -68,9 +70,47 @@ var deployBranchCmd = &cobra.Command{
 	},
 }
 
+var deployPromoteCmd = &cobra.Command{
+	Use:     "promote",
+	Aliases: []string{"p"},
+	Short:   "Promote an environment",
+	Long:    "Promote one environment to another",
+	Run: func(cmd *cobra.Command, args []string) {
+		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		promoteEnv := parseDeployFlags(*cmd.Flags())
+		if cmdProjectName == "" || promoteEnv.Source == "" || promoteEnv.Destination == "" {
+			fmt.Println("Missing arguments: Project name, source environment name, or destination environment name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		if !outputOptions.JSON {
+			fmt.Println(fmt.Sprintf("Promoting %s %s to %s", cmdProjectName, promoteEnv.Source, promoteEnv.Destination))
+		}
+
+		if yesNo() {
+			deployResult, err := eClient.PromoteEnvironment(cmdProjectName, promoteEnv.Source, promoteEnv.Destination)
+			handleError(err)
+			resultData := output.Result{
+				Result: string(deployResult),
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+
+	},
+}
+
+var (
+	promoteSourceEnv string
+	promoteDestEnv   string
+)
+
 func init() {
 	deployCmd.AddCommand(deployBranchCmd)
+	deployCmd.AddCommand(deployPromoteCmd)
 	deployBranchCmd.Flags().StringVarP(&deployBranchName, "branch", "b", "", "branch name")
+	deployPromoteCmd.Flags().StringVarP(&promoteSourceEnv, "source", "s", "", "source environment name")
+	deployPromoteCmd.Flags().StringVarP(&promoteDestEnv, "destination", "d", "", "destination environment name")
 }
 
 /* @TODO
