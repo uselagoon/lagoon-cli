@@ -5,6 +5,7 @@ import (
 	"os"
 
 	lagoonssh "github.com/amazeeio/lagoon-cli/lagoon/ssh"
+	"github.com/amazeeio/lagoon-cli/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
@@ -53,10 +54,14 @@ var sshEnvCmd = &cobra.Command{
 				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 			}
 			defer closeSSHAgent()
+			var err error
 			if sshCommand != "" {
-				lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
+				err = lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
 			} else {
-				lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
+				err = lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
+			}
+			if err != nil {
+				output.RenderError(err.Error(), outputOptions)
 			}
 		}
 

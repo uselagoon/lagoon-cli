@@ -2,8 +2,8 @@ package ssh
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"golang.org/x/crypto/ssh"
@@ -11,16 +11,16 @@ import (
 )
 
 // InteractiveSSH .
-func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) {
+func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		panic("Failed to dial: " + err.Error())
+		return errors.New("Failed to dial: " + err.Error() + "\nPossibly check the project or environment name")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		panic("Failed to create session: " + err.Error())
+		return errors.New("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -35,16 +35,16 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	if terminal.IsTerminal(fileDescriptor) {
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
 		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 		err = session.RequestPty("xterm-256color", termHeight, termWidth, modes)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 	}
 	var connString string
@@ -56,22 +56,23 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	err = session.Start(connString)
 	if err != nil {
-		log.Fatalf("failed to start shell: %s", err)
+		return errors.New("Failed to start shell: " + err.Error())
 	}
 	session.Wait()
+	return nil
 }
 
 // RunSSHCommand .
-func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) {
+func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		panic("Failed to dial: " + err.Error())
+		return errors.New("Failed to dial: " + err.Error() + "\nPossibly check the project or environment name")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		panic("Failed to create session: " + err.Error())
+		return errors.New("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -86,16 +87,16 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	if terminal.IsTerminal(fileDescriptor) {
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
 		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 		err = session.RequestPty("xterm-256color", termHeight, termWidth, modes)
 		if err != nil {
-			log.Fatalf("%s", err)
+			return err
 		}
 	}
 	var connString string
@@ -114,6 +115,7 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		os.Exit(1)
 	}
 	fmt.Println(b.String())
+	return nil
 }
 
 // GenerateSSHConnectionString .
