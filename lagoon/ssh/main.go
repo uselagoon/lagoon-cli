@@ -14,7 +14,7 @@ import (
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nPossibly check the project or environment name")
+		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
@@ -66,7 +66,7 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nPossibly check the project or environment name")
+		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
