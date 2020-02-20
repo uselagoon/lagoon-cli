@@ -15,14 +15,16 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	deleteCmd.AddCommand(deleteVariableCmd)
-	deleteCmd.AddCommand(delUserFromGroupCmd)
-	deleteCmd.AddCommand(delProjectFromGroupCmd)
-	deleteCmd.AddCommand(delUserCmd)
-	deleteCmd.AddCommand(delGroupCmd)
-	deleteCmd.AddCommand(deleteProjectSlackNotificationCmd)
-	deleteCmd.AddCommand(deleteSlackNotificationCmd)
+	deleteCmd.AddCommand(deleteEnvCmd)
+	deleteCmd.AddCommand(deleteGroupCmd)
+	deleteCmd.AddCommand(deleteProjectCmd)
+	deleteCmd.AddCommand(deleteProjectFromGroupCmd)
 	deleteCmd.AddCommand(deleteProjectRocketChatNotificationCmd)
+	deleteCmd.AddCommand(deleteProjectSlackNotificationCmd)
 	deleteCmd.AddCommand(deleteRocketChatNotificationCmd)
-	deleteCmd.AddCommand(delSSHKeyCmd)
+	deleteCmd.AddCommand(deleteSlackNotificationCmd)
+	deleteCmd.AddCommand(deleteUserCmd)
+	deleteCmd.AddCommand(deleteSSHKeyCmd)
+	deleteCmd.AddCommand(deleteUserFromGroupCmd)
+	deleteCmd.AddCommand(deleteVariableCmd)
 }

@@ -34,7 +34,7 @@ func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
 var deployCmd = &cobra.Command{
 	Use:     "deploy",
 	Aliases: []string{"d"},
-	Short:   "deploy a branch or environment",
+	Short:   "Deploy a branch or environment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
@@ -109,8 +109,8 @@ func init() {
 	deployCmd.AddCommand(deployBranchCmd)
 	deployCmd.AddCommand(deployPromoteCmd)
 	deployBranchCmd.Flags().StringVarP(&deployBranchName, "branch", "b", "", "branch name")
-	deployPromoteCmd.Flags().StringVarP(&promoteSourceEnv, "source", "s", "", "source environment name")
 	deployPromoteCmd.Flags().StringVarP(&promoteDestEnv, "destination", "d", "", "destination environment name")
+	deployPromoteCmd.Flags().StringVarP(&promoteSourceEnv, "source", "s", "", "source environment name")
 }
 
 /* @TODO

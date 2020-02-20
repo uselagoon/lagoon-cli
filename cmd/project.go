@@ -121,9 +121,7 @@ var updateProjectCmd = &cobra.Command{
 }
 
 func init() {
-	deleteCmd.AddCommand(deleteProjectCmd)
 
-	updateCmd.AddCommand(updateProjectCmd)
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
 	// @TODO this seems needlessly busy, maybe see if cobra supports grouping flags and applying them to commands easier?
@@ -144,7 +142,6 @@ func init() {
 	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
-	addCmd.AddCommand(addProjectCmd)
 	addProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
 	addProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "g", "", "GitURL of the project")

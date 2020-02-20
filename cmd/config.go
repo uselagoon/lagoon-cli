@@ -187,10 +187,10 @@ var configDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	configCmd.AddCommand(configDefaultCmd)
-	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configAddCmd)
+	configCmd.AddCommand(configDefaultCmd)
 	configCmd.AddCommand(configDeleteCmd)
+	configCmd.AddCommand(configLagoonsCmd)
 	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
 	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
 	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")

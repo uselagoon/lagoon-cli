@@ -133,7 +133,7 @@ var addProjectToGroupCmd = &cobra.Command{
 	},
 }
 
-var delUserFromGroupCmd = &cobra.Command{
+var deleteUserFromGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
 	Short:   "Delete a user from a group in lagoon",
@@ -166,7 +166,7 @@ var delUserFromGroupCmd = &cobra.Command{
 	},
 }
 
-var delProjectFromGroupCmd = &cobra.Command{
+var deleteProjectFromGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
 	Short:   "Delete a project from a group in lagoon",
@@ -200,7 +200,7 @@ var delProjectFromGroupCmd = &cobra.Command{
 		output.RenderResult(resultData, outputOptions)
 	},
 }
-var delGroupCmd = &cobra.Command{
+var deleteGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
 	Short:   "Delete a group from lagoon",
@@ -228,8 +228,8 @@ func init() {
 	addUserToGroupCmd.Flags().StringVarP(&groupRole, "role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
 	addUserToGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addProjectToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	delUserFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	delUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	delProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	delGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	deleteUserFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
+	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 }
