@@ -13,10 +13,9 @@ lagoon [flags]
 ### Options
 
 ```
-      --all-projects         All projects (if supported)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
-      --force                Force (if supported)
+      --force                Force yes on prompts (if supported)
   -h, --help                 help for lagoon
   -l, --lagoon string        The Lagoon instance to interact with
       --no-header            No header on table (if supported)
@@ -24,7 +23,7 @@ lagoon [flags]
       --output-json          Output as JSON (if supported)
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
-  -i, --ssh-key string       Specify a specific SSH key to use
+  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
       --version              Version information
 ```
 
@@ -33,7 +32,7 @@ lagoon [flags]
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 * [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
-* [lagoon deploy](lagoon_deploy.md)	 - deploy a branch or environment
+* [lagoon deploy](lagoon_deploy.md)	 - Deploy a branch or environment
 * [lagoon get](lagoon_get.md)	 - Get info on a resource
 * [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
