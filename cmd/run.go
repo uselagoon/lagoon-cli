@@ -15,8 +15,8 @@ var runCmd = &cobra.Command{
 }
 
 func init() {
-	runCmd.AddCommand(runDrushArchiveDump)
-	runCmd.AddCommand(runDrushSQLDump)
-	runCmd.AddCommand(runDrushCacheClear)
 	runCmd.AddCommand(runCustomTask)
+	runCmd.AddCommand(runDrushArchiveDump)
+	runCmd.AddCommand(runDrushCacheClear)
+	runCmd.AddCommand(runDrushSQLDump)
 }

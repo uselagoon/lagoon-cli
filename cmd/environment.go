@@ -50,7 +50,3 @@ var deleteEnvCmd = &cobra.Command{
 		}
 	},
 }
-
-func init() {
-	deleteCmd.AddCommand(deleteEnvCmd)
-}

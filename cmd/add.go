@@ -15,14 +15,15 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	addCmd.AddCommand(addVariableCmd)
-	addCmd.AddCommand(addUserCmd)
 	addCmd.AddCommand(addGroupCmd)
-	addCmd.AddCommand(addUserToGroupCmd)
+	addCmd.AddCommand(addProjectCmd)
 	addCmd.AddCommand(addProjectToGroupCmd)
-	addCmd.AddCommand(addUserSSHKeyCmd)
-	addCmd.AddCommand(addSlackNotificationCmd)
+	addCmd.AddCommand(addProjectRocketChatNotificationCmd)
 	addCmd.AddCommand(addProjectSlackNotificationCmd)
 	addCmd.AddCommand(addRocketChatNotificationCmd)
-	addCmd.AddCommand(addProjectRocketChatNotificationCmd)
+	addCmd.AddCommand(addSlackNotificationCmd)
+	addCmd.AddCommand(addUserCmd)
+	addCmd.AddCommand(addUserToGroupCmd)
+	addCmd.AddCommand(addUserSSHKeyCmd)
+	addCmd.AddCommand(addVariableCmd)
 }

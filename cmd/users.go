@@ -106,7 +106,7 @@ var addUserSSHKeyCmd = &cobra.Command{
 	},
 }
 
-var delSSHKeyCmd = &cobra.Command{
+var deleteSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"u"},
 	Short:   "Delete an sshkey from lagoon",
@@ -127,7 +127,7 @@ var delSSHKeyCmd = &cobra.Command{
 	},
 }
 
-var delUserCmd = &cobra.Command{
+var deleteUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
 	Short:   "Delete a user from lagoon",
@@ -237,8 +237,8 @@ func init() {
 	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey (optional, if not provided will try use what is in the pubkey file)")
 	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "file location to the public key to add")
-	delUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	delSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey")
+	deleteUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
+	deleteSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey")
 	updateUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "New firstname of the user")
 	updateUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "New lastname of the user")
 	updateUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")

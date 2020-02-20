@@ -72,17 +72,17 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
 
 	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The Lagoon instance to interact with")
-	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "Force (if supported)")
-	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify a specific SSH key to use")
+	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "Force yes on prompts (if supported)")
+	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify path to a specific SSH key to use for lagoon authentication")
 
-	rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
+	// rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Header, "no-header", "", false, "No header on table (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.CSV, "output-csv", "", false, "Output as CSV (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 
-	rootCmd.PersistentFlags().BoolVarP(&versionFlag, "version", "", false, "Version information")
+	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
 
 	rootCmd.Flags().MarkHidden("docs")
@@ -115,19 +115,19 @@ Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
 
 Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
 `)
-	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(deleteCmd)
-	rootCmd.AddCommand(updateCmd)
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(getCmd)
-	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(deployCmd)
-	rootCmd.AddCommand(sshEnvCmd)
-	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(kibanaCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(loginCmd)
+	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(sshEnvCmd)
+	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(webCmd)
 }
 
 // version/build information command
