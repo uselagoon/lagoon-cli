@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 )
 
 // config vars

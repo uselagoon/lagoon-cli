@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

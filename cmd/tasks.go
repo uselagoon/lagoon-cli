@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 )
 

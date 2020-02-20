@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	lagoonssh "github.com/amazeeio/lagoon-cli/lagoon/ssh"
-	"github.com/amazeeio/lagoon-cli/output"
+	lagoonssh "github.com/amazeeio/lagoon-cli/pkg/lagoon/ssh"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
