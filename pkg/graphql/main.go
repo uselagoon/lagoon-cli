@@ -1,7 +1,7 @@
 package graphql
 
 import (
-	"github.com/amazeeio/lagoon-cli/api"
+	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
 )

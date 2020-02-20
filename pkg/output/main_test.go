@@ -57,6 +57,43 @@ func TestRenderError(t *testing.T) {
 	}
 }
 
+func TestRenderInfo(t *testing.T) {
+	var testData = `Info Message`
+	var testSuccess1 = `{"info":"Info Message"}
+`
+	var testSuccess2 = `Info: Info Message
+`
+
+	outputOptions := Options{
+		Header: false,
+		CSV:    false,
+		JSON:   true,
+		Pretty: false,
+	}
+	rescueStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	RenderInfo(testData, outputOptions)
+	w.Close()
+	out, _ := ioutil.ReadAll(r)
+	os.Stdout = rescueStdout
+	if string(out) != testSuccess1 {
+		checkEqual(t, string(out), testSuccess1, " render info json processing failed")
+	}
+
+	outputOptions.JSON = false
+	rescueStdout = os.Stdout
+	r, w, _ = os.Pipe()
+	os.Stdout = w
+	RenderInfo(testData, outputOptions)
+	w.Close()
+	out, _ = ioutil.ReadAll(r)
+	os.Stdout = rescueStdout
+	if string(out) != testSuccess2 {
+		checkEqual(t, string(out), testSuccess2, " render info stdout processing failed")
+	}
+}
+
 func TestRenderOutput(t *testing.T) {
 	var testData = `{"header":["NID","NotificationName","Channel","Webhook"],"data":[["1","amazeeio--lagoon-local-ci","lagoon-local-ci","https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"]]}`
 	var testSuccess1 = `{"data":[{"channel":"lagoon-local-ci","nid":"1","notificationname":"amazeeio--lagoon-local-ci","webhook":"https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"}]}

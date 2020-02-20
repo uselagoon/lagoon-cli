@@ -33,6 +33,7 @@ type Result struct {
 	ResultData map[string]interface{} `json:"data,omitempty"`
 	Result     string                 `json:"result,omitempty"`
 	Error      string                 `json:"error,omitempty"`
+	Info       string                 `json:"info,omitempty"`
 }
 
 // RenderJSON .
@@ -63,6 +64,18 @@ func RenderError(errorMsg string, opts Options) {
 	} else {
 		//fmt.Println(fmt.Sprintf("Error: %s", aurora.Yellow(trimQuotes(errorMsg))))
 		fmt.Println("Error:", trimQuotes(errorMsg))
+	}
+}
+
+// RenderInfo .
+func RenderInfo(infoMsg string, opts Options) {
+	if opts.JSON {
+		jsonData := Result{
+			Info: trimQuotes(infoMsg),
+		}
+		RenderJSON(jsonData, opts)
+	} else {
+		fmt.Println("Info:", trimQuotes(infoMsg))
 	}
 }
 

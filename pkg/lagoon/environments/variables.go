@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/graphql"
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/amazeeio/lagoon-cli/pkg/graphql"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 )
 
 // AddEnvironmentVariableToEnvironment will list all environments for a project
