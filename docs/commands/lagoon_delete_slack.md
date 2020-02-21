@@ -28,6 +28,7 @@ lagoon delete slack [flags]
       --output-json          Output as JSON (if supported)
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
+      --skip-update-check    Skip checking for updates
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
