@@ -47,7 +47,10 @@ var rootCmd = &cobra.Command{
 	Long:              `Lagoon CLI. Manage your Lagoon hosted projects.`,
 	DisableAutoGenTag: true,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if !skipUpdateCheck {
+		if viper.GetBool("updateCheckDisable") == true {
+			skipUpdateCheck = true
+		}
+		if skipUpdateCheck == false {
 			// Using code from https://github.com/drud/ddev/
 			home, err := os.UserHomeDir()
 			if err != nil {

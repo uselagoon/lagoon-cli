@@ -1,15 +1,20 @@
-## lagoon config
+## lagoon config feature
 
-Configure Lagoon CLI
+Enable or disable CLI features
 
 ### Synopsis
 
-Configure Lagoon CLI
+Enable or disable CLI features
+
+```
+lagoon config feature [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for config
+      --disable-update-check string   Enable or disable checking of updates (true/false)
+  -h, --help                          help for feature
 ```
 
 ### Options inherited from parent commands
@@ -30,10 +35,5 @@ Configure Lagoon CLI
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon config add](lagoon_config_add.md)	 - Add information about an additional Lagoon instance to use
-* [lagoon config default](lagoon_config_default.md)	 - Set the default Lagoon to use
-* [lagoon config delete](lagoon_config_delete.md)	 - Delete a Lagoon instance configuration
-* [lagoon config feature](lagoon_config_feature.md)	 - Enable or disable CLI features
-* [lagoon config list](lagoon_config_list.md)	 - View all configured Lagoon instances
+* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 
