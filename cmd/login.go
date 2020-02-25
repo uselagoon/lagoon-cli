@@ -101,6 +101,9 @@ func loginToken() error {
 		return err
 	}
 	err = conn.Close()
+	if err != nil {
+		return err
+	}
 	viper.Set("lagoons."+cmdLagoon+".token", strings.TrimSpace(string(out)))
 	err = viper.WriteConfig()
 	if err != nil {

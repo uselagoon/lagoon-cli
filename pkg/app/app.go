@@ -30,6 +30,9 @@ func (project *LagoonProject) ReadConfig() error {
 	var err error
 
 	source, err := ioutil.ReadFile(filepath.Join(project.Dir, ".lagoon.yml"))
+	if err != nil {
+		return fmt.Errorf("unable to load config file %s/: %v", filepath.Join(project.Dir, ".lagoon.yml"), err)
+	}
 	err = yaml.Unmarshal(source, project)
 	if err != nil {
 		return fmt.Errorf("unable to load config file %s/: %v", filepath.Join(project.Dir, ".lagoon.yml"), err)
@@ -56,7 +59,7 @@ func (project *LagoonProject) ReadConfig() error {
 
 // GetLocalProject returns the current Lagoon app detected.
 func GetLocalProject() (LagoonProject, error) {
-	appDir, err := os.Getwd()
+	_, err := os.Getwd()
 	if err != nil {
 		return LagoonProject{}, fmt.Errorf("error determining the current directory: %s", err)
 	}
@@ -66,7 +69,7 @@ func GetLocalProject() (LagoonProject, error) {
 	if err != nil {
 		return LagoonProject{}, err
 	}
-	appDir = fmt.Sprintf("%+v", root)
+	appDir := fmt.Sprintf("%+v", root)
 	return getProjectFromPath(appDir)
 }
 

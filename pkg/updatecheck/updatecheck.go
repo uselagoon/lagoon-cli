@@ -69,6 +69,9 @@ func ResetUpdateTime(filepath string) error {
 	err := os.Remove(filepath)
 	_ = err // We don't actually care if remove failed. All we care about is that the create succeeds.
 	file, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
 	err = file.Close()
 	return err
 }
