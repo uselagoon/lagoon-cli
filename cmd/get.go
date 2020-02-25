@@ -156,6 +156,33 @@ var getProjectKeyCmd = &cobra.Command{
 	},
 }
 
+// @TODO: This is only available for platform administrators currently
+var getEnvHitsCmd = &cobra.Command{
+	Use:     "hits",
+	Aliases: []string{"h"},
+	Short:   "Get an environments hits",
+	Long:    "Get an environments hits, this is only available to platform admin",
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+		returnedJSON, err := eClient.EnvironmentHits(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
+		fmt.Println(string(returnedJSON))
+		var dataMain output.Table
+		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		handleError(err)
+		if len(dataMain.Data) == 0 {
+			output.RenderError(noDataError, outputOptions)
+			os.Exit(1)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+
+	},
+}
+
 func init() {
 	getCmd.AddCommand(getAllUserKeysCmd)
 	getCmd.AddCommand(getDeploymentCmd)
@@ -163,6 +190,7 @@ func init() {
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
+	getCmd.AddCommand(getEnvHitsCmd)
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

@@ -32,6 +32,7 @@ type Client interface {
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
+	EnvironmentHits(string, string) ([]byte, error)
 }
 
 // New .
@@ -195,6 +196,39 @@ func (e *Environments) PromoteEnvironment(projectName string, sourceEnv string, 
 			"destEnv":   destEnv,
 		},
 		MappedResult: "deployEnvironmentPromote",
+	}
+	returnResult, err := e.api.Request(customRequest)
+	return returnResult, err
+}
+
+// EnvironmentHits .
+func (e *Environments) EnvironmentHits(projectName string, environmentName string) ([]byte, error) {
+	// get project info from lagoon
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+	customRequest := api.CustomRequest{
+		Query: `query environmentByName ($project: Int!, $environment: String!){
+			environmentByName(name: $environment, project: $project) {
+				hitsMonth(month: "2020-02") {
+					total
+				}
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"project":     projectInfo.ID,
+			"environment": environmentName,
+		},
+		MappedResult: "environmentByName",
 	}
 	returnResult, err := e.api.Request(customRequest)
 	return returnResult, err
