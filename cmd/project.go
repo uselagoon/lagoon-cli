@@ -46,7 +46,7 @@ var deleteProjectCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deleting %s", cmdProjectName))
 		}
 
-		if yesNo() {
+		if yesNo("Are you sure you want to delete?") {
 			deleteResult, err := pClient.DeleteProject(cmdProjectName)
 			handleError(err)
 			resultData := output.Result{

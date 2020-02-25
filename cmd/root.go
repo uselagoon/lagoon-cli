@@ -255,10 +255,10 @@ func initConfig() {
 
 }
 
-func yesNo() bool {
+func yesNo(message string) bool {
 	if forceAction != true {
 		prompt := promptui.Select{
-			Label: "Select[Yes/No]",
+			Label: message + "; Select[Yes/No]",
 			Items: []string{"No", "Yes"},
 		}
 		_, result, err := prompt.Run()

@@ -58,7 +58,7 @@ var deployBranchCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Deploying %s %s", cmdProjectName, deployBranch.Branch))
 		}
 
-		if yesNo() {
+		if yesNo("Continue with deployment?") {
 			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
 			handleError(err)
 			resultData := output.Result{
@@ -88,7 +88,7 @@ var deployPromoteCmd = &cobra.Command{
 			fmt.Println(fmt.Sprintf("Promoting %s %s to %s", cmdProjectName, promoteEnv.Source, promoteEnv.Destination))
 		}
 
-		if yesNo() {
+		if yesNo("Continue with environment promotion?") {
 			deployResult, err := eClient.PromoteEnvironment(cmdProjectName, promoteEnv.Source, promoteEnv.Destination)
 			handleError(err)
 			resultData := output.Result{
