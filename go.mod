@@ -9,7 +9,6 @@ require (
 	github.com/machinebox/graphql v0.2.3-0.20181106130121-3a9253180225
 	github.com/manifoldco/promptui v0.3.2
 	github.com/matryer/is v1.2.0 // indirect
-	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v0.0.5
@@ -26,7 +25,6 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	// workaround for https://github.com/manifoldco/promptui/issues/98
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
-	github.com/prometheus/common v0.4.0
 	github.com/stretchr/testify v1.2.2
 )
 
