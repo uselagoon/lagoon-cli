@@ -1,0 +1,87 @@
+fragment NotificationSlack on NotificationSlack {
+  webhook
+  name
+  channel
+}
+fragment NotificationRocketChat on NotificationRocketChat {
+  webhook
+  name
+  channel
+}
+# TODO: lagoon version should enable/disable these:
+# fragment NotificationEmail on NotificationEmail {
+#   emailAddress
+#   name
+# }
+# fragment NotificationTeams on NotificationMicrosoftTeams {
+#   webhook
+#   name
+# }
+query (
+  $name: String!) {
+    projectByName(
+      name: $name) {
+        id
+        name
+        autoIdle
+        branches
+        pullrequests
+        privateKey
+        productionEnvironment
+        activeSystemsDeploy
+        activeSystemsTask
+        activeSystemsRemove
+        activeSystemsPromote
+        storageCalc
+        openshiftProjectPattern
+        developmentEnvironmentsLimit
+        gitUrl
+        autoIdle
+        groups{
+          name
+          members{
+            user{
+              email
+              sshKeys{
+                name
+                keyType
+                keyValue
+              }
+              firstName
+              lastName
+            }
+            role
+          }
+        }
+        notifications {
+          __typename
+          ...NotificationRocketChat
+          ...NotificationSlack
+          # ...NotificationEmail
+          # ...NotificationTeams
+        }
+        openshift{
+          id
+        }
+        envVariables {
+          name
+          scope
+          value
+        }
+        environments {
+          name
+          deployType
+          deployBaseRef
+          deployHeadRef
+          deployTitle
+          environmentType
+          openshiftProjectName
+          autoIdle
+          envVariables {
+            name
+            scope
+            value
+          }
+        }
+      }
+  }

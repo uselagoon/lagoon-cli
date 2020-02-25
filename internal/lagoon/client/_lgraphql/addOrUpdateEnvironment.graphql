@@ -1,0 +1,23 @@
+mutation (
+  $name: String!,
+  $project: Int!,
+  $deployType: DeployType!,
+  $deployBaseRef: String!,
+  $deployHeadRef: String,
+  $deployTitle: String,
+  $environmentType: EnvType!,
+  $openshiftProjectName: String!) {
+    addOrUpdateEnvironment(input: {
+      name: $name,
+      project: $project,
+      deployType: $deployType,
+      deployBaseRef: $deployBaseRef,
+      deployHeadRef: $deployHeadRef,
+      deployTitle: $deployTitle,
+      environmentType: $environmentType,
+      openshiftProjectName: $openshiftProjectName
+    }) {
+      id
+      name
+    }
+  }

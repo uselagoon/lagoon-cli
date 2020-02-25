@@ -1,0 +1,15 @@
+mutation (
+  $email: String!,
+  $firstName: String,
+  $lastName: String,
+  $comment: String) {
+    addUser(input: {
+      email: $email
+      firstName: $firstName
+      lastName: $lastName
+      comment: $comment
+    }) {
+      id
+      email
+    }
+  }

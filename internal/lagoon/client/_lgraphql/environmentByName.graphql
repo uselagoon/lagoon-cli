@@ -1,0 +1,19 @@
+query (
+  $name: String!,
+  $project: Int!) {
+    environmentByName(
+      name: $name,
+      project: $project)
+      {
+        id
+        name
+        route
+        routes
+        deployType
+        environmentType
+        openshiftProjectName
+        updated
+        created
+        deleted
+      }
+  }

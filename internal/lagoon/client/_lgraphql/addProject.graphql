@@ -1,0 +1,39 @@
+mutation (
+  $name: String!,
+  $gitUrl: String!,
+  $subfolder: String,
+  $openshift: Int!,
+  $openshiftProjectPattern: String,
+  $activeSystemsDeploy: String,
+  $activeSystemsPromote: String,
+  $activeSystemsRemove: String,
+  $activeSystemsTask: String,
+  $branches: String,
+  $pullrequests: String,
+  $productionEnvironment: String!,
+  $autoIdle: Int,
+  $storageCalc: Int,
+  $developmentEnvironmentsLimit: Int,
+  $privateKey: String) {
+    addProject(input: {
+      name: $name,
+      gitUrl: $gitUrl,
+      subfolder: $subfolder,
+      openshift: $openshift,
+      openshiftProjectPattern: $openshiftProjectPattern,
+      activeSystemsDeploy: $activeSystemsDeploy,
+      activeSystemsPromote: $activeSystemsPromote,
+      activeSystemsRemove: $activeSystemsRemove,
+      activeSystemsTask: $activeSystemsTask,
+      branches: $branches,
+      pullrequests: $pullrequests,
+      productionEnvironment: $productionEnvironment,
+      autoIdle: $autoIdle,
+      storageCalc: $storageCalc,
+      developmentEnvironmentsLimit: $developmentEnvironmentsLimit,
+      privateKey: $privateKey
+    }) {
+      id
+      name
+    }
+  }
