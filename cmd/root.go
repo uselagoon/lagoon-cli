@@ -247,7 +247,6 @@ func initConfig() {
 	}
 	if cmdProject.Environment != "" && cmdProjectEnvironment == "" {
 		cmdProjectEnvironment = cmdProject.Environment
-		fmt.Println(cmdProject.Environment)
 	}
 
 	// if !outputOptions.CSV && !outputOptions.JSON {
