@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -186,10 +186,32 @@ var configDeleteCmd = &cobra.Command{
 	},
 }
 
+var configFeatureSwitch = &cobra.Command{
+	Use:     "feature",
+	Aliases: []string{"f"},
+	Short:   "Enable or disable CLI features",
+	Run: func(cmd *cobra.Command, args []string) {
+		switch updateCheck {
+		case "true":
+			viper.Set("updateCheckDisable", true)
+		case "false":
+			viper.Set("updateCheckDisable", false)
+		}
+		err := viper.WriteConfig()
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+	},
+}
+
+var updateCheck string
+
 func init() {
 	configCmd.AddCommand(configAddCmd)
 	configCmd.AddCommand(configDefaultCmd)
 	configCmd.AddCommand(configDeleteCmd)
+	configCmd.AddCommand(configFeatureSwitch)
 	configCmd.AddCommand(configLagoonsCmd)
 	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
 	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
@@ -197,4 +219,5 @@ func init() {
 	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
 	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "", "Lagoon UI location (https://ui-lagoon-master.ch.amazee.io)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
+	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
 }

@@ -1,8 +1,8 @@
 package users
 
 import (
-	"github.com/amazeeio/lagoon-cli/api"
-	"github.com/amazeeio/lagoon-cli/graphql"
+	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/amazeeio/lagoon-cli/pkg/graphql"
 )
 
 // Users .

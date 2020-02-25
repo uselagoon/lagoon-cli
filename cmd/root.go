@@ -3,18 +3,20 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/amazeeio/lagoon-cli/app"
-	"github.com/amazeeio/lagoon-cli/graphql"
-	"github.com/amazeeio/lagoon-cli/lagoon/environments"
-	"github.com/amazeeio/lagoon-cli/lagoon/projects"
-	"github.com/amazeeio/lagoon-cli/lagoon/users"
-	"github.com/amazeeio/lagoon-cli/output"
+	"github.com/amazeeio/lagoon-cli/pkg/app"
+	"github.com/amazeeio/lagoon-cli/pkg/graphql"
+	"github.com/amazeeio/lagoon-cli/pkg/lagoon/environments"
+	"github.com/amazeeio/lagoon-cli/pkg/lagoon/projects"
+	"github.com/amazeeio/lagoon-cli/pkg/lagoon/users"
+	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/amazeeio/lagoon-cli/pkg/updatecheck"
 	"github.com/manifoldco/promptui"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
@@ -27,12 +29,58 @@ var cmdSSHKey = ""
 var inputScanner = bufio.NewScanner(os.Stdin)
 var versionFlag bool
 var docsFlag bool
+var updateInterval = time.Hour * 24 * 7 // One week interval between updates
+var configName = ".lagoon"
+var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
+
+var skipUpdateCheck bool
+
+// version/build information
+var (
+	version string
+	build   string
+)
 
 var rootCmd = &cobra.Command{
 	Use:               "lagoon",
 	Short:             "Command line integration for Lagoon",
 	Long:              `Lagoon CLI. Manage your Lagoon hosted projects.`,
 	DisableAutoGenTag: true,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if viper.GetBool("updateCheckDisable") == true {
+			skipUpdateCheck = true
+		}
+		if skipUpdateCheck == false {
+			// Using code from https://github.com/drud/ddev/
+			home, err := os.UserHomeDir()
+			if err != nil {
+				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
+			}
+			updateFile := filepath.Join(home, configName+".update")
+			// Do periodic detection of whether an update is available for lagoon-cli users.
+			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
+			if err != nil {
+				output.RenderInfo(fmt.Sprintf("Could not perform update check %v", err), outputOptions)
+			}
+			if timeToCheckForUpdates && isInternetActive() {
+				// Recreate the updatefile with current time so we won't do this again soon.
+				err = updatecheck.ResetUpdateTime(updateFile)
+				if err != nil {
+					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s", updateFile), outputOptions)
+				}
+				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("amazeeio", "lagoon-cli", version)
+				if err != nil {
+					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
+					output.RenderError(err.Error(), outputOptions)
+					return
+				}
+				if updateNeeded {
+					output.RenderInfo(fmt.Sprintf("A new update is available! please visit %s to download the update.\nFor upgrade help see %s\n\nIf installed using brew, upgrade using `brew upgrade lagoon`\n", updateURL, updateDocURL), outputOptions)
+				}
+			}
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
@@ -49,12 +97,6 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// version/build information
-var (
-	version string
-	build   string
-)
-
 // Execute the root command.
 func Execute() {
 	viper.AutomaticEnv()
@@ -62,6 +104,14 @@ func Execute() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+}
+
+//IsInternetActive() checks to see if we have a viable
+// internet connection. It just tries a quick DNS query.
+// This requires that the named record be query-able.
+func isInternetActive() bool {
+	_, err := net.LookupHost("amazee.io")
+	return err == nil
 }
 
 func init() {
@@ -81,6 +131,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
+	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
@@ -147,13 +198,11 @@ func displayVersionInfo() {
 
 func initConfig() {
 	// Find home directory.
-	home, err := homedir.Dir()
+	home, err := os.UserHomeDir()
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-
-	var configName = ".lagoon"
 
 	// Search config in home directory with name ".lagoon" (without extension).
 	// @todo see if we can grok the proper info from the cwd .lagoon.yml

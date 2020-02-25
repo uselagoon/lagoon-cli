@@ -15,13 +15,20 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.5.0
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/yaml.v2 v2.2.4
 )
 
-// workaround for https://github.com/manifoldco/promptui/issues/98
-require github.com/nicksnyder/go-i18n v1.10.1 // indirect
+require (
+	github.com/Masterminds/semver v1.4.2
+	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
+	github.com/google/go-querystring v1.0.0 // indirect
+	// workaround for https://github.com/manifoldco/promptui/issues/98
+	github.com/nicksnyder/go-i18n v1.10.1 // indirect
+	github.com/prometheus/common v0.4.0
+	github.com/stretchr/testify v1.2.2
+)
 
 // use this version for fixes to formatting of end header
 replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20200114082015-d810c4a558bf
