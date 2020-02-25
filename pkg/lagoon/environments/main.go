@@ -16,6 +16,13 @@ type Environments struct {
 	api   api.Client
 }
 
+// Hits .
+type Hits struct {
+	HitsMonth struct {
+		Total int `json:"total"`
+	} `json:"hitsMonth"`
+}
+
 // Client .
 type Client interface {
 	DeployEnvironmentBranch(string, string) ([]byte, error)
@@ -32,7 +39,7 @@ type Client interface {
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
-	EnvironmentHits(string, string) ([]byte, error)
+	EnvironmentHits(string, string, string) ([]byte, error)
 }
 
 // New .
@@ -202,7 +209,7 @@ func (e *Environments) PromoteEnvironment(projectName string, sourceEnv string, 
 }
 
 // EnvironmentHits .
-func (e *Environments) EnvironmentHits(projectName string, environmentName string) ([]byte, error) {
+func (e *Environments) EnvironmentHits(projectName string, environmentName string, monthDate string) ([]byte, error) {
 	// get project info from lagoon
 	project := api.Project{
 		Name: projectName,
@@ -217,9 +224,9 @@ func (e *Environments) EnvironmentHits(projectName string, environmentName strin
 		return []byte(""), err
 	}
 	customRequest := api.CustomRequest{
-		Query: `query environmentByName ($project: Int!, $environment: String!){
+		Query: `query environmentByName ($project: Int!, $environment: String!, $month: Date!){
 			environmentByName(name: $environment, project: $project) {
-				hitsMonth(month: "2020-02") {
+				hitsMonth(month: $month) {
 					total
 				}
 			}
@@ -227,9 +234,32 @@ func (e *Environments) EnvironmentHits(projectName string, environmentName strin
 		Variables: map[string]interface{}{
 			"project":     projectInfo.ID,
 			"environment": environmentName,
+			"month":       monthDate,
 		},
 		MappedResult: "environmentByName",
 	}
-	returnResult, err := e.api.Request(customRequest)
+	returnResultJSON, err := e.api.Request(customRequest)
+	if err != nil {
+		return []byte(""), err
+	}
+	returnResult, err := processEnvHits(returnResultJSON)
+	if err != nil {
+		return []byte(""), err
+	}
 	return returnResult, err
+}
+
+func processEnvHits(hitsMonth []byte) ([]byte, error) {
+	var hits Hits
+	err := json.Unmarshal([]byte(hitsMonth), &hits)
+	if err != nil {
+		return []byte(""), err
+	}
+	var data []output.Data
+	data = append(data, output.Data{strconv.Itoa(hits.HitsMonth.Total)})
+	dataMain := output.Table{
+		Header: []string{"TotalHits"},
+		Data:   data,
+	}
+	return json.Marshal(dataMain)
 }

@@ -13,7 +13,8 @@ lagoon get hits [flags]
 ### Options
 
 ```
-  -h, --help   help for hits
+  -h, --help           help for hits
+  -m, --month string   The month string to query (format YYYY-MM)
 ```
 
 ### Options inherited from parent commands

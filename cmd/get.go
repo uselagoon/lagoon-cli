@@ -163,14 +163,13 @@ var getEnvHitsCmd = &cobra.Command{
 	Short:   "Get an environments hits",
 	Long:    "Get an environments hits, this is only available to platform admin",
 	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
+		if cmdProjectName == "" || cmdProjectEnvironment == "" || monthDate == "" {
+			fmt.Println("Missing arguments: Project name, environment name, or month is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := eClient.EnvironmentHits(cmdProjectName, cmdProjectEnvironment)
+		returnedJSON, err := eClient.EnvironmentHits(cmdProjectName, cmdProjectEnvironment, monthDate)
 		handleError(err)
-		fmt.Println(string(returnedJSON))
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
@@ -183,14 +182,17 @@ var getEnvHitsCmd = &cobra.Command{
 	},
 }
 
+var monthDate string
+
 func init() {
 	getCmd.AddCommand(getAllUserKeysCmd)
 	getCmd.AddCommand(getDeploymentCmd)
 	getCmd.AddCommand(getEnvironmentCmd)
+	getCmd.AddCommand(getEnvHitsCmd)
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
-	getCmd.AddCommand(getEnvHitsCmd)
+	getEnvHitsCmd.Flags().StringVarP(&monthDate, "month", "m", "", "The month string to query (format YYYY-MM)")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }
