@@ -51,6 +51,9 @@ func (e *Environments) GetEnvironmentDeployments(projectName string, environment
 		MappedResult: "environmentByName",
 	}
 	environmentByName, err := e.api.Request(customRequest)
+	if err != nil {
+		return []byte(""), err
+	}
 	returnResult, err := processEnvironmentDeployments(environmentByName)
 	if err != nil {
 		return []byte(""), err

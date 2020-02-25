@@ -108,7 +108,7 @@ var addProjectToGroupCmd = &cobra.Command{
 				Name: cmdProjectName,
 			},
 			Groups: []api.Group{
-				api.Group{
+				{
 					Name: groupName,
 				},
 			},
@@ -176,7 +176,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 				Name: cmdProjectName,
 			},
 			Groups: []api.Group{
-				api.Group{
+				{
 					Name: groupName,
 				},
 			},

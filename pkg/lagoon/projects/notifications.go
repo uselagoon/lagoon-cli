@@ -433,6 +433,9 @@ func (p *Projects) DeleteRocketChatNotificationFromProject(projectName string, n
 func (p *Projects) UpdateSlackNotification(notificationName string, jsonPatch string) ([]byte, error) {
 	var updateSlack api.UpdateNotificationSlackPatch
 	err := json.Unmarshal([]byte(jsonPatch), &updateSlack)
+	if err != nil {
+		return []byte(""), err
+	}
 	customReq := api.CustomRequest{
 		Query: `mutation ($oldname: String!, $patch: UpdateNotificationSlackPatchInput!) {
 			updateNotificationSlack(input:{name: $oldname, patch: $patch}
@@ -457,6 +460,9 @@ func (p *Projects) UpdateSlackNotification(notificationName string, jsonPatch st
 func (p *Projects) UpdateRocketChatNotification(notificationName string, jsonPatch string) ([]byte, error) {
 	var updateRocketChat api.UpdateNotificationRocketChatPatch
 	err := json.Unmarshal([]byte(jsonPatch), &updateRocketChat)
+	if err != nil {
+		return []byte(""), err
+	}
 	customReq := api.CustomRequest{
 		Query: `mutation ($oldname: String!, $patch: UpdateNotificationRocketChatPatchInput!) {
 			updateNotificationRocketChat(input:{name: $oldname, patch: $patch}

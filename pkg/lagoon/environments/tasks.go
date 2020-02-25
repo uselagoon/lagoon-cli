@@ -204,6 +204,9 @@ func (e *Environments) GetEnvironmentTasks(projectName string, environmentName s
 		MappedResult: "environmentByName",
 	}
 	environmentByName, err := e.api.Request(customRequest)
+	if err != nil {
+		return []byte(""), err
+	}
 	returnResult, err := processEnvironmentTasks(environmentByName)
 	if err != nil {
 		return []byte(""), err

@@ -113,6 +113,9 @@ func TestProjectUpdate(t *testing.T) {
 		t.Error("Should not fail if processing succeeded", err)
 	}
 	updateResults, err := json.Marshal(returnResult)
+	if err != nil {
+		t.Error("Should not fail if processing succeeded", err)
+	}
 	if string(updateResults) != updateProjectsSuccess {
 		checkEqual(t, string(updateResults), updateProjectsSuccess, "projectInfo processing failed")
 	}
@@ -121,6 +124,9 @@ func TestProjectUpdate(t *testing.T) {
 		t.Error("Should not fail if processing succeeded", err)
 	}
 	updateResults, err = json.Marshal(returnResult)
+	if err != nil {
+		t.Error("Should not fail if processing succeeded", err)
+	}
 	if string(updateResults) == updateProjectsFail {
 		checkEqual(t, string(updateResults), updateProjectsFail, "projectInfo processing succeeded, but should fail if json patch is broken")
 	}

@@ -146,6 +146,9 @@ func (u *Users) ListUsers(groupName string) ([]byte, error) {
 		MappedResult: "allGroups",
 	}
 	listUsers, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
 	returnResult, err := processUserList(listUsers)
 	if err != nil {
 		return []byte(""), err
@@ -239,7 +242,13 @@ func (u *Users) ListUserSSHKeys(groupName string, email string, allUsers bool) (
 		MappedResult: "allGroups",
 	}
 	listUsers, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
 	returnedKeys, err := processReturnedUserKeysList(listUsers)
+	if err != nil {
+		return []byte(""), err
+	}
 	var returnResult []byte
 	if allUsers {
 		returnResult, err = processAllUserKeysList(returnedKeys)
