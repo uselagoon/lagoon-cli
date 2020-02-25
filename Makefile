@@ -12,7 +12,7 @@ BUILD=$(shell date +%FT%T%z)
 
 LDFLAGS=-ldflags "-w -s -X ${PKG}/cmd.version=${VERSION} -X ${PKG}/cmd.build=${BUILD}"
 
-all: deps test build
+all: deps test build docs
 all-docker-linux: deps-docker test-docker build-docker-linux
 all-docker-darwin: deps-docker test-docker build-docker-darwin
 
@@ -32,6 +32,12 @@ build-linux:
 	GO111MODULE=on GOOS=linux GOARCH=amd64 $(GOCMD) build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
 build-darwin:
 	GO111MODULE=on GOOS=darwin GOARCH=amd64 $(GOCMD) build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
+
+docs: test
+	GO111MODULE=on $(GOCMD) run main.go --docs
+
+tidy:
+	GO111MODULE=on $(GOCMD) mod tidy
 
 ## build using docker golang
 deps-docker:
