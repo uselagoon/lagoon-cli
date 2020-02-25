@@ -1,15 +1,19 @@
-## lagoon get
+## lagoon get hits
 
-Get info on a resource
+Get an environments hits
 
 ### Synopsis
 
-Get info on a resource
+Get an environments hits, this is only available to platform admin
+
+```
+lagoon get hits [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for get
+  -h, --help   help for hits
 ```
 
 ### Options inherited from parent commands
@@ -30,12 +34,5 @@ Get info on a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon get all-user-sshkeys](lagoon_get_all-user-sshkeys.md)	 - Get all user SSH keys
-* [lagoon get deployment](lagoon_get_deployment.md)	 - Get a build log by remote id
-* [lagoon get environment](lagoon_get_environment.md)	 - Get details about an environment
-* [lagoon get hits](lagoon_get_hits.md)	 - Get an environments hits
-* [lagoon get project](lagoon_get_project.md)	 - Get details about a project
-* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
-* [lagoon get user-sshkeys](lagoon_get_user-sshkeys.md)	 - Get a users SSH keys
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 
