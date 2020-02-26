@@ -85,7 +85,7 @@ func loginToken() error {
 	}
 	defer closeSSHAgent()
 
-	sshHost := fmt.Sprintf("%s:%s\n",
+	sshHost := fmt.Sprintf("%s:%s",
 		viper.GetString("lagoons."+cmdLagoon+".hostname"),
 		viper.GetString("lagoons."+cmdLagoon+".port"))
 	conn, err := ssh.Dial("tcp", sshHost, config)
