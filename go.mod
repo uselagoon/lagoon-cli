@@ -1,6 +1,6 @@
 module github.com/amazeeio/lagoon-cli
 
-go 1.12
+go 1.13
 
 require (
 	github.com/Masterminds/semver v1.4.2
@@ -26,7 +26,6 @@ require (
 	golang.org/x/text v0.3.2 // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/yaml.v2 v2.2.8
-	rsc.io/sampler v1.99.99 // indirect
 	sigs.k8s.io/yaml v1.2.0
 )
 
