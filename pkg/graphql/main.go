@@ -30,20 +30,16 @@ func hasValidToken(lagoon string) bool {
 
 // VerifyTokenExpiry verfies if the current token is valid or not
 func VerifyTokenExpiry(lagoon string) bool {
-	if hasValidToken(lagoon) {
-		var p jwt.Parser
-		token, _, err := p.ParseUnverified(getGraphQLToken(lagoon), &jwt.StandardClaims{})
-		if err != nil {
-			//handle invalid token
-			return false
-		}
-		if err = token.Claims.Valid(); err != nil {
-			//handle invalid token
-			return false
-		}
-		return true
+	var p jwt.Parser
+	token, _, err := p.ParseUnverified(
+		viper.GetString("lagoons."+lagoon+".token"), &jwt.StandardClaims{})
+	if err != nil {
+		return false
 	}
-	return false
+	if token.Claims.Valid() != nil {
+		return false
+	}
+	return true
 }
 
 // DefaultFragment is blank to use what is defined in api
