@@ -64,7 +64,10 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 }
 
 func loginToken() error {
-	homeDir, _ := os.UserHomeDir()
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("couldn't get $HOME: %v", err)
+	}
 	skipAgent := false
 
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
@@ -81,34 +84,30 @@ func loginToken() error {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	defer closeSSHAgent()
-	var err error
 
-	conn, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", viper.GetString("lagoons."+cmdLagoon+".hostname"), viper.GetString("lagoons."+cmdLagoon+".port")), config)
+	sshHost := fmt.Sprintf("%s:%s\n",
+		viper.GetString("lagoons."+cmdLagoon+".hostname"),
+		viper.GetString("lagoons."+cmdLagoon+".port"))
+	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
-		//panic(err)
-		return err
+		return fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
 	}
+	defer conn.Close()
+
 	session, err := conn.NewSession()
 	if err != nil {
-		_ = conn.Close()
-		//panic(err)
-		return err
+		return fmt.Errorf("couldn't open session: %v", err)
 	}
 
 	out, err := session.CombinedOutput("token")
 	if err != nil {
-		//panic(err)
-		return err
+		return fmt.Errorf("couldn't get token: %v", err)
 	}
-	err = conn.Close()
-	if err != nil {
-		return err
-	}
+
 	viper.Set("lagoons."+cmdLagoon+".token", strings.TrimSpace(string(out)))
-	err = viper.WriteConfig()
-	if err != nil {
-		//panic(err)
-		return err
+	if err = viper.WriteConfig(); err != nil {
+		return fmt.Errorf("couldn't write config: %v", err)
 	}
+
 	return nil
 }
