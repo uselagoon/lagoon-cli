@@ -205,10 +205,20 @@ var configFeatureSwitch = &cobra.Command{
 	},
 }
 
+var configGetCurrent = &cobra.Command{
+	Use:     "current",
+	Aliases: []string{"cur"},
+	Short:   "Display the current lagoon that commands would be executed against",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(viper.GetString("current"))
+	},
+}
+
 var updateCheck string
 
 func init() {
 	configCmd.AddCommand(configAddCmd)
+	configCmd.AddCommand(configGetCurrent)
 	configCmd.AddCommand(configDefaultCmd)
 	configCmd.AddCommand(configDeleteCmd)
 	configCmd.AddCommand(configFeatureSwitch)
