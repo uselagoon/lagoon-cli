@@ -175,7 +175,7 @@ func ProjectsToConfig(
 			config.Notifications.RocketChat =
 				append(config.Notifications.RocketChat, n)
 		}
-		minimiseProjectConfig(&projectConfig)
+		minimiseProjectConfig(&projectConfig, exclude)
 		config.Projects = append(config.Projects, projectConfig)
 	}
 
@@ -201,7 +201,7 @@ func ProjectsToConfig(
 
 // minimise zeroes default or empty values in a Project to minimise the config
 // file.
-func minimiseProjectConfig(p *ProjectConfig) {
+func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	// clear bits we don't want to serialise at all
 	p.Notifications = nil
 	// omit IDs from config
@@ -209,6 +209,10 @@ func minimiseProjectConfig(p *ProjectConfig) {
 		p.Environments[i].ID = 0
 	}
 	p.ID = 0
+	// clear exclusions
+	if exclude["project-users"] {
+		p.Users = nil
+	}
 	// TODO make these configurable?
 	p.OpenshiftID = nil
 	p.PrivateKey = ""
