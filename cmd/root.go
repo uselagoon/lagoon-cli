@@ -116,7 +116,6 @@ func isInternetActive() bool {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	cobra.EnableCommandSorting = false
 
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")

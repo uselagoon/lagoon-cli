@@ -23,6 +23,7 @@ lagoon update project [flags]
   -g, --gitUrl string                      GitURL of the project
   -h, --help                               help for project
   -j, --json string                        JSON string to patch
+  -N, --name string                        Change the name of the project by specifying a new name (careful!)
   -S, --openshift int                      Reference to OpenShift Object this Project should be deployed to
   -o, --openshiftProjectPattern string     Pattern of OpenShift Project/Namespace that should be generated
   -I, --privateKey string                  Private key to use for the project
