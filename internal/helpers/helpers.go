@@ -23,18 +23,14 @@ func FileExists(filename string) bool {
 }
 
 // GetLagoonConfigFile .
-func GetLagoonConfigFile(userPath *string, configName *string, configExtension *string, cmd *cobra.Command) error {
+func GetLagoonConfigFile(userPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar to define our confg file
 	var configFilePath string
-	createConfig, err := cmd.Flags().GetBool("create-config")
-	if err != nil {
-		return err
-	}
 	if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); !ok {
 		configFilePath = lagoonConfigEnvar
 	}
 	// otherwise check the flag
-	configFilePath, err = cmd.Flags().GetString("config-file")
+	configFilePath, err := cmd.Flags().GetString("config-file")
 	if err != nil {
 		return err
 	}

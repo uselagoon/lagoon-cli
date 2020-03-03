@@ -33,6 +33,7 @@ var docsFlag bool
 var updateInterval = time.Hour * 24 * 7 // One week interval between updates
 var configName = ".lagoon"
 var configExtension = ".yml"
+var createConfig bool
 var userPath string
 var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
 
@@ -132,8 +133,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 
 	// get config-file from flag
-	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file you want to use instead of the default (must be .yml or .yaml)")
-	rootCmd.PersistentFlags().BoolP("create-config", "", false, "Create the config file if it is non existent")
+	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
 
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
@@ -208,12 +208,11 @@ func initConfig() {
 	}
 
 	// check if we are being given a path to a different config file
-	err = helpers.GetLagoonConfigFile(&userPath, &configName, &configExtension, rootCmd)
+	err = helpers.GetLagoonConfigFile(&userPath, &configName, &configExtension, createConfig, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-	fmt.Println(userPath, configName)
 
 	// Search config in userPath directory with default name ".lagoon" (without extension).
 	// @todo see if we can grok the proper info from the cwd .lagoon.yml

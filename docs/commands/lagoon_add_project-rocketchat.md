@@ -21,6 +21,7 @@ lagoon add project-rocketchat [flags]
 ### Options inherited from parent commands
 
 ```
+      --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
       --force                Force yes on prompts (if supported)
