@@ -36,10 +36,9 @@ var sshEnvCmd = &cobra.Command{
 			fmt.Println(lagoonssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
 		} else {
 			// get private key that the cli is using
-			homeDir, _ := os.UserHomeDir()
 			skipAgent := false
 
-			privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
+			privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 			if cmdSSHKey != "" {
 				privateKey = cmdSSHKey
 				skipAgent = true

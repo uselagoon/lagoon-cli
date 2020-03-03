@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -58,7 +59,7 @@ var configDefaultCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		viper.Set("default", strings.TrimSpace(string(lagoonConfig.Lagoon)))
-		err := viper.WriteConfig()
+		err := viper.WriteConfigAs(filepath.Join(userPath, configName+configExtension))
 		handleError(err)
 
 		resultData := output.Result{
@@ -140,7 +141,7 @@ var configAddCmd = &cobra.Command{
 			if lagoonConfig.Token != "" {
 				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
 			}
-			err := viper.WriteConfig()
+			err := viper.WriteConfigAs(filepath.Join(userPath, configName+configExtension))
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -197,7 +198,7 @@ var configFeatureSwitch = &cobra.Command{
 		case "false":
 			viper.Set("updateCheckDisable", false)
 		}
-		err := viper.WriteConfig()
+		err := viper.WriteConfigAs(filepath.Join(userPath, configName+configExtension))
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)

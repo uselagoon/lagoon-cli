@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/pkg/app"
 	"github.com/amazeeio/lagoon-cli/pkg/graphql"
 	"github.com/amazeeio/lagoon-cli/pkg/lagoon/environments"
@@ -31,6 +32,8 @@ var versionFlag bool
 var docsFlag bool
 var updateInterval = time.Hour * 24 * 7 // One week interval between updates
 var configName = ".lagoon"
+var configExtension = ".yml"
+var userPath string
 var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
@@ -52,12 +55,7 @@ var rootCmd = &cobra.Command{
 		}
 		if skipUpdateCheck == false {
 			// Using code from https://github.com/drud/ddev/
-			home, err := os.UserHomeDir()
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
-			updateFile := filepath.Join(home, configName+".update")
+			updateFile := filepath.Join(userPath, ".lagoon.update")
 			// Do periodic detection of whether an update is available for lagoon-cli users.
 			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
 			if err != nil {
@@ -133,6 +131,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 
+	// get config-file from flag
+	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file you want to use instead of the default (must be .yml or .yaml)")
+	rootCmd.PersistentFlags().BoolP("create-config", "", false, "Create the config file if it is non existent")
+
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
 
@@ -197,27 +199,38 @@ func displayVersionInfo() {
 }
 
 func initConfig() {
+	var err error
 	// Find home directory.
-	home, err := os.UserHomeDir()
+	userPath, err = os.UserHomeDir()
+	if err != nil {
+		output.RenderError(fmt.Errorf("couldn't get $HOME: %v", err).Error(), outputOptions)
+		os.Exit(1)
+	}
+
+	// check if we are being given a path to a different config file
+	err = helpers.GetLagoonConfigFile(&userPath, &configName, &configExtension, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+	fmt.Println(userPath, configName)
 
-	// Search config in home directory with name ".lagoon" (without extension).
+	// Search config in userPath directory with default name ".lagoon" (without extension).
 	// @todo see if we can grok the proper info from the cwd .lagoon.yml
-	viper.AddConfigPath(home)
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(userPath)
 	viper.SetConfigName(configName)
-	viper.SetDefault("lagoons.amazeeio.hostname", "ssh.lagoon.amazeeio.cloud")
-	viper.SetDefault("lagoons.amazeeio.port", 32222)
-	viper.SetDefault("lagoons.amazeeio.token", "")
-	viper.SetDefault("lagoons.amazeeio.graphql", "https://api.lagoon.amazeeio.cloud/graphql")
-	viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
-	viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
-	viper.SetDefault("default", "amazeeio")
 	err = viper.ReadInConfig()
 	if err != nil {
-		err = viper.WriteConfigAs(filepath.Join(home, configName+".yml"))
+		// if we can't read the file cause it doesn't exist, then we should set the default configuration options and try create it
+		viper.SetDefault("lagoons.amazeeio.hostname", "ssh.lagoon.amazeeio.cloud")
+		viper.SetDefault("lagoons.amazeeio.port", 32222)
+		viper.SetDefault("lagoons.amazeeio.token", "")
+		viper.SetDefault("lagoons.amazeeio.graphql", "https://api.lagoon.amazeeio.cloud/graphql")
+		viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
+		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
+		viper.SetDefault("default", "amazeeio")
+		err = viper.WriteConfigAs(filepath.Join(userPath, configName+configExtension))
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)

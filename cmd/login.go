@@ -64,13 +64,8 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 }
 
 func loginToken() error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("couldn't get $HOME: %v", err)
-	}
 	skipAgent := false
-
-	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", homeDir)
+	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 	if cmdSSHKey != "" {
 		privateKey = cmdSSHKey
 		skipAgent = true
