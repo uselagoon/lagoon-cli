@@ -115,8 +115,8 @@ You can specify to export a specific project by using the '-p <project-name>' fl
 			return err
 		}
 
-		fmt.Println(string(conf))
-		return nil
+		_, err = fmt.Print(string(conf))
+		return err
 	},
 }
 

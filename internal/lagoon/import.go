@@ -18,6 +18,7 @@ import (
 var ErrExist = errors.New("object already exists")
 
 // Importer interface contains methods for exporting data from Lagoon.
+// TODO: compose this once simpler interfaces are defined.
 type Importer interface {
 	AddGroup(context.Context, *schema.AddGroupInput, *schema.Group) error
 	AddUser(context.Context, *schema.AddUserInput, *schema.User) error
