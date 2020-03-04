@@ -84,7 +84,7 @@ func (c *Config) UnmarshalJSON(data []byte) error {
 // It assumes a list of unique Projects.
 func ProjectsToConfig(
 	projects []Project, exclude map[string]bool) ([]byte, error) {
-	config := Config{}
+	config := Config{Notifications: &NotificationsConfig{}}
 
 	// avoid adding objects multiple times
 	users := map[string]bool{}
@@ -93,7 +93,8 @@ func ProjectsToConfig(
 	rocketChatNotifications := map[string]bool{}
 
 	for _, project := range projects {
-		projectConfig := ProjectConfig{Project: project}
+		projectConfig :=
+			ProjectConfig{Project: project, Notifications: &ProjectNotifications{}}
 		for _, group := range project.Groups {
 			// project group users are appended to the project directly because this
 			// group is automatically created in Lagoon.
@@ -147,31 +148,23 @@ func ProjectsToConfig(
 		}
 		// add notifications
 		for _, n := range project.Notifications.Slack {
-			projectConfig.NotificationSlack =
-				append(projectConfig.NotificationSlack, n.Name)
+			projectConfig.Notifications.Slack =
+				append(projectConfig.Notifications.Slack, n.Name)
 			// skip creating the notification if already done
 			if slackNotifications[n.Name] {
 				continue // next notification
 			}
 			slackNotifications[n.Name] = true
-			// init the field before trying to dereference it
-			if config.Notifications == nil {
-				config.Notifications = &NotificationsConfig{}
-			}
 			config.Notifications.Slack = append(config.Notifications.Slack, n)
 		}
 		for _, n := range project.Notifications.RocketChat {
-			projectConfig.NotificationRocketChat =
-				append(projectConfig.NotificationRocketChat, n.Name)
+			projectConfig.Notifications.RocketChat =
+				append(projectConfig.Notifications.RocketChat, n.Name)
 			// skip creating the notification if already done
 			if rocketChatNotifications[n.Name] {
 				continue // next notification
 			}
 			rocketChatNotifications[n.Name] = true
-			// init the field before trying to dereference it
-			if config.Notifications == nil {
-				config.Notifications = &NotificationsConfig{}
-			}
 			config.Notifications.RocketChat =
 				append(config.Notifications.RocketChat, n)
 		}
@@ -203,7 +196,7 @@ func ProjectsToConfig(
 // file.
 func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	// clear bits we don't want to serialise at all
-	p.Notifications = nil
+	p.Project.Notifications = nil
 	// omit IDs from config
 	for i := range p.Environments {
 		p.Environments[i].ID = 0
@@ -216,6 +209,12 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	// TODO make these configurable?
 	p.OpenshiftID = nil
 	p.PrivateKey = ""
+	// clear empty notifications
+	if p.Notifications != nil &&
+		p.Notifications.Slack == nil &&
+		p.Notifications.RocketChat == nil {
+		p.Notifications = nil
+	}
 
 	// don't set options if they're already set to default values
 	defaults := projectDefaults()
@@ -244,6 +243,13 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 
 // minimiseConfig clears any configured fields from the config.
 func minimiseConfig(c *Config, exclude map[string]bool) {
+	// clear empty notifications
+	if c.Notifications != nil &&
+		len(c.Notifications.Slack) == 0 &&
+		len(c.Notifications.RocketChat) == 0 {
+		c.Notifications = nil
+	}
+	// handle exclusions
 	if exclude["users"] {
 		c.Users = nil
 	}

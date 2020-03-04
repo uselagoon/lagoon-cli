@@ -81,8 +81,9 @@ projects:
   groups:
   - abc
   name: bananas
-  notificationSlack:
-  - example-slack
+  notifications:
+    slack:
+    - example-slack
   productionEnvironment: production
   storageCalc: 1
   users:

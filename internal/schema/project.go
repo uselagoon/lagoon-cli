@@ -42,15 +42,21 @@ type Project struct {
 // ProjectConfig contains project configuration.
 type ProjectConfig struct {
 	Project
-	// Notification* fields are (un)marshalled during import.
-	NotificationSlack      []string `json:"notificationSlack,omitempty"`
-	NotificationRocketChat []string `json:"notificationRocketChat,omitempty"`
+	// ProjectNotifications are (un)marshalled during import.
+	Notifications *ProjectNotifications `json:"notifications,omitempty"`
 	// Group are (un)marshalled during import.
 	Groups []string `json:"groups,omitempty"`
 	// Users are members of the project.
 	// Note that in Lagoon this is implemented as being a member of the
 	// project-<projectname> group.
 	Users []UserRoleConfig `json:"users,omitempty"`
+}
+
+// ProjectNotifications lists the notifications for a project within a
+// ProjectConfig.
+type ProjectNotifications struct {
+	Slack      []string `json:"slack,omitempty"`
+	RocketChat []string `json:"rocketChat,omitempty"`
 }
 
 // OpenshiftID is unmarshalled during export.

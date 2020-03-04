@@ -11,8 +11,9 @@ projects:
   groups:
   - kickstart-group
   name: lagoon
-  notificationRocketChat:
-  - amazeeio--lagoon-kickstart
+  notifications:
+    rocketChat:
+    - amazeeio--lagoon-kickstart
   openshiftProjectPattern: lagoon
   productionEnvironment: master
   storageCalc: 1
