@@ -201,3 +201,17 @@ func (mr *MockImporterMockRecorder) AddGroupsToProject(arg0, arg1, arg2 interfac
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupsToProject", reflect.TypeOf((*MockImporter)(nil).AddGroupsToProject), arg0, arg1, arg2)
 }
+
+// AddNotificationToProject mocks base method
+func (m *MockImporter) AddNotificationToProject(arg0 context.Context, arg1 *schema.AddNotificationToProjectInput, arg2 *schema.Project) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNotificationToProject", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNotificationToProject indicates an expected call of AddNotificationToProject
+func (mr *MockImporterMockRecorder) AddNotificationToProject(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNotificationToProject", reflect.TypeOf((*MockImporter)(nil).AddNotificationToProject), arg0, arg1, arg2)
+}

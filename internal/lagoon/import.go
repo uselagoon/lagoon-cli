@@ -39,6 +39,8 @@ type Importer interface {
 	EnvironmentByName(context.Context, string, uint, *schema.Environment) error
 	AddGroupsToProject(
 		context.Context, *schema.ProjectGroupsInput, *schema.Project) error
+	AddNotificationToProject(
+		context.Context, *schema.AddNotificationToProjectInput, *schema.Project) error
 }
 
 // Import creates objects in the Lagoon API based on a configuration object.
@@ -232,6 +234,39 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 					return fmt.Errorf("couldn't add user to project group: %w", err)
 				}
 				l.Printf("couldn't add user to project group: %v", err)
+			}
+		}
+		// add project notifications
+		if p.Notifications != nil {
+			for _, n := range p.Notifications.Slack {
+				err := i.AddNotificationToProject(ctx,
+					&schema.AddNotificationToProjectInput{
+						Project:          p.Name,
+						NotificationType: api.SlackNotification,
+						NotificationName: n,
+					}, nil)
+				if err != nil {
+					if !keepGoing {
+						return fmt.Errorf(
+							"couldn't add Slack Notification to project: %w", err)
+					}
+					l.Printf("couldn't add Slack Notification to project: %v", err)
+				}
+			}
+			for _, n := range p.Notifications.RocketChat {
+				err := i.AddNotificationToProject(ctx,
+					&schema.AddNotificationToProjectInput{
+						Project:          p.Name,
+						NotificationType: api.RocketChatNotification,
+						NotificationName: n,
+					}, nil)
+				if err != nil {
+					if !keepGoing {
+						return fmt.Errorf(
+							"couldn't add RocketChat Notification to project: %w", err)
+					}
+					l.Printf("couldn't add RocketChat Notification to project: %v", err)
+				}
 			}
 		}
 	}

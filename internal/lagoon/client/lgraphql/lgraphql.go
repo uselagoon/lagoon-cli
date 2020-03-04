@@ -5,6 +5,7 @@
 // _lgraphql/addGroupsToProject.graphql
 // _lgraphql/addNotificationRocketChat.graphql
 // _lgraphql/addNotificationSlack.graphql
+// _lgraphql/addNotificationToProject.graphql
 // _lgraphql/addOrUpdateEnvironment.graphql
 // _lgraphql/addProject.graphql
 // _lgraphql/addSshKey.graphql
@@ -184,6 +185,26 @@ func _lgraphqlAddnotificationslackGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/addNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlAddnotificationtoprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\x29\x28\xca\xcf\x4a\x4d\x2e\xb1\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x09\xe6\xe5\x97\x64\xa6\x65\x26\x83\x95\x85\x54\x16\xa4\x5a\x29\xf8\xa1\x89\x60\xaa\xf3\x4b\xcc\x4d\x85\x9b\xa2\xa9\x50\xcd\xa5\xa0\xa0\xa0\x90\x98\x92\x82\xa2\x33\x3f\x00\x62\x9d\x46\x66\x5e\x41\x69\x89\x15\x54\x95\x82\x02\xdc\x15\x30\xf7\x40\xc5\x31\x1d\x82\xe1\x36\x2c\x2a\x21\x4e\xc1\x70\x1d\x58\x65\xad\x26\xdc\xd2\xcc\x14\x98\x5e\xb8\x24\x17\x08\x03\x02\x00\x00\xff\xff\x5d\xba\xcd\xcd\x21\x01\x00\x00")
+
+func _lgraphqlAddnotificationtoprojectGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlAddnotificationtoprojectGraphql,
+		"_lgraphql/addNotificationToProject.graphql",
+	)
+}
+
+func _lgraphqlAddnotificationtoprojectGraphql() (*asset, error) {
+	bytes, err := _lgraphqlAddnotificationtoprojectGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/addNotificationToProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -385,6 +406,7 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/addGroupsToProject.graphql":        _lgraphqlAddgroupstoprojectGraphql,
 	"_lgraphql/addNotificationRocketChat.graphql": _lgraphqlAddnotificationrocketchatGraphql,
 	"_lgraphql/addNotificationSlack.graphql":      _lgraphqlAddnotificationslackGraphql,
+	"_lgraphql/addNotificationToProject.graphql":  _lgraphqlAddnotificationtoprojectGraphql,
 	"_lgraphql/addOrUpdateEnvironment.graphql":    _lgraphqlAddorupdateenvironmentGraphql,
 	"_lgraphql/addProject.graphql":                _lgraphqlAddprojectGraphql,
 	"_lgraphql/addSshKey.graphql":                 _lgraphqlAddsshkeyGraphql,
@@ -441,6 +463,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"addGroupsToProject.graphql":        &bintree{_lgraphqlAddgroupstoprojectGraphql, map[string]*bintree{}},
 		"addNotificationRocketChat.graphql": &bintree{_lgraphqlAddnotificationrocketchatGraphql, map[string]*bintree{}},
 		"addNotificationSlack.graphql":      &bintree{_lgraphqlAddnotificationslackGraphql, map[string]*bintree{}},
+		"addNotificationToProject.graphql":  &bintree{_lgraphqlAddnotificationtoprojectGraphql, map[string]*bintree{}},
 		"addOrUpdateEnvironment.graphql":    &bintree{_lgraphqlAddorupdateenvironmentGraphql, map[string]*bintree{}},
 		"addProject.graphql":                &bintree{_lgraphqlAddprojectGraphql, map[string]*bintree{}},
 		"addSshKey.graphql":                 &bintree{_lgraphqlAddsshkeyGraphql, map[string]*bintree{}},

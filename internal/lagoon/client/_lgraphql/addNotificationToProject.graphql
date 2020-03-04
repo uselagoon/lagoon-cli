@@ -1,0 +1,13 @@
+mutation (
+  $project: String!,
+  $notificationType: NotificationType!,
+  $notificationName: String!) {
+    addNotificationToProject(input: {
+      project: $project
+      notificationType: $notificationType
+      notificationName: $notificationName
+    }) {
+      id
+      name
+    }
+  }

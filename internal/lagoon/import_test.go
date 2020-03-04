@@ -17,17 +17,18 @@ import (
 // importCalls stores arrays of expected import calls associated with a given
 // config file
 type importCalls struct {
-	NewProjectID               uint
-	NewEnvironmentID           uint
-	AddGroupInputs             []schema.AddGroupInput
-	AddUserInputs              []schema.AddUserInput
-	AddSSHKeyInputs            []schema.AddSSHKeyInput
-	UserGroupRoleInputs        []schema.UserGroupRoleInput
-	AddNotificationSlackInputs []schema.AddNotificationSlackInput
-	AddProjectInputs           []schema.AddProjectInput
-	EnvVariableInputs          []schema.EnvVariableInput
-	AddEnvironmentInputs       []schema.AddEnvironmentInput
-	ProjectGroupsInputs        []schema.ProjectGroupsInput
+	NewProjectID                   uint
+	NewEnvironmentID               uint
+	AddGroupInputs                 []schema.AddGroupInput
+	AddUserInputs                  []schema.AddUserInput
+	AddSSHKeyInputs                []schema.AddSSHKeyInput
+	UserGroupRoleInputs            []schema.UserGroupRoleInput
+	AddNotificationSlackInputs     []schema.AddNotificationSlackInput
+	AddProjectInputs               []schema.AddProjectInput
+	EnvVariableInputs              []schema.EnvVariableInput
+	AddEnvironmentInputs           []schema.AddEnvironmentInput
+	ProjectGroupsInputs            []schema.ProjectGroupsInput
+	AddNotificationToProjectInputs []schema.AddNotificationToProjectInput
 }
 
 func TestImport(t *testing.T) {
@@ -147,6 +148,13 @@ func TestImport(t *testing.T) {
 					Groups:  []schema.GroupInput{{Name: "abc"}},
 				},
 			},
+			AddNotificationToProjectInputs: []schema.AddNotificationToProjectInput{
+				{
+					Project:          "bananas",
+					NotificationType: api.SlackNotification,
+					NotificationName: "example-slack",
+				},
+			},
 		}},
 	}
 	for name, tc := range testCases {
@@ -199,6 +207,10 @@ func TestImport(t *testing.T) {
 			for i := range tc.expect.ProjectGroupsInputs {
 				importer.EXPECT().AddGroupsToProject(
 					ctx, &tc.expect.ProjectGroupsInputs[i], nil)
+			}
+			for i := range tc.expect.AddNotificationToProjectInputs {
+				importer.EXPECT().AddNotificationToProject(
+					ctx, &tc.expect.AddNotificationToProjectInputs[i], nil)
 			}
 			// open the test yaml
 			file, err := os.Open(tc.input)

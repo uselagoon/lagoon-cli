@@ -80,7 +80,7 @@ type ProjectInput struct {
 // AddNotificationToProjectInput is based on the input to
 // addNotificationToProject.
 type AddNotificationToProjectInput struct {
-	ProjectName      string               `json:"projectName"`
+	Project          string               `json:"project"`
 	NotificationType api.NotificationType `json:"notificationType"`
 	NotificationName string               `json:"notificationName"`
 }

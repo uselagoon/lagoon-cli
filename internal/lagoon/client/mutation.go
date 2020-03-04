@@ -160,3 +160,17 @@ func (c *Client) AddGroupsToProject(ctx context.Context,
 		Response: out,
 	})
 }
+
+// AddNotificationToProject adds a Notification to a Project.
+func (c *Client) AddNotificationToProject(ctx context.Context,
+	in *schema.AddNotificationToProjectInput, out *schema.Project) error {
+	req, err := c.newRequest("_lgraphql/addNotificationToProject.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Project `json:"addNotificationToProject"`
+	}{
+		Response: out,
+	})
+}
