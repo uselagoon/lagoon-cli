@@ -2,9 +2,9 @@ package schema
 
 import "encoding/json"
 
-// GraphqlResponse is a wrapper for unmarshalling raw graphql responses.
+// ProjectByNameResponse is a wrapper for unmarshalling raw graphql responses.
 // This is exported for tests only.
-type GraphQLResponse struct {
+type ProjectByNameResponse struct {
 	Response *struct {
 		Project *Project `json:"projectByName"`
 	} `json:"data"`
@@ -12,6 +12,7 @@ type GraphQLResponse struct {
 
 // UnmarshalProjectConfig takes raw JSON and returns the unmarshalled
 // ProjectConfig. This is exported for tests only.
-func UnmarshalProjectConfigData(data []byte, r *GraphQLResponse) error {
+func UnmarshalProjectByNameResponse(
+	data []byte, r *ProjectByNameResponse) error {
 	return json.Unmarshal(data, &r)
 }

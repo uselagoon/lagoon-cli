@@ -9,3 +9,16 @@ const (
 	High     ProjectAvailability = "HIGH"
 	Standard ProjectAvailability = "STANDARD"
 )
+
+// Currency for billing purposes.
+type Currency string
+
+// These are the Currency units supported by Lagoon.
+const (
+	AUD Currency = "AUD"
+	EUR Currency = "EUR"
+	GBP Currency = "GBP"
+	USD Currency = "USD"
+	CHF Currency = "CHF"
+	ZAR Currency = "ZAR"
+)

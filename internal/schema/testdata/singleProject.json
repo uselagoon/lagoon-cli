@@ -17,6 +17,7 @@
       "gitUrl": "git@github.amazee.io:foo-bar/bananas-au.git",
       "groups": [
         {
+          "__typename": "Group",
           "name": "abc",
           "id": "d5e3f014-8110-43f8-b0d2-0b60ef917e63",
           "members": [
@@ -53,6 +54,7 @@
           ]
         },
         {
+          "__typename": "Group",
           "name": "project-bananas",
           "id": "324b5b77-975b-4243-b540-697e1aa475c5",
           "members": [

@@ -17,10 +17,12 @@
       "gitUrl": "git@github.com:amazeeio/lagoon.git",
       "groups": [
         {
+          "__typename": "Group",
           "name": "kickstart-group",
           "members": []
         },
         {
+          "__typename": "Group",
           "name": "project-lagoon",
           "members": [
             {

@@ -36,7 +36,7 @@ type Project struct {
 	// Openshift is unmarshalled during export.
 	OpenshiftID *OpenshiftID `json:"openshift,omitempty"`
 	// Groups are unmarshalled during export.
-	Groups []Group `json:"groups,omitempty"`
+	Groups *Groups `json:"groups,omitempty"`
 }
 
 // ProjectConfig contains project configuration.
@@ -46,6 +46,8 @@ type ProjectConfig struct {
 	Notifications *ProjectNotifications `json:"notifications,omitempty"`
 	// Group are (un)marshalled during import.
 	Groups []string `json:"groups,omitempty"`
+	// BillingGroup are (un)marshalled during import.
+	BillingGroups []string `json:"billingGroups,omitempty"`
 	// Users are members of the project.
 	// Note that in Lagoon this is implemented as being a member of the
 	// project-<projectname> group.
@@ -83,4 +85,11 @@ type AddNotificationToProjectInput struct {
 	Project          string               `json:"project"`
 	NotificationType api.NotificationType `json:"notificationType"`
 	NotificationName string               `json:"notificationName"`
+}
+
+// ProjectBillingGroupInput is based on the input to
+// addProjectToBillingGroup.
+type ProjectBillingGroupInput struct {
+	Group   GroupInput   `json:"group"`
+	Project ProjectInput `json:"project"`
 }

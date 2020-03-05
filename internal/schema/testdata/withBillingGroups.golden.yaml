@@ -1,0 +1,43 @@
+billingGroups:
+- billingSoftware: "null"
+  currency: USD
+  name: High Cotton Billing Group
+groups:
+- name: ui-customer
+projects:
+- autoIdle: 1
+  billingGroups:
+  - High Cotton Billing Group
+  environments:
+  - autoIdle: 1
+    deployBaseRef: Master
+    deployType: branch
+    environmentType: production
+    name: Master
+    openshiftProjectName: high-cotton-master
+  - autoIdle: 1
+    deployBaseRef: Staging
+    deployType: branch
+    environmentType: development
+    name: Staging
+    openshiftProjectName: high-cotton-staging
+  - autoIdle: 1
+    deployBaseRef: Development
+    deployType: branch
+    environmentType: development
+    name: Development
+    openshiftProjectName: high-cotton-development
+  - autoIdle: 1
+    deployBaseRef: target
+    deployHeadRef: source
+    deployTitle: PR-175
+    deployType: pullrequest
+    environmentType: development
+    name: PR-175
+    openshiftProjectName: high-cotton-pr-175
+  gitUrl: ssh://git@192.168.42.1:2222/git/project18.git
+  groups:
+  - ui-customer
+  name: high-cotton
+  productionEnvironment: Master
+  storageCalc: 1

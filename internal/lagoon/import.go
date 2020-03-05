@@ -39,8 +39,12 @@ type Importer interface {
 	EnvironmentByName(context.Context, string, uint, *schema.Environment) error
 	AddGroupsToProject(
 		context.Context, *schema.ProjectGroupsInput, *schema.Project) error
-	AddNotificationToProject(
-		context.Context, *schema.AddNotificationToProjectInput, *schema.Project) error
+	AddNotificationToProject(context.Context,
+		*schema.AddNotificationToProjectInput, *schema.Project) error
+	AddBillingGroup(
+		context.Context, *schema.AddBillingGroupInput, *schema.BillingGroup) error
+	AddProjectToBillingGroup(context.Context, *schema.ProjectBillingGroupInput,
+		*schema.Project) error
 }
 
 // Import creates objects in the Lagoon API based on a configuration object.
@@ -59,6 +63,15 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 
 	// import the config
 	l := log.New(os.Stderr, "import: ", 0)
+	// add billing groups
+	for _, bg := range config.BillingGroups {
+		if err := i.AddBillingGroup(ctx, &bg, nil); err != nil {
+			if !keepGoing {
+				return fmt.Errorf("couldn't add billing group: %w", err)
+			}
+			l.Printf("couldn't add billing group: %v", err)
+		}
+	}
 	// add groups
 	for _, group := range config.Groups {
 		if err := i.AddGroup(ctx, &group.AddGroupInput, nil); err != nil {
@@ -139,7 +152,8 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 					return fmt.Errorf("project exists: %w", err)
 				}
 				if err = i.ProjectByName(ctx, p.Name, &newProj); err != nil {
-					return fmt.Errorf("couldn't get project by name: %w", err)
+					return fmt.Errorf(
+						`couldn't get project "%s" by name: %w`, p.Name, err)
 				}
 				l.Printf(`project "%s" exists, using ID %d`, p.Name, newProj.ID)
 			} else {
@@ -204,13 +218,13 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 				}
 			}
 		}
+		// add groups to project
 		if len(p.Groups) > 0 {
 			// convert group names to input type
 			groupsInput := []schema.GroupInput{}
 			for _, name := range p.Groups {
 				groupsInput = append(groupsInput, schema.GroupInput{Name: name})
 			}
-			// add groups to project
 			err = i.AddGroupsToProject(ctx, &schema.ProjectGroupsInput{
 				Project: schema.ProjectInput{Name: p.Name},
 				Groups:  groupsInput}, nil)
@@ -220,6 +234,26 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 						`couldn't add Groups to Project "%s": %w`, p.Name, err)
 				}
 				l.Printf(`couldn't add Groups to Project "%s": %v`, p.Name, err)
+			}
+		}
+		if len(p.BillingGroups) > 1 {
+			return fmt.Errorf(
+				`project can only have one billing group: %v`, p.BillingGroups)
+		}
+		// add project to billing group
+		for _, bgName := range p.BillingGroups {
+			err = i.AddProjectToBillingGroup(ctx, &schema.ProjectBillingGroupInput{
+				Group:   schema.GroupInput{Name: bgName},
+				Project: schema.ProjectInput{Name: p.Name},
+			}, nil)
+			if err != nil {
+				if !keepGoing {
+					return fmt.Errorf(
+						`couldn't add Project "%s" to Billing Group "%s": %w`, p.Name,
+						bgName, err)
+				}
+				l.Printf(`couldn't add Project "%s" to Billing Group "%s": %v`, p.Name,
+					bgName, err)
 			}
 		}
 		// add project users

@@ -29,6 +29,8 @@ type importCalls struct {
 	AddEnvironmentInputs           []schema.AddEnvironmentInput
 	ProjectGroupsInputs            []schema.ProjectGroupsInput
 	AddNotificationToProjectInputs []schema.AddNotificationToProjectInput
+	AddBillingGroupInputs          []schema.AddBillingGroupInput
+	ProjectBillingGroupInputs      []schema.ProjectBillingGroupInput
 }
 
 func TestImport(t *testing.T) {
@@ -155,6 +157,19 @@ func TestImport(t *testing.T) {
 					NotificationName: "example-slack",
 				},
 			},
+			AddBillingGroupInputs: []schema.AddBillingGroupInput{
+				{
+					Name:            "High Cotton Billing Group",
+					Currency:        schema.USD,
+					BillingSoftware: "Microsoft Billing",
+				},
+			},
+			ProjectBillingGroupInputs: []schema.ProjectBillingGroupInput{
+				{
+					Project: schema.ProjectInput{Name: "bananas"},
+					Group:   schema.GroupInput{Name: "High Cotton Billing Group"},
+				},
+			},
 		}},
 	}
 	for name, tc := range testCases {
@@ -211,6 +226,14 @@ func TestImport(t *testing.T) {
 			for i := range tc.expect.AddNotificationToProjectInputs {
 				importer.EXPECT().AddNotificationToProject(
 					ctx, &tc.expect.AddNotificationToProjectInputs[i], nil)
+			}
+			for i := range tc.expect.AddBillingGroupInputs {
+				importer.EXPECT().AddBillingGroup(ctx,
+					&tc.expect.AddBillingGroupInputs[i], nil)
+			}
+			for i := range tc.expect.ProjectBillingGroupInputs {
+				importer.EXPECT().AddProjectToBillingGroup(ctx,
+					&tc.expect.ProjectBillingGroupInputs[i], nil)
 			}
 			// open the test yaml
 			file, err := os.Open(tc.input)

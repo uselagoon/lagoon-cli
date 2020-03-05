@@ -215,3 +215,31 @@ func (mr *MockImporterMockRecorder) AddNotificationToProject(arg0, arg1, arg2 in
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNotificationToProject", reflect.TypeOf((*MockImporter)(nil).AddNotificationToProject), arg0, arg1, arg2)
 }
+
+// AddBillingGroup mocks base method
+func (m *MockImporter) AddBillingGroup(arg0 context.Context, arg1 *schema.AddBillingGroupInput, arg2 *schema.BillingGroup) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddBillingGroup", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddBillingGroup indicates an expected call of AddBillingGroup
+func (mr *MockImporterMockRecorder) AddBillingGroup(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBillingGroup", reflect.TypeOf((*MockImporter)(nil).AddBillingGroup), arg0, arg1, arg2)
+}
+
+// AddProjectToBillingGroup mocks base method
+func (m *MockImporter) AddProjectToBillingGroup(arg0 context.Context, arg1 *schema.ProjectBillingGroupInput, arg2 *schema.Project) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddProjectToBillingGroup", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddProjectToBillingGroup indicates an expected call of AddProjectToBillingGroup
+func (mr *MockImporterMockRecorder) AddProjectToBillingGroup(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddProjectToBillingGroup", reflect.TypeOf((*MockImporter)(nil).AddProjectToBillingGroup), arg0, arg1, arg2)
+}

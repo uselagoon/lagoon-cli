@@ -1,22 +1,3 @@
-fragment NotificationSlack on NotificationSlack {
-  webhook
-  name
-  channel
-}
-fragment NotificationRocketChat on NotificationRocketChat {
-  webhook
-  name
-  channel
-}
-# TODO: lagoon version should enable/disable these:
-# fragment NotificationEmail on NotificationEmail {
-#   emailAddress
-#   name
-# }
-# fragment NotificationTeams on NotificationMicrosoftTeams {
-#   webhook
-#   name
-# }
 query (
   $name: String!) {
     projectByName(
@@ -38,27 +19,57 @@ query (
         gitUrl
         autoIdle
         groups{
-          name
-          members{
-            user{
-              email
-              sshKeys{
-                name
-                keyType
-                keyValue
+          ... on Group {
+            __typename
+            name
+            members{
+              user{
+                email
+                sshKeys{
+                  name
+                  keyType
+                  keyValue
+                }
+                firstName
+                lastName
               }
-              firstName
-              lastName
+              role
             }
-            role
           }
+          {{ if apiVerGreaterThanOrEqual . "1.2.0" }}
+          ... on BillingGroup {
+            __typename
+            name
+            currency
+            billingSoftware
+          }
+          {{ end }}
         }
         notifications {
-          __typename
-          ...NotificationRocketChat
-          ...NotificationSlack
-          # ...NotificationEmail
-          # ...NotificationTeams
+          ... on NotificationSlack {
+            __typename
+            webhook
+            name
+            channel
+          }
+          ... on NotificationRocketChat {
+            __typename
+            webhook
+            name
+            channel
+          }
+          {{ if apiVerGreaterThanOrEqual . "1.2.0" }}
+          ... on NotificationEmail {
+            __typename
+            emailAddress
+            name
+          }
+          ... on NotificationMicrosoftTeams {
+            __typename
+            webhook
+            name
+          }
+          {{ end }}
         }
         openshift{
           id

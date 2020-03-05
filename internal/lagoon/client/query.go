@@ -11,7 +11,7 @@ import (
 func (c *Client) ProjectByName(
 	ctx context.Context, name string, project *schema.Project) error {
 
-	req, err := c.newRequest("_lgraphql/projectByName.graphql",
+	req, err := c.newVersionedRequest("_lgraphql/projectByName.graphql",
 		map[string]interface{}{
 			"name": name,
 		})

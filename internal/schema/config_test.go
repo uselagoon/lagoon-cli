@@ -28,6 +28,14 @@ func TestProjectsToConfig(t *testing.T) {
 			input:  "testdata/ciBranchPicky.json",
 			expect: "testdata/ciBranchPicky.golden.yaml",
 		},
+		"noBillingGroups": {
+			input:  "testdata/noBillingGroups.json",
+			expect: "testdata/noBillingGroups.golden.yaml",
+		},
+		"withBillingGroups": {
+			input:  "testdata/withBillingGroups.json",
+			expect: "testdata/withBillingGroups.golden.yaml",
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
@@ -36,8 +44,8 @@ func TestProjectsToConfig(t *testing.T) {
 			if err != nil {
 				tt.Fatalf("couldn't read file: %v", err)
 			}
-			data := schema.GraphQLResponse{}
-			if err = schema.UnmarshalProjectConfigData(testJSON, &data); err != nil {
+			data := schema.ProjectByNameResponse{}
+			if err = schema.UnmarshalProjectByNameResponse(testJSON, &data); err != nil {
 				tt.Fatalf("couldn't unmarshal project config: %v", err)
 			}
 			result, err := schema.ProjectsToConfig(

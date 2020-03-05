@@ -14,10 +14,11 @@ import (
 // Fields for comprising structs are dictated by the add* Lagoon APIs.
 type Config struct {
 	// API objects
-	Projects      []ProjectConfig      `json:"projects,omitempty"`
-	Groups        []GroupConfig        `json:"groups,omitempty"`
-	Users         []User               `json:"users,omitempty"`
-	Notifications *NotificationsConfig `json:"notifications,omitempty"`
+	Projects      []ProjectConfig        `json:"projects,omitempty"`
+	Groups        []GroupConfig          `json:"groups,omitempty"`
+	BillingGroups []AddBillingGroupInput `json:"billingGroups,omitempty"`
+	Users         []User                 `json:"users,omitempty"`
+	Notifications *NotificationsConfig   `json:"notifications,omitempty"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface to control how lagoon
@@ -95,7 +96,7 @@ func ProjectsToConfig(
 	for _, project := range projects {
 		projectConfig :=
 			ProjectConfig{Project: project, Notifications: &ProjectNotifications{}}
-		for _, group := range project.Groups {
+		for _, group := range project.Groups.Groups {
 			// project group users are appended to the project directly because this
 			// group is automatically created in Lagoon.
 			if fmt.Sprintf("project-%s", project.Name) == group.Name {
@@ -146,6 +147,18 @@ func ProjectsToConfig(
 			}
 			config.Groups = append(config.Groups, newGroup)
 		}
+		// add billing groups
+		for _, billingGroup := range project.Groups.BillingGroups {
+			projectConfig.BillingGroups =
+				append(projectConfig.BillingGroups, billingGroup.Name)
+			// skip creating the group if already done
+			if groups[billingGroup.Name] {
+				continue // next group
+			}
+			groups[billingGroup.Name] = true
+			config.BillingGroups =
+				append(config.BillingGroups, billingGroup.AddBillingGroupInput)
+		}
 		// add notifications
 		for _, n := range project.Notifications.Slack {
 			projectConfig.Notifications.Slack =
@@ -192,8 +205,8 @@ func ProjectsToConfig(
 	return yaml.JSONToYAML(j)
 }
 
-// minimise zeroes default or empty values in a Project to minimise the config
-// file.
+// minimiseProjectConfig zeroes default or empty values in a Project to
+// minimise the config file.
 func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	// clear bits we don't want to serialise at all
 	p.Project.Notifications = nil
@@ -241,7 +254,8 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	}
 }
 
-// minimiseConfig clears any configured fields from the config.
+// minimiseConfig clears any configured fields from the config to minimise the
+// marshalled YAML.
 func minimiseConfig(c *Config, exclude map[string]bool) {
 	// clear empty notifications
 	if c.Notifications != nil &&

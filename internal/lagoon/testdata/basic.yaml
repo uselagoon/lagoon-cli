@@ -1,3 +1,7 @@
+billingGroups:
+- billingSoftware: Microsoft Billing
+  currency: USD
+  name: High Cotton Billing Group
 groups:
 - name: abc
   users:
@@ -12,6 +16,8 @@ notifications:
     webhook: https://hooks.slack.example.com/services/xxx/yyy
 projects:
 - autoIdle: 1
+  billingGroups:
+  - High Cotton Billing Group
   branches: ^(master|develop|production)$
   developmentEnvironmentsLimit: 10
   envVariables:

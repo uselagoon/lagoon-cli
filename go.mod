@@ -4,11 +4,13 @@ go 1.13
 
 require (
 	github.com/Masterminds/semver v1.4.2
+	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/mock v1.4.0
 	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/uuid v1.1.1
+	github.com/hashicorp/go-version v1.2.0
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/logrusorgru/aurora v0.0.0-20191017060258-dc85c304c434
 	github.com/machinebox/graphql v0.2.3-0.20181106130121-3a9253180225

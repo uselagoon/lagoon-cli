@@ -32,6 +32,7 @@ type NotificationSlack struct {
 }
 
 // Notifications represents possible Lagoon notification types.
+// These are unmarshalled from a projectByName query response.
 type Notifications struct {
 	Slack      []AddNotificationSlackInput
 	RocketChat []AddNotificationRocketChatInput
