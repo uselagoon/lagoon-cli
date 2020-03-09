@@ -1,15 +1,19 @@
-## lagoon config
+## lagoon config current
 
-Configure Lagoon CLI
+Display the current lagoon
 
 ### Synopsis
 
-Configure Lagoon CLI
+Display the current lagoon
+
+```
+lagoon config current [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for config
+  -h, --help   help for current
 ```
 
 ### Options inherited from parent commands
@@ -30,11 +34,5 @@ Configure Lagoon CLI
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon config add](lagoon_config_add.md)	 - Add information about an additional Lagoon instance to use
-* [lagoon config current](lagoon_config_current.md)	 - Display the current lagoon
-* [lagoon config default](lagoon_config_default.md)	 - Set the default Lagoon to use
-* [lagoon config delete](lagoon_config_delete.md)	 - Delete a Lagoon instance configuration
-* [lagoon config feature](lagoon_config_feature.md)	 - Enable or disable CLI features
-* [lagoon config list](lagoon_config_list.md)	 - View all configured Lagoon instances
+* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 
