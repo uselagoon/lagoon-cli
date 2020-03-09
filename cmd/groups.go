@@ -153,16 +153,20 @@ var deleteUserFromGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = uClient.RemoveUserFromGroup(userGroupRole)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+		fmt.Println(fmt.Sprintf("Removing user %s from group %s", userGroupRole.User.Email, userGroupRole.Group.Name))
+
+		if yesNo("Are you sure you want to do this?") {
+			customReqResult, err = uClient.RemoveUserFromGroup(userGroupRole)
+			handleError(err)
+			returnResultData := map[string]interface{}{}
+			err = json.Unmarshal([]byte(customReqResult), &returnResultData)
+			handleError(err)
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: returnResultData,
+			}
+			output.RenderResult(resultData, outputOptions)
 		}
-		output.RenderResult(resultData, outputOptions)
 	},
 }
 
@@ -188,16 +192,20 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = uClient.RemoveGroupsFromProject(projectGroup)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+		fmt.Println(fmt.Sprintf("Removing project %s from group %s", projectGroup.Project.Name, projectGroup.Groups[0].Name))
+
+		if yesNo("Are you sure you want to do this?") {
+			customReqResult, err = uClient.RemoveGroupsFromProject(projectGroup)
+			handleError(err)
+			returnResultData := map[string]interface{}{}
+			err = json.Unmarshal([]byte(customReqResult), &returnResultData)
+			handleError(err)
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: returnResultData,
+			}
+			output.RenderResult(resultData, outputOptions)
 		}
-		output.RenderResult(resultData, outputOptions)
 	},
 }
 var deleteGroupCmd = &cobra.Command{
@@ -213,12 +221,16 @@ var deleteGroupCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = uClient.DeleteGroup(groupFlags)
-		handleError(err)
-		resultData := output.Result{
-			Result: string(customReqResult),
+		fmt.Println(fmt.Sprintf("Deleting group %s", groupFlags.Name))
+
+		if yesNo("Are you sure you want to do this?") {
+			customReqResult, err = uClient.DeleteGroup(groupFlags)
+			handleError(err)
+			resultData := output.Result{
+				Result: string(customReqResult),
+			}
+			output.RenderResult(resultData, outputOptions)
 		}
-		output.RenderResult(resultData, outputOptions)
 	},
 }
 
