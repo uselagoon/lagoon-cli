@@ -107,9 +107,7 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		fmt.Println(fmt.Sprintf("Deleting notification %s from project %s", notificationFlags.NotificationName, notificationFlags.Project))
-
-		if yesNo("Are you sure you want to delete?") {
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from project '%s', are you sure?", notificationFlags.NotificationName, notificationFlags.Project)) {
 			deleteResult, err := pClient.DeleteSlackNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
 			handleError(err)
 			var addedProject api.NotificationSlack
@@ -136,7 +134,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 		}
 		fmt.Println(fmt.Sprintf("Deleting notification %s", notificationFlags.NotificationName))
 
-		if yesNo("Are you sure you want to delete?") {
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from lagoon, are you sure?", notificationFlags.NotificationName)) {
 			deleteResult, err := pClient.DeleteSlackNotification(notificationFlags.NotificationName)
 			handleError(err)
 			resultData := output.Result{

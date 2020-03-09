@@ -107,8 +107,11 @@ var deleteVariableCmd = &cobra.Command{
 			output.RenderError("Must define a variable name", outputOptions)
 			os.Exit(1)
 		}
-
-		if yesNo("Are you sure?") {
+		deleteMsg := fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", envVarFlags.Name, cmdProjectName)
+		if cmdProjectEnvironment != "" {
+			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", envVarFlags.Name, cmdProjectEnvironment, cmdProjectName)
+		}
+		if yesNo(deleteMsg) {
 			var deleteResult []byte
 			var err error
 			if cmdProjectEnvironment != "" {

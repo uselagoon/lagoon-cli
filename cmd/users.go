@@ -118,9 +118,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		fmt.Println(fmt.Sprintf("Deleting ssh key %s", sshKeyName))
-
-		if yesNo("Are you sure you want to delete?") {
+		if yesNo(fmt.Sprintf("You are attempting to delete ssh key named '%s', are you sure?", sshKeyName)) {
 			customReqResult, err = uClient.DeleteSSHKey(sshKeyName)
 			handleError(err)
 			resultData := output.Result{
@@ -144,9 +142,7 @@ var deleteUserCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		fmt.Println(fmt.Sprintf("Deleting user with email %s", userFlags.Email))
-
-		if yesNo("Are you sure you want to delete?") {
+		if yesNo(fmt.Sprintf("You are attempting to delete user with email address '%s', are you sure?", userFlags.Email)) {
 			customReqResult, err = uClient.DeleteUser(userFlags)
 			handleError(err)
 			resultData := output.Result{

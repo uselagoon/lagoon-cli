@@ -38,9 +38,7 @@ var deleteEnvCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		fmt.Println(fmt.Sprintf("Deleting %s-%s", cmdProjectName, cmdProjectEnvironment))
-
-		if yesNo("Are you sure you want to delete?") {
+		if yesNo(fmt.Sprintf("You are attempting to delete environment '%s' from project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
 			projectByName, err := eClient.DeleteEnvironment(cmdProjectName, cmdProjectEnvironment)
 			handleError(err)
 			resultData := output.Result{
