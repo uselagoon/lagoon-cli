@@ -14,6 +14,16 @@ notifications:
   - channel: build-notifications
     name: example-slack
     webhook: https://hooks.slack.example.com/services/xxx/yyy
+  rocketChat:
+  - channel: build-notifications
+    name: example-rocketchat
+    webhook: https://hooks.rocketchat.example.com/services/xxx/yyy
+  email:
+  - emailAddress: example@example.com
+    name: example-email
+  microsoftTeams:
+  - webhook: https://hooks.msteams.example.com/services/xxx/yyy
+    name: example-msteams
 projects:
 - autoIdle: 1
   billingGroups:

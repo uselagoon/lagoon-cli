@@ -57,8 +57,10 @@ type ProjectConfig struct {
 // ProjectNotifications lists the notifications for a project within a
 // ProjectConfig.
 type ProjectNotifications struct {
-	Slack      []string `json:"slack,omitempty"`
-	RocketChat []string `json:"rocketChat,omitempty"`
+	Slack          []string `json:"slack,omitempty"`
+	RocketChat     []string `json:"rocketChat,omitempty"`
+	Email          []string `json:"email,omitempty"`
+	MicrosoftTeams []string `json:"microsoftTeams,omitempty"`
 }
 
 // OpenshiftID is unmarshalled during export.

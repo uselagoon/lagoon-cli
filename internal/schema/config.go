@@ -92,6 +92,8 @@ func ProjectsToConfig(
 	groups := map[string]bool{}
 	slackNotifications := map[string]bool{}
 	rocketChatNotifications := map[string]bool{}
+	emailNotifications := map[string]bool{}
+	microsoftTeamsNotifications := map[string]bool{}
 
 	for _, project := range projects {
 		projectConfig :=
@@ -181,6 +183,28 @@ func ProjectsToConfig(
 			config.Notifications.RocketChat =
 				append(config.Notifications.RocketChat, n)
 		}
+		for _, n := range project.Notifications.Email {
+			projectConfig.Notifications.Email =
+				append(projectConfig.Notifications.Email, n.Name)
+			// skip creating the notification if already done
+			if emailNotifications[n.Name] {
+				continue // next notification
+			}
+			emailNotifications[n.Name] = true
+			config.Notifications.Email =
+				append(config.Notifications.Email, n)
+		}
+		for _, n := range project.Notifications.MicrosoftTeams {
+			projectConfig.Notifications.MicrosoftTeams =
+				append(projectConfig.Notifications.MicrosoftTeams, n.Name)
+			// skip creating the notification if already done
+			if microsoftTeamsNotifications[n.Name] {
+				continue // next notification
+			}
+			microsoftTeamsNotifications[n.Name] = true
+			config.Notifications.MicrosoftTeams =
+				append(config.Notifications.MicrosoftTeams, n)
+		}
 		minimiseProjectConfig(&projectConfig, exclude)
 		config.Projects = append(config.Projects, projectConfig)
 	}
@@ -225,7 +249,9 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	// clear empty notifications
 	if p.Notifications != nil &&
 		p.Notifications.Slack == nil &&
-		p.Notifications.RocketChat == nil {
+		p.Notifications.RocketChat == nil &&
+		p.Notifications.Email == nil &&
+		p.Notifications.MicrosoftTeams == nil {
 		p.Notifications = nil
 	}
 

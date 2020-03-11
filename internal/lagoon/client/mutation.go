@@ -105,6 +105,36 @@ func (c *Client) AddNotificationRocketChat(ctx context.Context,
 	})
 }
 
+// AddNotificationEmail defines an Email notification.
+func (c *Client) AddNotificationEmail(ctx context.Context,
+	in *schema.AddNotificationEmailInput,
+	out *schema.NotificationEmail) error {
+	req, err := c.newRequest("_lgraphql/addNotificationEmail.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.NotificationEmail `json:"addNotificationEmail"`
+	}{
+		Response: out,
+	})
+}
+
+// AddNotificationMicrosoftTeams defines a MicrosoftTeams notification.
+func (c *Client) AddNotificationMicrosoftTeams(ctx context.Context,
+	in *schema.AddNotificationMicrosoftTeamsInput,
+	out *schema.NotificationMicrosoftTeams) error {
+	req, err := c.newRequest("_lgraphql/addNotificationMicrosoftTeams.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.NotificationMicrosoftTeams `json:"addNotificationMicrosoftTeams"`
+	}{
+		Response: out,
+	})
+}
+
 // AddProject adds a project.
 func (c *Client) AddProject(
 	ctx context.Context, in *schema.AddProjectInput, out *schema.Project) error {

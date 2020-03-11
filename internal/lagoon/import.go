@@ -26,10 +26,17 @@ type Importer interface {
 	AddUserToGroup(
 		context.Context, *schema.UserGroupRoleInput, *schema.Group) error
 	AddNotificationSlack(context.Context,
-		*schema.AddNotificationSlackInput, *schema.NotificationSlack) error
+		*schema.AddNotificationSlackInput,
+		*schema.NotificationSlack) error
 	AddNotificationRocketChat(context.Context,
 		*schema.AddNotificationRocketChatInput,
 		*schema.NotificationRocketChat) error
+	AddNotificationEmail(context.Context,
+		*schema.AddNotificationEmailInput,
+		*schema.NotificationEmail) error
+	AddNotificationMicrosoftTeams(context.Context,
+		*schema.AddNotificationMicrosoftTeamsInput,
+		*schema.NotificationMicrosoftTeams) error
 	AddProject(context.Context, *schema.AddProjectInput, *schema.Project) error
 	AddEnvVariable(
 		context.Context, *schema.EnvVariableInput, *schema.EnvKeyValue) error
@@ -138,6 +145,24 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 					return fmt.Errorf("couldn't add RocketChat notification: %w", err)
 				}
 				l.Printf("couldn't add RocketChat notification: %v", err)
+			}
+		}
+		// add Email notifications
+		for _, n := range config.Notifications.Email {
+			if err := i.AddNotificationEmail(ctx, &n, nil); err != nil {
+				if !keepGoing {
+					return fmt.Errorf("couldn't add Email notification: %w", err)
+				}
+				l.Printf("couldn't add Email notification: %v", err)
+			}
+		}
+		// add MicrosoftTeams notifications
+		for _, n := range config.Notifications.MicrosoftTeams {
+			if err := i.AddNotificationMicrosoftTeams(ctx, &n, nil); err != nil {
+				if !keepGoing {
+					return fmt.Errorf("couldn't add MicrosoftTeams notification: %w", err)
+				}
+				l.Printf("couldn't add MicrosoftTeams notification: %v", err)
 			}
 		}
 	}
@@ -300,6 +325,36 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 							"couldn't add RocketChat Notification to project: %w", err)
 					}
 					l.Printf("couldn't add RocketChat Notification to project: %v", err)
+				}
+			}
+			for _, n := range p.Notifications.Email {
+				err := i.AddNotificationToProject(ctx,
+					&schema.AddNotificationToProjectInput{
+						Project:          p.Name,
+						NotificationType: api.EmailNotification,
+						NotificationName: n,
+					}, nil)
+				if err != nil {
+					if !keepGoing {
+						return fmt.Errorf(
+							"couldn't add Email Notification to project: %w", err)
+					}
+					l.Printf("couldn't add Email Notification to project: %v", err)
+				}
+			}
+			for _, n := range p.Notifications.MicrosoftTeams {
+				err := i.AddNotificationToProject(ctx,
+					&schema.AddNotificationToProjectInput{
+						Project:          p.Name,
+						NotificationType: api.MicrosoftTeamsNotification,
+						NotificationName: n,
+					}, nil)
+				if err != nil {
+					if !keepGoing {
+						return fmt.Errorf(
+							"couldn't add MicrosoftTeams Notification to project: %w", err)
+					}
+					l.Printf("couldn't add MicrosoftTeams Notification to project: %v", err)
 				}
 			}
 		}

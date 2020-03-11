@@ -118,6 +118,34 @@ func (mr *MockImporterMockRecorder) AddNotificationRocketChat(arg0, arg1, arg2 i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNotificationRocketChat", reflect.TypeOf((*MockImporter)(nil).AddNotificationRocketChat), arg0, arg1, arg2)
 }
 
+// AddNotificationEmail mocks base method
+func (m *MockImporter) AddNotificationEmail(arg0 context.Context, arg1 *schema.AddNotificationEmailInput, arg2 *schema.NotificationEmail) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNotificationEmail", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNotificationEmail indicates an expected call of AddNotificationEmail
+func (mr *MockImporterMockRecorder) AddNotificationEmail(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNotificationEmail", reflect.TypeOf((*MockImporter)(nil).AddNotificationEmail), arg0, arg1, arg2)
+}
+
+// AddNotificationMicrosoftTeams mocks base method
+func (m *MockImporter) AddNotificationMicrosoftTeams(arg0 context.Context, arg1 *schema.AddNotificationMicrosoftTeamsInput, arg2 *schema.NotificationMicrosoftTeams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNotificationMicrosoftTeams", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNotificationMicrosoftTeams indicates an expected call of AddNotificationMicrosoftTeams
+func (mr *MockImporterMockRecorder) AddNotificationMicrosoftTeams(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNotificationMicrosoftTeams", reflect.TypeOf((*MockImporter)(nil).AddNotificationMicrosoftTeams), arg0, arg1, arg2)
+}
+
 // AddProject mocks base method
 func (m *MockImporter) AddProject(arg0 context.Context, arg1 *schema.AddProjectInput, arg2 *schema.Project) error {
 	m.ctrl.T.Helper()

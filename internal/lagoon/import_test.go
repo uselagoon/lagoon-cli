@@ -17,20 +17,23 @@ import (
 // importCalls stores arrays of expected import calls associated with a given
 // config file
 type importCalls struct {
-	NewProjectID                   uint
-	NewEnvironmentID               uint
-	AddGroupInputs                 []schema.AddGroupInput
-	AddUserInputs                  []schema.AddUserInput
-	AddSSHKeyInputs                []schema.AddSSHKeyInput
-	UserGroupRoleInputs            []schema.UserGroupRoleInput
-	AddNotificationSlackInputs     []schema.AddNotificationSlackInput
-	AddProjectInputs               []schema.AddProjectInput
-	EnvVariableInputs              []schema.EnvVariableInput
-	AddEnvironmentInputs           []schema.AddEnvironmentInput
-	ProjectGroupsInputs            []schema.ProjectGroupsInput
-	AddNotificationToProjectInputs []schema.AddNotificationToProjectInput
-	AddBillingGroupInputs          []schema.AddBillingGroupInput
-	ProjectBillingGroupInputs      []schema.ProjectBillingGroupInput
+	NewProjectID                        uint
+	NewEnvironmentID                    uint
+	AddGroupInputs                      []schema.AddGroupInput
+	AddUserInputs                       []schema.AddUserInput
+	AddSSHKeyInputs                     []schema.AddSSHKeyInput
+	UserGroupRoleInputs                 []schema.UserGroupRoleInput
+	AddNotificationSlackInputs          []schema.AddNotificationSlackInput
+	AddNotificationRocketChatInputs     []schema.AddNotificationRocketChatInput
+	AddNotificationEmailInputs          []schema.AddNotificationEmailInput
+	AddNotificationMicrosoftTeamsInputs []schema.AddNotificationMicrosoftTeamsInput
+	AddProjectInputs                    []schema.AddProjectInput
+	EnvVariableInputs                   []schema.EnvVariableInput
+	AddEnvironmentInputs                []schema.AddEnvironmentInput
+	ProjectGroupsInputs                 []schema.ProjectGroupsInput
+	AddNotificationToProjectInputs      []schema.AddNotificationToProjectInput
+	AddBillingGroupInputs               []schema.AddBillingGroupInput
+	ProjectBillingGroupInputs           []schema.ProjectBillingGroupInput
 }
 
 func TestImport(t *testing.T) {
@@ -38,7 +41,7 @@ func TestImport(t *testing.T) {
 		input  string
 		expect *importCalls
 	}{
-		"basic": {input: "testdata/basic.yaml", expect: &importCalls{
+		"exhaustive": {input: "testdata/exhaustive.import.yaml", expect: &importCalls{
 			NewProjectID:     99,
 			NewEnvironmentID: 88,
 			AddGroupInputs: []schema.AddGroupInput{
@@ -94,6 +97,25 @@ func TestImport(t *testing.T) {
 					Name:    "example-slack",
 					Webhook: "https://hooks.slack.example.com/services/xxx/yyy",
 					Channel: "build-notifications",
+				},
+			},
+			AddNotificationRocketChatInputs: []schema.AddNotificationRocketChatInput{
+				{
+					Name:    "example-rocketchat",
+					Webhook: "https://hooks.rocketchat.example.com/services/xxx/yyy",
+					Channel: "build-notifications",
+				},
+			},
+			AddNotificationEmailInputs: []schema.AddNotificationEmailInput{
+				{
+					Name:         "example-email",
+					EmailAddress: "example@example.com",
+				},
+			},
+			AddNotificationMicrosoftTeamsInputs: []schema.AddNotificationMicrosoftTeamsInput{
+				{
+					Name:    "example-msteams",
+					Webhook: "https://hooks.msteams.example.com/services/xxx/yyy",
 				},
 			},
 			AddProjectInputs: []schema.AddProjectInput{
@@ -196,6 +218,18 @@ func TestImport(t *testing.T) {
 			for i := range tc.expect.AddNotificationSlackInputs {
 				importer.EXPECT().AddNotificationSlack(
 					ctx, &tc.expect.AddNotificationSlackInputs[i], nil)
+			}
+			for i := range tc.expect.AddNotificationRocketChatInputs {
+				importer.EXPECT().AddNotificationRocketChat(
+					ctx, &tc.expect.AddNotificationRocketChatInputs[i], nil)
+			}
+			for i := range tc.expect.AddNotificationEmailInputs {
+				importer.EXPECT().AddNotificationEmail(
+					ctx, &tc.expect.AddNotificationEmailInputs[i], nil)
+			}
+			for i := range tc.expect.AddNotificationMicrosoftTeamsInputs {
+				importer.EXPECT().AddNotificationMicrosoftTeams(
+					ctx, &tc.expect.AddNotificationMicrosoftTeamsInputs[i], nil)
 			}
 			for i := range tc.expect.AddProjectInputs {
 				importer.EXPECT().AddProject(

@@ -76,8 +76,10 @@ func (g *Groups) UnmarshalJSON(b []byte) error {
 	var value string
 	for _, groupMapRaw := range gArrayRaw {
 		if len(groupMapRaw) == 0 {
-			// unsupported group type returns an empty array entry... even when not
-			// requested! (╯°□°）╯︵ ┻━┻
+			// Unsupported group type returns an empty map... even when the unknown
+			// type it represents is not requested! (╯°□°）╯︵ ┻━┻
+			// This happens when the lagoon API being targeted is actually a higher
+			// version than configured.
 			continue
 		}
 		gMap := map[string]string{}

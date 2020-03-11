@@ -36,6 +36,14 @@ func TestProjectsToConfig(t *testing.T) {
 			input:  "testdata/withBillingGroups.json",
 			expect: "testdata/withBillingGroups.golden.yaml",
 		},
+		"noNewNotifications": {
+			input:  "testdata/noNewNotifications.json",
+			expect: "testdata/noNewNotifications.golden.yaml",
+		},
+		"newNotifications": {
+			input:  "testdata/newNotifications.json",
+			expect: "testdata/newNotifications.golden.yaml",
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
