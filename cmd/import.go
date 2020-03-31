@@ -14,7 +14,7 @@ import (
 var importCmd = &cobra.Command{
 	Use:     "import",
 	Aliases: []string{"i"},
-	Hidden:  true,
+	Hidden:  false,
 	Short:   "Import a config from a yaml file",
 	Long: `Import a config from a yaml file.
 By default this command will exit on encountering an error (such as an existing object).
@@ -74,10 +74,10 @@ func sliceToMap(s []string) map[string]bool {
 var exportCmd = &cobra.Command{
 	Use:     "export",
 	Aliases: []string{"e"},
-	Hidden:  true,
+	Hidden:  false,
 	Short:   "Export lagoon output to yaml",
 	Long: `Export lagoon output to yaml
-You can specify to export a specific project by using the '-p <project-name>' flag`,
+You must specify to export a specific project by using the '-p <project-name>' flag`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(viper.GetString("current"))
 	},
