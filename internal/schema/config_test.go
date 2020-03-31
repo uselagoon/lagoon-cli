@@ -57,7 +57,8 @@ func TestProjectsToConfig(t *testing.T) {
 				tt.Fatalf("couldn't unmarshal project config: %v", err)
 			}
 			result, err := schema.ProjectsToConfig(
-				[]schema.Project{*data.Response.Project}, nil)
+				[]schema.Project{*data.Response.Project},
+				map[string]bool{"project-private-keys": true})
 			if err != nil {
 				tt.Fatalf("couldn't translate ProjectConfigs: %v", err)
 			}

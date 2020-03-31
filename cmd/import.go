@@ -135,6 +135,6 @@ func init() {
 		}
 	}
 
-	exportCmd.Flags().StringSlice("exclude", []string{},
-		`Exclude data which is exported by default. Valid options (others are ignored): users, project-users, groups, notifications`)
+	exportCmd.Flags().StringSlice("exclude", []string{"project-private-keys"},
+		`Exclude data from the export. Valid options (others are ignored): users, project-users, groups, notifications, project-private-keys`)
 }

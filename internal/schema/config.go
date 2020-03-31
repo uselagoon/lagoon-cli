@@ -243,9 +243,11 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 	if exclude["project-users"] {
 		p.Users = nil
 	}
-	// TODO make these configurable?
+	if exclude["project-private-keys"] {
+		p.PrivateKey = ""
+	}
+	// this could be part of exclude, but haven't seen a use for it yet
 	p.OpenshiftID = nil
-	p.PrivateKey = ""
 	// clear empty notifications
 	if p.Notifications != nil &&
 		p.Notifications.Slack == nil &&
