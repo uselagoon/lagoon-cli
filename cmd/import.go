@@ -47,6 +47,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 			return nil // user cancelled
 		}
 
+		viper.SetDefault("lagoons."+current+".version", "1.0.0")
 		lc := client.New(
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
@@ -105,6 +106,7 @@ You must specify to export a specific project by using the '-p <project-name>' f
 			return nil // user cancelled
 		}
 
+		viper.SetDefault("lagoons."+current+".version", "1.0.0")
 		lc := client.New(
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
