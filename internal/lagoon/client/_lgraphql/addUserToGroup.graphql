@@ -1,0 +1,13 @@
+mutation (
+  $userEmail: String!,
+  $groupName: String!,
+  $groupRole: GroupRole!) {
+    addUserToGroup(input: {
+      user: { email: $userEmail }
+      group: { name: $groupName }
+      role: $groupRole
+    }) {
+      id
+      name
+    }
+  }

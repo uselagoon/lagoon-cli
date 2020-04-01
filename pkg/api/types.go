@@ -33,8 +33,10 @@ type NotificationType string
 
 // . .
 const (
-	SlackNotification      NotificationType = "SLACK"
-	RocketChatNotification NotificationType = "ROCKETCHAT"
+	SlackNotification          NotificationType = "SLACK"
+	RocketChatNotification     NotificationType = "ROCKETCHAT"
+	EmailNotification          NotificationType = "EMAIL"
+	MicrosoftTeamsNotification NotificationType = "MICROSOFTTEAMS"
 )
 
 // DeploymentStatusType .

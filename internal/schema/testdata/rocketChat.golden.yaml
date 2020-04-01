@@ -1,0 +1,19 @@
+groups:
+- name: kickstart-group
+notifications:
+  rocketChat:
+  - channel: lagoon-kickstart
+    name: amazeeio--lagoon-kickstart
+    webhook: https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
+projects:
+- autoIdle: 1
+  gitUrl: git@github.com:amazeeio/lagoon.git
+  groups:
+  - kickstart-group
+  name: lagoon
+  notifications:
+    rocketChat:
+    - amazeeio--lagoon-kickstart
+  openshiftProjectPattern: lagoon
+  productionEnvironment: master
+  storageCalc: 1

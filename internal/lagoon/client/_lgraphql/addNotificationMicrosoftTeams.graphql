@@ -1,0 +1,11 @@
+mutation (
+  $name: String!,
+  $webhook: String!) {
+    addNotificationMicrosoftTeams(input: {
+      name: $name,
+      webhook: $webhook
+    }) {
+      id
+      name
+    }
+  }

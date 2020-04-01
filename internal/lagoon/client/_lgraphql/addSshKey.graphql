@@ -1,0 +1,17 @@
+mutation (
+  $name: String!,
+  $keyValue: String!,
+  $keyType: SshKeyType!,
+  $userEmail: String!) {
+    addSshKey(input: {
+      name: $name
+      keyValue: $keyValue
+      keyType: $keyType
+      user: {
+        email: $userEmail
+      }
+    }) {
+      id
+      name
+    }
+  }

@@ -1,0 +1,93 @@
+billingGroups:
+- billingSoftware: Microsoft Billing
+  currency: USD
+  name: High Cotton Billing Group
+groups:
+- name: abc
+  users:
+  - email: foo@example.com
+    role: OWNER
+  - email: bar@example.com
+    role: OWNER
+notifications:
+  slack:
+  - channel: build-notifications
+    name: example-slack
+    webhook: https://hooks.slack.example.com/services/xxx/yyy
+  rocketChat:
+  - channel: build-notifications
+    name: example-rocketchat
+    webhook: https://hooks.rocketchat.example.com/services/xxx/yyy
+  email:
+  - emailAddress: example@example.com
+    name: example-email
+  microsoftTeams:
+  - webhook: https://hooks.msteams.example.com/services/xxx/yyy
+    name: example-msteams
+projects:
+- autoIdle: 1
+  billingGroups:
+  - High Cotton Billing Group
+  branches: ^(master|develop|production)$
+  developmentEnvironmentsLimit: 10
+  envVariables:
+  - name: ENABLE_REDIS
+    scope: global
+    value: "1"
+  environments:
+  - autoIdle: 1
+    deployBaseRef: ""
+    deployType: ""
+    envVariables:
+    - name: ENABLE_REDIS
+      scope: build
+      value: "1"
+    environmentType: ""
+    name: develop
+    openshiftProjectName: bananas-develop
+  - autoIdle: 1
+    deployBaseRef: ""
+    deployType: ""
+    environmentType: ""
+    name: master
+    openshiftProjectName: bananas-master
+  - autoIdle: 1
+    deployBaseRef: ""
+    deployType: ""
+    environmentType: ""
+    name: sandbox
+    openshiftProjectName: bananas-sandbox
+  gitUrl: git@github.amazee.io:foo-bar/bananas-au.git
+  groups:
+  - abc
+  name: bananas
+  notifications:
+    slack:
+    - example-slack
+  productionEnvironment: production
+  storageCalc: 1
+  users:
+  - email: projectuser@example.com
+    role: MAINTAINER
+users:
+- email: foo@example.com
+  firstName: foofirst
+  lastName: foolast
+  sshKeys:
+  - keyType: ssh-ed25519
+    keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
+    name: foo-example
+- email: bar@example.com
+  firstName: barfirst
+  lastName: barlast
+  sshKeys:
+  - keyType: ssh-ed25519
+    keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
+    name: bar-example
+- email: projectuser@example.com
+  firstName: projectuserfirst
+  lastName: projectuserlast
+  sshKeys:
+  - keyType: ssh-ed25519
+    keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
+    name: projectuser
