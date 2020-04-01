@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.13
     working_directory: /go/src/github.com/amazeeio/lagoon-cli
     steps:
       - checkout
@@ -16,7 +16,7 @@ jobs:
           command: make test
   deploy:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.13
     working_directory: /go/src/github.com/amazeeio/lagoon-cli
     steps:
       - checkout

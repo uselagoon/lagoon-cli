@@ -1,0 +1,11 @@
+mutation (
+  $group: GroupInput!,
+  $project: ProjectInput!) {
+    addProjectToBillingGroup(input: {
+      group: $group,
+      project: $project
+    }) {
+      id
+      name
+    }
+  }

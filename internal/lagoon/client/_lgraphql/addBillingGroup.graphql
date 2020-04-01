@@ -1,0 +1,13 @@
+mutation (
+  $name: String!,
+  $currency: Currency!,
+  $billingSoftware: String) {
+    addBillingGroup(input: {
+      name: $name,
+      currency: $currency,
+      billingSoftware: $billingSoftware
+    }) {
+      id
+      name
+    }
+  }

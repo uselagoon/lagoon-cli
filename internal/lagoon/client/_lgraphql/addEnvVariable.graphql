@@ -1,0 +1,17 @@
+mutation (
+  $type: EnvVariableType!,
+  $typeId: Int!,
+  $scope: EnvVariableScope!,
+  $name: String!,
+  $value: String!) {
+    addEnvVariable(input: {
+      type: $type,
+      typeId: $typeId,
+      scope: $scope,
+      name: $name,
+      value: $value
+    }) {
+      id
+      name
+    }
+  }

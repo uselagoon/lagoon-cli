@@ -105,15 +105,17 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := pClient.DeleteRocketChatNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
-		handleError(err)
-		var addedProject api.NotificationSlack
-		err = json.Unmarshal([]byte(deleteResult), &addedProject)
-		handleError(err)
-		resultData := output.Result{
-			Result: "success",
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from project '%s', are you sure?", notificationFlags.NotificationName, notificationFlags.Project)) {
+			deleteResult, err := pClient.DeleteRocketChatNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
+			handleError(err)
+			var addedProject api.NotificationSlack
+			err = json.Unmarshal([]byte(deleteResult), &addedProject)
+			handleError(err)
+			resultData := output.Result{
+				Result: "success",
+			}
+			output.RenderResult(resultData, outputOptions)
 		}
-		output.RenderResult(resultData, outputOptions)
 	},
 }
 var deleteRocketChatNotificationCmd = &cobra.Command{
@@ -127,12 +129,14 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		deleteResult, err := pClient.DeleteRocketChatNotification(notificationFlags.NotificationName)
-		handleError(err)
-		resultData := output.Result{
-			Result: string(deleteResult),
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from lagoon, are you sure?", notificationFlags.NotificationName)) {
+			deleteResult, err := pClient.DeleteRocketChatNotification(notificationFlags.NotificationName)
+			handleError(err)
+			resultData := output.Result{
+				Result: string(deleteResult),
+			}
+			output.RenderResult(resultData, outputOptions)
 		}
-		output.RenderResult(resultData, outputOptions)
 	},
 }
 

@@ -115,7 +115,6 @@ func isInternetActive() bool {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	cobra.EnableCommandSorting = false
 
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
@@ -181,6 +180,8 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(importCmd)
+	rootCmd.AddCommand(exportCmd)
 }
 
 // version/build information command
@@ -364,4 +365,34 @@ func validateToken(lagoon string) {
 		os.Exit(1)
 	}
 	outputOptions.Debug = debugEnable
+}
+
+// validateTokenE does the same thing as validateToken, it just returns an
+// error instead of exiting on error.
+func validateTokenE(lagoon string) error {
+	var err error
+	if graphql.VerifyTokenExpiry(lagoon) {
+		return nil // nothing to do
+	}
+	if err = loginToken(); err != nil {
+		return fmt.Errorf("Couldn't refresh token, try `lagoon login`: %w", err)
+	}
+	// set up the clients
+	eClient, err = environments.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		return err
+	}
+	uClient, err = users.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		return err
+	}
+	pClient, err = projects.New(debugEnable)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		return err
+	}
+	outputOptions.Debug = debugEnable
+	return nil
 }

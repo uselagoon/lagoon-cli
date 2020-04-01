@@ -33,8 +33,10 @@ type NotificationType string
 
 // . .
 const (
-	SlackNotification      NotificationType = "SLACK"
-	RocketChatNotification NotificationType = "ROCKETCHAT"
+	SlackNotification          NotificationType = "SLACK"
+	RocketChatNotification     NotificationType = "ROCKETCHAT"
+	EmailNotification          NotificationType = "EMAIL"
+	MicrosoftTeamsNotification NotificationType = "MICROSOFTTEAMS"
 )
 
 // DeploymentStatusType .
@@ -65,9 +67,11 @@ type EnvVariableScope string
 
 // . .
 const (
-	BuildVar   EnvVariableScope = "BUILD"
-	RuntimeVar EnvVariableScope = "RUNTIME"
-	GlobalVar  EnvVariableScope = "GLOBAL"
+	BuildVar                     EnvVariableScope = "BUILD"
+	RuntimeVar                   EnvVariableScope = "RUNTIME"
+	GlobalVar                    EnvVariableScope = "GLOBAL"
+	InternalContainerRegistryVar EnvVariableScope = "INTERNAL_CONTAINER_REGISTRY"
+	ContainerRegistryVar         EnvVariableScope = "CONTAINER_REGISTRY"
 )
 
 // TaskStatusType .
