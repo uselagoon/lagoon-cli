@@ -53,9 +53,11 @@ func (c *Config) UnmarshalJSON(data []byte) error {
 		"development": api.DevelopmentEnv,
 	}
 	envVarScope := map[api.EnvVariableScope]api.EnvVariableScope{
-		"build":   api.BuildVar,
-		"runtime": api.RuntimeVar,
-		"global":  api.GlobalVar,
+		"build":                       api.BuildVar,
+		"runtime":                     api.RuntimeVar,
+		"global":                      api.GlobalVar,
+		"internal_container_registry": api.InternalContainerRegistryVar,
+		"container_registry":          api.ContainerRegistryVar,
 	}
 	for _, project := range uc.Projects {
 		for j, ev := range project.EnvVariables {
