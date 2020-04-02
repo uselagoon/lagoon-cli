@@ -1,19 +1,21 @@
-## lagoon config current
+## lagoon export
 
-Display the current lagoon that commands would be executed against
+Export lagoon output to yaml
 
 ### Synopsis
 
-Display the current lagoon that commands would be executed against
+Export lagoon output to yaml
+You must specify to export a specific project by using the '-p <project-name>' flag
 
 ```
-lagoon config current [flags]
+lagoon export [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for current
+      --exclude strings   Exclude data from the export. Valid options (others are ignored): users, project-users, groups, notifications, project-private-keys (default [project-private-keys])
+  -h, --help              help for export
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +36,5 @@ lagoon config current [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

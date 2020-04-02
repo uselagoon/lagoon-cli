@@ -1,19 +1,24 @@
-## lagoon config current
+## lagoon import
 
-Display the current lagoon that commands would be executed against
+Import a config from a yaml file
 
 ### Synopsis
 
-Display the current lagoon that commands would be executed against
+Import a config from a yaml file.
+By default this command will exit on encountering an error (such as an existing object).
+You can get it to continue anyway with --keep-going. To disable any prompts, use --force.
 
 ```
-lagoon config current [flags]
+lagoon import [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for current
+  -h, --help                 help for import
+  -I, --import-file string   path to the file to import
+      --keep-going           on error, just log and continue instead of aborting
+      --openshiftID uint     ID of the openshift to target for import
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +39,5 @@ lagoon config current [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

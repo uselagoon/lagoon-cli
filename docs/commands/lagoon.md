@@ -35,7 +35,9 @@ lagoon [flags]
 * [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - Deploy a branch or environment
+* [lagoon export](lagoon_export.md)	 - Export lagoon output to yaml
 * [lagoon get](lagoon_get.md)	 - Get info on a resource
+* [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
 * [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
 * [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
