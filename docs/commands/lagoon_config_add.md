@@ -13,6 +13,7 @@ lagoon config add [flags]
 ### Options
 
 ```
+      --create-config     Create the config file if it is non existent (to be used with --config-file)
   -g, --graphql string    Lagoon GraphQL endpoint
   -h, --help              help for add
   -H, --hostname string   Lagoon SSH hostname
@@ -25,6 +26,7 @@ lagoon config add [flags]
 ### Options inherited from parent commands
 
 ```
+      --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
       --force                Force yes on prompts (if supported)

@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/Masterminds/semver v1.4.2
-	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/mock v1.4.0
 	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
@@ -22,7 +21,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
-	github.com/spf13/viper v1.5.0
+	github.com/spf13/viper v1.6.2
 	github.com/stretchr/testify v1.2.2
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/text v0.3.2 // indirect

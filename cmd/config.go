@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -58,7 +59,7 @@ var configDefaultCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		viper.Set("default", strings.TrimSpace(string(lagoonConfig.Lagoon)))
-		err := viper.WriteConfig()
+		err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
 
 		resultData := output.Result{
@@ -140,7 +141,7 @@ var configAddCmd = &cobra.Command{
 			if lagoonConfig.Token != "" {
 				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
 			}
-			err := viper.WriteConfig()
+			err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -196,7 +197,7 @@ var configFeatureSwitch = &cobra.Command{
 		case "false":
 			viper.Set("updateCheckDisable", false)
 		}
-		err := viper.WriteConfig()
+		err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -227,6 +228,7 @@ func init() {
 	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
 	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
 	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "", "Lagoon UI location (https://ui-lagoon-master.ch.amazee.io)")
+	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false, "Create the config file if it is non existent (to be used with --config-file)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
 }
