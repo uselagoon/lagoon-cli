@@ -22,7 +22,7 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-// GetLagoonConfigFile .
+// GetLagoonConfigFile get the configpath, name and extension from the config init so we can pass it back to be used by the rest of the cli
 func GetLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our confg file
 	var configFilePath string
