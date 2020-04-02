@@ -14,7 +14,7 @@ lagoon delete variable [flags]
 
 ```
   -h, --help          help for variable
-  -N, --name string   Name of the variable to add
+  -N, --name string   Name of the variable to delete
 ```
 
 ### Options inherited from parent commands
