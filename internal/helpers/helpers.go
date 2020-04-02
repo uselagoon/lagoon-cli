@@ -23,7 +23,7 @@ func FileExists(filename string) bool {
 }
 
 // GetLagoonConfigFile .
-func GetLagoonConfigFile(userPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
+func GetLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar to define our confg file
 	var configFilePath string
 	if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); !ok {
@@ -36,12 +36,12 @@ func GetLagoonConfigFile(userPath *string, configName *string, configExtension *
 	}
 	if configFilePath != "" {
 		if FileExists(configFilePath) || createConfig {
-			*userPath = filepath.Dir(configFilePath)
+			*configPath = filepath.Dir(configFilePath)
 			*configExtension = filepath.Ext(configFilePath)
 			*configName = strings.TrimSuffix(filepath.Base(configFilePath), *configExtension)
 			return nil
 		}
-		return fmt.Errorf("%s/%s File doesn't exist", *userPath, configFilePath)
+		return fmt.Errorf("%s/%s File doesn't exist", *configPath, configFilePath)
 
 	}
 	// no config file found

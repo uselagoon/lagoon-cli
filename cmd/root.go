@@ -35,6 +35,7 @@ var configName = ".lagoon"
 var configExtension = ".yml"
 var createConfig bool
 var userPath string
+var configFilePath string
 var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
@@ -207,9 +208,10 @@ func initConfig() {
 		output.RenderError(fmt.Errorf("couldn't get $HOME: %v", err).Error(), outputOptions)
 		os.Exit(1)
 	}
+	configFilePath := userPath
 
 	// check if we are being given a path to a different config file
-	err = helpers.GetLagoonConfigFile(&userPath, &configName, &configExtension, createConfig, rootCmd)
+	err = helpers.GetLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -218,7 +220,7 @@ func initConfig() {
 	// Search config in userPath directory with default name ".lagoon" (without extension).
 	// @todo see if we can grok the proper info from the cwd .lagoon.yml
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(userPath)
+	viper.AddConfigPath(configFilePath)
 	viper.SetConfigName(configName)
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -230,7 +232,7 @@ func initConfig() {
 		viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
 		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
 		viper.SetDefault("default", "amazeeio")
-		err = viper.WriteConfigAs(filepath.Join(userPath, configName+configExtension))
+		err = viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
