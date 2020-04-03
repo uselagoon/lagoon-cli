@@ -208,7 +208,7 @@ func initConfig() {
 		output.RenderError(fmt.Errorf("couldn't get $HOME: %v", err).Error(), outputOptions)
 		os.Exit(1)
 	}
-	configFilePath := userPath
+	configFilePath = userPath
 
 	// check if we are being given a path to a different config file
 	err = helpers.GetLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
@@ -256,7 +256,9 @@ func initConfig() {
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
-	cmdProject, _ = app.GetLocalProject()
+	if viper.GetBool("projectDirectoryCheckDisable") == false {
+		cmdProject, _ = app.GetLocalProject()
+	}
 	if cmdProject.Name != "" && cmdProjectName == "" {
 		cmdProjectName = cmdProject.Name
 	}
