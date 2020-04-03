@@ -197,6 +197,12 @@ var configFeatureSwitch = &cobra.Command{
 		case "false":
 			viper.Set("updateCheckDisable", false)
 		}
+		switch projectDirectoryCheck {
+		case "true":
+			viper.Set("projectDirectoryCheckDisable", true)
+		case "false":
+			viper.Set("projectDirectoryCheckDisable", false)
+		}
 		err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -215,6 +221,7 @@ var configGetCurrent = &cobra.Command{
 }
 
 var updateCheck string
+var projectDirectoryCheck string
 
 func init() {
 	configCmd.AddCommand(configAddCmd)
@@ -231,4 +238,5 @@ func init() {
 	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false, "Create the config file if it is non existent (to be used with --config-file)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
+	configFeatureSwitch.Flags().StringVarP(&projectDirectoryCheck, "disable-project-directory-check", "", "", "Enable or disable checking of local directory for lagoon project (true/false)")
 }
