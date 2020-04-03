@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
@@ -26,10 +27,14 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
-	b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
-	handleError(err)
-	splitKey := strings.Split(string(b), " ")
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) api.SSHKey {
+	// if we haven't got a keyvalue
+	if keyValue == "" {
+		b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
+		handleError(err)
+		keyValue = string(b)
+	}
+	splitKey := strings.Split(keyValue, " ")
 	var keyType api.SSHKeyType
 	// default to ssh-rsa, otherwise check if ssh-ed25519
 	// will fail if neither are right
@@ -40,14 +45,14 @@ func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
 		//strip new line
-		keyName = strings.TrimSuffix(splitKey[2], "\n")
+		keyName = helpers.StripNewLines(splitKey[2])
 	} else if keyName == "" && len(splitKey) == 2 {
-		output.RenderError("no name provided", outputOptions)
-		os.Exit(1)
+		keyName = userEmail
+		output.RenderInfo("no name provided, using email address as key name", outputOptions)
 	}
 	parsedFlags := api.SSHKey{
 		KeyType:  keyType,
-		KeyValue: splitKey[1],
+		KeyValue: helpers.StripNewLines(splitKey[1]),
 		Name:     keyName,
 	}
 	return parsedFlags
@@ -83,6 +88,22 @@ var addUserSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"uk"},
 	Short:   "Add an sshkey to a user",
+	Long: `Add an sshkey to a user
+
+Examples:
+Add key from public key file:
+  lagoon add user-sshkey --email test@example.com --pubkey /path/to/id_rsa.pub
+
+Add key by defining full key value:
+  lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example"
+
+Add key by defining full key value, but a specific key name:
+  lagoon add user-sshkey --email test@example.com --keyname my-computer@example --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+
+Add key by defining key value, but not specifying a key name (will default to try using the email address as key name):
+  lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
@@ -90,7 +111,7 @@ var addUserSSHKeyCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		userSSHKey := parseSSHKeyFile(pubKeyFile, sshKeyName)
+		userSSHKey := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
 		var customReqResult []byte
 		var err error
 		customReqResult, err = uClient.AddSSHKeyToUser(userFlags, userSSHKey)
@@ -232,6 +253,7 @@ var getAllUserKeysCmd = &cobra.Command{
 
 var (
 	currentUserEmail string
+	pubKeyValue      string
 )
 
 func init() {
@@ -240,7 +262,8 @@ func init() {
 	addUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey (optional, if not provided will try use what is in the pubkey file)")
-	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "file location to the public key to add")
+	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "Specify path to the public key to add")
+	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyValue, "keyvalue", "V", "", "Value of the public key to add (ssh-ed25519 AAA..)")
 	deleteUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	deleteSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey")
 	updateUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "New firstname of the user")
