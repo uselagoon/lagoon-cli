@@ -47,7 +47,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string) api.SSHKey {
 	}
 	parsedFlags := api.SSHKey{
 		KeyType:  keyType,
-		KeyValue: splitKey[1],
+		KeyValue: strings.TrimSuffix(splitKey[1], "\n"),
 		Name:     keyName,
 	}
 	return parsedFlags
