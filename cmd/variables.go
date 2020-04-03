@@ -133,5 +133,5 @@ func init() {
 	addVariableCmd.Flags().StringVarP(&variableValue, "value", "V", "", "Value of the variable to add")
 	addVariableCmd.Flags().StringVarP(&variableScope, "scope", "S", "", "Scope of the variable[global, build, runtime]")
 	addVariableCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
-	deleteVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to add")
+	deleteVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to delete")
 }
