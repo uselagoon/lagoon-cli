@@ -29,7 +29,7 @@ func GetLagoonConfigFile(configPath *string, configName *string, configExtension
 	var configFilePath string
 	configFilePath, err := cmd.Flags().GetString("config-file")
 	if err != nil {
-		return err
+		return fmt.Errorf("Error reading flag `config-file`: %v", err)
 	}
 	if configFilePath == "" {
 		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); ok {
@@ -56,7 +56,7 @@ func GetLagoonContext(lagoon *string, cmd *cobra.Command) error {
 	var lagoonContext string
 	lagoonContext, err := cmd.Flags().GetString("lagoon")
 	if err != nil {
-		return err
+		return fmt.Errorf("Error reading flag `lagoon`: %v", err)
 	}
 	if lagoonContext == "" {
 		if lagoonContextEnvar, ok := os.LookupEnv("LAGOONCONTEXT"); ok {
@@ -72,7 +72,6 @@ func GetLagoonContext(lagoon *string, cmd *cobra.Command) error {
 			*lagoon = viper.GetString("default")
 		}
 	}
-	// no config file found
 	return nil
 }
 
