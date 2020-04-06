@@ -75,3 +75,8 @@ func GetLagoonContext(lagoon *string, cmd *cobra.Command) error {
 	// no config file found
 	return nil
 }
+
+// StripNewLines will strip new lines from strings helper
+func StripNewLines(stripString string) string {
+	return strings.TrimSuffix(stripString, "\n")
+}
