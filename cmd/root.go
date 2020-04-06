@@ -238,12 +238,11 @@ func initConfig() {
 			os.Exit(1)
 		}
 	}
-	if cmdLagoon == "" {
-		if viper.GetString("default") == "" {
-			cmdLagoon = "amazeeio"
-		} else {
-			cmdLagoon = viper.GetString("default")
-		}
+	// get the lagoon context to use
+	err = helpers.GetLagoonContext(&cmdLagoon, rootCmd)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
 	}
 	viper.Set("current", strings.TrimSpace(string(cmdLagoon))) // set the current lagoon to whatever we defined from config or as override in a flag
 
