@@ -79,3 +79,11 @@ func GetLagoonContext(lagoon *string, cmd *cobra.Command) error {
 func StripNewLines(stripString string) string {
 	return strings.TrimSuffix(stripString, "\n")
 }
+
+// ReturnNonEmptyString return a `-` if a string is empty
+func ReturnNonEmptyString(value string) string {
+	if len(value) == 0 {
+		return "-"
+	}
+	return value
+}

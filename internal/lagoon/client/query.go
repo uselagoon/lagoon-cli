@@ -26,6 +26,24 @@ func (c *Client) ProjectByName(
 	})
 }
 
+// Me queries the Lagoon API for me, and
+// unmarshals the response into project.
+func (c *Client) Me(
+	ctx context.Context, user *schema.User) error {
+
+	req, err := c.newRequest("_lgraphql/me.graphql",
+		map[string]interface{}{})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.User `json:"me"`
+	}{
+		Response: user,
+	})
+}
+
 // EnvironmentByName queries the Lagoon API for an environment by its name and
 // parent projectID, and unmarshals the response into environment.
 func (c *Client) EnvironmentByName(ctx context.Context, name string,
