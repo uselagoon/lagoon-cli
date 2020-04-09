@@ -46,4 +46,5 @@ lagoon [flags]
 * [lagoon update](lagoon_update.md)	 - Update a resource
 * [lagoon version](lagoon_version.md)	 - Version information
 * [lagoon web](lagoon_web.md)	 - Launch the web user interface
+* [lagoon whoami](lagoon_whoami.md)	 - Whoami will return your user information for lagoon
 
