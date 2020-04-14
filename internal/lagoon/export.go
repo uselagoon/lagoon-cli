@@ -5,6 +5,7 @@ package lagoon
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 )
@@ -24,6 +25,11 @@ func ExportProject(ctx context.Context,
 	if err != nil {
 		return nil, fmt.Errorf("couldn't perform request: %w", err)
 	}
+
+	// sort EnvVariables by name
+	sort.Slice(project.EnvVariables, func(i, j int) bool {
+		return project.EnvVariables[i].Name < project.EnvVariables[j].Name
+	})
 
 	return schema.ProjectsToConfig([]schema.Project{project}, exclude)
 }
