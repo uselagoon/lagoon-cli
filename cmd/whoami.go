@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
@@ -37,6 +38,9 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			debug)
 		whoami, err := lagoon.GetMeInfo(context.TODO(), lc)
 		if err != nil {
+			if strings.Contains(err.Error(), "Cannot read property 'access_token' of null") {
+				return fmt.Errorf("Unable to get user information, you may be using an administration token")
+			}
 			return err
 		}
 		whoamiTable, err := formatWhoAmI(whoami)
