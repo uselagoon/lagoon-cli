@@ -4,7 +4,6 @@ package lagoon
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/internal/schema"
@@ -17,15 +16,14 @@ type Me interface {
 
 // GetMeInfo gets info on the current user of lagoon.
 func GetMeInfo(ctx context.Context,
-	m Me) ([]byte, error) {
+	m Me) (*schema.User, error) {
 
-	user := schema.User{}
+	user := &schema.User{}
 
-	err := m.Me(ctx, &user)
+	err := m.Me(ctx, user)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't perform request: %w", err)
+		return user, fmt.Errorf("couldn't perform request: %w", err)
 	}
-	userBytes, _ := json.Marshal(user)
 
-	return userBytes, nil
+	return user, nil
 }

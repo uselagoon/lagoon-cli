@@ -22,7 +22,6 @@ type Group struct {
 		User User          `json:"user"`
 		Role api.GroupRole `json:"role"`
 	} `json:"members,omitempty"`
-	Groups []Group `json:"groups,omitempty"`
 }
 
 // GroupConfig embeds AddGroupInput as well as a list of members.

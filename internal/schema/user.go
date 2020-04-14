@@ -16,5 +16,4 @@ type User struct {
 	AddUserInput
 	ID      *uuid.UUID `json:"id,omitempty"`
 	SSHKeys []SSHKey   `json:"sshKeys,omitempty"`
-	Groups  []Group    `json:"groups,omitempty"`
 }

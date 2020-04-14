@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
-	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/amazeeio/lagoon-cli/internal/schema"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -55,12 +54,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 	},
 }
 
-func formatWhoAmI(whoami []byte) (output.Table, error) {
-	var user api.User
-	err := json.Unmarshal([]byte(whoami), &user)
-	if err != nil {
-		return output.Table{}, fmt.Errorf("Unable to unmarshal result, error was: %v", err)
-	}
+func formatWhoAmI(user *schema.User) (output.Table, error) {
 	userData := []string{
 		helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
 		helpers.ReturnNonEmptyString(user.Email),
