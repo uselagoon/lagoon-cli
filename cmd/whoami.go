@@ -8,7 +8,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
-	"github.com/amazeeio/lagoon-cli/internal/schema"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,42 +34,32 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			viper.GetString("lagoons."+current+".token"),
 			viper.GetString("lagoons."+current+".version"),
 			debug)
-		whoami, err := lagoon.GetMeInfo(context.TODO(), lc)
+
+		user, err := lagoon.GetMeInfo(context.TODO(), lc)
 		if err != nil {
 			if strings.Contains(err.Error(), "Cannot read property 'access_token' of null") {
 				return fmt.Errorf("Unable to get user information, you may be using an administration token")
 			}
 			return err
 		}
-		whoamiTable, err := formatWhoAmI(whoami)
-		if err != nil {
-			return err
-		}
-		if len(whoamiTable.Data) == 0 {
-			return fmt.Errorf(noDataError)
-		}
-		output.RenderOutput(whoamiTable, outputOptions)
+
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"ID",
+				"Email",
+				"FirstName",
+				"LastName",
+			},
+			Data: []output.Data{
+				[]string{
+					helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
+					helpers.ReturnNonEmptyString(user.Email),
+					helpers.ReturnNonEmptyString(user.FirstName),
+					helpers.ReturnNonEmptyString(user.LastName),
+				},
+			},
+		}, outputOptions)
+
 		return nil
 	},
-}
-
-func formatWhoAmI(user *schema.User) (output.Table, error) {
-	userData := []string{
-		helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
-		helpers.ReturnNonEmptyString(user.Email),
-		helpers.ReturnNonEmptyString(user.FirstName),
-		helpers.ReturnNonEmptyString(user.LastName),
-	}
-	table := output.Table{
-		Header: []string{
-			"ID",
-			"Email",
-			"FirstName",
-			"LastName",
-		},
-		Data: []output.Data{
-			userData,
-		},
-	}
-	return table, nil
 }
