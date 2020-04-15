@@ -4,7 +4,6 @@ package lagoon
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 )
@@ -15,15 +14,7 @@ type Me interface {
 }
 
 // GetMeInfo gets info on the current user of lagoon.
-func GetMeInfo(ctx context.Context,
-	m Me) (*schema.User, error) {
-
-	user := &schema.User{}
-
-	err := m.Me(ctx, user)
-	if err != nil {
-		return user, fmt.Errorf("couldn't perform request: %w", err)
-	}
-
-	return user, nil
+func GetMeInfo(ctx context.Context, m Me) (*schema.User, error) {
+	user := schema.User{}
+	return &user, m.Me(ctx, &user)
 }
