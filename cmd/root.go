@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/amazeeio/lagoon-cli/internal/helpers"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/app"
 	"github.com/amazeeio/lagoon-cli/pkg/graphql"
 	"github.com/amazeeio/lagoon-cli/pkg/lagoon/environments"
@@ -40,10 +41,11 @@ var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
 
-// version/build information
+// version/build information (populated at build time by make file)
 var (
-	version string
-	build   string
+	lagoonCLIVersion        = "0.x.x"
+	lagoonCLIBuild          = ""
+	lagoonCLIBuildGoVersion = ""
 )
 
 var rootCmd = &cobra.Command{
@@ -69,7 +71,7 @@ var rootCmd = &cobra.Command{
 				if err != nil {
 					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s", updateFile), outputOptions)
 				}
-				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("amazeeio", "lagoon-cli", version)
+				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("amazeeio", "lagoon-cli", lagoonCLIVersion)
 				if err != nil {
 					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
 					output.RenderError(err.Error(), outputOptions)
@@ -91,6 +93,7 @@ var rootCmd = &cobra.Command{
 		}
 		if versionFlag {
 			displayVersionInfo()
+			os.Exit(0)
 		}
 		cmd.Help()
 		os.Exit(1)
@@ -190,15 +193,15 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version information",
-	Run: func(cmd *cobra.Command, args []string) {
-		displayVersionInfo()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return displayVersionInfo()
 	},
 }
 
-func displayVersionInfo() {
-	fmt.Println("Version:", version)
-	fmt.Println("Build:", build)
-	os.Exit(0)
+func displayVersionInfo() error {
+	fmt.Println(fmt.Sprintf("lagoon %s (%s)", lagoonCLIVersion, lagoonCLIBuildGoVersion))
+	fmt.Println(fmt.Sprintf("built %s", lagoonCLIBuild))
+	return nil
 }
 
 func initConfig() {
@@ -343,6 +346,7 @@ const (
 )
 
 func validateToken(lagoon string) {
+	var err error
 	valid := graphql.VerifyTokenExpiry(lagoon)
 	if valid == false {
 		loginErr := loginToken()
@@ -352,7 +356,6 @@ func validateToken(lagoon string) {
 		}
 	}
 	// set up the clients
-	var err error
 	eClient, err = environments.New(debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
@@ -369,6 +372,13 @@ func validateToken(lagoon string) {
 		os.Exit(1)
 	}
 	outputOptions.Debug = debugEnable
+	// check the API for the version of lagoon if we haven't got one set
+	// otherwise return nil, nothing to do
+	err = versionCheck(lagoon)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
 }
 
 // validateTokenE does the same thing as validateToken, it just returns an
@@ -376,7 +386,9 @@ func validateToken(lagoon string) {
 func validateTokenE(lagoon string) error {
 	var err error
 	if graphql.VerifyTokenExpiry(lagoon) {
-		return nil // nothing to do
+		// check the API for the version of lagoon if we haven't got one set
+		// otherwise return nil, nothing to do
+		return versionCheck(lagoon)
 	}
 	if err = loginToken(); err != nil {
 		return fmt.Errorf("Couldn't refresh token, try `lagoon login`: %w", err)
@@ -398,5 +410,29 @@ func validateTokenE(lagoon string) error {
 		return err
 	}
 	outputOptions.Debug = debugEnable
+	// fallback if token is expired or there was no token to begin with
+	return versionCheck(lagoon)
+}
+
+// check if we have a version set in config, if not get the version.
+// this won't re-check the version if lagoon does update to a new api version
+// @TODO: maybe set a refresh interval or something on this
+func versionCheck(lagoon string) error {
+	if viper.GetString("lagoons."+lagoon+".version") == "" {
+		lc := client.New(
+			viper.GetString("lagoons."+lagoon+".graphql"),
+			viper.GetString("lagoons."+lagoon+".token"),
+			viper.GetString("lagoons."+lagoon+".version"),
+			lagoonCLIVersion,
+			debugEnable)
+		lagoonVersion, err := helpers.GetLagoonAPIVersion(lc)
+		if err != nil {
+			return err
+		}
+		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion)
+		if err = viper.WriteConfig(); err != nil {
+			return fmt.Errorf("couldn't write config: %v", err)
+		}
+	}
 	return nil
 }

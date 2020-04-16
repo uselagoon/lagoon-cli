@@ -7,10 +7,13 @@ ARTIFACT_DESTINATION=$(GOPATH)/bin
 PKG=github.com/amazeeio/lagoon-cli
 PKGMODPATH=$(DIR)/vendor
 
-VERSION=$(shell git rev-parse HEAD)
+VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags))-rc
 BUILD=$(shell date +%FT%T%z)
 
-LDFLAGS=-ldflags "-w -s -X ${PKG}/cmd.version=${VERSION} -X ${PKG}/cmd.build=${BUILD}"
+DOCKER_GO_VER=1.14
+GO_VER=$(shell go version)
+LDFLAGS=-w -s -X ${PKG}/cmd.lagoonCLIVersion=${VERSION} -X ${PKG}/cmd.lagoonCLIBuild=${BUILD}
+
 
 all: deps test build docs
 all-docker-linux: deps-docker test-docker build-docker-linux
@@ -22,16 +25,18 @@ test:
 	GO111MODULE=on $(GOCMD) fmt ./...
 	GO111MODULE=on $(GOCMD) vet ./...
 	GO111MODULE=on $(GOCMD) test -v ./...
+gen:
+	GO111MODULE=on $(GOCMD) generate ./...
 
 clean:
 	$(GOCMD) clean
 
 build:
-	GO111MODULE=on $(GOCMD) build ${LDFLAGS} -o ${ARTIFACT_DESTINATION}/${ARTIFACT_NAME} -v
+	GO111MODULE=on $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o ${ARTIFACT_DESTINATION}/${ARTIFACT_NAME} -v
 build-linux:
-	GO111MODULE=on GOOS=linux GOARCH=amd64 $(GOCMD) build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
+	GO111MODULE=on GOOS=linux GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
 build-darwin:
-	GO111MODULE=on GOOS=darwin GOARCH=amd64 $(GOCMD) build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
+	GO111MODULE=on GOOS=darwin GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
 
 docs: test
 	GO111MODULE=on $(GOCMD) run main.go --docs
@@ -48,7 +53,7 @@ deps-docker:
 	-e GOOS=linux \
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
-	golang go get -v
+	golang:$(DOCKER_GO_VER) go get -v
 
 ## build using docker golang
 test-docker:
@@ -59,7 +64,7 @@ test-docker:
 	-e GOOS=linux \
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
-	golang /bin/bash -c " \
+	golang:$(DOCKER_GO_VER) /bin/bash -c " \
 	go fmt ./... && \
 	go vet ./... && \
 	go test -v ./..."
@@ -73,7 +78,7 @@ build-docker-linux:
 	-e GOOS=linux \
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
-	golang go build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-linux-amd64
+	golang:$(DOCKER_GO_VER) go build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-linux-amd64
 
 build-docker-darwin:
 	docker run \
@@ -83,7 +88,7 @@ build-docker-darwin:
 	-e GOOS=darwin \
 	-e GOARCH=amd64 \
 	-w="/go/src/${PKG}/" \
-	golang go build ${LDFLAGS} -o builds/lagoon-cli-${VERSION}-darwin-amd64
+	golang:$(DOCKER_GO_VER) go build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64
 
 install-linux:
 	cp builds/lagoon-cli-${VERSION}-linux-amd64 ${ARTIFACT_DESTINATION}/lagoon

@@ -33,6 +33,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
 			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
 			debug)
 
 		user, err := lagoon.GetMeInfo(context.TODO(), lc)

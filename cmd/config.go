@@ -6,10 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 
+	"github.com/amazeeio/lagoon-cli/internal/helpers"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
-	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -76,43 +78,43 @@ var configLagoonsCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l"},
 	Short:   "View all configured Lagoon instances",
-	Run: func(cmd *cobra.Command, args []string) {
-		lagoons := viper.Get("lagoons")
-		lagoonsMap := reflect.ValueOf(lagoons).MapKeys()
-		if !outputOptions.CSV && !outputOptions.JSON {
-			fmt.Println("You have the following Lagoon instances configured:")
-			for _, lagoon := range lagoonsMap {
-				fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), lagoon))
-				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Hostname"), viper.GetString("lagoons."+lagoon.String()+".hostname")))
-				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("GraphQL"), viper.GetString("lagoons."+lagoon.String()+".graphql")))
-				fmt.Println(fmt.Sprintf(" - %s: %d", aurora.Yellow("Port"), viper.GetInt("lagoons."+lagoon.String()+".port")))
-				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("UI"), viper.GetString("lagoons."+lagoon.String()+".ui")))
-				fmt.Println(fmt.Sprintf(" - %s: %s", aurora.Yellow("Kibana"), viper.GetString("lagoons."+lagoon.String()+".kibana")))
+	RunE: func(cmd *cobra.Command, args []string) error {
+		var data []output.Data
+		for _, lagoon := range reflect.ValueOf(viper.Get("lagoons")).MapKeys() {
+			var isDefault, isCurrent string
+			if lagoon.String() == viper.Get("default") {
+				isDefault = "(default)"
 			}
-			fmt.Println("\nYour default Lagoon is:")
-			fmt.Println(fmt.Sprintf("%s: %s\n", aurora.Yellow("Name"), viper.Get("default")))
-			fmt.Println("Your current lagoon is:")
-			fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Name"), viper.Get("current")))
-		} else {
-			var lagoonsData []map[string]interface{}
-			for _, lagoon := range lagoonsMap {
-				lagoonMapData := map[string]interface{}{
-					"name":     fmt.Sprintf("%s", lagoon),
-					"hostname": viper.GetString("lagoons." + lagoon.String() + ".hostname"),
-					"graphql":  viper.GetString("lagoons." + lagoon.String() + ".graphql"),
-					"port":     viper.GetString("lagoons." + lagoon.String() + ".port"),
-					"ui":       viper.GetString("lagoons." + lagoon.String() + ".ui"),
-					"kibana":   viper.GetString("lagoons." + lagoon.String() + ".Kibana"),
-				}
-				lagoonsData = append(lagoonsData, lagoonMapData)
+			if lagoon.String() == viper.Get("current") {
+				isCurrent = "(current)"
 			}
-			returnedData := map[string]interface{}{
-				"lagoons":        lagoonsData,
-				"default-lagoon": viper.Get("default"),
-				"current-lagoon": viper.Get("current"),
+			mapData := []string{
+				helpers.ReturnNonEmptyString(fmt.Sprintf("%s%s%s", lagoon, isDefault, isCurrent)),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".version")),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".graphql")),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".hostname")),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".port")),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".ui")),
+				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".Kibana")),
 			}
-			output.RenderJSON(returnedData, outputOptions)
+			data = append(data, mapData)
 		}
+		sort.Slice(data, func(i, j int) bool {
+			return data[i][0] < data[j][0]
+		})
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"Name",
+				"Version",
+				"GraphQL",
+				"SSH-Hostname",
+				"SSH-Port",
+				"UI-URL",
+				"Kibana-URL",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
@@ -120,12 +122,10 @@ var configAddCmd = &cobra.Command{
 	Use:     "add",
 	Aliases: []string{"a"},
 	Short:   "Add information about an additional Lagoon instance to use",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
-			fmt.Println("Missing arguments: Lagoon name is not defined")
-			cmd.Help()
-			os.Exit(1)
+			return fmt.Errorf("Missing arguments: Lagoon name is not defined")
 		}
 
 		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
@@ -143,24 +143,33 @@ var configAddCmd = &cobra.Command{
 			}
 			err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
+				return err
 			}
-			resultData := output.Result{
-				Result: "success",
-				ResultData: map[string]interface{}{
-					"lagoon":   lagoonConfig.Lagoon,
-					"hostname": lagoonConfig.Hostname,
-					"graphql":  lagoonConfig.GraphQL,
-					"port":     lagoonConfig.Port,
-					"ui":       lagoonConfig.UI,
-					"kibana":   lagoonConfig.Kibana,
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"Name",
+					"GraphQL",
+					"SSH-Hostname",
+					"SSH-Port",
+					"UI-URL",
+					"Kibana-URL",
 				},
-			}
-			output.RenderResult(resultData, outputOptions)
+				Data: []output.Data{
+					[]string{
+
+						lagoonConfig.Lagoon,
+						lagoonConfig.GraphQL,
+						lagoonConfig.Hostname,
+						lagoonConfig.Port,
+						lagoonConfig.UI,
+						lagoonConfig.Kibana,
+					},
+				},
+			}, outputOptions)
 		} else {
 			output.RenderError("Must have Hostname, Port, and GraphQL endpoint", outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -214,9 +223,42 @@ var configFeatureSwitch = &cobra.Command{
 var configGetCurrent = &cobra.Command{
 	Use:     "current",
 	Aliases: []string{"cur"},
-	Short:   "Display the current lagoon that commands would be executed against",
+	Short:   "Display the current Lagoon that commands would be executed against",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(viper.GetString("current"))
+	},
+}
+
+var configLagoonVersionCmd = &cobra.Command{
+	Use:     "lagoon-version",
+	Aliases: []string{"l"},
+	Hidden:  false,
+	Short:   "Checks the current Lagoon for its version and sets it in the config file",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := viper.GetString("current")
+		lc := client.New(
+			viper.GetString("lagoons."+current+".graphql"),
+			viper.GetString("lagoons."+current+".token"),
+			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
+			debug)
+		lagoonVersion, err := helpers.GetLagoonAPIVersion(lc)
+		if err != nil {
+			return err
+		}
+		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion)
+		if err = viper.WriteConfig(); err != nil {
+			return fmt.Errorf("couldn't write config: %v", err)
+		}
+		fmt.Println(lagoonVersion)
+		return nil
 	},
 }
 
@@ -230,6 +272,7 @@ func init() {
 	configCmd.AddCommand(configDeleteCmd)
 	configCmd.AddCommand(configFeatureSwitch)
 	configCmd.AddCommand(configLagoonsCmd)
+	configCmd.AddCommand(configLagoonVersionCmd)
 	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
 	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
 	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
@@ -238,5 +281,5 @@ func init() {
 	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false, "Create the config file if it is non existent (to be used with --config-file)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
-	configFeatureSwitch.Flags().StringVarP(&projectDirectoryCheck, "disable-project-directory-check", "", "", "Enable or disable checking of local directory for lagoon project (true/false)")
+	configFeatureSwitch.Flags().StringVarP(&projectDirectoryCheck, "disable-project-directory-check", "", "", "Enable or disable checking of local directory for Lagoon project (true/false)")
 }

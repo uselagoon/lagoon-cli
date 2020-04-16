@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -78,6 +79,31 @@ func GetLagoonContext(lagoon *string, cmd *cobra.Command) error {
 // StripNewLines will strip new lines from strings helper
 func StripNewLines(stripString string) string {
 	return strings.TrimSuffix(stripString, "\n")
+}
+
+// GreaterThanOrEqualVersion return the given or greater than version
+func GreaterThanOrEqualVersion(a string, b string) (string, error) {
+	aVer, err := version.NewSemver(a)
+	if err != nil {
+		return a, err
+	}
+	bVer, err := version.NewSemver(b)
+	if err != nil {
+		return b, err
+	}
+	if aVer.GreaterThanOrEqual(bVer) {
+		return a, nil
+	}
+	return b, nil
+}
+
+// IsValidSemver check if string is valid semver
+func IsValidSemver(a string) bool {
+	_, err := version.NewSemver(a)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 // ReturnNonEmptyString return a `-` if a string is empty

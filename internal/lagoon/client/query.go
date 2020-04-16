@@ -64,3 +64,35 @@ func (c *Client) EnvironmentByName(ctx context.Context, name string,
 		Response: environment,
 	})
 }
+
+// LagoonAPIVersion queries the Lagoon API for its version, and
+// unmarshals the response.
+func (c *Client) LagoonAPIVersion(
+	ctx context.Context, lagoonAPIVersion *map[string]string) error {
+
+	req, err := c.newRequest("_lgraphql/lagoonVersion.graphql",
+		map[string]interface{}{})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &lagoonAPIVersion)
+}
+
+// LagoonSchema queries the Lagoon API for its schema, and
+// unmarshals the response.
+func (c *Client) LagoonSchema(
+	ctx context.Context, lagoonSchema *schema.LagoonSchema) error {
+
+	req, err := c.newRequest("_lgraphql/lagoonSchema.graphql",
+		map[string]interface{}{})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.LagoonSchema `json:"__schema"`
+	}{
+		Response: lagoonSchema,
+	})
+}
