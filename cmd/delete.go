@@ -6,9 +6,8 @@ import (
 )
 
 var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Aliases: []string{"d"},
-	Short:   "Delete a project, or delete notifications and variables from projects or environments",
+	Use:   "delete",
+	Short: "Delete a project, or delete notifications and variables from projects or environments",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
