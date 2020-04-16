@@ -13,7 +13,7 @@ lagoon config feature [flags]
 ### Options
 
 ```
-      --disable-project-directory-check string   Enable or disable checking of local directory for lagoon project (true/false)
+      --disable-project-directory-check string   Enable or disable checking of local directory for Lagoon project (true/false)
       --disable-update-check string              Enable or disable checking of updates (true/false)
   -h, --help                                     help for feature
 ```

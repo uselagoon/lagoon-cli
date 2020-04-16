@@ -1,10 +1,10 @@
 ## lagoon config lagoon-version
 
-Checks the current lagoon for its version and sets it in the config file
+Checks the current Lagoon for its version and sets it in the config file
 
 ### Synopsis
 
-Checks the current lagoon for its version and sets it in the config file
+Checks the current Lagoon for its version and sets it in the config file
 
 ```
 lagoon config lagoon-version [flags]

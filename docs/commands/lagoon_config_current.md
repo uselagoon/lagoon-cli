@@ -1,10 +1,10 @@
 ## lagoon config current
 
-Display the current lagoon that commands would be executed against
+Display the current Lagoon that commands would be executed against
 
 ### Synopsis
 
-Display the current lagoon that commands would be executed against
+Display the current Lagoon that commands would be executed against
 
 ```
 lagoon config current [flags]
