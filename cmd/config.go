@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,9 +10,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/helpers"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
+	"github.com/amazeeio/lagoon-cli/internal/schema"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -89,13 +92,13 @@ var configLagoonsCmd = &cobra.Command{
 				isCurrent = "(current)"
 			}
 			mapData := []string{
-				helpers.ReturnNonEmptyString(fmt.Sprintf("%s%s%s", lagoon, isDefault, isCurrent)),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".version")),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".graphql")),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".hostname")),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".port")),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".ui")),
-				helpers.ReturnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".Kibana")),
+				returnNonEmptyString(fmt.Sprintf("%s%s%s", lagoon, isDefault, isCurrent)),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".version")),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".graphql")),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".hostname")),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".port")),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".ui")),
+				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".Kibana")),
 			}
 			data = append(data, mapData)
 		}
@@ -167,7 +170,7 @@ var configAddCmd = &cobra.Command{
 				},
 			}, outputOptions)
 		} else {
-			output.RenderError("Must have Hostname, Port, and GraphQL endpoint", outputOptions)
+			return fmt.Errorf("Must have Hostname, Port, and GraphQL endpoint")
 		}
 		return nil
 	},
@@ -232,7 +235,6 @@ var configGetCurrent = &cobra.Command{
 var configLagoonVersionCmd = &cobra.Command{
 	Use:     "lagoon-version",
 	Aliases: []string{"l"},
-	Hidden:  false,
 	Short:   "Checks the current Lagoon for its version and sets it in the config file",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -249,7 +251,7 @@ var configLagoonVersionCmd = &cobra.Command{
 			viper.GetString("lagoons."+current+".version"),
 			lagoonCLIVersion,
 			debug)
-		lagoonVersion, err := helpers.GetLagoonAPIVersion(lc)
+		lagoonVersion, err := getLagoonAPIVersion(lc)
 		if err != nil {
 			return err
 		}
@@ -282,4 +284,96 @@ func init() {
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs-db-ui-lagoon-master.ch.amazee.io)")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
 	configFeatureSwitch.Flags().StringVarP(&projectDirectoryCheck, "disable-project-directory-check", "", "", "Enable or disable checking of local directory for Lagoon project (true/false)")
+}
+
+// get the version of the api, or fall back to schema checks
+func getLagoonAPIVersion(lc *client.Client) (string, error) {
+	// always start at v1.0.0
+	lagoonVersion := "v1.0.0"
+
+	// if we have the api version available, just use it
+	lagoonAPIVersion, err := lagoon.GetLagoonAPIVersion(context.TODO(), lc)
+	if err != nil {
+		if !strings.Contains(err.Error(), `Cannot query field "lagoonVersion" on type "Query"`) {
+			return lagoonVersion, err
+		}
+	}
+	if lagoonAPIVersion.LagoonVersion != "" {
+		lagoonVersion = lagoonAPIVersion.LagoonVersion
+		if isValidSemver(lagoonVersion) {
+			// if we get a valid version from the api, drop off here
+			return lagoonVersion, nil
+		}
+	}
+	// otherwise lets try to determine from schema changes
+	lagoonSchema, err := lagoon.GetLagoonSchema(context.TODO(), lc)
+	if err != nil {
+		return lagoonVersion, err
+	}
+	return determineLagoonVersion(lagoonVersion, *lagoonSchema)
+}
+
+// determine the version of the API based on the schema
+func determineLagoonVersion(lagoonVersion string, lagoonSchema schema.LagoonSchema) (string, error) {
+	var err error
+	for _, schemaType := range lagoonSchema.Types {
+		if schemaType.Name == "Mutation" {
+			for _, field := range schemaType.Fields {
+				if field.Name == "switchActiveStandby" {
+					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.4.0")
+					if err != nil {
+						return lagoonVersion, err
+					}
+				}
+			}
+		}
+		if schemaType.Name == "Query" {
+			for _, field := range schemaType.Fields {
+				if field.Name == "allGroups" {
+					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.1.0")
+					if err != nil {
+						return lagoonVersion, err
+					}
+				}
+				if field.Name == "me" {
+					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.3.0")
+					if err != nil {
+						return lagoonVersion, err
+					}
+				}
+			}
+		}
+		if schemaType.Name == "NotificationMicrosoftTeams" {
+			lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.2.0")
+			if err != nil {
+				return lagoonVersion, err
+			}
+		}
+	}
+	return lagoonVersion, nil
+}
+
+// return the given or greater than version
+func greaterThanOrEqualVersion(a string, b string) (string, error) {
+	aVer, err := version.NewSemver(a)
+	if err != nil {
+		return a, err
+	}
+	bVer, err := version.NewSemver(b)
+	if err != nil {
+		return b, err
+	}
+	if aVer.GreaterThanOrEqual(bVer) {
+		return a, nil
+	}
+	return b, nil
+}
+
+// check if string is valid semver
+func isValidSemver(a string) bool {
+	_, err := version.NewSemver(a)
+	if err != nil {
+		return false
+	}
+	return true
 }

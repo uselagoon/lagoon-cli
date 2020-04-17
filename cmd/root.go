@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/app"
 	"github.com/amazeeio/lagoon-cli/pkg/graphql"
@@ -193,15 +192,14 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version information",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return displayVersionInfo()
+	Run: func(cmd *cobra.Command, args []string) {
+		displayVersionInfo()
 	},
 }
 
-func displayVersionInfo() error {
+func displayVersionInfo() {
 	fmt.Println(fmt.Sprintf("lagoon %s (%s)", lagoonCLIVersion, lagoonCLIBuildGoVersion))
 	fmt.Println(fmt.Sprintf("built %s", lagoonCLIBuild))
-	return nil
 }
 
 func initConfig() {
@@ -215,7 +213,7 @@ func initConfig() {
 	configFilePath = userPath
 
 	// check if we are being given a path to a different config file
-	err = helpers.GetLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
+	err = getLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -243,7 +241,7 @@ func initConfig() {
 		}
 	}
 	// get the lagoon context to use
-	err = helpers.GetLagoonContext(&cmdLagoon, rootCmd)
+	err = getLagoonContext(&cmdLagoon, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -425,13 +423,64 @@ func versionCheck(lagoon string) error {
 			viper.GetString("lagoons."+lagoon+".version"),
 			lagoonCLIVersion,
 			debugEnable)
-		lagoonVersion, err := helpers.GetLagoonAPIVersion(lc)
+		lagoonVersion, err := getLagoonAPIVersion(lc)
 		if err != nil {
 			return err
 		}
 		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion)
 		if err = viper.WriteConfig(); err != nil {
 			return fmt.Errorf("couldn't write config: %v", err)
+		}
+	}
+	return nil
+}
+
+
+func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
+	// check if we have an envvar or flag to define our confg file
+	var configFilePath string
+	configFilePath, err := cmd.Flags().GetString("config-file")
+	if err != nil {
+		return fmt.Errorf("Error reading flag `config-file`: %v", err)
+	}
+	if configFilePath == "" {
+		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); ok {
+			configFilePath = lagoonConfigEnvar
+		}
+	}
+	if configFilePath != "" {
+		if fileExists(configFilePath) || createConfig {
+			*configPath = filepath.Dir(configFilePath)
+			*configExtension = filepath.Ext(configFilePath)
+			*configName = strings.TrimSuffix(filepath.Base(configFilePath), *configExtension)
+			return nil
+		}
+		return fmt.Errorf("%s/%s File doesn't exist", *configPath, configFilePath)
+
+	}
+	// no config file found
+	return nil
+}
+
+func getLagoonContext(lagoon *string, cmd *cobra.Command) error {
+	// check if we have an envvar or flag to define our lagoon context
+	var lagoonContext string
+	lagoonContext, err := cmd.Flags().GetString("lagoon")
+	if err != nil {
+		return fmt.Errorf("Error reading flag `lagoon`: %v", err)
+	}
+	if lagoonContext == "" {
+		if lagoonContextEnvar, ok := os.LookupEnv("LAGOONCONTEXT"); ok {
+			lagoonContext = lagoonContextEnvar
+		}
+	}
+	if lagoonContext != "" {
+		*lagoon = lagoonContext
+	} else {
+		if viper.GetString("default") == "" {
+			*lagoon = "amazeeio"
+		} else {
+			*lagoon = viper.GetString("default")
 		}
 	}
 	return nil

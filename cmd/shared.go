@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"strings"
 
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 )
@@ -66,4 +67,23 @@ func handleError(err error) {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
+}
+
+func returnNonEmptyString(value string) string {
+	if len(value) == 0 {
+		return "-"
+	}
+	return value
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func stripNewLines(stripString string) string {
+	return strings.TrimSuffix(stripString, "\n")
 }
