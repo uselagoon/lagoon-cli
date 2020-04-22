@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	lagooncli "github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/app"
 	"github.com/amazeeio/lagoon-cli/pkg/graphql"
@@ -423,18 +425,17 @@ func versionCheck(lagoon string) error {
 			viper.GetString("lagoons."+lagoon+".version"),
 			lagoonCLIVersion,
 			debugEnable)
-		lagoonVersion, err := getLagoonAPIVersion(lc)
+		lagoonVersion, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
-		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion)
+		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion.LagoonVersion)
 		if err = viper.WriteConfig(); err != nil {
 			return fmt.Errorf("couldn't write config: %v", err)
 		}
 	}
 	return nil
 }
-
 
 func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our confg file
