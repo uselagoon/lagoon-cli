@@ -41,6 +41,9 @@ func GetLagoonAPIVersion(ctx context.Context, l APIVersion) (*schema.LagoonVersi
 	}
 	// otherwise lets try to determine from schema changes
 	lagoonVersion, err = determineLagoonVersion(lagoonVersion, lagoonSchema)
+	if err != nil {
+		return &apiVersion, fmt.Errorf("unable to determine version: %w", err)
+	}
 	apiVersion.LagoonVersion = lagoonVersion
 	return &apiVersion, nil
 }
