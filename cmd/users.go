@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
@@ -45,14 +44,14 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
 		//strip new line
-		keyName = helpers.StripNewLines(splitKey[2])
+		keyName = stripNewLines(splitKey[2])
 	} else if keyName == "" && len(splitKey) == 2 {
 		keyName = userEmail
 		output.RenderInfo("no name provided, using email address as key name", outputOptions)
 	}
 	parsedFlags := api.SSHKey{
 		KeyType:  keyType,
-		KeyValue: helpers.StripNewLines(splitKey[1]),
+		KeyValue: stripNewLines(splitKey[1]),
 		Name:     keyName,
 	}
 	return parsedFlags

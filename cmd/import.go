@@ -52,6 +52,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
 			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
 			debug)
 
 		file, err := os.Open(importFile)
@@ -111,6 +112,7 @@ You must specify to export a specific project by using the '-p <project-name>' f
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
 			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
 			debug)
 
 		conf, err := lagoon.ExportProject(

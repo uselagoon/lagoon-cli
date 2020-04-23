@@ -32,7 +32,7 @@ func (c *Client) Me(
 	ctx context.Context, user *schema.User) error {
 
 	req, err := c.newRequest("_lgraphql/me.graphql",
-		map[string]interface{}{})
+		nil)
 	if err != nil {
 		return err
 	}
@@ -62,5 +62,37 @@ func (c *Client) EnvironmentByName(ctx context.Context, name string,
 		Response *schema.Environment `json:"environmentByName"`
 	}{
 		Response: environment,
+	})
+}
+
+// LagoonAPIVersion queries the Lagoon API for its version, and
+// unmarshals the response.
+func (c *Client) LagoonAPIVersion(
+	ctx context.Context, lagoonAPIVersion *schema.LagoonVersion) error {
+
+	req, err := c.newRequest("_lgraphql/lagoonVersion.graphql",
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &lagoonAPIVersion)
+}
+
+// LagoonSchema queries the Lagoon API for its schema, and
+// unmarshals the response.
+func (c *Client) LagoonSchema(
+	ctx context.Context, lagoonSchema *schema.LagoonSchema) error {
+
+	req, err := c.newRequest("_lgraphql/lagoonSchema.graphql",
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.LagoonSchema `json:"__schema"`
+	}{
+		Response: lagoonSchema,
 	})
 }

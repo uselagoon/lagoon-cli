@@ -17,21 +17,21 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-const lagoonCLIVersion = "0.x.x"
-
 // Client implements the lagoon package interfaces for the Lagoon GraphQL API.
 type Client struct {
 	userAgent  string
 	token      string
 	apiVersion string
+	cliVersion string
 	client     *graphql.Client
 }
 
 // New creates a new Client for the given endpoint.
-func New(endpoint, token, apiVersion string, debug bool) *Client {
+func New(endpoint, token, apiVersion string, cliVersion string, debug bool) *Client {
 	if debug {
 		return &Client{
 			apiVersion: apiVersion,
+			cliVersion: cliVersion,
 			token:      token,
 			client: graphql.NewClient(endpoint,
 				// enable debug logging to stderr
@@ -45,6 +45,7 @@ func New(endpoint, token, apiVersion string, debug bool) *Client {
 	}
 	return &Client{
 		apiVersion: apiVersion,
+		cliVersion: cliVersion,
 		token:      token,
 		client:     graphql.NewClient(endpoint),
 	}
@@ -117,7 +118,7 @@ func (c *Client) doRequest(query string, varStruct interface{}) (*graphql.Reques
 	}
 
 	headers := map[string]string{
-		"User-Agent":    fmt.Sprintf("lagoon-cli version: %s", lagoonCLIVersion),
+		"User-Agent":    fmt.Sprintf("lagoon-cli version: %s", c.cliVersion),
 		"Authorization": fmt.Sprintf("Bearer %s", c.token),
 	}
 	for key, value := range headers {
