@@ -14,7 +14,9 @@ lagoon whoami [flags]
 ### Options
 
 ```
-  -h, --help   help for whoami
+      --fingerprints   Display your SSH keys fingerprints
+  -h, --help           help for whoami
+      --keys           Display your SSH keys
 ```
 
 ### Options inherited from parent commands

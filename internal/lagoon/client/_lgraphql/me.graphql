@@ -4,5 +4,13 @@ query {
         email
         firstName
         lastName
+        sshKeys {
+            id
+            name
+            keyType
+            keyValue
+            keyFingerprint
+            created
+        }
     }
 }

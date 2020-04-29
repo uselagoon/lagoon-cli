@@ -4,9 +4,11 @@ import "github.com/amazeeio/lagoon-cli/pkg/api"
 
 // SSHKey is the basic SSH key information, used by both config and API data.
 type SSHKey struct {
-	Name     string         `json:"name"`
-	KeyValue string         `json:"keyValue"`
-	KeyType  api.SSHKeyType `json:"keyType"`
+	Name           string         `json:"name"`
+	KeyValue       string         `json:"keyValue"`
+	Created        string         `json:"created"`
+	KeyType        api.SSHKeyType `json:"keyType"`
+	KeyFingerprint string         `json:"keyFingerprint"`
 }
 
 // AddSSHKeyInput is based on the Lagoon API type.

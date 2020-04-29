@@ -24,6 +24,17 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		return validateTokenE(viper.GetString("current"))
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		showKeys, err := cmd.Flags().GetBool("keys")
+		if err != nil {
+			return err
+		}
+
+		showFingerprints, err := cmd.Flags().GetBool("fingerprints")
+		if err != nil {
+			return err
+		}
+
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
@@ -43,23 +54,55 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			return err
 		}
 
-		output.RenderOutput(output.Table{
-			Header: []string{
-				"ID",
-				"Email",
-				"FirstName",
-				"LastName",
-			},
-			Data: []output.Data{
-				[]string{
-					helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
-					helpers.ReturnNonEmptyString(user.Email),
-					helpers.ReturnNonEmptyString(user.FirstName),
-					helpers.ReturnNonEmptyString(user.LastName),
+		if showKeys || showFingerprints {
+			// if we are only showing the users keys, leave the users email visible as part
+			// of helping identify the user stil
+			var keys []output.Data
+			for _, key := range user.SSHKeys {
+				if showFingerprints {
+					keys = append(keys, []string{user.Email, key.Name, key.Created, fmt.Sprintf("%s", key.KeyType), key.KeyFingerprint})
+				} else {
+					keys = append(keys, []string{user.Email, key.Name, key.Created, fmt.Sprintf("%s", key.KeyType), key.KeyValue})
+				}
+			}
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"Email",
+					"Name",
+					"Created",
+					"Type",
+					"Value",
 				},
-			},
-		}, outputOptions)
+				Data: keys,
+			}, outputOptions)
+		} else {
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"ID",
+					"Email",
+					"FirstName",
+					"LastName",
+					"SSHKeys",
+				},
+				Data: []output.Data{
+					[]string{
+						helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
+						helpers.ReturnNonEmptyString(user.Email),
+						helpers.ReturnNonEmptyString(user.FirstName),
+						helpers.ReturnNonEmptyString(user.LastName),
+						helpers.ReturnNonEmptyString(fmt.Sprintf("%v", len(user.SSHKeys))),
+					},
+				},
+			}, outputOptions)
+		}
 
 		return nil
 	},
+}
+
+func init() {
+	whoamiCmd.Flags().Bool("keys", false,
+		"Display your SSH keys")
+	whoamiCmd.Flags().Bool("fingerprints", false,
+		"Display your SSH keys fingerprints")
 }
