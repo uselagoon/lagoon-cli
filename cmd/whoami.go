@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/helpers"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
@@ -44,6 +43,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			viper.GetString("lagoons."+current+".graphql"),
 			viper.GetString("lagoons."+current+".token"),
 			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
 			debug)
 
 		user, err := lagoon.GetMeInfo(context.TODO(), lc)
@@ -86,11 +86,11 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 				},
 				Data: []output.Data{
 					[]string{
-						helpers.ReturnNonEmptyString(fmt.Sprintf("%v", user.ID)),
-						helpers.ReturnNonEmptyString(user.Email),
-						helpers.ReturnNonEmptyString(user.FirstName),
-						helpers.ReturnNonEmptyString(user.LastName),
-						helpers.ReturnNonEmptyString(fmt.Sprintf("%v", len(user.SSHKeys))),
+						returnNonEmptyString(fmt.Sprintf("%v", user.ID)),
+						returnNonEmptyString(user.Email),
+						returnNonEmptyString(user.FirstName),
+						returnNonEmptyString(user.LastName),
+						returnNonEmptyString(fmt.Sprintf("%v", len(user.SSHKeys))),
 					},
 				},
 			}, outputOptions)

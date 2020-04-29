@@ -17,6 +17,8 @@
 // _lgraphql/addUser.graphql
 // _lgraphql/addUserToGroup.graphql
 // _lgraphql/environmentByName.graphql
+// _lgraphql/lagoonSchema.graphql
+// _lgraphql/lagoonVersion.graphql
 // _lgraphql/me.graphql
 // _lgraphql/projectByName.graphql
 package lgraphql
@@ -415,10 +417,48 @@ func _lgraphqlEnvironmentbynameGraphql() (*asset, error) {
 	return a, nil
 }
 
-var __lgraphqlMeGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\xc8\x4d\x85\x32\x40\x20\x33\x05\xce\x4c\xcd\x4d\xcc\xcc\x81\xf3\xd2\x32\x8b\x8a\x4b\xfc\x12\x73\x53\xe1\x22\x39\x89\x68\x02\xc5\xc5\x19\xde\xa9\x95\xc5\x48\xa6\xa1\x99\x08\x02\x79\xc8\x3a\x40\x20\x3b\xb5\x32\xa4\xb2\x00\x43\x2c\x2c\x31\xa7\x14\x43\xd0\x2d\x33\x2f\x3d\xb5\xa8\xa0\x28\x33\xaf\x04\x45\x2a\xb9\x28\x35\xb1\x24\x15\x61\x51\x2d\x17\x84\xac\x05\x04\x00\x00\xff\xff\x19\x81\x0c\x89\xe8\x00\x00\x00")
+var __lgraphqlLagoonschemaGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x88\x8f\x2f\x4e\xce\x48\xcd\x4d\x04\x73\x14\x14\x4a\x2a\x0b\x52\x8b\xa1\x6c\x05\x85\xec\xcc\xbc\x14\x28\x33\x2f\x31\x37\x15\xca\x4c\xcb\x4c\xcd\x49\x29\xd6\xc8\xcc\x4b\xce\x29\x4d\x49\x75\x49\x2d\x28\x4a\x4d\x4e\x2c\x49\x4d\xb1\x2a\x29\x2a\x4d\xd5\x84\x6b\x46\xd1\x53\xcb\x05\x23\x6b\xb9\x6a\x01\x01\x00\x00\xff\xff\x29\x07\x39\xef\x7e\x00\x00\x00")
+func _lgraphqlLagoonschemaGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlLagoonschemaGraphql,
+		"_lgraphql/lagoonSchema.graphql",
+	)
+}
+
+func _lgraphqlLagoonschemaGraphql() (*asset, error) {
+	bytes, err := _lgraphqlLagoonschemaGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/lagoonSchema.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlLagoonversionGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\xc8\x49\x4c\xcf\xcf\xcf\x0b\x4b\x2d\x2a\xce\xcc\xcf\xe3\xaa\x05\x04\x00\x00\xff\xff\x42\xb4\x77\x45\x19\x00\x00\x00")
+
+func _lgraphqlLagoonversionGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlLagoonversionGraphql,
+		"_lgraphql/lagoonVersion.graphql",
+	)
+}
+
+func _lgraphqlLagoonversionGraphql() (*asset, error) {
+	bytes, err := _lgraphqlLagoonversionGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/lagoonVersion.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlMeGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\xc8\x4d\x85\x32\x40\x20\x33\x05\xce\x4c\xcd\x4d\xcc\xcc\x81\xf3\xd2\x32\x8b\x8a\x4b\xfc\x12\x73\x53\xe1\x22\x39\x89\x48\x02\xb5\x5c\xb5\x80\x00\x00\x00\xff\xff\xd4\x0b\x94\x75\x54\x00\x00\x00")
 
 func _lgraphqlMeGraphqlBytes() ([]byte, error) {
-	return bindataRead(
 		__lgraphqlMeGraphql,
 		"_lgraphql/me.graphql",
 	)
@@ -523,6 +563,8 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/addUser.graphql":                       _lgraphqlAdduserGraphql,
 	"_lgraphql/addUserToGroup.graphql":                _lgraphqlAddusertogroupGraphql,
 	"_lgraphql/environmentByName.graphql":             _lgraphqlEnvironmentbynameGraphql,
+	"_lgraphql/lagoonSchema.graphql":                  _lgraphqlLagoonschemaGraphql,
+	"_lgraphql/lagoonVersion.graphql":                 _lgraphqlLagoonversionGraphql,
 	"_lgraphql/me.graphql":                            _lgraphqlMeGraphql,
 	"_lgraphql/projectByName.graphql":                 _lgraphqlProjectbynameGraphql,
 }
@@ -585,6 +627,8 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"addUser.graphql":                       &bintree{_lgraphqlAdduserGraphql, map[string]*bintree{}},
 		"addUserToGroup.graphql":                &bintree{_lgraphqlAddusertogroupGraphql, map[string]*bintree{}},
 		"environmentByName.graphql":             &bintree{_lgraphqlEnvironmentbynameGraphql, map[string]*bintree{}},
+		"lagoonSchema.graphql":                  &bintree{_lgraphqlLagoonschemaGraphql, map[string]*bintree{}},
+		"lagoonVersion.graphql":                 &bintree{_lgraphqlLagoonversionGraphql, map[string]*bintree{}},
 		"me.graphql":                            &bintree{_lgraphqlMeGraphql, map[string]*bintree{}},
 		"projectByName.graphql":                 &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
 	}},

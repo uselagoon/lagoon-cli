@@ -56,7 +56,7 @@ func TestAddProjectRequest(t *testing.T) {
 					}
 				}))
 			defer ts.Close()
-			c := client.New(ts.URL, "", "", false)
+			c := client.New(ts.URL, "", "", "", false)
 			// ignore response error - we're testing the request
 			_ = c.AddProject(context.Background(), &schema.AddProjectInput{
 				Name:                  "foo",
@@ -111,7 +111,7 @@ func TestAddOrUpdateEnvironmentResponse(t *testing.T) {
 					}
 				}))
 			defer ts.Close()
-			c := client.New(ts.URL, "", "", false)
+			c := client.New(ts.URL, "", "", "", false)
 
 			out := schema.Environment{}
 			err := c.AddOrUpdateEnvironment(context.Background(), tc.input.in, &out)
@@ -167,7 +167,7 @@ func TestAddUser(t *testing.T) {
 					}
 				}))
 			defer ts.Close()
-			c := client.New(ts.URL, "", "", false)
+			c := client.New(ts.URL, "", "", "", false)
 
 			out := schema.User{}
 			err := c.AddUser(context.Background(), tc.input.in, &out)

@@ -1,19 +1,19 @@
-## lagoon config current
+## lagoon config lagoon-version
 
-Display the current Lagoon that commands would be executed against
+Checks the current Lagoon for its version and sets it in the config file
 
 ### Synopsis
 
-Display the current Lagoon that commands would be executed against
+Checks the current Lagoon for its version and sets it in the config file
 
 ```
-lagoon config current [flags]
+lagoon config lagoon-version [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for current
+  -h, --help   help for lagoon-version
 ```
 
 ### Options inherited from parent commands

@@ -1,0 +1,11 @@
+query {
+  __schema {
+    types {
+      kind
+      name
+      fields(includeDeprecated:true) {
+        name
+      }
+    }
+  }
+}
