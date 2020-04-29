@@ -1,22 +1,20 @@
-## lagoon deploy branch
+## lagoon deploy latest
 
-Deploy a new branch into Lagoon
+Deploy the latest environment
 
 ### Synopsis
 
-Deploy a new branch into Lagoon
-This branch may or may not already exist in lagoon, if it already exists you may want to
-use 'lagoon deploy latest' instead
+Deploy the latest environment
+This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI
 
 ```
-lagoon deploy branch [flags]
+lagoon deploy latest [flags]
 ```
 
 ### Options
 
 ```
-  -b, --branch string   branch name
-  -h, --help            help for branch
+  -h, --help   help for latest
 ```
 
 ### Options inherited from parent commands

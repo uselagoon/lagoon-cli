@@ -232,3 +232,23 @@ func (c *Client) AddProjectToBillingGroup(ctx context.Context,
 		Response: out,
 	})
 }
+
+// DeployEnvironmentLatest deploys a latest environment.
+func (c *Client) DeployEnvironmentLatest(ctx context.Context,
+	in *schema.DeployEnvironmentLatestInput, out *schema.DeployEnvironmentLatest) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentLatest.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// DeployEnvironmentPullrequest deploys a latest environment.
+func (c *Client) DeployEnvironmentPullrequest(ctx context.Context,
+	in *schema.DeployEnvironmentPullrequestInput, out *schema.DeployEnvironmentPullrequest) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentPullrequest.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}

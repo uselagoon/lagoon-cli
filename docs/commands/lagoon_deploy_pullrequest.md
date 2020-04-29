@@ -1,22 +1,26 @@
-## lagoon deploy branch
+## lagoon deploy pullrequest
 
-Deploy a new branch into Lagoon
+Deploy a pullrequest
 
 ### Synopsis
 
-Deploy a new branch into Lagoon
-This branch may or may not already exist in lagoon, if it already exists you may want to
-use 'lagoon deploy latest' instead
+Deploy a pullrequest
+This pullrequest may not already exist as an environment in lagoon.
 
 ```
-lagoon deploy branch [flags]
+lagoon deploy pullrequest [flags]
 ```
 
 ### Options
 
 ```
-  -b, --branch string   branch name
-  -h, --help            help for branch
+  -N, --baseBranchName string   Pullrequest base branch name
+  -R, --baseBranchRef string    Pullrequest base branch reference hash
+  -H, --headBranchName string   Pullrequest head branch name
+  -M, --headBranchRef string    Pullrequest head branch reference hash
+  -h, --help                    help for pullrequest
+  -n, --number uint             Pullrequest number
+  -t, --title string            Pullrequest title
 ```
 
 ### Options inherited from parent commands
