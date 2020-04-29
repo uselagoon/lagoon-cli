@@ -27,6 +27,8 @@
                 "sshKeys": [
                   {
                     "name": "foo-example",
+                    "created": "2020-02-11 09:00:42",
+                    "keyFingerprint": "",
                     "keyType": "ssh-ed25519",
                     "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
                   }
@@ -42,6 +44,8 @@
                 "sshKeys": [
                   {
                     "name": "bar-example",
+                    "created": "2020-02-11 09:00:42",
+                    "keyFingerprint": "",
                     "keyType": "ssh-ed25519",
                     "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
                   }
@@ -64,6 +68,8 @@
                 "sshKeys": [
                   {
                     "name": "projectuser",
+                    "created": "2020-02-11 09:00:42",
+                    "keyFingerprint": "",
                     "keyType": "ssh-ed25519",
                     "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
                   }
