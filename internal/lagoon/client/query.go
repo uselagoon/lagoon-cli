@@ -96,3 +96,23 @@ func (c *Client) LagoonSchema(
 		Response: lagoonSchema,
 	})
 }
+
+// CanUserSSH queries the Lagoon API for userCanSshToEnvironment, and
+// unmarshals the response
+func (c *Client) CanUserSSH(
+	ctx context.Context, openshiftProjectName string, environment *schema.Environment) error {
+
+	req, err := c.newRequest("_lgraphql/userCanSshToEnvironment.graphql",
+		map[string]interface{}{
+			"openshiftProjectName": openshiftProjectName,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Environment `json:"userCanSshToEnvironment"`
+	}{
+		Response: environment,
+	})
+}

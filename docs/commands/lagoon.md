@@ -32,6 +32,7 @@ lagoon [flags]
 ### SEE ALSO
 
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon can-i-ssh](lagoon_can-i-ssh.md)	 - Can I SSH will return the environment if you can access it
 * [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - Deploy a branch or environment

@@ -47,3 +47,17 @@ func (mr *MockMeMockRecorder) Me(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Me", reflect.TypeOf((*MockMe)(nil).Me), ctx, user)
 }
+
+// CanUserSSH mocks base method
+func (m *MockMe) CanUserSSH(ctx context.Context, name string, environment *schema.Environment) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CanUserSSH", ctx, name, environment)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CanUserSSH indicates an expected call of CanUserSSH
+func (mr *MockMeMockRecorder) CanUserSSH(ctx, name, environment interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CanUserSSH", reflect.TypeOf((*MockMe)(nil).CanUserSSH), ctx, name, environment)
+}

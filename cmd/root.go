@@ -188,6 +188,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(importCmd)
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
+	rootCmd.AddCommand(canISSHCmd)
 }
 
 // version/build information command

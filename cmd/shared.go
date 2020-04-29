@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/pkg/output"
@@ -86,4 +87,11 @@ func fileExists(filename string) bool {
 
 func stripNewLines(stripString string) string {
 	return strings.TrimSuffix(stripString, "\n")
+}
+
+// regex the name to make it match what lagoon is expecting
+func sanitizeName(name string) string {
+	var re = regexp.MustCompile(`[^a-zA-Z0-9-]`)
+	sanitizedName := re.ReplaceAllString(name, `$1-$2`)
+	return sanitizedName
 }
