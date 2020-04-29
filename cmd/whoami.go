@@ -23,21 +23,15 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		return validateTokenE(viper.GetString("current"))
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		showKeys, err := cmd.Flags().GetBool("keys")
-		if err != nil {
-			return err
-		}
-
-		showFingerprints, err := cmd.Flags().GetBool("fingerprints")
-		if err != nil {
-			return err
-		}
-
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
+		showOpts, err := cmd.Flags().GetStringSlice("show-keys")
+		if err != nil {
+			return err
+		}
+
 		current := viper.GetString("current")
 		lc := client.New(
 			viper.GetString("lagoons."+current+".graphql"),
@@ -54,26 +48,46 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			return err
 		}
 
-		if showKeys || showFingerprints {
+		if len(showOpts) > 0 {
 			// if we are only showing the users keys, leave the users email visible as part
 			// of helping identify the user stil
+			opts := sliceToMap(showOpts)
+			header := []string{
+				"Email",
+				"Name",
+			}
 			var keys []output.Data
+			if opts["created"] {
+				header = append(header, "Created")
+			}
+			if opts["type"] {
+				header = append(header, "Type")
+			}
+			if opts["key"] {
+				header = append(header, "Key")
+			}
+			if opts["fingerprint"] {
+				header = append(header, "Fingerprint")
+			}
 			for _, key := range user.SSHKeys {
-				if showFingerprints {
-					keys = append(keys, []string{user.Email, key.Name, key.Created, fmt.Sprintf("%s", key.KeyType), key.KeyFingerprint})
-				} else {
-					keys = append(keys, []string{user.Email, key.Name, key.Created, fmt.Sprintf("%s", key.KeyType), key.KeyValue})
+				keyData := []string{user.Email, key.Name}
+				if opts["created"] {
+					keyData = append(keyData, key.Created)
 				}
+				if opts["type"] {
+					keyData = append(keyData, fmt.Sprintf("%s", key.KeyType))
+				}
+				if opts["key"] {
+					keyData = append(keyData, key.KeyValue)
+				}
+				if opts["fingerprint"] {
+					keyData = append(keyData, key.KeyFingerprint)
+				}
+				keys = append(keys, keyData)
 			}
 			output.RenderOutput(output.Table{
-				Header: []string{
-					"Email",
-					"Name",
-					"Created",
-					"Type",
-					"Value",
-				},
-				Data: keys,
+				Header: header,
+				Data:   keys,
 			}, outputOptions)
 		} else {
 			output.RenderOutput(output.Table{
@@ -101,8 +115,6 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 }
 
 func init() {
-	whoamiCmd.Flags().Bool("keys", false,
-		"Display your SSH keys")
-	whoamiCmd.Flags().Bool("fingerprints", false,
-		"Display your SSH keys fingerprints")
+	whoamiCmd.Flags().StringSlice("show-keys", []string{},
+		`Select which fields to display when showing SSH keys. Valid options (others are ignored): type,created,key,fingerprint`)
 }

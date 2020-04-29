@@ -14,9 +14,8 @@ lagoon whoami [flags]
 ### Options
 
 ```
-      --fingerprints   Display your SSH keys fingerprints
-  -h, --help           help for whoami
-      --keys           Display your SSH keys
+  -h, --help                help for whoami
+      --show-keys strings   Select which fields to display when showing SSH keys. Valid options (others are ignored): type, created, key, fingerprint
 ```
 
 ### Options inherited from parent commands
