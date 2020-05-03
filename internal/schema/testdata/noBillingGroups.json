@@ -28,6 +28,8 @@
                 "sshKeys": [
                   {
                     "name": "auto-add via api",
+                    "created": "2020-02-11 09:00:42",
+                    "keyFingerprint": "",
                     "keyType": "ssh-ed25519",
                     "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIKJdBFjazAhnlwxLWkF38Ux5nrkSddQCHLEhcoHwW1qh"
                   }

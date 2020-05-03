@@ -31,6 +31,8 @@
                 "sshKeys": [
                   {
                     "name": "auto-add via api",
+                    "created": "2020-02-11 09:00:42",
+                    "keyFingerprint": "",
                     "keyType": "ssh-ed25519",
                     "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIIUALiosiYOvlGtyImg8wG6zFBlotZ2+YA6yhjryib13"
                   }
