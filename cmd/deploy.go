@@ -188,7 +188,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			lagoonCLIVersion,
 			debug)
 
-		deployPullrequest := &schema.DeployEnvironmentPullrequestInput{
+		result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{
 			Project: schema.ProjectInput{
 				Name: cmdProjectName,
 			},
@@ -198,8 +198,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			BaseBranchRef:  baseBranchRef,
 			HeadBranchName: headBranchName,
 			HeadBranchRef:  headBranchRef,
-		}
-		result, err := lagoon.DeployPullRequest(context.TODO(), deployPullrequest, lc)
+		}, lc)
 		if err != nil {
 			return err
 		}
