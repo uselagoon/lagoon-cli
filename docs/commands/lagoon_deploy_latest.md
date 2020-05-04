@@ -1,10 +1,10 @@
 ## lagoon deploy latest
 
-Deploy the latest environment
+Deploy latest environment
 
 ### Synopsis
 
-Deploy the latest environment
+Deploy latest environment
 This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI
 
 ```
@@ -36,5 +36,5 @@ lagoon deploy latest [flags]
 
 ### SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Deploy a branch or environment
+* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
 

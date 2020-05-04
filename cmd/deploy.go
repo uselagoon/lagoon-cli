@@ -38,7 +38,7 @@ func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
 var deployCmd = &cobra.Command{
 	Use:     "deploy",
 	Aliases: []string{"d"},
-	Short:   "Deploy a branch or environment",
+	Short:   "Actions for deploying or promoting branches or environments in lagoon",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 	},
@@ -46,8 +46,8 @@ var deployCmd = &cobra.Command{
 
 var deployBranchCmd = &cobra.Command{
 	Use:   "branch",
-	Short: "Deploy a new branch into Lagoon",
-	Long: `Deploy a new branch into Lagoon
+	Short: "Deploy a new branch",
+	Long: `Deploy a new branch
 This branch may or may not already exist in lagoon, if it already exists you may want to
 use 'lagoon deploy latest' instead`,
 	Aliases: []string{"b"},
@@ -100,8 +100,8 @@ var deployLatestCmd = &cobra.Command{
 	Use:     "latest",
 	Aliases: []string{"l"},
 	Hidden:  false,
-	Short:   "Deploy the latest environment",
-	Long: `Deploy the latest environment
+	Short:   "Deploy latest environment",
+	Long: `Deploy latest environment
 This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(viper.GetString("current"))
@@ -126,6 +126,9 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 					Name: cmdProjectName,
 				},
 			},
+		}
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
 		}
 		result, err := lagoon.DeployLatest(context.TODO(), deployLatest, lc)
 		if err != nil {

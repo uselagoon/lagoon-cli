@@ -42,5 +42,5 @@ lagoon deploy pullrequest [flags]
 
 ### SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Deploy a branch or environment
+* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
 
