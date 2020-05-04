@@ -111,6 +111,9 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		if err != nil {
 			return err
 		}
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+		}
 		current := viper.GetString("current")
 		lc := client.New(
 			viper.GetString("lagoons."+current+".graphql"),
@@ -118,19 +121,14 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			viper.GetString("lagoons."+current+".version"),
 			lagoonCLIVersion,
 			debug)
-
-		deployLatest := &schema.DeployEnvironmentLatestInput{
+		result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
 			Environment: schema.EnvironmentInput{
 				Name: cmdProjectEnvironment,
 				Project: schema.ProjectInput{
 					Name: cmdProjectName,
 				},
 			},
-		}
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
-		}
-		result, err := lagoon.DeployLatest(context.TODO(), deployLatest, lc)
+		}, lc)
 		if err != nil {
 			return err
 		}
