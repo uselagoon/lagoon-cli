@@ -39,9 +39,6 @@ var deployCmd = &cobra.Command{
 	Use:     "deploy",
 	Aliases: []string{"d"},
 	Short:   "Actions for deploying or promoting branches or environments in lagoon",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
-	},
 }
 
 var deployBranchCmd = &cobra.Command{
@@ -51,6 +48,9 @@ var deployBranchCmd = &cobra.Command{
 This branch may or may not already exist in lagoon, if it already exists you may want to
 use 'lagoon deploy latest' instead`,
 	Aliases: []string{"b"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(viper.GetString("current"))
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		deployBranch := parseDeployFlags(*cmd.Flags())
@@ -76,6 +76,9 @@ var deployPromoteCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Promote an environment",
 	Long:    "Promote one environment to another",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(viper.GetString("current"))
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
 		promoteEnv := parseDeployFlags(*cmd.Flags())
