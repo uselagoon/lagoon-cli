@@ -1,6 +1,6 @@
 package schema
 
-// DeployEnvironmentLatestInput is based on the Lagoon API type.
+// DeployEnvironmentLatestInput is used as the input for deploying an environment.
 type DeployEnvironmentLatestInput struct {
 	Environment EnvironmentInput `json:"environment"`
 }
@@ -10,7 +10,7 @@ type DeployEnvironmentLatest struct {
 	DeployEnvironmentLatest string `json:"deployEnvironmentLatest"`
 }
 
-// DeployEnvironmentPullrequestInput is based on the Lagoon API type.
+// DeployEnvironmentPullrequestInput is used as the input for deploying a pull request.
 type DeployEnvironmentPullrequestInput struct {
 	Project        ProjectInput `json:"project"`
 	Number         uint         `json:"number"`
@@ -26,7 +26,7 @@ type DeployEnvironmentPullrequest struct {
 	DeployEnvironmentPullrequest string `json:"deployEnvironmentPullrequest"`
 }
 
-// DeployEnvironmentBranchInput is based on the Lagoon API type.
+// DeployEnvironmentBranchInput is used as the input for deploying a branch.
 type DeployEnvironmentBranchInput struct {
 	Project string `json:"project"`
 	Branch  string `json:"branch"`
@@ -37,7 +37,7 @@ type DeployEnvironmentBranch struct {
 	DeployEnvironmentBranch string `json:"deployEnvironmentBranch"`
 }
 
-// DeployEnvironmentPromoteInput is based on the Lagoon API type.
+// DeployEnvironmentPromoteInput is used as the input for promoting one environment to another.
 type DeployEnvironmentPromoteInput struct {
 	Project                string `json:"project"`
 	SourceEnvironment      string `json:"sourceEnvironment"`

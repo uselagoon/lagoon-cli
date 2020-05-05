@@ -243,7 +243,7 @@ func (c *Client) DeployEnvironmentLatest(ctx context.Context,
 	return c.client.Run(ctx, req, &out)
 }
 
-// DeployEnvironmentPullrequest deploys a latest environment.
+// DeployEnvironmentPullrequest deploys a pullreguest.
 func (c *Client) DeployEnvironmentPullrequest(ctx context.Context,
 	in *schema.DeployEnvironmentPullrequestInput, out *schema.DeployEnvironmentPullrequest) error {
 	req, err := c.newRequest("_lgraphql/deployEnvironmentPullrequest.graphql", in)
@@ -253,7 +253,7 @@ func (c *Client) DeployEnvironmentPullrequest(ctx context.Context,
 	return c.client.Run(ctx, req, &out)
 }
 
-// DeployEnvironmentPromote deploys a latest environment.
+// DeployEnvironmentPromote promotes one environment into a new environment.
 func (c *Client) DeployEnvironmentPromote(ctx context.Context,
 	in *schema.DeployEnvironmentPromoteInput, out *schema.DeployEnvironmentPromote) error {
 	req, err := c.newRequest("_lgraphql/deployEnvironmentPromote.graphql", in)
@@ -263,7 +263,7 @@ func (c *Client) DeployEnvironmentPromote(ctx context.Context,
 	return c.client.Run(ctx, req, &out)
 }
 
-// DeployEnvironmentBranch deploys a latest environment.
+// DeployEnvironmentBranch deploys a branch.
 func (c *Client) DeployEnvironmentBranch(ctx context.Context,
 	in *schema.DeployEnvironmentBranchInput, out *schema.DeployEnvironmentBranch) error {
 	req, err := c.newRequest("_lgraphql/deployEnvironmentBranch.graphql", in)
