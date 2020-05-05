@@ -25,3 +25,26 @@ type DeployEnvironmentPullrequestInput struct {
 type DeployEnvironmentPullrequest struct {
 	DeployEnvironmentPullrequest string `json:"deployEnvironmentPullrequest"`
 }
+
+// DeployEnvironmentBranchInput is based on the Lagoon API type.
+type DeployEnvironmentBranchInput struct {
+	Project string `json:"project"`
+	Branch  string `json:"branch"`
+}
+
+// DeployEnvironmentBranch is the response.
+type DeployEnvironmentBranch struct {
+	DeployEnvironmentBranch string `json:"deployEnvironmentBranch"`
+}
+
+// DeployEnvironmentPromoteInput is based on the Lagoon API type.
+type DeployEnvironmentPromoteInput struct {
+	Project                string `json:"project"`
+	SourceEnvironment      string `json:"sourceEnvironment"`
+	DestinationEnvironment string `json:"destinationEnvironment"`
+}
+
+// DeployEnvironmentPromote is the response.
+type DeployEnvironmentPromote struct {
+	DeployEnvironmentPromote string `json:"deployEnvironmentPromote"`
+}

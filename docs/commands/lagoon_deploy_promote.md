@@ -13,9 +13,9 @@ lagoon deploy promote [flags]
 ### Options
 
 ```
-  -d, --destination string   destination environment name
+  -d, --destination string   Destination environment name to create
   -h, --help                 help for promote
-  -s, --source string        source environment name
+  -s, --source string        Source environment name to use as the base to deploy from
 ```
 
 ### Options inherited from parent commands

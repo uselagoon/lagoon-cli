@@ -10,8 +10,10 @@ import (
 
 // Deploy interface contains methods for deploying branches and environments in lagoon
 type Deploy interface {
+	DeployEnvironmentPromote(ctx context.Context, deploy *schema.DeployEnvironmentPromoteInput, result *schema.DeployEnvironmentPromote) error
 	DeployEnvironmentLatest(ctx context.Context, deploy *schema.DeployEnvironmentLatestInput, result *schema.DeployEnvironmentLatest) error
 	DeployEnvironmentPullrequest(ctx context.Context, deploy *schema.DeployEnvironmentPullrequestInput, result *schema.DeployEnvironmentPullrequest) error
+	DeployEnvironmentBranch(ctx context.Context, deploy *schema.DeployEnvironmentBranchInput, result *schema.DeployEnvironmentBranch) error
 }
 
 // DeployLatest deploys the latest environment
@@ -24,4 +26,16 @@ func DeployLatest(ctx context.Context, deploy *schema.DeployEnvironmentLatestInp
 func DeployPullRequest(ctx context.Context, deploy *schema.DeployEnvironmentPullrequestInput, m Deploy) (*schema.DeployEnvironmentPullrequest, error) {
 	result := schema.DeployEnvironmentPullrequest{}
 	return &result, m.DeployEnvironmentPullrequest(ctx, deploy, &result)
+}
+
+// DeployPromote deploys a pull request
+func DeployPromote(ctx context.Context, deploy *schema.DeployEnvironmentPromoteInput, m Deploy) (*schema.DeployEnvironmentPromote, error) {
+	result := schema.DeployEnvironmentPromote{}
+	return &result, m.DeployEnvironmentPromote(ctx, deploy, &result)
+}
+
+// DeployBranch deploys a pull request
+func DeployBranch(ctx context.Context, deploy *schema.DeployEnvironmentBranchInput, m Deploy) (*schema.DeployEnvironmentBranch, error) {
+	result := schema.DeployEnvironmentBranch{}
+	return &result, m.DeployEnvironmentBranch(ctx, deploy, &result)
 }

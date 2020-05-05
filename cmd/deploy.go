@@ -2,42 +2,18 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/internal/schema"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-// DeployFlags .
-type DeployFlags struct {
-	Branch      string `json:"branch,omitempty"`
-	Source      string `json:"source,omitempty"`
-	Destination string `json:"destination,omitempty"`
-}
-
-func parseDeployFlags(flags pflag.FlagSet) DeployFlags {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := DeployFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
-
 var deployCmd = &cobra.Command{
 	Use:     "deploy",
-	Aliases: []string{"d"},
+	Aliases: []string{"d", "dep"},
 	Short:   "Actions for deploying or promoting branches or environments in lagoon",
 }
 
@@ -51,23 +27,36 @@ use 'lagoon deploy latest' instead`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(viper.GetString("current"))
 	},
-	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
-		deployBranch := parseDeployFlags(*cmd.Flags())
-		if cmdProjectName == "" || deployBranch.Branch == "" {
-			fmt.Println("Missing arguments: Project name or branch name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		if yesNo(fmt.Sprintf("You are attempting to deploy branch '%s' for project '%s', are you sure?", deployBranch.Branch, cmdProjectName)) {
-			deployResult, err := eClient.DeployEnvironmentBranch(cmdProjectName, deployBranch.Branch)
-			handleError(err)
-			resultData := output.Result{
-				Result: string(deployResult),
+		branch, err := cmd.Flags().GetString("branch")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" || branch == "" {
+			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to deploy branch '%s' for project '%s', are you sure?", branch, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.DeployBranch(context.TODO(), &schema.DeployEnvironmentBranchInput{
+				Branch:  branch,
+				Project: cmdProjectName,
+			}, lc)
+			if err != nil {
+				return err
 			}
-			output.RenderResult(resultData, outputOptions)
+			fmt.Println(result.DeployEnvironmentBranch)
 		}
-
+		return nil
 	},
 }
 
@@ -79,23 +68,41 @@ var deployPromoteCmd = &cobra.Command{
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(viper.GetString("current"))
 	},
-	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
-		promoteEnv := parseDeployFlags(*cmd.Flags())
-		if cmdProjectName == "" || promoteEnv.Source == "" || promoteEnv.Destination == "" {
-			fmt.Println("Missing arguments: Project name, source environment name, or destination environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", promoteEnv.Source, promoteEnv.Destination, cmdProjectName)) {
-			deployResult, err := eClient.PromoteEnvironment(cmdProjectName, promoteEnv.Source, promoteEnv.Destination)
-			handleError(err)
-			resultData := output.Result{
-				Result: string(deployResult),
+		sourceEnvironment, err := cmd.Flags().GetString("source")
+		if err != nil {
+			return err
+		}
+		destinationEnvironment, err := cmd.Flags().GetString("destination")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
+			return fmt.Errorf("Missing arguments: Project name, source environment, or destination environment is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", sourceEnvironment, destinationEnvironment, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.DeployPromote(context.TODO(), &schema.DeployEnvironmentPromoteInput{
+				SourceEnvironment:      sourceEnvironment,
+				DestinationEnvironment: destinationEnvironment,
+				Project:                cmdProjectName,
+			}, lc)
+			if err != nil {
+				return err
 			}
-			output.RenderResult(resultData, outputOptions)
+			fmt.Println(result.DeployEnvironmentPromote)
 		}
-
+		return nil
 	},
 }
 
@@ -117,25 +124,27 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
 		}
-		current := viper.GetString("current")
-		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
-			lagoonCLIVersion,
-			debug)
-		result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
-			Environment: schema.EnvironmentInput{
-				Name: cmdProjectEnvironment,
-				Project: schema.ProjectInput{
-					Name: cmdProjectName,
+		if yesNo(fmt.Sprintf("You are attempting to deploy the latest environment '%s' for project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
+				Environment: schema.EnvironmentInput{
+					Name: cmdProjectEnvironment,
+					Project: schema.ProjectInput{
+						Name: cmdProjectName,
+					},
 				},
-			},
-		}, lc)
-		if err != nil {
-			return err
+			}, lc)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result.DeployEnvironmentLatest)
 		}
-		fmt.Println(result.DeployEnvironmentLatest)
 		return nil
 	},
 }
@@ -183,29 +192,31 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
 			return fmt.Errorf("Missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
 		}
-		current := viper.GetString("current")
-		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
-			lagoonCLIVersion,
-			debug)
+		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
 
-		result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{
-			Project: schema.ProjectInput{
-				Name: cmdProjectName,
-			},
-			Title:          prTitle,
-			Number:         prNumber,
-			BaseBranchName: baseBranchName,
-			BaseBranchRef:  baseBranchRef,
-			HeadBranchName: headBranchName,
-			HeadBranchRef:  headBranchRef,
-		}, lc)
-		if err != nil {
-			return err
+			result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{
+				Project: schema.ProjectInput{
+					Name: cmdProjectName,
+				},
+				Title:          prTitle,
+				Number:         prNumber,
+				BaseBranchName: baseBranchName,
+				BaseBranchRef:  baseBranchRef,
+				HeadBranchName: headBranchName,
+				HeadBranchRef:  headBranchRef,
+			}, lc)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result.DeployEnvironmentPullrequest)
 		}
-		fmt.Println(result.DeployEnvironmentPullrequest)
 		return nil
 	},
 }
@@ -220,9 +231,11 @@ func init() {
 	deployCmd.AddCommand(deployPromoteCmd)
 	deployCmd.AddCommand(deployLatestCmd)
 	deployCmd.AddCommand(deployPullrequestCmd)
-	deployBranchCmd.Flags().StringVarP(&deployBranchName, "branch", "b", "", "branch name")
-	deployPromoteCmd.Flags().StringVarP(&promoteDestEnv, "destination", "d", "", "destination environment name")
-	deployPromoteCmd.Flags().StringVarP(&promoteSourceEnv, "source", "s", "", "source environment name")
+
+	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
+
+	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
+	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")

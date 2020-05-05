@@ -252,3 +252,23 @@ func (c *Client) DeployEnvironmentPullrequest(ctx context.Context,
 	}
 	return c.client.Run(ctx, req, &out)
 }
+
+// DeployEnvironmentPromote deploys a latest environment.
+func (c *Client) DeployEnvironmentPromote(ctx context.Context,
+	in *schema.DeployEnvironmentPromoteInput, out *schema.DeployEnvironmentPromote) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentPromote.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// DeployEnvironmentBranch deploys a latest environment.
+func (c *Client) DeployEnvironmentBranch(ctx context.Context,
+	in *schema.DeployEnvironmentBranchInput, out *schema.DeployEnvironmentBranch) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentBranch.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}

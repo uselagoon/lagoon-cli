@@ -1,0 +1,11 @@
+mutation (
+  $project: String!, 
+  $branch: String!) {
+    deployEnvironmentBranch(input: {
+      project:{
+        name: $project
+      }
+      branchName: $branch
+    }
+  )
+}
