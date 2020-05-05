@@ -1,0 +1,7 @@
+mutation (
+  $environment: EnvironmentInput!) {
+    deployEnvironmentLatest(input: {
+      environment: $environment
+    }
+  )
+}

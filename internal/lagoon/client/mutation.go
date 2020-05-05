@@ -232,3 +232,43 @@ func (c *Client) AddProjectToBillingGroup(ctx context.Context,
 		Response: out,
 	})
 }
+
+// DeployEnvironmentLatest deploys a latest environment.
+func (c *Client) DeployEnvironmentLatest(ctx context.Context,
+	in *schema.DeployEnvironmentLatestInput, out *schema.DeployEnvironmentLatest) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentLatest.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// DeployEnvironmentPullrequest deploys a pullreguest.
+func (c *Client) DeployEnvironmentPullrequest(ctx context.Context,
+	in *schema.DeployEnvironmentPullrequestInput, out *schema.DeployEnvironmentPullrequest) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentPullrequest.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// DeployEnvironmentPromote promotes one environment into a new environment.
+func (c *Client) DeployEnvironmentPromote(ctx context.Context,
+	in *schema.DeployEnvironmentPromoteInput, out *schema.DeployEnvironmentPromote) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentPromote.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// DeployEnvironmentBranch deploys a branch.
+func (c *Client) DeployEnvironmentBranch(ctx context.Context,
+	in *schema.DeployEnvironmentBranchInput, out *schema.DeployEnvironmentBranch) error {
+	req, err := c.newRequest("_lgraphql/deployEnvironmentBranch.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}

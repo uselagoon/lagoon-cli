@@ -1,10 +1,10 @@
 ## lagoon deploy
 
-Deploy a branch or environment
+Actions for deploying or promoting branches or environments in lagoon
 
 ### Synopsis
 
-Deploy a branch or environment
+Actions for deploying or promoting branches or environments in lagoon
 
 ### Options
 
@@ -32,6 +32,8 @@ Deploy a branch or environment
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon deploy branch](lagoon_deploy_branch.md)	 - Deploy a latest branch
+* [lagoon deploy branch](lagoon_deploy_branch.md)	 - Deploy a new branch
+* [lagoon deploy latest](lagoon_deploy_latest.md)	 - Deploy latest environment
 * [lagoon deploy promote](lagoon_deploy_promote.md)	 - Promote an environment
+* [lagoon deploy pullrequest](lagoon_deploy_pullrequest.md)	 - Deploy a pullrequest
 
