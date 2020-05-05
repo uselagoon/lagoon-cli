@@ -1,21 +1,26 @@
-## lagoon deploy promote
+## lagoon deploy pullrequest
 
-Promote an environment
+Deploy a pullrequest
 
 ### Synopsis
 
-Promote one environment to another
+Deploy a pullrequest
+This pullrequest may not already exist as an environment in lagoon.
 
 ```
-lagoon deploy promote [flags]
+lagoon deploy pullrequest [flags]
 ```
 
 ### Options
 
 ```
-  -d, --destination string   Destination environment name to create
-  -h, --help                 help for promote
-  -s, --source string        Source environment name to use as the base to deploy from
+  -N, --baseBranchName string   Pullrequest base branch name
+  -R, --baseBranchRef string    Pullrequest base branch reference hash
+  -H, --headBranchName string   Pullrequest head branch name
+  -M, --headBranchRef string    Pullrequest head branch reference hash
+  -h, --help                    help for pullrequest
+  -n, --number uint             Pullrequest number
+  -t, --title string            Pullrequest title
 ```
 
 ### Options inherited from parent commands

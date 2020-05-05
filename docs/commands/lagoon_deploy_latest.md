@@ -1,21 +1,20 @@
-## lagoon deploy promote
+## lagoon deploy latest
 
-Promote an environment
+Deploy latest environment
 
 ### Synopsis
 
-Promote one environment to another
+Deploy latest environment
+This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI
 
 ```
-lagoon deploy promote [flags]
+lagoon deploy latest [flags]
 ```
 
 ### Options
 
 ```
-  -d, --destination string   Destination environment name to create
-  -h, --help                 help for promote
-  -s, --source string        Source environment name to use as the base to deploy from
+  -h, --help   help for latest
 ```
 
 ### Options inherited from parent commands

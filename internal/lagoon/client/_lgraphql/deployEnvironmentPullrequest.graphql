@@ -1,0 +1,19 @@
+mutation (
+  $project: ProjectInput!, 
+  $number: Int!,
+  $title: String!,
+  $baseBranchName: String!,
+  $baseBranchRef: String!,
+  $headBranchName: String!,
+  $headBranchRef: String!) {
+    deployEnvironmentPullrequest(input: {
+      project: $project
+      number: $number
+      title: $title
+      baseBranchName: $baseBranchName
+      baseBranchRef: $baseBranchRef
+      headBranchName: $headBranchName
+      headBranchRef: $headBranchRef
+    }
+  )
+}

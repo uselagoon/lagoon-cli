@@ -94,20 +94,26 @@ users:
   firstName: foofirst
   lastName: foolast
   sshKeys:
-  - keyType: ssh-ed25519
+  - created: "2020-02-11 09:00:42"
+    keyFingerprint: ""
+    keyType: ssh-ed25519
     keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
     name: foo-example
 - email: bar@example.com
   firstName: barfirst
   lastName: barlast
   sshKeys:
-  - keyType: ssh-ed25519
+  - created: "2020-02-11 09:00:42"
+    keyFingerprint: ""
+    keyType: ssh-ed25519
     keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
     name: bar-example
 - email: projectuser@example.com
   firstName: projectuserfirst
   lastName: projectuserlast
   sshKeys:
-  - keyType: ssh-ed25519
+  - created: "2020-02-11 09:00:42"
+    keyFingerprint: ""
+    keyType: ssh-ed25519
     keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3
     name: projectuser
