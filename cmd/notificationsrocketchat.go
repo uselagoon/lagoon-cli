@@ -184,6 +184,7 @@ func init() {
 	addProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	deleteProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	deleteRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
 	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")
