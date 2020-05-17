@@ -189,6 +189,7 @@ func init() {
 	addProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	deleteProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	deleteSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	updateSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
 	updateSlackNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")
