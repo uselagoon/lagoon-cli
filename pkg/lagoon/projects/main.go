@@ -211,11 +211,12 @@ func processEnvironmentsList(projectByName []byte) ([]byte, error) {
 			environment.Name,
 			string(environment.DeployType),
 			string(environment.EnvironmentType),
+			string(environment.OpenshiftProjectName),
 			envRoute,
 		})
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "Name", "DeployType", "Environment", "Route"}, //, "SSH"},
+		Header: []string{"ID", "Name", "DeployType", "Environment", "OpenshiftProjectName", "Route"}, //, "SSH"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
