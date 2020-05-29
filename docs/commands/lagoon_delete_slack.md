@@ -13,7 +13,8 @@ lagoon delete slack [flags]
 ### Options
 
 ```
-  -h, --help   help for slack
+  -h, --help          help for slack
+  -n, --name string   The name of the notification
 ```
 
 ### Options inherited from parent commands
