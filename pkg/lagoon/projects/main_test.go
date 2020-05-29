@@ -61,7 +61,7 @@ func TestProjectEnvironmentList(t *testing.T) {
 	{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
 	"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"Master","pullrequests":"true","storageCalc":1,"subfolder":null
 }`
-	var projectInfoSuccess = `{"header":["ID","Name","DeployType","Environment","Route"],"data":[["3","Master","branch","production","http://highcotton.org"],["4","Staging","branch","development","https://varnish-highcotton-org-staging.us.amazee.io"],["5","Development","branch","development","https://varnish-highcotton-org-development.us.amazee.io"],["6","PR-175","pullrequest","development","none"],["10","high-cotton","branch","development","none"]]}`
+	var projectInfoSuccess = `{"header":["ID","Name","DeployType","Environment","OpenshiftProjectName","Route"],"data":[["3","Master","branch","production","high-cotton-master","http://highcotton.org"],["4","Staging","branch","development","high-cotton-staging","https://varnish-highcotton-org-staging.us.amazee.io"],["5","Development","branch","development","high-cotton-development","https://varnish-highcotton-org-development.us.amazee.io"],["6","PR-175","pullrequest","development","high-cotton-pr-175","none"],["10","high-cotton","branch","development","high-cotton-high-cotton","none"]]}`
 
 	returnResult, err := processEnvironmentsList([]byte(projectInfo))
 	if err != nil {

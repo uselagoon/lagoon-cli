@@ -129,7 +129,7 @@ func processEnvInfo(projectByName []byte) ([]byte, error) {
 	var data []output.Data
 	data = append(data, environmentData)
 	dataMain := output.Table{
-		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "Route", "Routes", "MonitoringURLS", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "MonitoringURLS", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -141,6 +141,7 @@ func processEnvExtra(environment api.Environment) []string {
 	envEnvironmentType := returnNonEmptyString(string(environment.EnvironmentType))
 	envDeployType := returnNonEmptyString(string(environment.DeployType))
 	envCreated := returnNonEmptyString(string(environment.Created))
+	envOpenshiftProjectName := returnNonEmptyString(string(environment.OpenshiftProjectName))
 	envRoute := returnNonEmptyString(string(environment.Route))
 	envRoutes := returnNonEmptyString(string(environment.Routes))
 	envMonitoringUrls := returnNonEmptyString(string(environment.MonitoringUrls))
@@ -154,6 +155,7 @@ func processEnvExtra(environment api.Environment) []string {
 		fmt.Sprintf("%v", envEnvironmentType),
 		fmt.Sprintf("%v", envDeployType),
 		fmt.Sprintf("%v", envCreated),
+		fmt.Sprintf("%v", envOpenshiftProjectName),
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
 		fmt.Sprintf("%v", envMonitoringUrls),
