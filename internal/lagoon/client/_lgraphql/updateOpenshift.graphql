@@ -1,0 +1,6 @@
+mutation($id: Int!, $patch: UpdateOpenshiftPatchInput!) {
+  updateOpenshift(input: { id: $id, patch: $patch }) {
+    id
+    name
+  }
+}

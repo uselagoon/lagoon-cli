@@ -1,14 +1,10 @@
 package cmd
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
-	"sort"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -237,102 +233,6 @@ var listUsersCmd = &cobra.Command{
 	},
 }
 
-var listOpenshifts = &cobra.Command{
-	Use:     "openshifts",
-	Aliases: []string{"o", "os"},
-	Short:   "List all Openshifts Lagoon knows about (admin user only)",
-	RunE: func(cmd *cobra.Command, args []string) error {
-
-		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
-			return err
-		}
-		showFields, err := cmd.Flags().GetStringSlice("fields")
-		if err != nil {
-			return err
-		}
-
-		current := viper.GetString("current")
-		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
-			lagoonCLIVersion,
-			debug)
-
-		openshifts, err := lagoon.GetAllOpenshifts(context.TODO(), lc)
-		if err != nil {
-			return err
-		}
-
-		opts := sliceToMap(showFields)
-		header := []string{
-			"ID",
-			"Name",
-		}
-		if opts["consoleurl"] || opts["all"] {
-			header = append(header, "ConsoleURL")
-		}
-		if opts["routerpattern"] || opts["all"] {
-			header = append(header, "RouterPattern")
-		}
-		if opts["projectuser"] || opts["all"] {
-			header = append(header, "projectuser")
-		}
-		if opts["sshhost"] || opts["all"] {
-			header = append(header, "SSHHost")
-		}
-		if opts["sshport"] || opts["all"] {
-			header = append(header, "SSHPort")
-		}
-		if opts["created"] || opts["all"] {
-			header = append(header, "Created")
-		}
-		if opts["token"] || opts["all"] {
-			header = append(header, "Token")
-		}
-
-		var data []output.Data
-		for _, openshift := range *openshifts {
-			mapData := []string{
-				returnNonEmptyString(fmt.Sprintf("%v", openshift.ID)),
-				returnNonEmptyString(openshift.Name),
-			}
-			if opts["consoleurl"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.ConsoleURL))
-			}
-			if opts["routerpattern"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.RouterPattern))
-			}
-			if opts["projectuser"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.ProjectUser))
-			}
-			if opts["sshhost"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.SSHHost))
-			}
-			if opts["sshport"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.SSHPort))
-			}
-			if opts["created"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.Created))
-			}
-			if opts["token"] || opts["all"] {
-				mapData = append(mapData, returnNonEmptyString(openshift.Token))
-			}
-			data = append(data, mapData)
-		}
-
-		sort.Slice(data, func(i, j int) bool {
-			return data[i][0] < data[j][0]
-		})
-		output.RenderOutput(output.Table{
-			Header: header,
-			Data:   data,
-		}, outputOptions)
-		return nil
-	},
-}
-
 func init() {
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
@@ -344,12 +244,8 @@ func init() {
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)
-	listCmd.AddCommand(listOpenshifts)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
-
-	listOpenshifts.Flags().StringSlice("fields", []string{},
-		`Select which fields to display when showing Openshifts. Valid options (others are ignored): consoleurl,routerpattern,projectuser,sshhost,sshport,created,token,all`)
 }

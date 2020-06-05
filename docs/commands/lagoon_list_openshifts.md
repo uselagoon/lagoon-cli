@@ -1,10 +1,12 @@
 ## lagoon list openshifts
 
-List all Openshifts Lagoon knows about (admin user only)
+List all Openshifts Lagoon knows about (platform admin user permissions only)
 
 ### Synopsis
 
-List all Openshifts Lagoon knows about (admin user only)
+List all Openshifts Lagoon knows about (platform admin user permissions only)
+Only platform admin role can list openshifts.
+NOTE: only openshifts that are used by projects can be listed
 
 ```
 lagoon list openshifts [flags]
@@ -13,7 +15,7 @@ lagoon list openshifts [flags]
 ### Options
 
 ```
-      --fields strings   Select which fields to display when showing Openshifts. Valid options (others are ignored): consoleurl,routerpattern,projectuser,sshhost,sshport,created,token,all
+      --fields strings   Select which fields to display when listing Openshifts. Valid options (others are ignored): consoleurl,created,id,name,projectuser,routerpattern,sshhost,sshport,token (default [id,name])
   -h, --help             help for openshifts
 ```
 
