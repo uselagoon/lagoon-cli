@@ -1,0 +1,13 @@
+query allOpenshifts {
+  allOpenshifts {
+    id
+    name
+    consoleUrl
+    routerPattern
+    projectUser
+    sshHost
+    sshPort
+    created
+    token
+  }
+}
