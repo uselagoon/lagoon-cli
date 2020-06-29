@@ -121,7 +121,7 @@ var updateProjectCmd = &cobra.Command{
 var getProjectByMetadata = &cobra.Command{
 	Use:     "project-by-metadata",
 	Aliases: []string{"pm", "projectmeta"},
-	Short:   "Checks the current Lagoon for its version and sets it in the config file",
+	Short:   "Query lagoon projects by a given metadata key or key:value",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -152,20 +152,140 @@ var getProjectByMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if len(*projects) == 0 {
+			if value != "" {
+				return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s and value %s", key, value))
+			}
+			return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s", key))
+		}
 		data := []output.Data{}
 		for _, project := range *projects {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", project.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", project.Metadata)),
 			})
 		}
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
 				"Name",
+				"Metadata",
 			},
 			Data: data,
 		}, outputOptions)
+		return nil
+	},
+}
+
+var updateProjectMetadata = &cobra.Command{
+	Use:     "project-by-metadata",
+	Aliases: []string{"pm", "projectmeta"},
+	Short:   "Update a projects metadata with a given key or key:value",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		key, err := cmd.Flags().GetString("key")
+		if err != nil {
+			return err
+		}
+		value, err := cmd.Flags().GetString("value")
+		if err != nil {
+			return err
+		}
+		if key == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
+			projectResult, err := lagoon.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
+			if err != nil {
+				return err
+			}
+			data := []output.Data{}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+			})
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"ID",
+					"Name",
+					"Metadata",
+				},
+				Data: data,
+			}, outputOptions)
+		}
+		return nil
+	},
+}
+
+var deleteProjectMetadataByKey = &cobra.Command{
+	Use:     "project-by-metadata",
+	Aliases: []string{"pm", "projectmeta"},
+	Short:   "Delete a key from a projects metadata",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		key, err := cmd.Flags().GetString("key")
+		if err != nil {
+			return err
+		}
+		if key == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
+			projectResult, err := lagoon.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
+			if err != nil {
+				return err
+			}
+			data := []output.Data{}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+			})
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"ID",
+					"Name",
+					"Metadata",
+				},
+				Data: data,
+			}, outputOptions)
+		}
 		return nil
 	},
 }
@@ -214,4 +334,12 @@ func init() {
 	getCmd.AddCommand(getProjectByMetadata)
 	getProjectByMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
 	getProjectByMetadata.Flags().String("value", "", "The value for the key you are querying on")
+
+	updateCmd.AddCommand(updateProjectMetadata)
+	updateProjectMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
+	updateProjectMetadata.Flags().String("value", "", "The value for the key you are querying on")
+
+	deleteCmd.AddCommand(deleteProjectMetadataByKey)
+	deleteProjectMetadataByKey.Flags().String("key", "", "The key name of the metadata value you are querying on")
+
 }

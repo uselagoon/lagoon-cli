@@ -35,6 +35,7 @@ Delete a project, or delete notifications and variables from projects or environ
 * [lagoon delete environment](lagoon_delete_environment.md)	 - Delete an environment
 * [lagoon delete group](lagoon_delete_group.md)	 - Delete a group from lagoon
 * [lagoon delete project](lagoon_delete_project.md)	 - Delete a project
+* [lagoon delete project-by-metadata](lagoon_delete_project-by-metadata.md)	 - Delete a key from a projects metadata
 * [lagoon delete project-group](lagoon_delete_project-group.md)	 - Delete a project from a group in lagoon
 * [lagoon delete project-rocketchat](lagoon_delete_project-rocketchat.md)	 - Delete a rocketchat notification from a project
 * [lagoon delete project-slack](lagoon_delete_project-slack.md)	 - Delete a slack notification from a project

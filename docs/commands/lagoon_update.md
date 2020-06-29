@@ -33,6 +33,7 @@ Update a resource
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
 * [lagoon update project](lagoon_update_project.md)	 - Update a project
+* [lagoon update project-by-metadata](lagoon_update_project-by-metadata.md)	 - Update a projects metadata with a given key or key:value
 * [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing rocketchat notification
 * [lagoon update slack](lagoon_update_slack.md)	 - Update an existing slack notification
 * [lagoon update user](lagoon_update_user.md)	 - Update a user in lagoon

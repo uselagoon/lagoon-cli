@@ -1,19 +1,12 @@
-{{ if apiVerGreaterThanOrEqual . "1.6.0" }}
 query (
-    $key: String!
-    $value: String){
-    projectsByMetadata(
-        metadata: {
-            key: $key
-            value: $value
-        }
-    ){
+  $name: String!) {
+    projectByName(
+      name: $name) {
         id
         name
         autoIdle
         branches
         pullrequests
-        metadata
         productionEnvironment
         activeSystemsDeploy
         activeSystemsTask
@@ -26,6 +19,5 @@ query (
         openshift{
           id
         }
-    }
-}
-{{ end }}
+      }
+  }
