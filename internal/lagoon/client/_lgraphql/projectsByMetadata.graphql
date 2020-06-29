@@ -1,0 +1,29 @@
+{{ if apiVerGreaterThanOrEqual . "1.6.0" }}
+query (
+    $key: String!
+    $value: String){
+    projectsByMetadata(
+        metadata: {
+            key: $key
+            value: $value
+        }
+    ){
+        id
+        name
+        autoIdle
+        branches
+        pullrequests
+        privateKey
+        productionEnvironment
+        activeSystemsDeploy
+        activeSystemsTask
+        activeSystemsRemove
+        activeSystemsPromote
+        storageCalc
+        openshiftProjectPattern
+        developmentEnvironmentsLimit
+        gitUrl
+        autoIdle
+    }
+}
+{{ end }}

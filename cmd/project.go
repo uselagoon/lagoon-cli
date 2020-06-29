@@ -1,14 +1,18 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 
+	"github.com/amazeeio/lagoon-cli/internal/lagoon"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 var projectPatch api.ProjectPatch
@@ -111,12 +115,62 @@ var updateProjectCmd = &cobra.Command{
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
+	},
+}
 
+var getProjectByMetadata = &cobra.Command{
+	Use:     "project-by-metadata",
+	Aliases: []string{"pm", "projectmeta"},
+	Short:   "Checks the current Lagoon for its version and sets it in the config file",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		key, err := cmd.Flags().GetString("key")
+		if err != nil {
+			return err
+		}
+		value, err := cmd.Flags().GetString("value")
+		if err != nil {
+			return err
+		}
+		if key == "" {
+			return fmt.Errorf("Missing arguments: key is not defined")
+		}
+		current := viper.GetString("current")
+		lc := client.New(
+			viper.GetString("lagoons."+current+".graphql"),
+			viper.GetString("lagoons."+current+".token"),
+			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
+			debug)
+		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, project := range *projects {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", project.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
 func init() {
-
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
 	// @TODO this seems needlessly busy, maybe see if cobra supports grouping flags and applying them to commands easier?
@@ -157,4 +211,7 @@ func init() {
 	addProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
+	getCmd.AddCommand(getProjectByMetadata)
+	getProjectByMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
+	getProjectByMetadata.Flags().String("value", "", "The value for the key you are querying on")
 }

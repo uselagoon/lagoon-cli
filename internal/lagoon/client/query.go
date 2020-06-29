@@ -96,3 +96,24 @@ func (c *Client) LagoonSchema(
 		Response: lagoonSchema,
 	})
 }
+
+// ProjectsByMetadata queries the Lagoon API for a project by its name, and
+// unmarshals the response into project.
+func (c *Client) ProjectsByMetadata(
+	ctx context.Context, key string, value string, projects *[]schema.ProjectMetadata) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/projectsByMetadata.graphql",
+		map[string]interface{}{
+			"key":   key,
+			"value": value,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.ProjectMetadata `json:"projectsByMetadata"`
+	}{
+		Response: projects,
+	})
+}
