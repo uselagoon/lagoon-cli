@@ -1,15 +1,20 @@
-## lagoon get
+## lagoon delete project-metadata
 
-Get info on a resource
+Delete a key from a projects metadata
 
 ### Synopsis
 
-Get info on a resource
+Delete a key from a projects metadata
+
+```
+lagoon delete project-metadata [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for get
+  -h, --help         help for project-metadata
+      --key string   The key name of the metadata value you are querying on
 ```
 
 ### Options inherited from parent commands
@@ -31,11 +36,5 @@ Get info on a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon get all-user-sshkeys](lagoon_get_all-user-sshkeys.md)	 - Get all user SSH keys
-* [lagoon get deployment](lagoon_get_deployment.md)	 - Get a build log by remote id
-* [lagoon get environment](lagoon_get_environment.md)	 - Get details about an environment
-* [lagoon get project](lagoon_get_project.md)	 - Get details about a project
-* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
-* [lagoon get user-sshkeys](lagoon_get_user-sshkeys.md)	 - Get a users SSH keys
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 

@@ -118,10 +118,10 @@ var updateProjectCmd = &cobra.Command{
 	},
 }
 
-var getProjectByMetadata = &cobra.Command{
-	Use:     "project-by-metadata",
+var listProjectByMetadata = &cobra.Command{
+	Use:     "projects-by-metadata",
 	Aliases: []string{"pm", "projectmeta"},
-	Short:   "Query lagoon projects by a given metadata key or key:value",
+	Short:   "List projects by a given metadata key or key:value",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -179,8 +179,8 @@ var getProjectByMetadata = &cobra.Command{
 }
 
 var updateProjectMetadata = &cobra.Command{
-	Use:     "project-by-metadata",
-	Aliases: []string{"pm", "projectmeta"},
+	Use:     "project-metadata",
+	Aliases: []string{"pm", "meta", "projectmeta"},
 	Short:   "Update a projects metadata with a given key or key:value",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -237,8 +237,8 @@ var updateProjectMetadata = &cobra.Command{
 }
 
 var deleteProjectMetadataByKey = &cobra.Command{
-	Use:     "project-by-metadata",
-	Aliases: []string{"pm", "projectmeta"},
+	Use:     "project-metadata",
+	Aliases: []string{"pm", "meta", "projectmeta"},
 	Short:   "Delete a key from a projects metadata",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -331,9 +331,9 @@ func init() {
 	addProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
-	getCmd.AddCommand(getProjectByMetadata)
-	getProjectByMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
-	getProjectByMetadata.Flags().String("value", "", "The value for the key you are querying on")
+	listCmd.AddCommand(listProjectByMetadata)
+	listProjectByMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
+	listProjectByMetadata.Flags().String("value", "", "The value for the key you are querying on")
 
 	updateCmd.AddCommand(updateProjectMetadata)
 	updateProjectMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
