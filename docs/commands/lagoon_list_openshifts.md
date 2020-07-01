@@ -15,7 +15,7 @@ lagoon list openshifts [flags]
 ### Options
 
 ```
-      --fields strings   Select which fields to display when listing Openshifts. Valid options (others are ignored): consoleurl,created,id,name,projectuser,routerpattern,sshhost,sshport,token (default [id,name])
+      --fields strings   Select which fields to display when listing Openshifts. Valid options (others are ignored): consoleurl,created,id,monitoringconfig,name,projectuser,routerpattern,sshhost,sshport,token (default [id,name])
   -h, --help             help for openshifts
 ```
 

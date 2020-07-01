@@ -13,15 +13,16 @@ lagoon add openshift [flags]
 ### Options
 
 ```
-  -C, --consoleUrl string      ConsoleURL of the openshift
-  -h, --help                   help for openshift
-  -I, --id int                 ID to assign the Openshift in Lagoon
-  -N, --name string            Name of the Openshift to be used in Lagoon
-  -P, --projectUser string     Project user to use
-  -R, --routerPattern string   Router pattern to use
-  -S, --sshHost string         SSH host address
-  -s, --sshPort string         SSH port number
-  -T, --token string           Openshift token used to access the cluster
+  -C, --consoleUrl string         ConsoleURL of the openshift
+  -h, --help                      help for openshift
+  -I, --id int                    ID to assign the Openshift in Lagoon
+  -m, --monitoringConfig string   Configuration for monitoring (JSON)
+  -N, --name string               Name of the Openshift to be used in Lagoon
+  -P, --projectUser string        Project user to use
+  -R, --routerPattern string      Router pattern to use
+  -S, --sshHost string            SSH host address
+  -s, --sshPort string            SSH port number
+  -T, --token string              Openshift token used to access the cluster
 ```
 
 ### Options inherited from parent commands
