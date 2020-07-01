@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/hashicorp/go-version"
 )
 
 // config vars
@@ -159,4 +160,20 @@ func alwaysShowFields(show []string, always map[int]string) []string {
 		show = moveString(show, sliceIndex(len(show), func(i int) bool { return (show)[i] == always[k] }), k)
 	}
 	return show
+}
+
+// return if the version is greater or less than
+func greaterThanOrEqualVersion(a string, b string) bool {
+	aVer, err := version.NewSemver(a)
+	if err != nil {
+		return false
+	}
+	bVer, err := version.NewSemver(b)
+	if err != nil {
+		return false
+	}
+	if aVer.GreaterThanOrEqual(bVer) {
+		return true
+	}
+	return false
 }

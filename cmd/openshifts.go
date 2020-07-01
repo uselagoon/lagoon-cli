@@ -134,6 +134,10 @@ var addOpenshift = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		monitoringConfig, err := cmd.Flags().GetString("monitoringConfig")
+		if err != nil {
+			return err
+		}
 		if name == "" {
 			return fmt.Errorf("Missing arguments: name is not defined")
 		}
@@ -147,7 +151,7 @@ var addOpenshift = &cobra.Command{
 			viper.GetString("lagoons."+current+".version"),
 			lagoonCLIVersion,
 			debug)
-		result, err := lagoon.AddOpenshift(context.TODO(), &schema.AddOpenshiftInput{
+		openshift := &schema.AddOpenshiftInput{
 			ID: ID,
 			UpdateOpenshiftPatchInput: schema.UpdateOpenshiftPatchInput{
 				Name:          name,
@@ -158,7 +162,12 @@ var addOpenshift = &cobra.Command{
 				SSHHost:       sshHost,
 				SSHPort:       sshPort,
 			},
-		}, lc)
+		}
+		// @TODO: supporting versioned schemas might become a bit tricky
+		if greaterThanOrEqualVersion(viper.GetString("lagoons."+current+".version"), "v1.7.0") {
+			openshift.UpdateOpenshiftPatchInput.MonitoringConfig = monitoringConfig
+		}
+		result, err := lagoon.AddOpenshift(context.TODO(), openshift, lc)
 		if err != nil {
 			return err
 		}
@@ -186,7 +195,6 @@ var updateOpenshift = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
 		ID, err := cmd.Flags().GetInt("id")
 		if err != nil {
 			return err
@@ -219,6 +227,20 @@ var updateOpenshift = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		monitoringConfig, err := cmd.Flags().GetString("monitoringConfig")
+		if err != nil {
+			return err
+		}
+		if ID == 0 {
+			return fmt.Errorf("Missing arguments: ID is not defined")
+		}
+		current := viper.GetString("current")
+		lc := client.New(
+			viper.GetString("lagoons."+current+".graphql"),
+			viper.GetString("lagoons."+current+".token"),
+			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
+			debug)
 		openshift := &schema.UpdateOpenshiftInput{
 			ID: ID,
 			Patch: schema.UpdateOpenshiftPatchInput{
@@ -231,16 +253,10 @@ var updateOpenshift = &cobra.Command{
 				SSHPort:       sshPort,
 			},
 		}
-		if ID == 0 {
-			return fmt.Errorf("Missing arguments: ID is not defined")
+		// @TODO: supporting versioned schemas might become a bit tricky
+		if greaterThanOrEqualVersion(viper.GetString("lagoons."+current+".version"), "v1.7.0") {
+			openshift.Patch.MonitoringConfig = monitoringConfig
 		}
-		current := viper.GetString("current")
-		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
-			lagoonCLIVersion,
-			debug)
 		result, err := lagoon.UpdateOpenshift(context.TODO(), openshift, lc)
 		if err != nil {
 			return err
@@ -298,15 +314,16 @@ var deleteOpenshift = &cobra.Command{
 // since the returned structs in the lagoon-cli can use embedded structs sometimes
 // we can define the fields we want to pick from a possible embedded struct to a specific named field
 var listOpenshiftFields = map[string]string{
-	"id":            "ID",
-	"name":          "Name",
-	"consoleurl":    "ConsoleURL",
-	"routerpattern": "RouterPattern",
-	"projectuser":   "ProjectUser",
-	"sshhost":       "SSHHost",
-	"sshport":       "SSHPort",
-	"created":       "Created",
-	"token":         "Token",
+	"id":               "ID",
+	"name":             "Name",
+	"consoleurl":       "ConsoleURL",
+	"routerpattern":    "RouterPattern",
+	"projectuser":      "ProjectUser",
+	"sshhost":          "SSHHost",
+	"sshport":          "SSHPort",
+	"created":          "Created",
+	"token":            "Token",
+	"monitoringconfig": "MonitoringConfig",
 }
 
 func init() {
@@ -334,6 +351,8 @@ func init() {
 		"SSH host address")
 	addOpenshift.Flags().StringP("sshPort", "s", "",
 		"SSH port number")
+	addOpenshift.Flags().StringP("monitoringConfig", "m", "",
+		"Configuration for monitoring (JSON)")
 
 	updateCmd.AddCommand(updateOpenshift)
 	updateOpenshift.Flags().StringP("name", "N", "",
@@ -352,6 +371,8 @@ func init() {
 		"SSH host address")
 	updateOpenshift.Flags().StringP("sshPort", "s", "",
 		"SSH port number")
+	updateOpenshift.Flags().StringP("monitoringConfig", "m", "",
+		"Configuration for monitoring (JSON)")
 
 	deleteCmd.AddCommand(deleteOpenshift)
 	deleteOpenshift.Flags().StringP("name", "N", "",

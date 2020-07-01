@@ -6,19 +6,6 @@ type Openshift struct {
 	UpdateOpenshiftPatchInput
 }
 
-// Openshift is based on the Lagoon API type.
-// type Openshift struct {
-// 	ID            int    `json:"id"`
-// 	Name          string `json:"name,omitempty"`
-// 	ConsoleURL    string `json:"consoleUrl,omitempty"`
-// 	RouterPattern string `json:"routerPattern,omitempty"`
-// 	ProjectUser   string `json:"projectUser,omitempty"`
-// 	SSHHost       string `json:"sshHost,omitempty"`
-// 	SSHPort       string `json:"sshPort,omitempty"`
-// 	Created       string `json:"created,omitempty"`
-// 	Token         string `json:"token,omitempty"`
-// }
-
 // UpdateOpenshiftInput is based on the Lagoon API type.
 type UpdateOpenshiftInput struct {
 	ID    int                       `json:"id"`
@@ -27,14 +14,15 @@ type UpdateOpenshiftInput struct {
 
 // UpdateOpenshiftPatchInput is based on the Lagoon API type.
 type UpdateOpenshiftPatchInput struct {
-	Name          string `json:"name,omitempty"`
-	ConsoleURL    string `json:"consoleUrl,omitempty"`
-	RouterPattern string `json:"routerPattern,omitempty"`
-	ProjectUser   string `json:"projectUser,omitempty"`
-	SSHHost       string `json:"sshHost,omitempty"`
-	SSHPort       string `json:"sshPort,omitempty"`
-	Created       string `json:"created,omitempty"`
-	Token         string `json:"token,omitempty"`
+	Name             string `json:"name,omitempty"`
+	ConsoleURL       string `json:"consoleUrl,omitempty"`
+	RouterPattern    string `json:"routerPattern,omitempty"`
+	ProjectUser      string `json:"projectUser,omitempty"`
+	SSHHost          string `json:"sshHost,omitempty"`
+	SSHPort          string `json:"sshPort,omitempty"`
+	Created          string `json:"created,omitempty"`
+	Token            string `json:"token,omitempty"`
+	MonitoringConfig string `json:"monitoringConfig,omitempty"`
 }
 
 // AddOpenshiftInput is based on the Lagoon API type.

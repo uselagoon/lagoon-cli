@@ -102,7 +102,7 @@ func (c *Client) LagoonSchema(
 func (c *Client) AllOpenshifts(
 	ctx context.Context, allOpenshifts *[]schema.Openshift) error {
 
-	req, err := c.newRequest("_lgraphql/allOpenshifts.graphql",
+	req, err := c.newVersionedRequest("_lgraphql/allOpenshifts.graphql",
 		nil)
 	if err != nil {
 		return err

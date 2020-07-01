@@ -276,7 +276,7 @@ func (c *Client) DeployEnvironmentBranch(ctx context.Context,
 // AddOpenshift adds an Openshift.
 func (c *Client) AddOpenshift(
 	ctx context.Context, in *schema.AddOpenshiftInput, out *schema.Openshift) error {
-	req, err := c.newRequest("_lgraphql/addOpenshift.graphql", in)
+	req, err := c.newVersionedRequest("_lgraphql/addOpenshift.graphql", in)
 	if err != nil {
 		return err
 	}
@@ -290,7 +290,7 @@ func (c *Client) AddOpenshift(
 // UpdateOpenshift updates an Openshift.
 func (c *Client) UpdateOpenshift(
 	ctx context.Context, in *schema.UpdateOpenshiftInput, out *schema.Openshift) error {
-	req, err := c.newRequest("_lgraphql/updateOpenshift.graphql", in)
+	req, err := c.newVersionedRequest("_lgraphql/updateOpenshift.graphql", in)
 	if err != nil {
 		return err
 	}
