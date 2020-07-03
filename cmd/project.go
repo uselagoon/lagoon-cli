@@ -130,6 +130,10 @@ var listProjectByMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		showMetadata, err := cmd.Flags().GetBool("show-metadata")
+		if err != nil {
+			return err
+		}
 		key, err := cmd.Flags().GetString("key")
 		if err != nil {
 			return err
@@ -160,19 +164,25 @@ var listProjectByMetadata = &cobra.Command{
 		}
 		data := []output.Data{}
 		for _, project := range *projects {
-			data = append(data, []string{
+			projectData := []string{
 				returnNonEmptyString(fmt.Sprintf("%v", project.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", project.Metadata)),
-			})
+			}
+			if showMetadata {
+				projectData = append(projectData, returnNonEmptyString(fmt.Sprintf("%v", project.Metadata)))
+			}
+			data = append(data, projectData)
+		}
+		header := []string{
+			"ID",
+			"Name",
+		}
+		if showMetadata {
+			header = append(header, "Metadata")
 		}
 		output.RenderOutput(output.Table{
-			Header: []string{
-				"ID",
-				"Name",
-				"Metadata",
-			},
-			Data: data,
+			Header: header,
+			Data:   data,
 		}, outputOptions)
 		return nil
 	},
@@ -332,14 +342,14 @@ func init() {
 	addProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 
 	listCmd.AddCommand(listProjectByMetadata)
-	listProjectByMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
-	listProjectByMetadata.Flags().String("value", "", "The value for the key you are querying on")
+	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
+	listProjectByMetadata.Flags().StringP("value", "V", "", "The value for the key you are querying on")
+	listProjectByMetadata.Flags().Bool("show-metadata", false, "Show the metadata for each project as another field (this could be a lot of data)")
 
 	updateCmd.AddCommand(updateProjectMetadata)
-	updateProjectMetadata.Flags().String("key", "", "The key name of the metadata value you are querying on")
-	updateProjectMetadata.Flags().String("value", "", "The value for the key you are querying on")
+	updateProjectMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
+	updateProjectMetadata.Flags().StringP("value", "V", "", "The value for the key you are querying on")
 
 	deleteCmd.AddCommand(deleteProjectMetadataByKey)
-	deleteProjectMetadataByKey.Flags().String("key", "", "The key name of the metadata value you are querying on")
-
+	deleteProjectMetadataByKey.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
 }
