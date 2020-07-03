@@ -14,6 +14,7 @@ DOCKER_GO_VER=1.14
 GO_VER=$(shell go version)
 LDFLAGS=-w -s -X ${PKG}/cmd.lagoonCLIVersion=${VERSION} -X ${PKG}/cmd.lagoonCLIBuild=${BUILD}
 
+GIT_ORIGIN=origin
 
 all: deps test build docs
 all-docker-linux: deps-docker test-docker build-docker-linux
@@ -99,16 +100,16 @@ release-patch:
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push origin master --tags
+	git push $(GIT_ORIGIN) master --tags
 
 release-minor: 
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -m $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push origin master --tags
+	git push $(GIT_ORIGIN) master --tags
 
 release-major: 
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -M $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push origin master --tags
+	git push $(GIT_ORIGIN) master --tags
