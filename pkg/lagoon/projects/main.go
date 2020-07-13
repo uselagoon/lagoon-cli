@@ -86,7 +86,7 @@ func processAllProjects(allProjects []byte) ([]byte, error) {
 		data = append(data, projectData)
 	}
 	dataMain := output.Table{
-		Header: []string{"ID", "ProjectName", "GitURL", "DevEnvironments"},
+		Header: []string{"ID", "ProjectName", "GitURL", "ProductionEnvironment", "DevEnvironments"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -104,6 +104,7 @@ func processProject(project api.Project) []string {
 		fmt.Sprintf("%v", project.ID),
 		fmt.Sprintf("%v", project.Name),
 		fmt.Sprintf("%v", project.GitURL),
+		fmt.Sprintf("%v", project.ProductionEnvironment),
 		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
 	}
 	return data
