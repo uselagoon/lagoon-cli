@@ -161,6 +161,7 @@ var AllProjectsFragment = `fragment Project on Project {
 	gitUrl
 	name,
 	developmentEnvironmentsLimit,
+	productionEnvironment,
 	environments {
 		environmentType,
 		route
