@@ -58,6 +58,10 @@ var addVariableCmd = &cobra.Command{
 			envVarFlags.Scope = api.BuildVar
 		} else if strings.EqualFold(string(envVarFlags.Scope), "runtime") {
 			envVarFlags.Scope = api.RuntimeVar
+		} else if strings.EqualFold(string(envVarFlags.Scope), "container_registry") {
+			envVarFlags.Scope = api.ContainerRegistryVar
+		} else if strings.EqualFold(string(envVarFlags.Scope), "internal_container_registry") {
+			envVarFlags.Scope = api.InternalContainerRegistryVar
 		} else {
 			output.RenderError("Unknown scope: "+string(envVarFlags.Scope), outputOptions)
 			os.Exit(1)
@@ -131,7 +135,7 @@ var deleteVariableCmd = &cobra.Command{
 func init() {
 	addVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to add")
 	addVariableCmd.Flags().StringVarP(&variableValue, "value", "V", "", "Value of the variable to add")
-	addVariableCmd.Flags().StringVarP(&variableScope, "scope", "S", "", "Scope of the variable[global, build, runtime]")
+	addVariableCmd.Flags().StringVarP(&variableScope, "scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
 	addVariableCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 	deleteVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to delete")
 }
