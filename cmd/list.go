@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 
+	"github.com/amazeeio/lagoon-cli/internal/lagoon"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -233,6 +236,47 @@ var listUsersCmd = &cobra.Command{
 	},
 }
 
+
+var listFactsCmd = &cobra.Command{
+	Use:     "facts",
+	// Aliases: []string{"f"},
+	Short:   "List facts for an environment (alias: f)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name or environment name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		current := viper.GetString("current")
+		lc := client.New(
+			viper.GetString("lagoons."+current+".graphql"),
+			viper.GetString("lagoons."+current+".token"),
+			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
+			debug)
+
+			projectDetails, err := lagoon.GetProjectByNameForFacts(
+				context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
+	
+			projectId := projectDetails.ID
+
+			_, err = fmt.Print(projectId)
+			return err
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
@@ -244,6 +288,7 @@ func init() {
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)
+	listCmd.AddCommand(listFactsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")

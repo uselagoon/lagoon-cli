@@ -44,6 +44,18 @@ func (c *Client) Me(
 	})
 }
 
+func (c *Client) FactsforEnvironment(ctx context.Context, projectId int, environmentName string, facts []*schema.Fact) error {
+	req, err := c.doRequest("  environmentByName(name: \"Development\", project: 18) {
+		facts {
+		  id
+		  name
+		  value
+		}
+	  }", nil)
+	
+}
+
+
 // EnvironmentByName queries the Lagoon API for an environment by its name and
 // parent projectID, and unmarshals the response into environment.
 func (c *Client) EnvironmentByName(ctx context.Context, name string,
