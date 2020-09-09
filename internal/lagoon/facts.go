@@ -17,3 +17,7 @@ func GetProjectByNameForFacts(ctx context.Context, projectName string, f Facts) 
 	project := schema.Project{}
 	return &project, f.ProjectByName(ctx, projectName, &project)
 }
+
+// func GetFactsForProjectEnvironment(ctx context.Context, projectId int, environmentName string, f Facts) () {
+// 	// environment := 
+// }

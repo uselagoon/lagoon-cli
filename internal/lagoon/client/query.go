@@ -45,13 +45,24 @@ func (c *Client) Me(
 }
 
 func (c *Client) FactsforEnvironment(ctx context.Context, projectId int, environmentName string, facts []*schema.Fact) error {
-	req, err := c.doRequest("  environmentByName(name: \"Development\", project: 18) {
-		facts {
-		  id
-		  name
-		  value
+	req, err := c.doRequest(`query environmentFacts {environmentByName(name: "Development", project: 18) {facts {
+		    id
+			name
+			value
+		  }
 		}
-	  }", nil)
+	  }
+	  `, nil)
+
+	  if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response []*schema.Fact `json:"environmentFacts"`
+	}{
+		Response: facts,
+	})
 	
 }
 
