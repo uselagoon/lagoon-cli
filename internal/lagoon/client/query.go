@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 )
@@ -44,25 +45,31 @@ func (c *Client) Me(
 	})
 }
 
-func (c *Client) FactsforEnvironment(ctx context.Context, projectId int, environmentName string, facts []*schema.Fact) error {
-	req, err := c.doRequest(`query environmentFacts {environmentByName(name: "Development", project: 18) {facts {
-		    id
-			name
-			value
-		  }
-		}
-	  }
-	  `, nil)
+func (c *Client) FactsforEnvironment(ctx context.Context, projectId uint, environmentName string, facts *[]schema.Fact) error {
+	req, err := c.newRequest("_lgraphql/getFacts.graphql", map[string]interface{}{
+		"name":   environmentName,
+		"projectID": projectId,
+	})
 
-	  if err != nil {
-		return err
+	if err != nil {
+		fmt.Println(err)
+		return nil
 	}
 
-	return c.client.Run(ctx, req, &struct {
-		Response []*schema.Fact `json:"environmentFacts"`
+	var environment schema.Environment
+
+	ret := c.client.Run(ctx, req, &struct {
+		Response *schema.Environment `json:"environmentByName"`
 	}{
-		Response: facts,
+		Response: &environment,
 	})
+
+	if ret != nil {
+		fmt.Println("ERROR")
+	}
+
+	*facts = environment.Facts
+	return ret
 	
 }
 

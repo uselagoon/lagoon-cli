@@ -264,16 +264,41 @@ var listFactsCmd = &cobra.Command{
 			lagoonCLIVersion,
 			debug)
 
-			projectDetails, err := lagoon.GetProjectByNameForFacts(
-				context.TODO(), cmdProjectName, lc)
-			if err != nil {
-				return err
-			}
-	
-			projectId := projectDetails.ID
-
-			_, err = fmt.Print(projectId)
+		projectDetails, err := lagoon.GetProjectByNameForFacts(
+			context.TODO(), cmdProjectName, lc)
+		if err != nil {
 			return err
+		}
+	
+		projectId := projectDetails.ID
+
+		environmentFacts, factsError := lagoon.GetEnvironmentFacts(context.TODO(), projectId, cmdProjectEnvironment, lc)
+		if factsError != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		
+		for _, fact := range *environmentFacts {
+			factData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", fact.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", fact.Value)),
+			}
+
+			data = append(data, factData)
+		}
+		
+		header := []string{
+			"Name",
+			"Value",
+		}
+
+		output.RenderOutput(output.Table{
+			Header: header,
+			Data:   data,
+		}, outputOptions)
+
+		return nil
 	},
 }
 

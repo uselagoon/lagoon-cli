@@ -10,6 +10,7 @@ import (
 // Deploy interface contains methods for deploying branches and environments in lagoon.
 type Facts interface {
 	ProjectByName(ctx context.Context, name string, project *schema.Project) error
+	FactsforEnvironment(ctx context.Context, projectId uint, environmentName string, facts *[]schema.Fact) error
 }
 
 // GetMinimalProjectByNameForFacts gets info of projects in lagoon that have matching metadata.
@@ -18,6 +19,8 @@ func GetProjectByNameForFacts(ctx context.Context, projectName string, f Facts) 
 	return &project, f.ProjectByName(ctx, projectName, &project)
 }
 
-// func GetFactsForProjectEnvironment(ctx context.Context, projectId int, environmentName string, f Facts) () {
-// 	// environment := 
-// }
+func GetEnvironmentFacts(ctx context.Context, projectId uint, environmentName string, f Facts) (*[]schema.Fact, error) {
+	facts := []schema.Fact{}
+	ret := f.FactsforEnvironment(ctx, projectId, environmentName, &facts)
+	return &facts, ret
+}
