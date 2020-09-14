@@ -35,7 +35,7 @@ func (api *Interface) UpdateTask(task UpdateTask) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
