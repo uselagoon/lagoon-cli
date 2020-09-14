@@ -221,8 +221,8 @@ var getUserKeysCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No ssh-keys for user '%s'", userEmail), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -242,8 +242,8 @@ var getAllUserKeysCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("No ssh-keys for any users", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 

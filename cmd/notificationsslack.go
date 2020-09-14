@@ -17,11 +17,12 @@ var listSlackCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var returnedJSON []byte
 		var err error
+		var notificationFlags NotificationFlags
 		if listAllProjects {
 			returnedJSON, err = pClient.ListAllSlacks()
 			handleError(err)
 		} else {
-			notificationFlags := parseNotificationFlags(*cmd.Flags())
+			notificationFlags = parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
 				fmt.Println("Missing arguments: Project name is not defined")
 				cmd.Help()
@@ -35,8 +36,12 @@ var listSlackCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if listAllProjects {
+				output.RenderInfo("No notifications for Slack", outputOptions)
+			} else {
+				output.RenderInfo(fmt.Sprintf("No notifications for Slack in project '%s'", notificationFlags.Project), outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
