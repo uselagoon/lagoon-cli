@@ -259,7 +259,8 @@ func initConfig() {
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
-	if viper.GetBool("projectDirectoryCheckDisable") == false {
+	// this option is opt-in now, so to use it you will need to `lagoon config feature --enable-local-dir-check=true`
+	if viper.GetBool("environmentFromDirectory") == true {
 		cmdProject, _ = app.GetLocalProject()
 	}
 	if cmdProject.Name != "" && cmdProjectName == "" {
