@@ -11,6 +11,7 @@ import (
 type Facts interface {
 	ProjectByName(ctx context.Context, name string, project *schema.Project) error
 	FactsforEnvironment(ctx context.Context, projectId uint, environmentName string, facts *[]schema.Fact) error
+	AddFact(ctx context.Context, environmentId int, name string, value string, fact *schema.Fact) error
 }
 
 // GetMinimalProjectByNameForFacts gets info of projects in lagoon that have matching metadata.
@@ -23,4 +24,10 @@ func GetEnvironmentFacts(ctx context.Context, projectId uint, environmentName st
 	facts := []schema.Fact{}
 	ret := f.FactsforEnvironment(ctx, projectId, environmentName, &facts)
 	return &facts, ret
+}
+
+func AddFact(ctx context.Context, environmentId int, name string, value string, f Facts) (*schema.Fact, error) {
+	fact := schema.Fact{}
+	err := f.AddFact(ctx, environmentId, name, value, &fact)
+	return &fact, err
 }

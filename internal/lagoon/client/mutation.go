@@ -233,6 +233,29 @@ func (c *Client) AddProjectToBillingGroup(ctx context.Context,
 	})
 }
 
+
+// AddFact adds an Fact to an Environment.
+func (c *Client) AddFact(
+	ctx context.Context, environmentId int, name string, value string, fact *schema.Fact) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/addFact.graphql",
+		map[string]interface{}{
+			"environment":  environmentId,
+			"name": name,
+			"value": value,
+		})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(req)
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Fact `json:"addAFact"`
+	}{
+		Response: fact,
+	})
+}
+
 // DeployEnvironmentLatest deploys a latest environment.
 func (c *Client) DeployEnvironmentLatest(ctx context.Context,
 	in *schema.DeployEnvironmentLatestInput, out *schema.DeployEnvironmentLatest) error {
