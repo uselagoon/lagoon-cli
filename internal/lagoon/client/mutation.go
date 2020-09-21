@@ -233,16 +233,15 @@ func (c *Client) AddProjectToBillingGroup(ctx context.Context,
 	})
 }
 
-
 // AddFact adds an Fact to an Environment.
 func (c *Client) AddFact(
 	ctx context.Context, environmentId uint, name string, value string, fact *schema.Fact) error {
 
 	req, err := c.newVersionedRequest("_lgraphql/addFact.graphql",
 		map[string]interface{}{
-			"environment":  environmentId,
-			"name": name,
-			"value": value,
+			"environment": environmentId,
+			"name":        name,
+			"value":       value,
 		})
 	if err != nil {
 		return err
@@ -252,6 +251,26 @@ func (c *Client) AddFact(
 		Response *schema.Fact `json:"addFact"`
 	}{
 		Response: fact,
+	})
+}
+
+// DeleteFact deletes a Fact from an Environment.
+func (c *Client) DeleteFact(
+	ctx context.Context, environmentId uint, name string, ret *string) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/deleteFact.graphql",
+		map[string]interface{}{
+			"environment": environmentId,
+			"name":        name,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response string `json:"data"`
+	}{
+		Response: *ret,
 	})
 }
 

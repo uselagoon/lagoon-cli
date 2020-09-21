@@ -236,11 +236,10 @@ var listUsersCmd = &cobra.Command{
 	},
 }
 
-
 var listFactsCmd = &cobra.Command{
-	Use:     "facts",
+	Use: "facts",
 	// Aliases: []string{"f"},
-	Short:   "List facts for an environment (alias: f)",
+	Short: "List facts for an environment (alias: f)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -269,7 +268,7 @@ var listFactsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-	
+
 		projectId := projectDetails.ID
 
 		environmentFacts, factsError := lagoon.GetEnvironmentFacts(context.TODO(), projectId, cmdProjectEnvironment, lc)
@@ -278,7 +277,7 @@ var listFactsCmd = &cobra.Command{
 		}
 
 		data := []output.Data{}
-		
+
 		for _, fact := range *environmentFacts {
 			factData := []string{
 				returnNonEmptyString(fmt.Sprintf("%v", fact.Name)),
@@ -287,7 +286,7 @@ var listFactsCmd = &cobra.Command{
 
 			data = append(data, factData)
 		}
-		
+
 		header := []string{
 			"Name",
 			"Value",

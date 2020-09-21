@@ -47,7 +47,7 @@ func (c *Client) Me(
 
 func (c *Client) FactsforEnvironment(ctx context.Context, projectId uint, environmentName string, facts *[]schema.Fact) error {
 	req, err := c.newRequest("_lgraphql/getFacts.graphql", map[string]interface{}{
-		"name":   environmentName,
+		"name":      environmentName,
 		"projectID": projectId,
 	})
 
@@ -70,9 +70,8 @@ func (c *Client) FactsforEnvironment(ctx context.Context, projectId uint, enviro
 
 	*facts = environment.Facts
 	return ret
-	
-}
 
+}
 
 // EnvironmentByName queries the Lagoon API for an environment by its name and
 // parent projectID, and unmarshals the response into environment.

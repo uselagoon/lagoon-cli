@@ -7,11 +7,13 @@ import (
 
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 )
+
 // Deploy interface contains methods for deploying branches and environments in lagoon.
 type Facts interface {
 	ProjectByName(ctx context.Context, name string, project *schema.Project) error
 	FactsforEnvironment(ctx context.Context, projectId uint, environmentName string, facts *[]schema.Fact) error
 	AddFact(ctx context.Context, environmentId uint, name string, value string, fact *schema.Fact) error
+	DeleteFact(ctx context.Context, environmentId uint, name string, ret *string) error
 }
 
 // GetProjectByNameForFacts gets project by name for the context of facts
@@ -30,4 +32,10 @@ func AddFact(ctx context.Context, environmentId uint, name string, value string,
 	fact := schema.Fact{}
 	err := f.AddFact(ctx, environmentId, name, value, &fact)
 	return &fact, err
+}
+
+func DeleteFact(ctx context.Context, environmentId uint, name string, f Facts) (string, error) {
+	var ret string
+	err := f.DeleteFact(ctx, environmentId, name, &ret)
+	return ret, err
 }
