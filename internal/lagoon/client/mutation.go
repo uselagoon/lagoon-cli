@@ -236,7 +236,7 @@ func (c *Client) AddProjectToBillingGroup(ctx context.Context,
 
 // AddFact adds an Fact to an Environment.
 func (c *Client) AddFact(
-	ctx context.Context, environmentId int, name string, value string, fact *schema.Fact) error {
+	ctx context.Context, environmentId uint, name string, value string, fact *schema.Fact) error {
 
 	req, err := c.newVersionedRequest("_lgraphql/addFact.graphql",
 		map[string]interface{}{
@@ -248,9 +248,8 @@ func (c *Client) AddFact(
 		return err
 	}
 
-	fmt.Println(req)
 	return c.client.Run(ctx, req, &struct {
-		Response *schema.Fact `json:"addAFact"`
+		Response *schema.Fact `json:"addFact"`
 	}{
 		Response: fact,
 	})
