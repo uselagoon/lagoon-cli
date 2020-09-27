@@ -157,7 +157,7 @@ var deleteFactCommand = &cobra.Command{
 			return fmt.Errorf("Fact '%s' does not exist for %s:%s", name, cmdProjectName, cmdProjectEnvironment)
 		}
 
-		retval, errorval := lagoon.DeleteFact(context.TODO(), environment.ID, name, lc)
+		_, errorval := lagoon.DeleteFact(context.TODO(), environment.ID, name, lc)
 		if errorval != nil {
 			return errorval
 		}
@@ -169,7 +169,7 @@ var deleteFactCommand = &cobra.Command{
 
 		if !factExists {
 			resultData := output.Result{
-				Result:     retval,
+				Result:     "success",
 				ResultData: nil,
 			}
 			output.RenderResult(resultData, outputOptions)
