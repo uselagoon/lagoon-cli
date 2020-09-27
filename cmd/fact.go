@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	// "encoding/json"
 	"fmt"
 
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
@@ -10,7 +9,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
-	// "github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 

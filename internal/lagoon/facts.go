@@ -47,7 +47,7 @@ func FactExists(ctx context.Context, projectId uint, environmentName string, nam
 	}
 
 	for _, fact := range facts {
-		if(fact.Name == name) {
+		if fact.Name == name {
 			return true, nil
 		}
 	}

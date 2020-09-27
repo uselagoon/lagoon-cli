@@ -268,7 +268,7 @@ func (c *Client) DeleteFact(
 	}
 
 	return c.client.Run(ctx, req, &struct {
-		Response string "json:'data'"
+		Response string `json:"data"`
 	}{
 		Response: *ret,
 	})
