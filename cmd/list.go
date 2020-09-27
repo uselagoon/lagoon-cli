@@ -244,10 +244,12 @@ var listFactsCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments - Project name is not defined")
+		}
+
+		if cmdProjectEnvironment == "" {
+			return fmt.Errorf("Missing arguments - Environment name is not defined")
 		}
 
 		debug, err := cmd.Flags().GetBool("debug")

@@ -4,7 +4,6 @@ package lagoon
 
 import (
 	"context"
-
 	"github.com/amazeeio/lagoon-cli/internal/schema"
 )
 
@@ -38,4 +37,20 @@ func DeleteFact(ctx context.Context, environmentId uint, name string, f Facts) (
 	var ret string
 	err := f.DeleteFact(ctx, environmentId, name, &ret)
 	return ret, err
+}
+
+func FactExists(ctx context.Context, projectId uint, environmentName string, name string, f Facts) (bool, error) {
+	facts := []schema.Fact{}
+	err := f.FactsforEnvironment(ctx, projectId, environmentName, &facts)
+	if err != nil {
+		return false, err
+	}
+
+	for _, fact := range facts {
+		if(fact.Name == name) {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

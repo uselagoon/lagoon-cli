@@ -30,10 +30,12 @@ var addFactCommand = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments - Project name is not defined")
+		}
+
+		if cmdProjectEnvironment == "" {
+			return fmt.Errorf("Missing arguments - Environment name is not defined")
 		}
 
 		name, err := cmd.Flags().GetString("name")
@@ -61,6 +63,7 @@ var addFactCommand = &cobra.Command{
 
 		projectDetails, err := lagoon.GetProjectByNameForFacts(
 			context.TODO(), cmdProjectName, lc)
+
 		if err != nil {
 			return err
 		}
@@ -68,6 +71,16 @@ var addFactCommand = &cobra.Command{
 		var environment schema.Environment
 
 		lc.EnvironmentByName(context.TODO(), cmdProjectEnvironment, projectDetails.ID, &environment)
+
+		var factExists, factExistsErr = lagoon.FactExists(context.TODO(), projectDetails.ID, environment.Name, name, lc)
+
+		if factExistsErr != nil {
+			return factExistsErr
+		}
+
+		if factExists {
+			return fmt.Errorf("Fact '%s' already exists", name)
+		}
 
 		retval, errorval := lagoon.AddFact(context.TODO(), environment.ID, name, value, lc)
 		if errorval != nil {
@@ -131,7 +144,6 @@ var deleteFactCommand = &cobra.Command{
 		}
 
 		var environment schema.Environment
-
 		lc.EnvironmentByName(context.TODO(), cmdProjectEnvironment, projectDetails.ID, &environment)
 
 		retval, errorval := lagoon.DeleteFact(context.TODO(), environment.ID, name, lc)
@@ -139,28 +151,7 @@ var deleteFactCommand = &cobra.Command{
 			return errorval
 		}
 
-		if errorval != nil {
-			return errorval
-		}
-
 		fmt.Println(retval)
-		return nil
-
-		// data := []output.Data{}
-		// data = append(data, []string{
-		// 	returnNonEmptyString(fmt.Sprintf("%v", retval.ID)),
-		// 	returnNonEmptyString(fmt.Sprintf("%v", retval.Name)),
-		// 	returnNonEmptyString(fmt.Sprintf("%v", retval.Value)),
-		// })
-		// output.RenderOutput(output.Table{
-		// 	Header: []string{
-		// 		"ID",
-		// 		"Name",
-		// 		"Value",
-		// 	},
-		// 	Data: data,
-		// }, outputOptions)
-
 		return nil
 	},
 }
@@ -169,6 +160,7 @@ func init() {
 	factCmd.AddCommand(addFactCommand)
 	addFactCommand.Flags().StringP("name", "N", "", "The key name of the fact you are adding")
 	addFactCommand.Flags().StringP("value", "V", "", "The value of the fact you are adding")
+
 	factCmd.AddCommand(deleteFactCommand)
 	deleteFactCommand.Flags().StringP("name", "N", "", "The key name of the fact you are deleting")
 }
