@@ -4,7 +4,6 @@ import (
 	"context"
 	// "encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
@@ -72,7 +71,7 @@ var addFactCommand = &cobra.Command{
 
 		lc.EnvironmentByName(context.TODO(), cmdProjectEnvironment, projectDetails.ID, &environment)
 
-		var factExists, factExistsErr = lagoon.FactExists(context.TODO(), projectDetails.ID, environment.Name, name, lc)
+		factExists, factExistsErr := lagoon.FactExists(context.TODO(), projectDetails.ID, environment.Name, name, lc)
 
 		if factExistsErr != nil {
 			return factExistsErr
@@ -93,6 +92,7 @@ var addFactCommand = &cobra.Command{
 			returnNonEmptyString(fmt.Sprintf("%v", retval.Name)),
 			returnNonEmptyString(fmt.Sprintf("%v", retval.Value)),
 		})
+
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
@@ -113,10 +113,12 @@ var deleteFactCommand = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments - Project name is not defined")
+		}
+
+		if cmdProjectEnvironment == "" {
+			return fmt.Errorf("Missing arguments - Environment name is not defined")
 		}
 
 		name, err := cmd.Flags().GetString("name")
@@ -146,12 +148,35 @@ var deleteFactCommand = &cobra.Command{
 		var environment schema.Environment
 		lc.EnvironmentByName(context.TODO(), cmdProjectEnvironment, projectDetails.ID, &environment)
 
+		factExists, factExistsErr := lagoon.FactExists(context.TODO(), projectDetails.ID, environment.Name, name, lc)
+		if factExistsErr != nil {
+			return factExistsErr
+		}
+
+		if !factExists {
+			return fmt.Errorf("Fact '%s' does not exist for %s:%s", name, cmdProjectName, cmdProjectEnvironment)
+		}
+
 		retval, errorval := lagoon.DeleteFact(context.TODO(), environment.ID, name, lc)
 		if errorval != nil {
 			return errorval
 		}
 
-		fmt.Println(retval)
+		factExists, factExistsErr = lagoon.FactExists(context.TODO(), projectDetails.ID, environment.Name, name, lc)
+		if factExistsErr != nil {
+			return factExistsErr
+		}
+
+		if !factExists {
+			resultData := output.Result{
+				Result:     retval,
+				ResultData: nil,
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("Fact '%s' still exists for %s:%s", name, cmdProjectName, cmdProjectEnvironment)
+		}
+
 		return nil
 	},
 }
