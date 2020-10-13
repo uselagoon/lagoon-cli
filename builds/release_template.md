@@ -15,4 +15,7 @@ sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/CIRCLE_TA
 
 # Linux
 sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/CIRCLE_TAG/lagoon-cli-CIRCLE_TAG-linux-amd64" -o /usr/local/bin/lagoon
+
+# Staticly linked Linux binary (eg. for use in containers)
+sudo curl -L "https://github.com/amazeeio/lagoon-cli/releases/download/CIRCLE_TAG/lagoon-cli-CIRCLE_TAG-linux-amd64-static" -o /usr/local/bin/lagoon
 ```
