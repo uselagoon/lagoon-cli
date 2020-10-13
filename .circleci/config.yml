@@ -32,7 +32,6 @@ jobs:
           name: compile
           command: |
             make VERSION=${CIRCLE_TAG} build-linux
-            make VERSION=${CIRCLE_TAG} build-linux-static
             make VERSION=${CIRCLE_TAG} build-darwin
       - run:
           name: "Publish Release on GitHub"
