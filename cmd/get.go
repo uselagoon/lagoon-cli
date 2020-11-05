@@ -163,6 +163,9 @@ func init() {
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
+	getCmd.AddCommand(getTaskByID)
+	getTaskByID.Flags().IntP("id", "I", 0, "ID of the task")
+	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

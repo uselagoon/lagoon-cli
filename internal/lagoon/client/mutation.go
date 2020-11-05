@@ -272,3 +272,21 @@ func (c *Client) DeployEnvironmentBranch(ctx context.Context,
 	}
 	return c.client.Run(ctx, req, &out)
 }
+
+// RunActiveStandbySwitch deploys a branch.
+func (c *Client) RunActiveStandbySwitch(ctx context.Context,
+	project string, out *schema.Task) error {
+	req, err := c.newVersionedRequest("_lgraphql/switchActiveStandby.graphql", map[string]interface{}{
+		"project": project,
+	})
+	if err != nil {
+		return err
+	}
+
+	// return c.client.Run(ctx, req, &out)
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Task `json:"switchActiveStandby"`
+	}{
+		Response: out,
+	})
+}

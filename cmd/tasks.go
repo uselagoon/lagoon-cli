@@ -2,16 +2,123 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 
+	"github.com/amazeeio/lagoon-cli/internal/lagoon"
+	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+var getTaskByID = &cobra.Command{
+	Use:     "task-by-id",
+	Short:   "Get information about a task by its ID",
+	Long:    `Get information about a task by its ID`,
+	Aliases: []string{"t", "tbi"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(viper.GetString("current"))
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		taskID, err := cmd.Flags().GetInt("id")
+		if err != nil {
+			return err
+		}
+		showLogs, err := cmd.Flags().GetBool("logs")
+		if err != nil {
+			return err
+		}
+		if taskID == 0 {
+			return fmt.Errorf("Missing arguments: ID is not defined")
+		}
+		current := viper.GetString("current")
+		lc := client.New(
+			viper.GetString("lagoons."+current+".graphql"),
+			viper.GetString("lagoons."+current+".token"),
+			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIVersion,
+			debug)
+		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
+		if err != nil {
+			return err
+		}
+		dataMain := output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"Status",
+				"Created",
+				"Started",
+				"Completed",
+			},
+			Data: []output.Data{
+				{
+					fmt.Sprintf("%d", result.ID),
+					returnNonEmptyString(result.Name),
+					returnNonEmptyString(result.Status),
+					returnNonEmptyString(result.Created),
+					returnNonEmptyString(result.Started),
+					returnNonEmptyString(result.Completed),
+				},
+			},
+		}
+		if showLogs {
+			dataMain.Header = append(dataMain.Header, "Logs")
+			dataMain.Data[0] = append(dataMain.Data[0], returnNonEmptyString(result.Logs))
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
+var runActiveStandbySwitch = &cobra.Command{
+	Use:   "activestandby",
+	Short: "Run the active/standby switch for a project",
+	Long: `Run the active/standby switch for a project
+You should only run this once and then check the status of the task that gets created.
+If the task fails or fails to update, contact your Lagoon administrator for assistance.`,
+	Aliases: []string{"as", "standby"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(viper.GetString("current"))
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
+			current := viper.GetString("current")
+			lc := client.New(
+				viper.GetString("lagoons."+current+".graphql"),
+				viper.GetString("lagoons."+current+".token"),
+				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
+			fmt.Println(fmt.Sprintf(`Created a new task with ID %d
+You can use the following command to query the task status:
+lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
+		}
+		return nil
+	},
+}
 
 var runDrushArchiveDump = &cobra.Command{
 	Use:     "drush-archivedump",

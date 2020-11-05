@@ -76,6 +76,12 @@ func determineLagoonVersion(lagoonVersion string, lagoonSchema schema.LagoonSche
 						return lagoonVersion, err
 					}
 				}
+				if field.Name == "taskById" {
+					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.9.0")
+					if err != nil {
+						return lagoonVersion, err
+					}
+				}
 			}
 		}
 		if schemaType.Name == "NotificationMicrosoftTeams" {

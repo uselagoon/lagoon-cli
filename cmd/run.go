@@ -19,4 +19,5 @@ func init() {
 	runCmd.AddCommand(runDrushArchiveDump)
 	runCmd.AddCommand(runDrushCacheClear)
 	runCmd.AddCommand(runDrushSQLDump)
+	runCmd.AddCommand(runActiveStandbySwitch)
 }
