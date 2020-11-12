@@ -233,6 +233,7 @@ type Project struct {
 	ActiveSystemsDeploy          string                `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string                `json:"activeSystemsRemove,omitempty"`
 	ActiveSystemsPromote         string                `json:"activeSystemsPromote,omitempty"`
+	ActiveSystemsMisc            string                `json:"activeSystemsMisc,omitempty"`
 	Branches                     string                `json:"branches,omitempty"`
 	Pullrequests                 string                `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string                `json:"productionEnvironment,omitempty"`
@@ -259,6 +260,7 @@ type ProjectPatch struct {
 	ActiveSystemsDeploy          string `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string `json:"activeSystemsRemove,omitempty"`
 	ActiveSystemsPromote         string `json:"activeSystemsPromote,omitempty"`
+	ActiveSystemsMisc            string `json:"activeSystemsMisc,omitempty"`
 	Branches                     string `json:"branches,omitempty"`
 	Pullrequests                 string `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string `json:"productionEnvironment,omitempty"`
