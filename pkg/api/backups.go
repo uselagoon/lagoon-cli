@@ -38,7 +38,7 @@ func (api *Interface) AddBackup(backup AddBackup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -68,7 +68,7 @@ func (api *Interface) DeleteBackup(backup DeleteBackup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -101,7 +101,7 @@ func (api *Interface) UpdateRestore(update UpdateRestore) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -138,7 +138,7 @@ func (api *Interface) GetAllEnvironmentBackups() ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -179,7 +179,7 @@ func (api *Interface) GetEnvironmentBackups(backups EnvironmentBackups) ([]byte,
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }

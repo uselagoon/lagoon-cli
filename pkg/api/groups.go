@@ -34,7 +34,7 @@ func (api *Interface) AddGroup(group AddGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -68,7 +68,7 @@ func (api *Interface) AddGroupWithParent(group AddGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -104,7 +104,7 @@ func (api *Interface) UpdateGroup(group UpdateGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -136,7 +136,7 @@ func (api *Interface) DeleteGroup(group AddGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -172,7 +172,7 @@ func (api *Interface) AddUserToGroup(user AddUserToGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -205,7 +205,7 @@ func (api *Interface) AddGroupToProject(group ProjectToGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -238,7 +238,7 @@ func (api *Interface) RemoveGroupFromProject(group ProjectToGroup) ([]byte, erro
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -272,7 +272,7 @@ func (api *Interface) RemoveUserFromGroup(user UserGroup) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
