@@ -89,13 +89,13 @@ var runCustomTask = &cobra.Command{
 	Long: `Run a custom command on an environment
 The following are supported methods to use
 Direct:
-  lagoon run custom -p example -e master -N "My Task" -S cli -c "ps -ef"
+  lagoon run custom -p example -e main -N "My Task" -S cli -c "ps -ef"
 
 STDIN:
-  cat /path/to/my-script.sh | lagoon run custom -p example -e master -N "My Task" -S cli
+  cat /path/to/my-script.sh | lagoon run custom -p example -e main -N "My Task" -S cli
 
 Path:
-  lagoon run custom -p example -e master -N "My Task" -S cli -s /path/to/my-script.sh
+  lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		stat, _ := os.Stdin.Stat()

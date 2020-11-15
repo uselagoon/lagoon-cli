@@ -233,8 +233,8 @@ func initConfig() {
 		viper.SetDefault("lagoons.amazeeio.port", 32222)
 		viper.SetDefault("lagoons.amazeeio.token", "")
 		viper.SetDefault("lagoons.amazeeio.graphql", "https://api.lagoon.amazeeio.cloud/graphql")
-		viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
-		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
+		viper.SetDefault("lagoons.amazeeio.ui", "https://dashboard.amazeeio.cloud")
+		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs.amazeeio.cloud/")
 		viper.SetDefault("default", "amazeeio")
 		err = viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		if err != nil {
