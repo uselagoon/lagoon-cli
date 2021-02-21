@@ -237,6 +237,7 @@ type Project struct {
 	Branches                     string                `json:"branches,omitempty"`
 	Pullrequests                 string                `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string                `json:"productionEnvironment,omitempty"`
+	StandbyProductionEnvironment string                `json:"standbyProductionEnvironment,omitempty"`
 	AutoIdle                     *int                  `json:"autoIdle,omitempty"`
 	StorageCalc                  *int                  `json:"storageCalc,omitempty"`
 	OpenshiftProjectPattern      string                `json:"openshiftProjectPattern,omitempty"`
@@ -264,6 +265,7 @@ type ProjectPatch struct {
 	Branches                     string `json:"branches,omitempty"`
 	Pullrequests                 string `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string `json:"productionEnvironment,omitempty"`
+	StandbyProductionEnvironment string `json:"standbyProductionEnvironment,omitempty"`
 	AutoIdle                     *int   `json:"autoIdle,omitempty"`
 	StorageCalc                  *int   `json:"storageCalc,omitempty"`
 	OpenshiftProjectPattern      string `json:"openshiftProjectPattern,omitempty"`
