@@ -96,3 +96,23 @@ func (c *Client) LagoonSchema(
 		Response: lagoonSchema,
 	})
 }
+
+// GetTaskByID queries the Lagoon API for a task by its ID, and
+// unmarshals the response.
+func (c *Client) GetTaskByID(
+	ctx context.Context, id int, task *schema.Task) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/taskByID.graphql",
+		map[string]interface{}{
+			"id": id,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Task `json:"taskById"`
+	}{
+		Response: task,
+	})
+}

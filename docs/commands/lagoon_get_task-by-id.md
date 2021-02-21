@@ -1,15 +1,21 @@
-## lagoon run
+## lagoon get task-by-id
 
-Run a task against an environment
+Get information about a task by its ID
 
 ### Synopsis
 
-Run a task against an environment
+Get information about a task by its ID
+
+```
+lagoon get task-by-id [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for run
+  -h, --help     help for task-by-id
+  -I, --id int   ID of the task
+  -L, --logs     Show the task logs if available
 ```
 
 ### Options inherited from parent commands
@@ -31,10 +37,5 @@ Run a task against an environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon run activestandby](lagoon_run_activestandby.md)	 - Run the active/standby switch for a project
-* [lagoon run custom](lagoon_run_custom.md)	 - Run a custom command on an environment
-* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)	 - Run a drush archive dump on an environment
-* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)	 - Run a drush cache clear on an environment
-* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)	 - Run a drush sql dump on an environment
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

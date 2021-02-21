@@ -25,6 +25,8 @@
 // _lgraphql/lagoonVersion.graphql
 // _lgraphql/me.graphql
 // _lgraphql/projectByName.graphql
+// _lgraphql/switchActiveStandby.graphql
+// _lgraphql/taskByID.graphql
 package lgraphql
 
 import (
@@ -581,6 +583,46 @@ func _lgraphqlProjectbynameGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlSwitchactivestandbyGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\x8c\xb1\x8f\x82\x50\x0c\x87\xf7\xfe\x15\xbf\x23\x37\x1c\x0b\xb9\x1b\x8f\xcd\xc1\x38\x3a\x60\xdc\x2b\x54\xa9\x91\x82\xcf\xa2\x31\x2f\xef\x7f\x37\x18\xb0\x43\x93\x7e\xe9\xf7\xc5\x08\x3d\x82\x07\xdd\x4b\xd8\x04\x61\x97\xb0\x6b\xd9\xb6\x61\x7d\x1d\xf9\x82\x02\xd9\x5f\xf1\x5f\xfc\x66\x48\x89\xba\xd1\xd9\xb5\x37\xfc\x10\xf0\x3d\x84\xfe\x2c\xb5\x97\xa8\x3c\xa8\x9d\xbe\x08\xc8\x11\x09\xb8\x3d\xd4\xeb\x76\x55\xbb\xde\xa5\x72\xb6\xe6\xf0\x9c\x04\x40\x6d\x18\xbd\x7c\xff\x4c\xb3\x04\x96\x1b\x30\xee\xa4\xfc\x94\x67\x9c\x68\xd9\xf9\xac\x6a\x43\x13\x48\x14\x23\xc4\x1a\xa4\xf4\x0a\x00\x00\xff\xff\xf9\xe3\xea\x42\xc6\x00\x00\x00")
+
+func _lgraphqlSwitchactivestandbyGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlSwitchactivestandbyGraphql,
+		"_lgraphql/switchActiveStandby.graphql",
+	)
+}
+
+func _lgraphqlSwitchactivestandbyGraphql() (*asset, error) {
+	bytes, err := _lgraphqlSwitchactivestandbyGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/switchActiveStandby.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlTaskbyidGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\x8e\x31\x0f\x82\x30\x10\x85\xf7\xfe\x8a\x27\x61\xc0\x85\xe8\xa8\xa3\x89\x31\x4c\x2e\xc6\xfd\x42\x4f\x6d\xa4\x05\x8e\x62\x42\x9a\xfe\x77\x43\x11\xa7\xfb\xee\xdd\xcb\x97\x0b\x01\xe6\x01\xea\xcc\x9d\xe5\x22\x4c\x9e\xe5\xf6\x22\x77\x95\x73\x3f\x52\x83\x12\xd9\xbe\x3c\x94\xbb\x0c\x31\xaa\x7e\x64\x99\x50\x28\x20\x37\xfa\x88\xca\xf9\x8d\x02\xb6\x41\x01\x9e\x86\xf7\x69\xaa\x74\x31\x1f\x72\xa3\x53\x08\x18\x9d\x86\x23\xcb\x09\xea\xd6\x5a\x72\x4b\x38\x78\xf2\xe3\xb0\xa2\x78\xd6\x6b\xa5\x6b\xf8\xbf\xa5\x97\x16\x6e\xda\xe7\x52\x17\xb6\xad\xe7\xea\xa7\x61\xf9\x98\x7a\xd6\x47\x15\x55\x08\x60\xa7\x11\xe3\x37\x00\x00\xff\xff\xb1\xdc\x9e\x8c\xd8\x00\x00\x00")
+
+func _lgraphqlTaskbyidGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlTaskbyidGraphql,
+		"_lgraphql/taskByID.graphql",
+	)
+}
+
+func _lgraphqlTaskbyidGraphql() (*asset, error) {
+	bytes, err := _lgraphqlTaskbyidGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/taskByID.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -657,6 +699,8 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/lagoonVersion.graphql":                 _lgraphqlLagoonversionGraphql,
 	"_lgraphql/me.graphql":                            _lgraphqlMeGraphql,
 	"_lgraphql/projectByName.graphql":                 _lgraphqlProjectbynameGraphql,
+	"_lgraphql/switchActiveStandby.graphql":           _lgraphqlSwitchactivestandbyGraphql,
+	"_lgraphql/taskByID.graphql":                      _lgraphqlTaskbyidGraphql,
 }
 
 // AssetDir returns the file names below a certain
@@ -725,6 +769,8 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"lagoonVersion.graphql":                 &bintree{_lgraphqlLagoonversionGraphql, map[string]*bintree{}},
 		"me.graphql":                            &bintree{_lgraphqlMeGraphql, map[string]*bintree{}},
 		"projectByName.graphql":                 &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
+		"switchActiveStandby.graphql":           &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},
+		"taskByID.graphql":                      &bintree{_lgraphqlTaskbyidGraphql, map[string]*bintree{}},
 	}},
 }}
 
