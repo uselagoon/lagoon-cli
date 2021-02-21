@@ -100,16 +100,16 @@ release-patch:
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) master --tags
+	git push $(GIT_ORIGIN) main --tags
 
 release-minor: 
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -m $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) master --tags
+	git push $(GIT_ORIGIN) main --tags
 
 release-major: 
 	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -M $(shell git describe --abbrev=0 --tags)))
 	git tag $(VERSION)
 	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) master --tags
+	git push $(GIT_ORIGIN) main --tags

@@ -60,8 +60,6 @@ var outputOptions = output.Options{
 
 var debugEnable bool
 
-var noDataError = "no data returned from the lagoon api"
-
 func handleError(err error) {
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)

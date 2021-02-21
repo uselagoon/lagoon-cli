@@ -48,6 +48,7 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
 		fmt.Println("Error was:", err.Error())
+		fmt.Println("Lagoon CLI cannot decode private keys, you will need to add your private key to your ssh-agent.")
 		os.Exit(1)
 	} else if err == nil {
 		// return unencrypted private key

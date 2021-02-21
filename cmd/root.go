@@ -233,8 +233,8 @@ func initConfig() {
 		viper.SetDefault("lagoons.amazeeio.port", 32222)
 		viper.SetDefault("lagoons.amazeeio.token", "")
 		viper.SetDefault("lagoons.amazeeio.graphql", "https://api.lagoon.amazeeio.cloud/graphql")
-		viper.SetDefault("lagoons.amazeeio.ui", "https://ui-lagoon-master.ch.amazee.io")
-		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs-db-ui-lagoon-master.ch.amazee.io/")
+		viper.SetDefault("lagoons.amazeeio.ui", "https://dashboard.amazeeio.cloud")
+		viper.SetDefault("lagoons.amazeeio.kibana", "https://logs.amazeeio.cloud/")
 		viper.SetDefault("default", "amazeeio")
 		err = viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
 		if err != nil {
@@ -259,7 +259,8 @@ func initConfig() {
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
-	if viper.GetBool("projectDirectoryCheckDisable") == false {
+	// this option is opt-in now, so to use it you will need to `lagoon config feature --enable-local-dir-check=true`
+	if viper.GetBool("environmentFromDirectory") == true {
 		cmdProject, _ = app.GetLocalProject()
 	}
 	if cmdProject.Name != "" && cmdProjectName == "" {

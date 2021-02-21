@@ -71,7 +71,7 @@ var addUserToGroupCmd = &cobra.Command{
 		}
 		userGroupRole := api.UserGroupRole{
 			User: api.User{
-				Email: userEmail,
+				Email: strings.ToLower(userEmail),
 			},
 			Group: api.Group{
 				Name: groupName,
@@ -140,7 +140,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		userGroupRole := api.UserGroup{
 			User: api.User{
-				Email: userEmail,
+				Email: strings.ToLower(userEmail),
 			},
 			Group: api.Group{
 				Name: groupName,

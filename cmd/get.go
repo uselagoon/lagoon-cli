@@ -64,8 +64,8 @@ var getProjectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No details for project '%s'", getProjectFlags.Project), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -89,8 +89,8 @@ var getDeploymentCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if string(returnedJSON) == "null" {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No deployment for remoteId '%s'", getProjectFlags.RemoteID), outputOptions)
+			os.Exit(0)
 		}
 		var deployment api.Deployment
 		err = json.Unmarshal([]byte(returnedJSON), &deployment)
@@ -123,8 +123,8 @@ var getEnvironmentCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No environment '%s' for project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -148,8 +148,8 @@ var getProjectKeyCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 

@@ -1,5 +1,7 @@
 ## Lagoon CLI
 
+<img src="./docs/lagoon-cli-logo.png" width=100>
+
 [![CircleCI](https://circleci.com/gh/amazeeio/lagoon-cli.svg?style=svg)](https://circleci.com/gh/amazeeio/lagoon-cli) 
 
 This is a CLI for interacting with a [Lagoon](https://github.com/amazeeio/lagoon) instance. By default, it is configured

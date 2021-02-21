@@ -50,8 +50,8 @@ var listProjectsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("No access to any projects in Lagoon", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -69,8 +69,8 @@ var listGroupsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("This account is not in any groups", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -101,8 +101,12 @@ var listGroupProjectsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if !listAllProjects {
+				output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
+			} else {
+				output.RenderInfo("There are no projects in any groups", outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -125,8 +129,8 @@ var listProjectCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no environments for project '%s'", cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -156,8 +160,12 @@ var listVariablesCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if cmdProjectEnvironment != "" {
+				output.RenderInfo(fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			} else {
+				output.RenderInfo(fmt.Sprintf("There are no variables for project '%s'", cmdProjectName), outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -180,8 +188,8 @@ var listDeploymentsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no deployments for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -204,8 +212,8 @@ var listTasksCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no tasks for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -225,8 +233,8 @@ var listUsersCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("There are no users in any groups", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
