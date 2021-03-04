@@ -9,7 +9,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var whoamiCmd = &cobra.Command{
@@ -20,7 +19,7 @@ var whoamiCmd = &cobra.Command{
 	Long: `Whoami will return your user information for lagoon. 
 This is useful if you have multiple keys or accounts in multiple lagoons and need to check which you are using.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(viper.GetString("current"))
+		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -32,11 +31,11 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			return err
 		}
 
-		current := viper.GetString("current")
+		current := lagoonCLIConfig.Current
 		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
 

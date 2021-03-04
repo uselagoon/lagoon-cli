@@ -8,7 +8,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 // ListFlags .
@@ -35,7 +34,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List projects, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
 }
 

@@ -7,7 +7,6 @@ import (
 	lagoonssh "github.com/amazeeio/lagoon-cli/pkg/lagoon/ssh"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -20,7 +19,7 @@ var sshEnvCmd = &cobra.Command{
 	Aliases: []string{"s"},
 	Short:   "Display the SSH command to access a specific environment in a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			fmt.Println("Missing arguments: Project name or environment name are not defined")
@@ -28,8 +27,8 @@ var sshEnvCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		sshConfig := map[string]string{
-			"hostname": viper.GetString("lagoons." + cmdLagoon + ".hostname"),
-			"port":     viper.GetString("lagoons." + cmdLagoon + ".port"),
+			"hostname": lagoonCLIConfig.Lagoons[cmdLagoon].HostName,
+			"port":     lagoonCLIConfig.Lagoons[cmdLagoon].Port,
 			"username": cmdProjectName + "-" + cmdProjectEnvironment,
 		}
 		if sshConnString {

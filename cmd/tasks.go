@@ -14,7 +14,6 @@ import (
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var getTaskByID = &cobra.Command{
@@ -23,7 +22,7 @@ var getTaskByID = &cobra.Command{
 	Long:    `Get information about a task by its ID`,
 	Aliases: []string{"t", "tbi"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(viper.GetString("current"))
+		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -42,11 +41,11 @@ var getTaskByID = &cobra.Command{
 		if taskID == 0 {
 			return fmt.Errorf("Missing arguments: ID is not defined")
 		}
-		current := viper.GetString("current")
+		current := lagoonCLIConfig.Current
 		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
@@ -90,7 +89,7 @@ You should only run this once and then check the status of the task that gets cr
 If the task fails or fails to update, contact your Lagoon administrator for assistance.`,
 	Aliases: []string{"as", "standby"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(viper.GetString("current"))
+		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -101,11 +100,11 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			return fmt.Errorf("Missing arguments: Project name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
-			current := viper.GetString("current")
+			current := lagoonCLIConfig.Current
 			lc := client.New(
-				viper.GetString("lagoons."+current+".graphql"),
-				viper.GetString("lagoons."+current+".token"),
-				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)

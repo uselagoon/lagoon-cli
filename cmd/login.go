@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/terminal"
@@ -19,7 +19,7 @@ var loginCmd = &cobra.Command{
 	Short:   "Log into a Lagoon instance",
 	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 		fmt.Println("Token fetched and saved.")
 	},
 }
@@ -82,8 +82,8 @@ func loginToken() error {
 	defer closeSSHAgent()
 
 	sshHost := fmt.Sprintf("%s:%s",
-		viper.GetString("lagoons."+cmdLagoon+".hostname"),
-		viper.GetString("lagoons."+cmdLagoon+".port"))
+		lagoonCLIConfig.Lagoons[cmdLagoon].HostName,
+		lagoonCLIConfig.Lagoons[cmdLagoon].Port)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
 		return fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
@@ -100,8 +100,10 @@ func loginToken() error {
 		return fmt.Errorf("couldn't get token: %v", err)
 	}
 
-	viper.Set("lagoons."+cmdLagoon+".token", strings.TrimSpace(string(out)))
-	if err = viper.WriteConfig(); err != nil {
+	lc := lagoonCLIConfig.Lagoons[cmdLagoon]
+	lc.Token = strings.TrimSpace(string(out))
+	lagoonCLIConfig.Lagoons[cmdLagoon] = lc
+	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
 	}
 
