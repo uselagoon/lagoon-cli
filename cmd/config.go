@@ -63,8 +63,7 @@ var configDefaultCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		lagoon := strings.TrimSpace(string(lagoonConfig.Lagoon))
-		lagoonCLIConfig.Default = lagoon
+		lagoonCLIConfig.Default = strings.TrimSpace(string(lagoonConfig.Lagoon))
 		err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
 
@@ -84,16 +83,16 @@ var configLagoonsCmd = &cobra.Command{
 	Short:   "View all configured Lagoon instances",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var data []output.Data
-		for lagoon, lc := range lagoonCLIConfig.Lagoons {
+		for l, lc := range lagoonCLIConfig.Lagoons {
 			var isDefault, isCurrent string
-			if lagoon == lagoonCLIConfig.Default {
+			if l == lagoonCLIConfig.Default {
 				isDefault = "(default)"
 			}
-			if lagoon == lagoonCLIConfig.Current {
+			if l == lagoonCLIConfig.Current {
 				isCurrent = "(current)"
 			}
 			mapData := []string{
-				returnNonEmptyString(fmt.Sprintf("%s%s%s", lagoon, isDefault, isCurrent)),
+				returnNonEmptyString(fmt.Sprintf("%s%s%s", l, isDefault, isCurrent)),
 				returnNonEmptyString(lc.Version),
 				returnNonEmptyString(lc.GraphQL),
 				returnNonEmptyString(lc.HostName),
@@ -277,15 +276,24 @@ func init() {
 	configCmd.AddCommand(configFeatureSwitch)
 	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configLagoonVersionCmd)
-	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
-	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
-	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
-	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
-	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "", "Lagoon UI location (https://dashboard.amazeeio.cloud)")
-	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false, "Create the config file if it is non existent (to be used with --config-file)")
-	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs.amazeeio.cloud)")
-	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
-	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "", "Enable or disable checking of local directory for Lagoon project (true/false)")
+	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "",
+		"Lagoon SSH hostname")
+	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "",
+		"Lagoon SSH port")
+	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "",
+		"Lagoon GraphQL endpoint")
+	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "",
+		"Lagoon GraphQL token")
+	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "",
+		"Lagoon UI location (https://dashboard.amazeeio.cloud)")
+	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false,
+		"Create the config file if it is non existent (to be used with --config-file)")
+	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "",
+		"Lagoon Kibana URL (https://logs.amazeeio.cloud)")
+	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "",
+		"Enable or disable checking of updates (true/false)")
+	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "",
+		"Enable or disable checking of local directory for Lagoon project (true/false)")
 }
 
 // readLagoonConfig reads the lagoon config from specified file.
