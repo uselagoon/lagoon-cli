@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var updateCmd = &cobra.Command{
@@ -10,7 +9,7 @@ var updateCmd = &cobra.Command{
 	Aliases: []string{"u"},
 	Short:   "Update a resource",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
 }
 

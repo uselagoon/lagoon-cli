@@ -1,0 +1,6 @@
+current: amazeeio
+default: amazeeio
+lagoons:
+  amazeeio:
+    kibana: https://logs-db-ui-lagoon-master.ch.amazee.io/
+    ui: https://ui-lagoon-master.ch.amazee.io

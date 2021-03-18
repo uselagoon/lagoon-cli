@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
 
@@ -15,7 +17,7 @@ import (
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 // LagoonConfigFlags .
@@ -61,8 +63,8 @@ var configDefaultCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		viper.Set("default", strings.TrimSpace(string(lagoonConfig.Lagoon)))
-		err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
+		lagoonCLIConfig.Default = strings.TrimSpace(string(lagoonConfig.Lagoon))
+		err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
 
 		resultData := output.Result{
@@ -81,22 +83,22 @@ var configLagoonsCmd = &cobra.Command{
 	Short:   "View all configured Lagoon instances",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var data []output.Data
-		for _, lagoon := range reflect.ValueOf(viper.Get("lagoons")).MapKeys() {
+		for l, lc := range lagoonCLIConfig.Lagoons {
 			var isDefault, isCurrent string
-			if lagoon.String() == viper.Get("default") {
+			if l == lagoonCLIConfig.Default {
 				isDefault = "(default)"
 			}
-			if lagoon.String() == viper.Get("current") {
+			if l == lagoonCLIConfig.Current {
 				isCurrent = "(current)"
 			}
 			mapData := []string{
-				returnNonEmptyString(fmt.Sprintf("%s%s%s", lagoon, isDefault, isCurrent)),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".version")),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".graphql")),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".hostname")),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".port")),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".ui")),
-				returnNonEmptyString(viper.GetString("lagoons." + lagoon.String() + ".Kibana")),
+				returnNonEmptyString(fmt.Sprintf("%s%s%s", l, isDefault, isCurrent)),
+				returnNonEmptyString(lc.Version),
+				returnNonEmptyString(lc.GraphQL),
+				returnNonEmptyString(lc.HostName),
+				returnNonEmptyString(lc.Port),
+				returnNonEmptyString(lc.UI),
+				returnNonEmptyString(lc.Kibana),
 			}
 			data = append(data, mapData)
 		}
@@ -130,21 +132,22 @@ var configAddCmd = &cobra.Command{
 		}
 
 		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".hostname", lagoonConfig.Hostname)
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".port", lagoonConfig.Port)
-			viper.Set("lagoons."+lagoonConfig.Lagoon+".graphql", lagoonConfig.GraphQL)
+			lc := lagoonCLIConfig.Lagoons[lagoonConfig.Lagoon]
+			lc.HostName = lagoonConfig.Hostname
+			lc.Port = lagoonConfig.Port
+			lc.GraphQL = lagoonConfig.GraphQL
 			if lagoonConfig.UI != "" {
-				viper.Set("lagoons."+lagoonConfig.Lagoon+".ui", lagoonConfig.UI)
+				lc.UI = lagoonConfig.UI
 			}
 			if lagoonConfig.Kibana != "" {
-				viper.Set("lagoons."+lagoonConfig.Lagoon+".kibana", lagoonConfig.Kibana)
+				lc.Kibana = lagoonConfig.Kibana
 			}
 			if lagoonConfig.Token != "" {
-				viper.Set("lagoons."+lagoonConfig.Lagoon+".token", lagoonConfig.Token)
+				lc.Token = lagoonConfig.Token
 			}
-			err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
-			if err != nil {
-				return err
+			lagoonCLIConfig.Lagoons[lagoonConfig.Lagoon] = lc
+			if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
+				return fmt.Errorf("couldn't write config: %v", err)
 			}
 			output.RenderOutput(output.Table{
 				Header: []string{
@@ -157,7 +160,6 @@ var configAddCmd = &cobra.Command{
 				},
 				Data: []output.Data{
 					[]string{
-
 						lagoonConfig.Lagoon,
 						lagoonConfig.GraphQL,
 						lagoonConfig.Hostname,
@@ -203,18 +205,17 @@ var configFeatureSwitch = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		switch updateCheck {
 		case "true":
-			viper.Set("updateCheckDisable", true)
+			lagoonCLIConfig.UpdateCheckDisable = true
 		case "false":
-			viper.Set("updateCheckDisable", false)
+			lagoonCLIConfig.UpdateCheckDisable = false
 		}
 		switch environmentFromDirectory {
 		case "true":
-			viper.Set("environmentFromDirectory", true)
+			lagoonCLIConfig.EnvironmentFromDirectory = true
 		case "false":
-			viper.Set("environmentFromDirectory", false)
+			lagoonCLIConfig.EnvironmentFromDirectory = false
 		}
-		err := viper.WriteConfigAs(filepath.Join(configFilePath, configName+configExtension))
-		if err != nil {
+		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
 		}
@@ -226,7 +227,7 @@ var configGetCurrent = &cobra.Command{
 	Aliases: []string{"cur"},
 	Short:   "Display the current Lagoon that commands would be executed against",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(viper.GetString("current"))
+		fmt.Println(lagoonCLIConfig.Current)
 	},
 }
 
@@ -242,19 +243,21 @@ var configLagoonVersionCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := viper.GetString("current")
+		current := lagoonCLIConfig.Current
 		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
 		lagoonVersion, err := lagoon.GetLagoonAPIVersion(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
-		viper.Set("lagoons."+cmdLagoon+".version", lagoonVersion.LagoonVersion)
-		if err = viper.WriteConfig(); err != nil {
+		lagu := lagoonCLIConfig.Lagoons[current]
+		lagu.Version = lagoonVersion.LagoonVersion
+		lagoonCLIConfig.Lagoons[current] = lagu
+		if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 			return fmt.Errorf("couldn't write config: %v", err)
 		}
 		fmt.Println(lagoonVersion.LagoonVersion)
@@ -273,13 +276,103 @@ func init() {
 	configCmd.AddCommand(configFeatureSwitch)
 	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configLagoonVersionCmd)
-	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "", "Lagoon SSH hostname")
-	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "", "Lagoon SSH port")
-	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "", "Lagoon GraphQL endpoint")
-	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "", "Lagoon GraphQL token")
-	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "", "Lagoon UI location (https://dashboard.amazeeio.cloud)")
-	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false, "Create the config file if it is non existent (to be used with --config-file)")
-	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "", "Lagoon Kibana URL (https://logs.amazeeio.cloud)")
-	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "", "Enable or disable checking of updates (true/false)")
-	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "", "Enable or disable checking of local directory for Lagoon project (true/false)")
+	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "",
+		"Lagoon SSH hostname")
+	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "",
+		"Lagoon SSH port")
+	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "",
+		"Lagoon GraphQL endpoint")
+	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "",
+		"Lagoon GraphQL token")
+	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "",
+		"Lagoon UI location (https://dashboard.amazeeio.cloud)")
+	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false,
+		"Create the config file if it is non existent (to be used with --config-file)")
+	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "",
+		"Lagoon Kibana URL (https://logs.amazeeio.cloud)")
+	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "",
+		"Enable or disable checking of updates (true/false)")
+	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "",
+		"Enable or disable checking of local directory for Lagoon project (true/false)")
+}
+
+// readLagoonConfig reads the lagoon config from specified file.
+func readLagoonConfig(lc *lagoon.Config, file string) error {
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		// if there is no file found in the specified location, prompt the user to create it with the default
+		// configuration to point to the amazeeio lagoon instance
+		if yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
+			l := lagoon.Context{
+				GraphQL:  "https://api.lagoon.amazeeio.cloud/graphql",
+				HostName: "ssh.lagoon.amazeeio.cloud",
+				Token:    "",
+				UI:       "https://dashboard.amazeeio.cloud",
+				Kibana:   "https://logs.amazeeio.cloud/",
+			}
+			lc.Lagoons = map[string]lagoon.Context{}
+			lc.Lagoons["amazeeio"] = l
+			lc.Default = "amazeeio"
+			return writeLagoonConfig(lc, file)
+		}
+		return err
+	}
+	err = yaml.Unmarshal(data, &lc)
+	if err != nil {
+		return fmt.Errorf("unable to unmarshal config, yaml is likely invalid: %v", err)
+	}
+	for ln, l := range lc.Lagoons {
+		if l.GraphQL == "" || l.HostName == "" || l.Port == "" {
+			return fmt.Errorf("configured lagoon %s is missing required configuration for graphql, hostname, or port", ln)
+		}
+	}
+	return nil
+
+}
+
+func analyze(file string) error {
+	handle, err := os.Open(file)
+
+	if err != nil {
+		return err
+	}
+	defer handle.Close()
+	return doSomething(handle)
+}
+
+func doSomething(handle io.Reader) error {
+	scanner := bufio.NewScanner(handle)
+	for scanner.Scan() {
+		// Do something with line
+		d := scanner.Text()
+		fmt.Println(d)
+	}
+	return nil
+}
+
+// functions to handle read/write of configuration file
+
+// writeLagoonConfig writes the lagoon config to specified file.
+func writeLagoonConfig(lc *lagoon.Config, file string) error {
+	d, err := yaml.Marshal(&lc)
+	if err != nil {
+		return fmt.Errorf("unable to marshal config into valid yaml: %v", err)
+	}
+	err = ioutil.WriteFile(file, d, 0777)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func setConfigDefaultVersion(lc *lagoon.Config, lagoon string, version string) error {
+	if lc.Lagoons[lagoon].Version == "" {
+		l := lc.Lagoons[lagoon]
+		l.Version = version
+		lc.Lagoons[lagoon] = l
+		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
+			return fmt.Errorf("couldn't write config: %v", err)
+		}
+	}
+	return nil
 }

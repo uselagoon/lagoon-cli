@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/graphql"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
@@ -35,8 +36,8 @@ type Client interface {
 }
 
 // New .
-func New(debug bool) (Client, error) {
-	lagoonAPI, err := graphql.LagoonAPI(debug)
+func New(lc *lagoon.Config, debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(lc, debug)
 	if err != nil {
 		return &Environments{}, err
 	}
