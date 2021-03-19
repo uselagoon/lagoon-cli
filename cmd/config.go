@@ -236,7 +236,7 @@ var configLagoonVersionCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Short:   "Checks the current Lagoon for its version and sets it in the config file",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(cmdLagoon)
+		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")

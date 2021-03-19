@@ -22,8 +22,8 @@ var webCmd = &cobra.Command{
 		}
 
 		urlBuilder := strings.Builder{}
-		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[cmdLagoon].UI)
-		if lagoonCLIConfig.Lagoons[cmdLagoon].UI != "" {
+		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].UI)
+		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].UI != "" {
 			urlBuilder.WriteString(fmt.Sprintf("/projects/%s", cmdProjectName))
 		} else {
 			output.RenderError("unable to determine url for ui, is one set?", outputOptions)
@@ -42,8 +42,8 @@ var kibanaCmd = &cobra.Command{
 	Short:   "Launch the kibana interface",
 	Run: func(cmd *cobra.Command, args []string) {
 		urlBuilder := strings.Builder{}
-		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[cmdLagoon].Kibana)
-		if lagoonCLIConfig.Lagoons[cmdLagoon].Kibana == "" {
+		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Kibana)
+		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Kibana == "" {
 			output.RenderError("unable to determine url for kibana, is one set?", outputOptions)
 			os.Exit(1)
 		}

@@ -27,8 +27,8 @@ var sshEnvCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		sshConfig := map[string]string{
-			"hostname": lagoonCLIConfig.Lagoons[cmdLagoon].HostName,
-			"port":     lagoonCLIConfig.Lagoons[cmdLagoon].Port,
+			"hostname": lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
+			"port":     lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port,
 			"username": cmdProjectName + "-" + cmdProjectEnvironment,
 		}
 		if sshConnString {

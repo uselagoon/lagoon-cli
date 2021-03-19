@@ -229,7 +229,7 @@ func initConfig() {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-	err = getLagoonContext(&cmdLagoon, rootCmd)
+	err = getLagoonContext(&lagoonCLIConfig, &cmdLagoon, rootCmd)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -439,8 +439,7 @@ func getLagoonConfigFile(configPath *string, configName *string, configExtension
 	return nil
 }
 
-func getLagoonContext(lagoon *string, cmd *cobra.Command) error {
-	lagoonCLIConfig.Current = strings.TrimSpace(string(cmdLagoon))
+func getLagoonContext(lagoonCLIConfig *lagoon.Config, lagoon *string, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our lagoon context
 	var lagoonContext string
 	lagoonContext, err := cmd.Flags().GetString("lagoon")
@@ -461,5 +460,7 @@ func getLagoonContext(lagoon *string, cmd *cobra.Command) error {
 			*lagoon = lagoonCLIConfig.Default
 		}
 	}
+	// set the Current lagoon to the one we've determined it needs to be
+	lagoonCLIConfig.Current = strings.TrimSpace(*lagoon)
 	return nil
 }
