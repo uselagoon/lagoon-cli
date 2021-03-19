@@ -307,6 +307,7 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 				GraphQL:  "https://api.lagoon.amazeeio.cloud/graphql",
 				HostName: "ssh.lagoon.amazeeio.cloud",
 				Token:    "",
+				Port:     "32222",
 				UI:       "https://dashboard.amazeeio.cloud",
 				Kibana:   "https://logs.amazeeio.cloud/",
 			}
