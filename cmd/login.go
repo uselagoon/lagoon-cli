@@ -82,8 +82,8 @@ func loginToken() error {
 	defer closeSSHAgent()
 
 	sshHost := fmt.Sprintf("%s:%s",
-		lagoonCLIConfig.Lagoons[cmdLagoon].HostName,
-		lagoonCLIConfig.Lagoons[cmdLagoon].Port)
+		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
+		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
 		return fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
@@ -100,9 +100,9 @@ func loginToken() error {
 		return fmt.Errorf("couldn't get token: %v", err)
 	}
 
-	lc := lagoonCLIConfig.Lagoons[cmdLagoon]
+	lc := lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current]
 	lc.Token = strings.TrimSpace(string(out))
-	lagoonCLIConfig.Lagoons[cmdLagoon] = lc
+	lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current] = lc
 	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
 	}
