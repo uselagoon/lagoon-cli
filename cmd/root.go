@@ -295,15 +295,6 @@ func Prompt(prompt string) string {
 	return GetInput()
 }
 
-func unset(key string) error {
-	delete(lagoonCLIConfig.Lagoons, key)
-	if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	return nil
-}
-
 // global the clients
 var eClient environments.Client
 var uClient users.Client
@@ -321,6 +312,10 @@ const (
 
 func validateToken(lagoon string) {
 	var err error
+	if err = checkContextExists(&lagoonCLIConfig); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	valid := graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon)
 	if valid == false {
 		loginErr := loginToken()
@@ -359,6 +354,9 @@ func validateToken(lagoon string) {
 // error instead of exiting on error.
 func validateTokenE(lagoon string) error {
 	var err error
+	if err = checkContextExists(&lagoonCLIConfig); err != nil {
+		return err
+	}
 	if graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon) {
 		// check the API for the version of lagoon if we haven't got one set
 		// otherwise return nil, nothing to do
@@ -462,5 +460,18 @@ func getLagoonContext(lagoonCLIConfig *lagoon.Config, lagoon *string, cmd *cobra
 	}
 	// set the Current lagoon to the one we've determined it needs to be
 	lagoonCLIConfig.Current = strings.TrimSpace(*lagoon)
+	return nil
+}
+
+func checkContextExists(lagoonCLIConfig *lagoon.Config) error {
+	contextExists := false
+	for l := range lagoonCLIConfig.Lagoons {
+		if l == lagoonCLIConfig.Current {
+			contextExists = true
+		}
+	}
+	if !contextExists {
+		return fmt.Errorf("Chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current)
+	}
 	return nil
 }

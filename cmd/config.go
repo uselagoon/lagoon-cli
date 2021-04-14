@@ -64,6 +64,16 @@ var configDefaultCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		lagoonCLIConfig.Default = strings.TrimSpace(string(lagoonConfig.Lagoon))
+		contextExists := false
+		for l := range lagoonCLIConfig.Lagoons {
+			if l == lagoonCLIConfig.Current {
+				contextExists = true
+			}
+		}
+		if !contextExists {
+			fmt.Println(fmt.Printf("Chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current))
+			os.Exit(1)
+		}
 		err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
 
@@ -189,7 +199,7 @@ var configDeleteCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete config for lagoon '%s', are you sure?", lagoonConfig.Lagoon)) {
-			err := unset(lagoonConfig.Lagoon)
+			err := removeConfig(lagoonConfig.Lagoon)
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
@@ -374,6 +384,15 @@ func setConfigDefaultVersion(lc *lagoon.Config, lagoon string, version string) e
 		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 			return fmt.Errorf("couldn't write config: %v", err)
 		}
+	}
+	return nil
+}
+
+func removeConfig(key string) error {
+	delete(lagoonCLIConfig.Lagoons, key)
+	if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
 	}
 	return nil
 }
