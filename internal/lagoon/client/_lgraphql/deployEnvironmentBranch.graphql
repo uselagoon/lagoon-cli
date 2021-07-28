@@ -1,7 +1,7 @@
 mutation (
   $project: String!, 
   $branch: String!, 
-  $branchRef: String!) {
+  $branchRef: String) {
     deployEnvironmentBranch(input: {
       project:{
         name: $project
