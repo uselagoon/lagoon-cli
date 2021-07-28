@@ -240,7 +240,7 @@ func init() {
 	deployCmd.AddCommand(deployPullrequestCmd)
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
-	deployBranchCmd.Flags().StringP("branchref", "r", "", "Branch ref to deploy")
+	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
