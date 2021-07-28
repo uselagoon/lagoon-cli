@@ -35,6 +35,10 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
+		branchRef, err := cmd.Flags().GetString("branchRef")
+		if err != nil {
+			return err
+		}
 		if cmdProjectName == "" || branch == "" {
 			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
 		}
@@ -46,10 +50,14 @@ use 'lagoon deploy latest' instead`,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
-			result, err := lagoon.DeployBranch(context.TODO(), &schema.DeployEnvironmentBranchInput{
+			depBranch := &schema.DeployEnvironmentBranchInput{
 				Branch:  branch,
 				Project: cmdProjectName,
-			}, lc)
+			}
+			if branchRef != "" {
+				depBranch.BranchRef = branchRef
+			}
+			result, err := lagoon.DeployBranch(context.TODO(), depBranch, lc)
 			if err != nil {
 				return err
 			}
@@ -232,6 +240,7 @@ func init() {
 	deployCmd.AddCommand(deployPullrequestCmd)
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
+	deployBranchCmd.Flags().StringP("branchref", "r", "", "Branch ref to deploy")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
