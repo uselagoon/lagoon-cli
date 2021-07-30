@@ -1,6 +1,6 @@
 package schema
 
-import "github.com/amazeeio/lagoon-cli/pkg/api"
+import "github.com/uselagoon/lagoon-cli/pkg/api"
 
 // EnvKeyValue is the base type of Environment variable.
 type EnvKeyValue struct {

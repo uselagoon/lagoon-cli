@@ -5,7 +5,7 @@ package lagoon
 import (
 	"context"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // Deploy interface contains methods for deploying branches and environments in lagoon.

@@ -5,8 +5,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/amazeeio/lagoon-cli/internal/mock"
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/mock"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/golang/mock/gomock"
 )
 

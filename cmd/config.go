@@ -12,9 +12,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v2"

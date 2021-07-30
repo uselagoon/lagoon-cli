@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // AddUser function

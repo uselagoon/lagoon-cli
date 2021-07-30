@@ -10,16 +10,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	lagooncli "github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
-	"github.com/amazeeio/lagoon-cli/pkg/app"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/lagoon/environments"
-	"github.com/amazeeio/lagoon-cli/pkg/lagoon/projects"
-	"github.com/amazeeio/lagoon-cli/pkg/lagoon/users"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
-	"github.com/amazeeio/lagoon-cli/pkg/updatecheck"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	lagooncli "github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/pkg/app"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
+	"github.com/uselagoon/lagoon-cli/pkg/lagoon/projects"
+	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -38,7 +38,7 @@ var configExtension = ".yml"
 var createConfig bool
 var userPath string
 var configFilePath string
-var updateDocURL = "https://amazeeio.github.io/lagoon-cli"
+var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
 

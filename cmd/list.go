@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/hashicorp/go-version"
 )
 

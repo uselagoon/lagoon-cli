@@ -1,4 +1,4 @@
-module github.com/amazeeio/lagoon-cli
+module github.com/uselagoon/lagoon-cli
 
 go 1.13
 

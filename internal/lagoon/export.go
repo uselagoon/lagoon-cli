@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // Exporter interface contains methods for exporting data from Lagoon.

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"golang.org/x/crypto/ssh"
 )
 

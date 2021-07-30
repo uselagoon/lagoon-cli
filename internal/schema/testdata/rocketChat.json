@@ -14,7 +14,7 @@
       "storageCalc": 1,
       "openshiftProjectPattern": "lagoon",
       "developmentEnvironmentsLimit": 5,
-      "gitUrl": "git@github.com:amazeeio/lagoon.git",
+      "gitUrl": "git@github.com:uselagoon/lagoon.git",
       "groups": [
         {
           "__typename": "Group",

@@ -4,7 +4,7 @@ GOCMD=go
 ARTIFACT_NAME=lagoon
 ARTIFACT_DESTINATION=$(GOPATH)/bin
 
-PKG=github.com/amazeeio/lagoon-cli
+PKG=github.com/uselagoon/lagoon-cli
 PKGMODPATH=$(DIR)/vendor
 
 VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags))-rc

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 )

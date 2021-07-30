@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/google/uuid"
 )
 

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"sigs.k8s.io/yaml"
 )
 
@@ -307,7 +307,7 @@ func minimiseConfig(c *Config, exclude map[string]bool) {
 
 // projectDefaults returns default Project values.
 func projectDefaults() *ProjectConfig {
-	// see https://github.com/amazeeio/lagoon/blob/
+	// see https://github.com/uselagoon/lagoon/blob/
 	// 817def93b3e15f5d96aa44e2b7bd33c15f18bd43
 	// services/api/src/resources/project/resolvers.js#L233
 	return &ProjectConfig{
