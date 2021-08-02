@@ -20,11 +20,11 @@ all: deps test build docs
 all-docker-linux: deps-docker test-docker build-docker-linux
 all-docker-darwin: deps-docker test-docker build-docker-darwin
 
-gen:
+gen: deps
 	GO111MODULE=on $(GOCMD) generate ./...
-deps: gen
+deps: 
 	GO111MODULE=on ${GOCMD} get -v
-test: deps
+test: gen
 	GO111MODULE=on $(GOCMD) fmt ./...
 	GO111MODULE=on $(GOCMD) vet ./...
 	GO111MODULE=on $(GOCMD) test -v ./...
