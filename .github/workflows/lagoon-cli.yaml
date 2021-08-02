@@ -24,15 +24,8 @@ jobs:
         curl -sLo /tmp/go1.13.7.linux-amd64.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz
         sudo tar -C /usr/local -xzf /tmp/go1.13.7.linux-amd64.tar.gz
 
-    - name: run build
+    - name: Run build with tests
       run: |
         export PATH=$PATH:/usr/local/go/bin
         export GOPATH=$HOME/go
-        make deps
         make build
-
-    - name: run tests
-      run: |
-        export PATH=$PATH:/usr/local/go/bin
-        export GOPATH=$HOME/go
-        make test
