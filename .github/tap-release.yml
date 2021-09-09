@@ -1,6 +1,6 @@
 asset: "lagoon-cli-$VERSION_NUMBER-darwin-amd64.tar.gz"
 #url: "https://github.com/uselagoon/lagoon-cli/releases/download/$STABLE_VERSION/lagoon-cli-${STABLE_VERSION}-darwin-amd64.tar.gz"
-tap: "uselagoon/homebrew-lagoon-cli/lagoon.rb"
+tap: "amazeeio/homebrew-lagoon-cli/lagoon.rb"
 template: >
   class Lagoon < Formula
     desc     "Command line tool for interacting with a Lagoon API"
