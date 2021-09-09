@@ -14,7 +14,7 @@ import (
 	asrt "github.com/stretchr/testify/assert"
 )
 
-const testOrg = "amazeeio"
+const testOrg = "uselagoon"
 const testRepo = "lagoon-cli"
 
 func OsTempDir() (string, error) {
