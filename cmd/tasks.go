@@ -203,8 +203,6 @@ Direct:
 			os.Exit(1)
 		}
 
-		fmt.Println(invokedTaskName)
-
 		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
 		handleError(err)
 		var resultMap map[string]interface{}

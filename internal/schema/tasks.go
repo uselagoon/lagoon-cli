@@ -14,9 +14,3 @@ type Task struct {
 	Logs        string      `json:"logs,omitempty"`
 	Environment Environment `json:"environment,omitempty"`
 }
-
-// InvokeAdvancedTaskInput  is based on the Lagoon API mutation call.
-type InvokeAdvancedTaskInput struct {
-	AdvancedTaskDefinition int    `json:"id,omitempty"`
-	Environment            string `json:"environment,omitempty"`
-}

@@ -265,7 +265,6 @@ var listInvokableTasks = &cobra.Command{
 
 		var taskListData []output.Data
 		for _, task := range taskList {
-			//taskListData = append(taskListData, []string{task.Name})
 			taskListData = append(taskListData, []string{task.Name, task.Description})
 		}
 
