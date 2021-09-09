@@ -20,26 +20,26 @@ all: deps test build docs
 all-docker-linux: deps-docker test-docker build-docker-linux
 all-docker-darwin: deps-docker test-docker build-docker-darwin
 
-deps:
+gen: deps
+	GO111MODULE=on $(GOCMD) generate ./...
+deps: 
 	GO111MODULE=on ${GOCMD} get -v
-test:
+test: gen
 	GO111MODULE=on $(GOCMD) fmt ./...
 	GO111MODULE=on $(GOCMD) vet ./...
 	GO111MODULE=on $(GOCMD) test -v ./...
-gen:
-	GO111MODULE=on $(GOCMD) generate ./...
 
 clean:
 	$(GOCMD) clean
 
-build:
+build: test
 	GO111MODULE=on CGO_ENABLED=0 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o ${ARTIFACT_DESTINATION}/${ARTIFACT_NAME} -v
-build-linux:
+build-linux: test
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
-build-darwin:
+build-darwin: test
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
 
-docs: test
+docs: test build
 	GO111MODULE=on $(GOCMD) run main.go --docs
 
 tidy:

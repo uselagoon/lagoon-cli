@@ -1,0 +1,35 @@
+name: Lagoon CLI Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: "0"
+
+    - name: Install go1.13.7
+      run: |
+        #go
+        sudo rm -rf /usr/local/go
+        curl -sLo /tmp/go1.13.7.linux-amd64.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz
+        sudo tar -C /usr/local -xzf /tmp/go1.13.7.linux-amd64.tar.gz
+        export GOPATH=$HOME/go
+        export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+        go get github.com/golang/mock/mockgen@v1.4.3
+        go get -u github.com/go-bindata/go-bindata/...
+
+    - name: Run build with tests
+      run: |
+        export GOPATH=$HOME/go
+        export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+        make build
