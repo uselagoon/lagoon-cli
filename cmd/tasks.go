@@ -6,14 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
-
 	"github.com/amazeeio/lagoon-cli/internal/lagoon"
 	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
 	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
 )
 
 var getTaskByID = &cobra.Command{
@@ -188,6 +187,37 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
+var invokeDefinedTask = &cobra.Command{
+	Use:     "invoke",
+	Aliases: []string{"i"},
+	Short:   "",
+	Long: `Invoke a task registered against an environment
+The following are supported methods to use
+Direct:
+ lagoon run invoke -p example -e main -N "advanced task name"
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
+			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		fmt.Println(invokedTaskName)
+
+		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
+		handleError(err)
+		var resultMap map[string]interface{}
+		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		handleError(err)
+		resultData := output.Result{
+			Result:     "success",
+			ResultData: resultMap,
+		}
+		output.RenderResult(resultData, outputOptions)
+	},
+}
+
 var runCustomTask = &cobra.Command{
 	Use:     "custom",
 	Aliases: []string{"c"},
@@ -250,12 +280,14 @@ Path:
 
 var (
 	taskName        string
+	invokedTaskName string
 	taskService     string
 	taskCommand     string
 	taskCommandFile string
 )
 
 func init() {
+	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
