@@ -1,15 +1,19 @@
-## lagoon run
+## lagoon list invokable-tasks
 
-Run a task against an environment
+Print a list of invokable tasks
 
 ### Synopsis
 
-Run a task against an environment
+Print a list of invokable user defined tasks registered against an environment
+
+```
+lagoon list invokable-tasks [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for run
+  -h, --help   help for invokable-tasks
 ```
 
 ### Options inherited from parent commands
@@ -31,11 +35,5 @@ Run a task against an environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon run activestandby](lagoon_run_activestandby.md)	 - Run the active/standby switch for a project
-* [lagoon run custom](lagoon_run_custom.md)	 - Run a custom command on an environment
-* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)	 - Run a drush archive dump on an environment
-* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)	 - Run a drush cache clear on an environment
-* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)	 - Run a drush sql dump on an environment
-* [lagoon run invoke](lagoon_run_invoke.md)	 - 
+* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 
