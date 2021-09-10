@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"os"
 
 	"github.com/amazeeio/lagoon-cli/pkg/output"
@@ -240,6 +241,46 @@ var listUsersCmd = &cobra.Command{
 	},
 }
 
+var listInvokableTasks = &cobra.Command{
+	Use:     "invokable-tasks",
+	Aliases: []string{"dcc"},
+	Short:   "Print a list of invokable tasks",
+	Long:    "Print a list of invokable user defined tasks registered against an environment",
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+		taskResult, err := eClient.ListInvokableAdvancedTaskDefinitions(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
+
+		var taskList []api.AdvancedTask
+		err = json.Unmarshal([]byte(taskResult), &taskList)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		var taskListData []output.Data
+		for _, task := range taskList {
+			taskListData = append(taskListData, []string{task.Name, task.Description})
+		}
+
+		var dataMain output.Table
+		dataMain.Header = []string{"Task Name", "Description"}
+
+		dataMain.Data = taskListData
+
+		if len(dataMain.Data) == 0 {
+			output.RenderInfo("There are no user defined tasks for this environment", outputOptions)
+			os.Exit(0)
+		}
+		output.RenderOutput(dataMain, outputOptions)
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
@@ -251,6 +292,7 @@ func init() {
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)
+	listCmd.AddCommand(listInvokableTasks)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")

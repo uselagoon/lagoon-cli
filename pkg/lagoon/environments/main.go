@@ -33,6 +33,8 @@ type Client interface {
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
+	InvokeAdvancedTaskDefinition(string, string, string) ([]byte, error)
+	ListInvokableAdvancedTaskDefinitions(string, string) ([]byte, error)
 }
 
 // New .
