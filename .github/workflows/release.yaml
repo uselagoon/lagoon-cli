@@ -20,7 +20,7 @@ jobs:
     - name: Build CLI
       run: |
         make deps
-        make build
+        make test
     - name: Compile CLI
       run: |
         make VERSION=${GITHUB_REF##*/} build-linux
