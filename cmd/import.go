@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/spf13/cobra"
 )
 

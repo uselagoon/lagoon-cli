@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 var duplicate = regexp.MustCompile("^graphql: Duplicate entry ")

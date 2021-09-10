@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // ListProjectVariables will list the environment variables for a project and all environments attached

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client/lgraphql"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client/lgraphql"
 	"github.com/hashicorp/go-version"
 	"github.com/machinebox/graphql"
 )

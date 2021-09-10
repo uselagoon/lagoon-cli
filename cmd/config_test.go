@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 )
 
 func TestConfigRead(t *testing.T) {

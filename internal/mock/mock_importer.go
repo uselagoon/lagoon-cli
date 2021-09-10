@@ -6,7 +6,7 @@ package mock
 
 import (
 	context "context"
-	schema "github.com/amazeeio/lagoon-cli/internal/schema"
+	schema "github.com/uselagoon/lagoon-cli/internal/schema"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

@@ -5,7 +5,7 @@ package lagoon
 import (
 	"context"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // Tasks interface contains methods for running tasks in projects and environments in lagoon.

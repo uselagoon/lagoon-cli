@@ -5,7 +5,7 @@ package lagoon
 import (
 	"context"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // Me interface contains methods for getting info on the current user of lagoon.

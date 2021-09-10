@@ -3,7 +3,7 @@ package graphql
 import (
 	"testing"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 )
 
 func TestValidateToken(t *testing.T) {
