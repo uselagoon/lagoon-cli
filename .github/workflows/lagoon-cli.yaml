@@ -1,7 +1,5 @@
 name: Lagoon CLI Test
 
-name: Image Build and Publish
-
 on:
   push:
     branches:
