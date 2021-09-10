@@ -3,10 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"os"
 
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
