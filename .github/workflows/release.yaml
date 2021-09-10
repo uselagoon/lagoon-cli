@@ -19,6 +19,8 @@ jobs:
         go-version: 1.13
     - name: Build CLI
       run: |
+        go get github.com/golang/mock/mockgen@v1.4.3
+        go get -u github.com/go-bindata/go-bindata/...
         make deps
         make test
     - name: Compile CLI
