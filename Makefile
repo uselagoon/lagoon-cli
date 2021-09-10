@@ -2,7 +2,7 @@ DIR := $(PWD)
 GOCMD=go
 
 ARTIFACT_NAME=lagoon
-ARTIFACT_DESTINATION=$(GOPATH)/bin
+ARTIFACT_DESTINATION ?= $(GOPATH)/bin
 
 PKG=github.com/uselagoon/lagoon-cli
 PKGMODPATH=$(DIR)/vendor

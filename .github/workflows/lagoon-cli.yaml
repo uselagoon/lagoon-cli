@@ -26,7 +26,7 @@ jobs:
       run: |
         go get github.com/golang/mock/mockgen@v1.4.3
         go get -u github.com/go-bindata/go-bindata/...
-        make build
+        ARTIFACT_DESTINATION=./builds make build
 
   docker:
     needs: test-suite
