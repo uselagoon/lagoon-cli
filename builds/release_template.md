@@ -4,7 +4,7 @@
 
 The preferred method is installation via [Homebrew](https://brew.sh/).
 ```
-brew tap uselagoon/lagoon-cli
+brew tap amazeeio/lagoon-cli
 brew install lagoon
 ```
 

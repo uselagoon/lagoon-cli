@@ -12,7 +12,7 @@ To use this CLI, you need an account in the Lagoon that you wish to communicate 
 # Installation
 The preferred method to install is via [Homebrew](https://brew.sh/).
 ```
-brew tap uselagoon/lagoon-cli
+brew tap amazeeio/lagoon-cli
 brew install lagoon
 ```
 
