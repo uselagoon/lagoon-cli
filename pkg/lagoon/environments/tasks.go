@@ -427,7 +427,7 @@ func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environm
 			}
 		}`,
 		Variables: map[string]interface{}{
-			"advancedTaskDefinition": 1,
+			"advancedTaskDefinition": taskId,
 			"environment":            environmentInfo.ID,
 		},
 		MappedResult: "invokeRegisteredTask",
