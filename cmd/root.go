@@ -76,7 +76,7 @@ var rootCmd = &cobra.Command{
 				if err != nil {
 					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s", updateFile), outputOptions)
 				}
-				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("amazeeio", "lagoon-cli", lagoonCLIVersion)
+				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
 				if err != nil {
 					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
 					output.RenderError(err.Error(), outputOptions)
