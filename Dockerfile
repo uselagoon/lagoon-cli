@@ -7,7 +7,7 @@ ARG VERSION
 
 RUN apk update && apk add git
 
-RUN VERSION=${VERSION:-"$(git describe --abbrev=0 --tags)+$(git rev-parse --short=8 HEAD)"} \
+RUN VERSION=${VERSION:-"$(echo $(git describe --abbrev=0 --tags)+$(git rev-parse --short=8 HEAD))"} \
 	&& BUILD=$(date +%FT%T%z) \
   && CGO_ENABLED=0 GOOS=linux go build \
 	-ldflags "-w -s -X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIVersion=$VERSION \
