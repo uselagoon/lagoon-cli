@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine3.13 as build
+FROM golang:1.16-alpine3.14 as build
 
 WORKDIR /go/src/github.com/uselagoon/lagoon-cli/
 COPY . .
@@ -14,7 +14,7 @@ RUN VERSION=${VERSION:-"$(echo $(git describe --abbrev=0 --tags)+$(git rev-parse
 	-X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIBuild=$BUILD \
 	-X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIBuildGoVersion=go$GOLANG_VERSION" -o lagoon .
 
-	FROM alpine:3.13
+FROM alpine:3.14
 
 WORKDIR /root/
 COPY --from=build /go/src/github.com/uselagoon/lagoon-cli/lagoon /lagoon
