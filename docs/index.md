@@ -18,5 +18,16 @@ brew install lagoon
 
 Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/uselagoon/lagoon-cli/releases)
 
+# Running as a Docker Image
+In order to use the Lagoon CLI as a docker image (if that's the way you roll) you will need to add your own `.lagoon.yml` and ssh keys as volume mounts. This will use your existing
+config files with their defaults etc, and the full range of [Commands](commands/lagoon.md) are available.  Note that it needs read-write access to the .lagoon.yml to store the login token.
+```
+docker run \
+-v ~/.lagoon.yml:/root/.lagoon.yml:rw \
+-v ~/.ssh/cli_id_rsa:/root/.ssh/id_rsa:ro \
+uselagoon/lagoon-cli:latest \
+config list
+```
+
 # Usage
 See [Commands](commands/lagoon.md)
