@@ -1,12 +1,12 @@
-# getting started
+# Getting Started
 
-![lagoon-cli logo](.gitbook/assets/lagoon-cli-logo.png){: width=100}
+![lagoon-cli logo](.gitbook/assets/lagoon-cli-logo.png)
 
 ## Introduction
 
-This is a CLI for interacting with a [Lagoon](https://github.com/uselagoon/lagoon) instance. By default, it is configured to work against [Amazee.io](https://www.amazee.io/) instance.
+This is a CLI \(command line interface\) for interacting with a [Lagoon](https://github.com/uselagoon/lagoon) instance. By default, it is configured to work against [amazee.io](https://www.amazee.io/) instance.
 
-If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-compose.yml` that references your project in lagoon, then you don't need to specify your project name on the command line as the CLI can read these files to determine the project. You can still define a project name though if you want to target a different project.
+If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-compose.yml` that references your project in Lagoon, then you don't need to specify your project name on the command line as the CLI can read these files to determine the project. You can still define a project name though if you want to target a different project.
 
 ## Requirements
 
@@ -21,11 +21,11 @@ brew tap amazeeio/lagoon-cli
 brew install lagoon
 ```
 
-Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/uselagoon/lagoon-cli/releases)
+Alternatively, you may install by downloading one of the pre-compiled binaries from the [releases page](https://github.com/uselagoon/lagoon-cli/releases).
 
 ## Running as a Docker Image
 
-In order to use the Lagoon CLI as a docker image \(if that's the way you roll\) you will need to add your own `.lagoon.yml` and ssh keys as volume mounts. This will use your existing config files with their defaults etc, and the full range of [Commands](commands/lagoon.md) are available. Note that it needs read-write access to the .lagoon.yml to store the login token.
+In order to use the Lagoon CLI as a Docker image \(if that's the way you roll\) you will need to add your own `.lagoon.yml` and SSH keys as volume mounts. This will use your existing config files with their defaults etc, and the full range of [Commands](commands/lagoon.md) are available. Note that it needs read-write access to the `.lagoon.yml` to store the login token.
 
 ```text
 docker run \

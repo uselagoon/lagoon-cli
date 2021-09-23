@@ -1,10 +1,10 @@
 # lagoon add project-group
 
-Add a project to a group in lagoon
+Add a project to a group in Lagoon.
 
 ## Synopsis
 
-Add a project to a group in lagoon
+Add a project to a group in Lagoon.
 
 ```text
 lagoon add project-group [flags]
@@ -13,7 +13,7 @@ lagoon add project-group [flags]
 ## Options
 
 ```text
-  -h, --help          help for project-group
+  -h, --help          Help for project-group
   -N, --name string   Name of the group
 ```
 
@@ -31,10 +31,10 @@ lagoon add project-group [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments.
 

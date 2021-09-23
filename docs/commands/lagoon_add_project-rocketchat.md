@@ -1,10 +1,10 @@
 # lagoon add project-rocketchat
 
-Add a rocketchat notification to a project
+Add a Rocket.Chat notification to a project.
 
 ## Synopsis
 
-Add a rocketchat notification to a project This command is used to add an existing rocketchat notification in lagoon to a project.
+Add a Rocket.Chat notification to a project. This command is used to add an existing Rocket.Chat notification in Lagoon to a project.
 
 ```text
 lagoon add project-rocketchat [flags]
@@ -13,7 +13,7 @@ lagoon add project-rocketchat [flags]
 ## Options
 
 ```text
-  -h, --help          help for project-rocketchat
+  -h, --help          Help for project-rocketchat
   -n, --name string   The name of the notification
 ```
 
@@ -31,10 +31,10 @@ lagoon add project-rocketchat [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments.
 

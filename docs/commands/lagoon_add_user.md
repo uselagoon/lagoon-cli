@@ -1,10 +1,10 @@
 # lagoon add user
 
-Add a user to lagoon
+Add a user to Lagoon.
 
 ## Synopsis
 
-Add a user to lagoon
+Add a user to Lagoon.
 
 ```text
 lagoon add user [flags]
@@ -15,7 +15,7 @@ lagoon add user [flags]
 ```text
   -E, --email string       Email address of the user
   -F, --firstName string   Firstname of the user
-  -h, --help               help for user
+  -h, --help               Help for user
   -L, --lastName string    Lastname of the user
 ```
 
@@ -33,10 +33,10 @@ lagoon add user [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments.
 

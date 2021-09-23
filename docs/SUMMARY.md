@@ -1,8 +1,8 @@
 # Table of contents
 
-* [getting started](README.md)
-* [config](config.md)
-* [commands](commands/README.md)
+* [Getting Started](README.md)
+* [CLI Configuration](config.md)
+* [Commands](commands/README.md)
   * [lagoon](commands/lagoon.md)
   * [lagoon add](commands/lagoon_add.md)
   * [lagoon add group](commands/lagoon_add_group.md)

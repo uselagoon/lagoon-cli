@@ -1,14 +1,14 @@
-# config
+# CLI Configuration
 
 ## Introduction
 
 By default the CLI is configured to use the `amazeeio` Lagoon. But you can also define additional Lagoons if you need to.
 
-The `.lagoon.yml` file will be installed in your home directory by default
+The `.lagoon.yml` file will be installed in your home directory by default.
 
 ### Layout of the configuration file
 
-The configuration file is laid out like below
+The configuration file is laid out as below:
 
 ```yaml
 current: amazeeio
@@ -21,19 +21,19 @@ lagoons:
     token: ey.....xA
 ```
 
-There are a few sections to cover off
+There are a few sections to cover:
 
-* `current` is the current Lagoon that you will be using, if you only have the one, it will be `amazeeio`
-* `default` is the default Lagoon to use, if you always use a particular Lagoon then you can set your preference as your default
+* `current` is the current Lagoon that you will be using, if you only have the one, it will be `amazeeio`.
+* `default` is the default Lagoon to use, if you always use a particular Lagoon then you can set your preference as your default.
 * `lagoons` is where the actual connection parameters are stored for each Lagoon, they all follow the same template.
-  * `graphql` is the graphql endpoint
-  * `hostname` is the ssh hostname
-  * `port` is the ssh port
-  * `token` is the graphql token, this is automatically generate the first time you `lagoon login` and will automatically refresh if it expires via ssh.
+  * `graphql` is the GraphQl endpoint.
+  * `hostname` is the SSH hostname.
+  * `port` is the SSH port.
+  * `token` is the GraphQl token, this is automatically generate the first time you `lagoon login` and will automatically refresh if it expires via SSH.
 
 ## Add a Lagoon
 
-If you want to add a different Lagoon to use, then you can use the CLI command to view the flags available
+If you want to add a different Lagoon to use, then you can use the CLI command to view the flags available.
 
 ```bash
 lagoon config add
@@ -50,7 +50,7 @@ lagoon config add amazeeio \
 
 ## Delete a Lagoon
 
-If you want to remove a Lagoon, you can use
+If you want to remove a Lagoon, you can use:
 
 ```bash
 lagoon config delete
@@ -64,7 +64,7 @@ lagoon config delete amazeeio
 
 ## Change default Lagoon
 
-If you add additional Lagoons, you can select which one is the default you want to use by running
+If you add additional Lagoons, you can select which one is the default you want to use by running:
 
 ```bash
 lagoon config default
@@ -78,7 +78,7 @@ lagoon config default amazeeio
 
 ## Use a different Lagoon
 
-If you want to temporarily use a different Lagoon, when you run any commands you can specify the flag `--lagoon` or `-l` and then the name of the Lagoon
+If you want to temporarily use a different Lagoon, when you run any commands you can specify the flag `--lagoon` or `-l` and then the name of the Lagoon.
 
 ### Example
 
@@ -88,13 +88,13 @@ lagoon --lagoon mylagoon list projects
 
 ## View Lagoons
 
-You can view all the Lagoons you have configured by running
+You can view all the Lagoons you have configured by running:
 
 ```bash
 lagoon config list
 ```
 
-Output
+Output:
 
 ```yaml
 You have the following lagoons configured:
