@@ -1,10 +1,10 @@
 # lagoon config add
 
-Add information about an additional Lagoon instance to use
+Add information about an additional Lagoon instance to use.
 
 ## Synopsis
 
-Add information about an additional Lagoon instance to use
+Add information about an additional Lagoon instance to use.
 
 ```text
 lagoon config add [flags]
@@ -15,7 +15,7 @@ lagoon config add [flags]
 ```text
       --create-config     Create the config file if it is non existent (to be used with --config-file)
   -g, --graphql string    Lagoon GraphQL endpoint
-  -h, --help              help for add
+  -h, --help              Help for add
   -H, --hostname string   Lagoon SSH hostname
   -k, --kibana string     Lagoon Kibana URL (https://logs.amazeeio.cloud)
   -P, --port string       Lagoon SSH port
@@ -37,10 +37,10 @@ lagoon config add [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

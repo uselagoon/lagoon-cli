@@ -1,10 +1,10 @@
 # lagoon config feature
 
-Enable or disable CLI features
+Enable or disable CLI features.
 
 ## Synopsis
 
-Enable or disable CLI features
+Enable or disable CLI features.
 
 ```text
 lagoon config feature [flags]
@@ -15,7 +15,7 @@ lagoon config feature [flags]
 ```text
       --disable-update-check string     Enable or disable checking of updates (true/false)
       --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
-  -h, --help                            help for feature
+  -h, --help                            Help for feature
 ```
 
 ## Options inherited from parent commands
@@ -32,10 +32,10 @@ lagoon config feature [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

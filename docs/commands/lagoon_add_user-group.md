@@ -1,10 +1,10 @@
 # lagoon add user-group
 
-Add a user to a group in lagoon
+Add a user to a group in Lagoon.
 
 ## Synopsis
 
-Add a user to a group in lagoon
+Add a user to a group in Lagoon.
 
 ```text
 lagoon add user-group [flags]
@@ -14,7 +14,7 @@ lagoon add user-group [flags]
 
 ```text
   -E, --email string   Email address of the user
-  -h, --help           help for user-group
+  -h, --help           Help for user-group
   -N, --name string    Name of the group
   -R, --role string    Role in the group [owner, maintainer, developer, reporter, guest]
 ```
@@ -33,10 +33,10 @@ lagoon add user-group [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments.
 

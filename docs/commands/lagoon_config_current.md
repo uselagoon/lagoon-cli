@@ -1,10 +1,10 @@
 # lagoon config current
 
-Display the current Lagoon that commands would be executed against
+Display the current Lagoon that commands would be executed against.
 
 ## Synopsis
 
-Display the current Lagoon that commands would be executed against
+Display the current Lagoon that commands would be executed against.
 
 ```text
 lagoon config current [flags]
@@ -13,7 +13,7 @@ lagoon config current [flags]
 ## Options
 
 ```text
-  -h, --help   help for current
+  -h, --help   Help for current
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon config current [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

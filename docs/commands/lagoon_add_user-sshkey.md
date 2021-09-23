@@ -1,21 +1,37 @@
 # lagoon add user-sshkey
 
-Add an sshkey to a user
+Add an SSH key to a user.
 
 ## Synopsis
 
-Add an sshkey to a user
-
-Examples: Add key from public key file: lagoon add user-sshkey --email test@example.com --pubkey /path/to/id\_rsa.pub
-
-Add key by defining full key value: lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example"
-
-Add key by defining full key value, but a specific key name: lagoon add user-sshkey --email test@example.com --keyname my-computer@example --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
-
-Add key by defining key value, but not specifying a key name \(will default to try using the email address as key name\): lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+Add an SSH key to a user.
 
 ```text
 lagoon add user-sshkey [flags]
+```
+
+Examples: Add key from public key file: 
+
+```text
+lagoon add user-sshkey --email test@example.com --pubkey /path/to/id_rsa.pub
+```
+
+Add key by defining full key value: 
+
+```text
+lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example"
+```
+
+Add key by defining full key value, but a specific key name: 
+
+```text
+lagoon add user-sshkey --email test@example.com --keyname my-computer@example --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+```
+
+Add key by defining key value, but not specifying a key name \(will default to try using the email address as key name\): 
+
+```text
+lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
 ```
 
 ## Options

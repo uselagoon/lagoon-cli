@@ -1,10 +1,10 @@
 # lagoon config delete
 
-Delete a Lagoon instance configuration
+Delete a Lagoon instance configuration.
 
 ## Synopsis
 
-Delete a Lagoon instance configuration
+Delete a Lagoon instance configuration.
 
 ```text
 lagoon config delete [flags]
@@ -13,7 +13,7 @@ lagoon config delete [flags]
 ## Options
 
 ```text
-  -h, --help   help for delete
+  -h, --help   Help for delete
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon config delete [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

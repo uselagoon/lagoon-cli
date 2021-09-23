@@ -1,10 +1,10 @@
 # lagoon config default
 
-Set the default Lagoon to use
+Set the default Lagoon to use.
 
 ## Synopsis
 
-Set the default Lagoon to use
+Set the default Lagoon to use.
 
 ```text
 lagoon config default [flags]
@@ -13,7 +13,7 @@ lagoon config default [flags]
 ## Options
 
 ```text
-  -h, --help   help for default
+  -h, --help   Help for default
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon config default [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 
