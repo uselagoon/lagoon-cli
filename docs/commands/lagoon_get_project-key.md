@@ -1,25 +1,25 @@
-## lagoon get project-key
+# lagoon get project-key
 
 Get a projects public key
 
-### Synopsis
+## Synopsis
 
 Get a projects public key
 
-```
+```text
 lagoon get project-key [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help     help for project-key
       --reveal   Reveal the variable values
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +34,7 @@ lagoon get project-key [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource
 

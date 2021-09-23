@@ -1,20 +1,22 @@
-# lagoon delete group
+# lagoon add rocketchat
 
-Delete a group from lagoon
+Add a new rocketchat notification
 
 ## Synopsis
 
-Delete a group from lagoon
+Add a new rocketchat notification This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel. It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.
 
 ```text
-lagoon delete group [flags]
+lagoon add rocketchat [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help          help for group
-  -N, --name string   Name of the group
+  -c, --channel string   The channel for the notification
+  -h, --help             help for rocketchat
+  -n, --name string      The name of the notification
+  -w, --webhook string   The webhook URL of the notification
 ```
 
 ## Options inherited from parent commands
@@ -36,5 +38,5 @@ lagoon delete group [flags]
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

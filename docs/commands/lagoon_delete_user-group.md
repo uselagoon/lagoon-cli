@@ -1,26 +1,26 @@
-## lagoon delete user-group
+# lagoon delete user-group
 
 Delete a user from a group in lagoon
 
-### Synopsis
+## Synopsis
 
 Delete a user from a group in lagoon
 
-```
+```text
 lagoon delete user-group [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -E, --email string   Email address of the user
   -h, --help           help for user-group
   -N, --name string    Name of the group
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -35,7 +35,7 @@ lagoon delete user-group [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
 

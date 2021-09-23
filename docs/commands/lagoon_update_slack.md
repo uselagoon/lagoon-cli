@@ -1,18 +1,18 @@
-## lagoon update slack
+# lagoon update slack
 
 Update an existing slack notification
 
-### Synopsis
+## Synopsis
 
 Update an existing slack notification
 
-```
+```text
 lagoon update slack [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -c, --channel string   The channel for the notification
   -h, --help             help for slack
   -j, --json string      JSON string to patch
@@ -21,9 +21,9 @@ lagoon update slack [flags]
   -w, --webhook string   The webhook URL of the notification
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -38,7 +38,7 @@ lagoon update slack [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update a resource
+* [lagoon update](lagoon_update.md)     - Update a resource
 

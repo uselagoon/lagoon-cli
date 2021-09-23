@@ -1,33 +1,26 @@
-## lagoon add user-sshkey
+# lagoon add user-sshkey
 
 Add an sshkey to a user
 
-### Synopsis
+## Synopsis
 
 Add an sshkey to a user
 
-Examples:
-Add key from public key file:
-  lagoon add user-sshkey --email test@example.com --pubkey /path/to/id_rsa.pub
+Examples: Add key from public key file: lagoon add user-sshkey --email test@example.com --pubkey /path/to/id\_rsa.pub
 
-Add key by defining full key value:
-  lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example"
+Add key by defining full key value: lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example"
 
-Add key by defining full key value, but a specific key name:
-  lagoon add user-sshkey --email test@example.com --keyname my-computer@example --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+Add key by defining full key value, but a specific key name: lagoon add user-sshkey --email test@example.com --keyname my-computer@example --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
 
-Add key by defining key value, but not specifying a key name (will default to try using the email address as key name):
-  lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
+Add key by defining key value, but not specifying a key name \(will default to try using the email address as key name\): lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
 
-
-
-```
+```text
 lagoon add user-sshkey [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -E, --email string      Email address of the user
   -h, --help              help for user-sshkey
   -N, --keyname string    Name of the sshkey (optional, if not provided will try use what is in the pubkey file)
@@ -35,9 +28,9 @@ lagoon add user-sshkey [flags]
   -K, --pubkey string     Specify path to the public key to add
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -52,7 +45,7 @@ lagoon add user-sshkey [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,25 +1,25 @@
-## lagoon delete project-slack
+# lagoon delete project-slack
 
 Delete a slack notification from a project
 
-### Synopsis
+## Synopsis
 
 Delete a slack notification from a project
 
-```
+```text
 lagoon delete project-slack [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help          help for project-slack
   -n, --name string   The name of the notification
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +34,7 @@ lagoon delete project-slack [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
 

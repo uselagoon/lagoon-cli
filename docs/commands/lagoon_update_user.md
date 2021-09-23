@@ -1,18 +1,18 @@
-## lagoon update user
+# lagoon update user
 
 Update a user in lagoon
 
-### Synopsis
+## Synopsis
 
-Update a user in lagoon (change name, or email address)
+Update a user in lagoon \(change name, or email address\)
 
-```
+```text
 lagoon update user [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -C, --current-email string   Current email address of the user
   -E, --email string           New email address of the user
   -F, --firstName string       New firstname of the user
@@ -20,9 +20,9 @@ lagoon update user [flags]
   -L, --lastName string        New lastname of the user
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -37,7 +37,7 @@ lagoon update user [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update a resource
+* [lagoon update](lagoon_update.md)     - Update a resource
 

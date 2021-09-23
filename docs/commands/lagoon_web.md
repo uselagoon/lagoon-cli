@@ -1,24 +1,24 @@
-## lagoon web
+# lagoon web
 
 Launch the web user interface
 
-### Synopsis
+## Synopsis
 
 Launch the web user interface
 
-```
+```text
 lagoon web [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for web
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon web [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon
 

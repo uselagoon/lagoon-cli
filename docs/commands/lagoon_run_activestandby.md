@@ -1,26 +1,24 @@
-## lagoon run activestandby
+# lagoon run activestandby
 
 Run the active/standby switch for a project
 
-### Synopsis
+## Synopsis
 
-Run the active/standby switch for a project
-You should only run this once and then check the status of the task that gets created.
-If the task fails or fails to update, contact your Lagoon administrator for assistance.
+Run the active/standby switch for a project You should only run this once and then check the status of the task that gets created. If the task fails or fails to update, contact your Lagoon administrator for assistance.
 
-```
+```text
 lagoon run activestandby [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for activestandby
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -35,7 +33,7 @@ lagoon run activestandby [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon run](lagoon_run.md)	 - Run a task against an environment
+* [lagoon run](lagoon_run.md)     - Run a task against an environment
 

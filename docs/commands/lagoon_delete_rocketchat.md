@@ -1,25 +1,25 @@
-## lagoon delete rocketchat
+# lagoon delete rocketchat
 
 Delete a rocketchat notification from lagoon
 
-### Synopsis
+## Synopsis
 
 Delete a rocketchat notification from lagoon
 
-```
+```text
 lagoon delete rocketchat [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help          help for rocketchat
   -n, --name string   The name of the notification
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +34,7 @@ lagoon delete rocketchat [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
 

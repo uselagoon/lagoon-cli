@@ -1,24 +1,24 @@
-## lagoon get environment
+# lagoon get environment
 
 Get details about an environment
 
-### Synopsis
+## Synopsis
 
 Get details about an environment
 
-```
+```text
 lagoon get environment [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for environment
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon get environment [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon get](lagoon_get.md)	 - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource
 

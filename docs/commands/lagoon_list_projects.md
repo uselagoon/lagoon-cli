@@ -1,24 +1,24 @@
-## lagoon list projects
+# lagoon list projects
 
-List all projects you have access to (alias: p)
+List all projects you have access to \(alias: p\)
 
-### Synopsis
+## Synopsis
 
-List all projects you have access to (alias: p)
+List all projects you have access to \(alias: p\)
 
-```
+```text
 lagoon list projects [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for projects
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon list projects [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
 

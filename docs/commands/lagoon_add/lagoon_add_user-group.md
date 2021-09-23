@@ -1,25 +1,27 @@
-## lagoon add project-group
+# lagoon add user-group
 
-Add a project to a group in lagoon
+Add a user to a group in lagoon
 
-### Synopsis
+## Synopsis
 
-Add a project to a group in lagoon
+Add a user to a group in lagoon
 
-```
-lagoon add project-group [flags]
-```
-
-### Options
-
-```
-  -h, --help          help for project-group
-  -N, --name string   Name of the group
+```text
+lagoon add user-group [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -E, --email string   Email address of the user
+  -h, --help           help for user-group
+  -N, --name string    Name of the group
+  -R, --role string    Role in the group [owner, maintainer, developer, reporter, guest]
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +36,7 @@ lagoon add project-group [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,24 +1,24 @@
-## lagoon config delete
+# lagoon config lagoon-version
 
-Delete a Lagoon instance configuration
+Checks the current Lagoon for its version and sets it in the config file
 
-### Synopsis
+## Synopsis
 
-Delete a Lagoon instance configuration
+Checks the current Lagoon for its version and sets it in the config file
 
-```
-lagoon config delete [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for delete
+```text
+lagoon config lagoon-version [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -h, --help   help for lagoon-version
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon config delete [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon config](./)     - Configure Lagoon CLI
 

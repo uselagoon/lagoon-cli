@@ -1,26 +1,25 @@
-## lagoon export
+# lagoon export
 
 Export lagoon output to yaml
 
-### Synopsis
+## Synopsis
 
-Export lagoon output to yaml
-You must specify to export a specific project by using the '-p <project-name>' flag
+Export lagoon output to yaml You must specify to export a specific project by using the '-p ' flag
 
-```
+```text
 lagoon export [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
       --exclude strings   Exclude data from the export. Valid options (others are ignored): users, project-users, groups, notifications, project-private-keys (default [project-private-keys])
   -h, --help              help for export
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -35,7 +34,7 @@ lagoon export [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon
 

@@ -1,24 +1,24 @@
-## lagoon config current
+# lagoon config current
 
 Display the current Lagoon that commands would be executed against
 
-### Synopsis
+## Synopsis
 
 Display the current Lagoon that commands would be executed against
 
-```
+```text
 lagoon config current [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for current
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon config current [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon config](./)     - Configure Lagoon CLI
 

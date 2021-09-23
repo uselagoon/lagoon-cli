@@ -1,29 +1,23 @@
-## lagoon run invoke
+# lagoon run invoke
 
+## Synopsis
 
+Invoke a task registered against an environment The following are supported methods to use Direct: lagoon run invoke -p example -e main -N "advanced task name"
 
-### Synopsis
-
-Invoke a task registered against an environment
-The following are supported methods to use
-Direct:
- lagoon run invoke -p example -e main -N "advanced task name"
-
-
-```
+```text
 lagoon run invoke [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help          help for invoke
   -N, --name string   Name of the task that will be invoked
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -38,7 +32,7 @@ lagoon run invoke [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon run](lagoon_run.md)	 - Run a task against an environment
+* [lagoon run](lagoon_run.md)     - Run a task against an environment
 

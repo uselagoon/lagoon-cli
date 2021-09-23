@@ -1,24 +1,26 @@
-## lagoon config default
+# lagoon config feature
 
-Set the default Lagoon to use
+Enable or disable CLI features
 
-### Synopsis
+## Synopsis
 
-Set the default Lagoon to use
+Enable or disable CLI features
 
-```
-lagoon config default [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for default
+```text
+lagoon config feature [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+      --disable-update-check string     Enable or disable checking of updates (true/false)
+      --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
+  -h, --help                            help for feature
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +35,7 @@ lagoon config default [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon config](./)     - Configure Lagoon CLI
 

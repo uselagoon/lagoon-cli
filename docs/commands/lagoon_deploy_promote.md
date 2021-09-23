@@ -1,26 +1,26 @@
-## lagoon deploy promote
+# lagoon deploy promote
 
 Promote an environment
 
-### Synopsis
+## Synopsis
 
 Promote one environment to another
 
-```
+```text
 lagoon deploy promote [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -d, --destination string   Destination environment name to create
   -h, --help                 help for promote
   -s, --source string        Source environment name to use as the base to deploy from
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -35,7 +35,7 @@ lagoon deploy promote [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in lagoon
 

@@ -1,24 +1,24 @@
-## lagoon list invokable-tasks
+# lagoon list invokable-tasks
 
 Print a list of invokable tasks
 
-### Synopsis
+## Synopsis
 
 Print a list of invokable user defined tasks registered against an environment
 
-```
+```text
 lagoon list invokable-tasks [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for invokable-tasks
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon list invokable-tasks [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
 

@@ -1,28 +1,25 @@
-## lagoon add variable
+# lagoon add project-slack
 
-Add a variable to an environment or project
+Add a slack notification to a project
 
-### Synopsis
+## Synopsis
 
-Add a variable to an environment or project
+Add a slack notification to a project This command is used to add an existing slack notification in lagoon to a project.
 
-```
-lagoon add variable [flags]
-```
-
-### Options
-
-```
-  -h, --help           help for variable
-  -j, --json string    JSON string to patch
-  -N, --name string    Name of the variable to add
-  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
-  -V, --value string   Value of the variable to add
+```text
+lagoon add project-slack [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -h, --help          help for project-slack
+  -n, --name string   The name of the notification
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -37,7 +34,7 @@ lagoon add variable [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,18 +1,18 @@
-## lagoon update project
+# lagoon update project
 
 Update a project
 
-### Synopsis
+## Synopsis
 
 Update a project
 
-```
+```text
 lagoon update project [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -D, --activeSystemsDeploy string            Which internal Lagoon System is responsible for deploying 
   -M, --activeSystemsMisc string              Which internal Lagoon System is responsible for miscellaneous tasks
   -P, --activeSystemsPromote string           Which internal Lagoon System is responsible for promoting
@@ -35,9 +35,9 @@ lagoon update project [flags]
   -s, --subfolder string                      Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -52,7 +52,7 @@ lagoon update project [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update a resource
+* [lagoon update](lagoon_update.md)     - Update a resource
 

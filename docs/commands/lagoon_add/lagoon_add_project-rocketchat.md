@@ -1,24 +1,25 @@
-## lagoon config list
+# lagoon add project-rocketchat
 
-View all configured Lagoon instances
+Add a rocketchat notification to a project
 
-### Synopsis
+## Synopsis
 
-View all configured Lagoon instances
+Add a rocketchat notification to a project This command is used to add an existing rocketchat notification in lagoon to a project.
 
-```
-lagoon config list [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for list
+```text
+lagoon add project-rocketchat [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -h, --help          help for project-rocketchat
+  -n, --name string   The name of the notification
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +34,7 @@ lagoon config list [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

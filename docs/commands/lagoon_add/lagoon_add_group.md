@@ -1,24 +1,25 @@
-## lagoon config lagoon-version
+# lagoon add group
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a group to lagoon
 
-### Synopsis
+## Synopsis
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a group to lagoon
 
-```
-lagoon config lagoon-version [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for lagoon-version
+```text
+lagoon add group [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -h, --help          help for group
+  -N, --name string   Name of the group
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +34,7 @@ lagoon config lagoon-version [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

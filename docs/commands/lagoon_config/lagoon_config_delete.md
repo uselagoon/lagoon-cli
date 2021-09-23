@@ -1,27 +1,24 @@
-## lagoon add user
+# lagoon config delete
 
-Add a user to lagoon
+Delete a Lagoon instance configuration
 
-### Synopsis
+## Synopsis
 
-Add a user to lagoon
+Delete a Lagoon instance configuration
 
-```
-lagoon add user [flags]
-```
-
-### Options
-
-```
-  -E, --email string       Email address of the user
-  -F, --firstName string   Firstname of the user
-  -h, --help               help for user
-  -L, --lastName string    Lastname of the user
+```text
+lagoon config delete [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -h, --help   help for delete
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -36,7 +33,7 @@ lagoon add user [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon config](./)     - Configure Lagoon CLI
 

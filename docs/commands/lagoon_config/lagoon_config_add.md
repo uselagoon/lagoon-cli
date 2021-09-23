@@ -1,25 +1,31 @@
-## lagoon add group
+# lagoon config add
 
-Add a group to lagoon
+Add information about an additional Lagoon instance to use
 
-### Synopsis
+## Synopsis
 
-Add a group to lagoon
+Add information about an additional Lagoon instance to use
 
-```
-lagoon add group [flags]
-```
-
-### Options
-
-```
-  -h, --help          help for group
-  -N, --name string   Name of the group
+```text
+lagoon config add [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+      --create-config     Create the config file if it is non existent (to be used with --config-file)
+  -g, --graphql string    Lagoon GraphQL endpoint
+  -h, --help              help for add
+  -H, --hostname string   Lagoon SSH hostname
+  -k, --kibana string     Lagoon Kibana URL (https://logs.amazeeio.cloud)
+  -P, --port string       Lagoon SSH port
+  -t, --token string      Lagoon GraphQL token
+  -u, --ui string         Lagoon UI location (https://dashboard.amazeeio.cloud)
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +40,7 @@ lagoon add group [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon config](./)     - Configure Lagoon CLI
 

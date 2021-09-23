@@ -1,25 +1,25 @@
-## lagoon list users
+# lagoon list users
 
-List all users in groups (alias: u)
+List all users in groups \(alias: u\)
 
-### Synopsis
+## Synopsis
 
 List all users in groups in lagoon, this only shows users that are in groups.
 
-```
+```text
 lagoon list users [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help          help for users
   -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -34,7 +34,7 @@ lagoon list users [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
 

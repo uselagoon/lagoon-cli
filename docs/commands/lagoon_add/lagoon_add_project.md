@@ -1,18 +1,18 @@
-## lagoon add project
+# lagoon add project
 
 Add a new project to lagoon
 
-### Synopsis
+## Synopsis
 
 Add a new project to lagoon
 
-```
+```text
 lagoon add project [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -D, --activeSystemsDeploy string            Which internal Lagoon System is responsible for deploying 
   -M, --activeSystemsMisc string              Which internal Lagoon System is responsible for miscellaneous tasks
   -P, --activeSystemsPromote string           Which internal Lagoon System is responsible for promoting
@@ -34,9 +34,9 @@ lagoon add project [flags]
   -s, --subfolder string                      Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -51,7 +51,7 @@ lagoon add project [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,28 +1,22 @@
-## lagoon run custom
+# lagoon run custom
 
 Run a custom command on an environment
 
-### Synopsis
+## Synopsis
 
-Run a custom command on an environment
-The following are supported methods to use
-Direct:
-  lagoon run custom -p example -e main -N "My Task" -S cli -c "ps -ef"
+Run a custom command on an environment The following are supported methods to use Direct: lagoon run custom -p example -e main -N "My Task" -S cli -c "ps -ef"
 
-STDIN:
-  cat /path/to/my-script.sh | lagoon run custom -p example -e main -N "My Task" -S cli
+STDIN: cat /path/to/my-script.sh \| lagoon run custom -p example -e main -N "My Task" -S cli
 
-Path:
-  lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
+Path: lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 
-
-```
+```text
 lagoon run custom [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -c, --command string   The command to run in the task
   -h, --help             help for custom
   -N, --name string      Name of the task that will show in the UI (default: Custom Task) (default "Custom Task")
@@ -30,9 +24,9 @@ lagoon run custom [flags]
   -S, --service string   Name of the service (cli, nginx, other) that should run the task (default: cli) (default "cli")
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -47,7 +41,7 @@ lagoon run custom [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon run](lagoon_run.md)	 - Run a task against an environment
+* [lagoon run](lagoon_run.md)     - Run a task against an environment
 

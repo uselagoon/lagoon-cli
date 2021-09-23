@@ -1,26 +1,27 @@
-## lagoon add project-rocketchat
+# lagoon add user
 
-Add a rocketchat notification to a project
+Add a user to lagoon
 
-### Synopsis
+## Synopsis
 
-Add a rocketchat notification to a project
-This command is used to add an existing rocketchat notification in lagoon to a project.
+Add a user to lagoon
 
-```
-lagoon add project-rocketchat [flags]
-```
-
-### Options
-
-```
-  -h, --help          help for project-rocketchat
-  -n, --name string   The name of the notification
+```text
+lagoon add user [flags]
 ```
 
-### Options inherited from parent commands
+## Options
 
+```text
+  -E, --email string       Email address of the user
+  -F, --firstName string   Firstname of the user
+  -h, --help               help for user
+  -L, --lastName string    Lastname of the user
 ```
+
+## Options inherited from parent commands
+
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -35,7 +36,7 @@ lagoon add project-rocketchat [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,24 +1,24 @@
-## lagoon list slack
+# lagoon list slack
 
-List Slack details about a project (alias: s)
+List Slack details about a project \(alias: s\)
 
-### Synopsis
+## Synopsis
 
-List Slack details about a project (alias: s)
+List Slack details about a project \(alias: s\)
 
-```
+```text
 lagoon list slack [flags]
 ```
 
-### Options
+## Options
 
-```
+```text
   -h, --help   help for slack
 ```
 
-### Options inherited from parent commands
+## Options inherited from parent commands
 
-```
+```text
       --config-file string   Path to the config file to use (must be *.yml or *.yaml)
       --debug                Enable debugging output (if supported)
   -e, --environment string   Specify an environment to use
@@ -33,7 +33,7 @@ lagoon list slack [flags]
   -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
-### SEE ALSO
+## SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
 
