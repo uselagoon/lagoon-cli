@@ -1,10 +1,10 @@
 # lagoon list groups
 
-List groups you have access to \(alias: g\)
+List groups you have access to \(alias: g\).
 
 ## Synopsis
 
-List groups you have access to \(alias: g\)
+List groups you have access to \(alias: g\).
 
 ```text
 lagoon list groups [flags]
@@ -13,7 +13,7 @@ lagoon list groups [flags]
 ## Options
 
 ```text
-  -h, --help   help for groups
+  -h, --help   Help for groups
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list groups [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

@@ -1,10 +1,10 @@
 # lagoon deploy pullrequest
 
-Deploy a pullrequest
+Deploy a pull request.
 
 ## Synopsis
 
-Deploy a pullrequest This pullrequest may not already exist as an environment in lagoon.
+Deploy a pull request This pull request may not already exist as an environment in Lagoon.
 
 ```text
 lagoon deploy pullrequest [flags]
@@ -13,13 +13,13 @@ lagoon deploy pullrequest [flags]
 ## Options
 
 ```text
-  -N, --baseBranchName string   Pullrequest base branch name
-  -R, --baseBranchRef string    Pullrequest base branch reference hash
-  -H, --headBranchName string   Pullrequest head branch name
-  -M, --headBranchRef string    Pullrequest head branch reference hash
-  -h, --help                    help for pullrequest
-  -n, --number uint             Pullrequest number
-  -t, --title string            Pullrequest title
+  -N, --baseBranchName string   Pull request base branch name
+  -R, --baseBranchRef string    Pull request base branch reference hash
+  -H, --headBranchName string   Pull request head branch name
+  -M, --headBranchRef string    Pull request head branch reference hash
+  -h, --help                    Help for pull request
+  -n, --number uint             Pull request number
+  -t, --title string            Pull request title
 ```
 
 ## Options inherited from parent commands
@@ -36,10 +36,10 @@ lagoon deploy pullrequest [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in Lagoon.
 

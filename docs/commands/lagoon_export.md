@@ -1,10 +1,10 @@
 # lagoon export
 
-Export lagoon output to yaml
+Export lagoon output to YAML.
 
 ## Synopsis
 
-Export lagoon output to yaml You must specify to export a specific project by using the '-p ' flag
+Export lagoon output to YAML. You must specify to export a specific project by using the `-p` flag.
 
 ```text
 lagoon export [flags]
@@ -14,7 +14,7 @@ lagoon export [flags]
 
 ```text
       --exclude strings   Exclude data from the export. Valid options (others are ignored): users, project-users, groups, notifications, project-private-keys (default [project-private-keys])
-  -h, --help              help for export
+  -h, --help              Help for export
 ```
 
 ## Options inherited from parent commands
@@ -31,10 +31,10 @@ lagoon export [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

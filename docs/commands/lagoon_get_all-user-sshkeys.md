@@ -1,10 +1,10 @@
 # lagoon get all-user-sshkeys
 
-Get all user SSH keys
+Get all user SSH keys.
 
 ## Synopsis
 
-Get all user SSH keys. This will only work for users that are part of a group
+Get all user SSH keys. This will only work for users that are part of a group.
 
 ```text
 lagoon get all-user-sshkeys [flags]
@@ -13,7 +13,7 @@ lagoon get all-user-sshkeys [flags]
 ## Options
 
 ```text
-  -h, --help          help for all-user-sshkeys
+  -h, --help          Help for all-user-sshkeys
   -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
 ```
 
@@ -31,10 +31,10 @@ lagoon get all-user-sshkeys [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon get](lagoon_get.md)     - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource.
 

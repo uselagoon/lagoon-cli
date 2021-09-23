@@ -1,10 +1,10 @@
 # lagoon get deployment
 
-Get a build log by remote id
+Get a build log by remote ID.
 
 ## Synopsis
 
-Get a build log by remote id
+Get a build log by remote ID.
 
 ```text
 lagoon get deployment [flags]
@@ -13,7 +13,7 @@ lagoon get deployment [flags]
 ## Options
 
 ```text
-  -h, --help              help for deployment
+  -h, --help              Help for deployment
   -R, --remoteid string   The remote ID of the deployment
 ```
 
@@ -31,10 +31,10 @@ lagoon get deployment [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon get](lagoon_get.md)     - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource.
 

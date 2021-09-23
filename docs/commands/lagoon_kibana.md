@@ -1,10 +1,10 @@
 # lagoon kibana
 
-Launch the kibana interface
+Launch the Kibana interface.
 
 ## Synopsis
 
-Launch the kibana interface
+Launch the Kibana interface.
 
 ```text
 lagoon kibana [flags]
@@ -13,7 +13,7 @@ lagoon kibana [flags]
 ## Options
 
 ```text
-  -h, --help   help for kibana
+  -h, --help   Help for kibana
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon kibana [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

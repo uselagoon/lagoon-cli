@@ -1,10 +1,10 @@
 # lagoon web
 
-Launch the web user interface
+Launch the web user interface.
 
 ## Synopsis
 
-Launch the web user interface
+Launch the web user interface.
 
 ```text
 lagoon web [flags]
@@ -13,7 +13,7 @@ lagoon web [flags]
 ## Options
 
 ```text
-  -h, --help   help for web
+  -h, --help   Help for web
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon web [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

@@ -1,10 +1,10 @@
 # lagoon config lagoon-version
 
-Checks the current Lagoon for its version and sets it in the config file
+Checks the current Lagoon for its version and sets it in the config file.
 
 ## Synopsis
 
-Checks the current Lagoon for its version and sets it in the config file
+Checks the current Lagoon for its version and sets it in the config file.
 
 ```text
 lagoon config lagoon-version [flags]
@@ -13,7 +13,7 @@ lagoon config lagoon-version [flags]
 ## Options
 
 ```text
-  -h, --help   help for lagoon-version
+  -h, --help   Help for lagoon-version
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon config lagoon-version [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

@@ -1,10 +1,10 @@
 # lagoon run drush-cacheclear
 
-Run a drush cache clear on an environment
+Run a Drush cache clear on an environment.
 
 ## Synopsis
 
-Run a drush cache clear on an environment
+Run a Drush cache clear on an environment.
 
 ```text
 lagoon run drush-cacheclear [flags]
@@ -13,7 +13,7 @@ lagoon run drush-cacheclear [flags]
 ## Options
 
 ```text
-  -h, --help   help for drush-cacheclear
+  -h, --help   Help for drush-cacheclear
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon run drush-cacheclear [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon run](lagoon_run.md)     - Run a task against an environment
+* [lagoon run](lagoon_run.md)     - Run a task against an environment.
 

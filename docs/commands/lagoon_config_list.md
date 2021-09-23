@@ -1,10 +1,10 @@
 # lagoon config list
 
-View all configured Lagoon instances
+View all configured Lagoon instances.
 
 ## Synopsis
 
-View all configured Lagoon instances
+View all configured Lagoon instances.
 
 ```text
 lagoon config list [flags]
@@ -13,7 +13,7 @@ lagoon config list [flags]
 ## Options
 
 ```text
-  -h, --help   help for list
+  -h, --help   Help for list
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon config list [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI.
 

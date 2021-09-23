@@ -1,10 +1,10 @@
 # lagoon run activestandby
 
-Run the active/standby switch for a project
+Run the active/standby switch for a project.
 
 ## Synopsis
 
-Run the active/standby switch for a project You should only run this once and then check the status of the task that gets created. If the task fails or fails to update, contact your Lagoon administrator for assistance.
+Run the active/standby switch for a project. You should only run this once and then check the status of the task that gets created. If the task fails or fails to update, contact your Lagoon administrator for assistance.
 
 ```text
 lagoon run activestandby [flags]
@@ -13,7 +13,7 @@ lagoon run activestandby [flags]
 ## Options
 
 ```text
-  -h, --help   help for activestandby
+  -h, --help   Help for activestandby
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon run activestandby [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon run](lagoon_run.md)     - Run a task against an environment
+* [lagoon run](lagoon_run.md)     - Run a task against an environment.
 

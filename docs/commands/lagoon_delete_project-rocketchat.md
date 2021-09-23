@@ -1,10 +1,10 @@
 # lagoon delete project-rocketchat
 
-Delete a rocketchat notification from a project
+Delete a Rocket.Chat notification from a project.
 
 ## Synopsis
 
-Delete a rocketchat notification from a project
+Delete a Rocket.Chat notification from a project.
 
 ```text
 lagoon delete project-rocketchat [flags]
@@ -13,7 +13,7 @@ lagoon delete project-rocketchat [flags]
 ## Options
 
 ```text
-  -h, --help          help for project-rocketchat
+  -h, --help          Help for project-rocketchat
   -n, --name string   The name of the notification
 ```
 
@@ -31,10 +31,10 @@ lagoon delete project-rocketchat [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

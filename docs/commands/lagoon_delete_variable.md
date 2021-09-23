@@ -1,6 +1,6 @@
 # lagoon delete variable
 
-Delete a variable from an environment
+Delete a variable from an environment.
 
 ## Synopsis
 
@@ -13,7 +13,7 @@ lagoon delete variable [flags]
 ## Options
 
 ```text
-  -h, --help          help for variable
+  -h, --help          Help for variable
   -N, --name string   Name of the variable to delete
 ```
 
@@ -31,10 +31,10 @@ lagoon delete variable [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

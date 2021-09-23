@@ -1,10 +1,10 @@
 # lagoon list slack
 
-List Slack details about a project \(alias: s\)
+List Slack details about a project \(alias: s\).
 
 ## Synopsis
 
-List Slack details about a project \(alias: s\)
+List Slack details about a project \(alias: s\).
 
 ```text
 lagoon list slack [flags]
@@ -13,7 +13,7 @@ lagoon list slack [flags]
 ## Options
 
 ```text
-  -h, --help   help for slack
+  -h, --help   Help for slack
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list slack [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

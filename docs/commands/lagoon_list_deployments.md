@@ -1,10 +1,10 @@
 # lagoon list deployments
 
-List deployments for an environment \(alias: d\)
+List deployments for an environment \(alias: d\).
 
 ## Synopsis
 
-List deployments for an environment \(alias: d\)
+List deployments for an environment \(alias: d\).
 
 ```text
 lagoon list deployments [flags]
@@ -13,7 +13,7 @@ lagoon list deployments [flags]
 ## Options
 
 ```text
-  -h, --help   help for deployments
+  -h, --help   Help for deployments
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list deployments [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

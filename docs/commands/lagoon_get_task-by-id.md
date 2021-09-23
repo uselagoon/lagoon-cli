@@ -1,10 +1,10 @@
 # lagoon get task-by-id
 
-Get information about a task by its ID
+Get information about a task by its ID.
 
 ## Synopsis
 
-Get information about a task by its ID
+Get information about a task by its ID.
 
 ```text
 lagoon get task-by-id [flags]
@@ -13,7 +13,7 @@ lagoon get task-by-id [flags]
 ## Options
 
 ```text
-  -h, --help     help for task-by-id
+  -h, --help     Help for task-by-id
   -I, --id int   ID of the task
   -L, --logs     Show the task logs if available
 ```
@@ -32,10 +32,10 @@ lagoon get task-by-id [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon get](lagoon_get.md)     - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource.
 
