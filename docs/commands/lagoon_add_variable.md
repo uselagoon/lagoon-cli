@@ -1,19 +1,23 @@
-# lagoon config lagoon-version
+# lagoon add variable
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a variable to an environment or project
 
 ## Synopsis
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a variable to an environment or project
 
 ```text
-lagoon config lagoon-version [flags]
+lagoon add variable [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help   help for lagoon-version
+  -h, --help           help for variable
+  -j, --json string    JSON string to patch
+  -N, --name string    Name of the variable to add
+  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
+  -V, --value string   Value of the variable to add
 ```
 
 ## Options inherited from parent commands
@@ -35,5 +39,5 @@ lagoon config lagoon-version [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,20 +1,20 @@
-# lagoon add group
+# lagoon add project-rocketchat
 
-Add a group to lagoon
+Add a rocketchat notification to a project
 
 ## Synopsis
 
-Add a group to lagoon
+Add a rocketchat notification to a project This command is used to add an existing rocketchat notification in lagoon to a project.
 
 ```text
-lagoon add group [flags]
+lagoon add project-rocketchat [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help          help for group
-  -N, --name string   Name of the group
+  -h, --help          help for project-rocketchat
+  -n, --name string   The name of the notification
 ```
 
 ## Options inherited from parent commands
@@ -36,5 +36,5 @@ lagoon add group [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

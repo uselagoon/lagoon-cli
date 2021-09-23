@@ -1,19 +1,20 @@
-# lagoon config default
+# lagoon add project-slack
 
-Set the default Lagoon to use
+Add a slack notification to a project
 
 ## Synopsis
 
-Set the default Lagoon to use
+Add a slack notification to a project This command is used to add an existing slack notification in lagoon to a project.
 
 ```text
-lagoon config default [flags]
+lagoon add project-slack [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help   help for default
+  -h, --help          help for project-slack
+  -n, --name string   The name of the notification
 ```
 
 ## Options inherited from parent commands
@@ -35,5 +36,5 @@ lagoon config default [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

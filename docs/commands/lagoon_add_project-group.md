@@ -1,19 +1,20 @@
-# lagoon config current
+# lagoon add project-group
 
-Display the current Lagoon that commands would be executed against
+Add a project to a group in lagoon
 
 ## Synopsis
 
-Display the current Lagoon that commands would be executed against
+Add a project to a group in lagoon
 
 ```text
-lagoon config current [flags]
+lagoon add project-group [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help   help for current
+  -h, --help          help for project-group
+  -N, --name string   Name of the group
 ```
 
 ## Options inherited from parent commands
@@ -35,5 +36,5 @@ lagoon config current [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

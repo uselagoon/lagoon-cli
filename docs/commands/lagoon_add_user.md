@@ -1,20 +1,22 @@
-# lagoon add project-slack
+# lagoon add user
 
-Add a slack notification to a project
+Add a user to lagoon
 
 ## Synopsis
 
-Add a slack notification to a project This command is used to add an existing slack notification in lagoon to a project.
+Add a user to lagoon
 
 ```text
-lagoon add project-slack [flags]
+lagoon add user [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help          help for project-slack
-  -n, --name string   The name of the notification
+  -E, --email string       Email address of the user
+  -F, --firstName string   Firstname of the user
+  -h, --help               help for user
+  -L, --lastName string    Lastname of the user
 ```
 
 ## Options inherited from parent commands
@@ -36,5 +38,5 @@ lagoon add project-slack [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

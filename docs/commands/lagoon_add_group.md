@@ -1,23 +1,20 @@
-# lagoon add variable
+# lagoon add group
 
-Add a variable to an environment or project
+Add a group to lagoon
 
 ## Synopsis
 
-Add a variable to an environment or project
+Add a group to lagoon
 
 ```text
-lagoon add variable [flags]
+lagoon add group [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help           help for variable
-  -j, --json string    JSON string to patch
-  -N, --name string    Name of the variable to add
-  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
-  -V, --value string   Value of the variable to add
+  -h, --help          help for group
+  -N, --name string   Name of the group
 ```
 
 ## Options inherited from parent commands
@@ -39,5 +36,5 @@ lagoon add variable [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

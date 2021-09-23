@@ -1,20 +1,21 @@
-# lagoon add project-group
+# lagoon config feature
 
-Add a project to a group in lagoon
+Enable or disable CLI features
 
 ## Synopsis
 
-Add a project to a group in lagoon
+Enable or disable CLI features
 
 ```text
-lagoon add project-group [flags]
+lagoon config feature [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help          help for project-group
-  -N, --name string   Name of the group
+      --disable-update-check string     Enable or disable checking of updates (true/false)
+      --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
+  -h, --help                            help for feature
 ```
 
 ## Options inherited from parent commands
@@ -36,5 +37,5 @@ lagoon add project-group [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
 

@@ -1,19 +1,19 @@
-# lagoon config delete
+# lagoon config current
 
-Delete a Lagoon instance configuration
+Display the current Lagoon that commands would be executed against
 
 ## Synopsis
 
-Delete a Lagoon instance configuration
+Display the current Lagoon that commands would be executed against
 
 ```text
-lagoon config delete [flags]
+lagoon config current [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help   help for delete
+  -h, --help   help for current
 ```
 
 ## Options inherited from parent commands
@@ -35,5 +35,5 @@ lagoon config delete [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
 

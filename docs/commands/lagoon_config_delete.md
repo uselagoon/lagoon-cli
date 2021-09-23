@@ -1,22 +1,19 @@
-# lagoon add rocketchat
+# lagoon config delete
 
-Add a new rocketchat notification
+Delete a Lagoon instance configuration
 
 ## Synopsis
 
-Add a new rocketchat notification This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel. It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.
+Delete a Lagoon instance configuration
 
 ```text
-lagoon add rocketchat [flags]
+lagoon config delete [flags]
 ```
 
 ## Options
 
 ```text
-  -c, --channel string   The channel for the notification
-  -h, --help             help for rocketchat
-  -n, --name string      The name of the notification
-  -w, --webhook string   The webhook URL of the notification
+  -h, --help   help for delete
 ```
 
 ## Options inherited from parent commands
@@ -38,5 +35,5 @@ lagoon add rocketchat [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
 

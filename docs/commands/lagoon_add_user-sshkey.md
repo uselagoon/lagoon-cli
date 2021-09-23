@@ -47,5 +47,5 @@ lagoon add user-sshkey [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

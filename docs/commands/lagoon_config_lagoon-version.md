@@ -1,22 +1,19 @@
-# lagoon add user
+# lagoon config lagoon-version
 
-Add a user to lagoon
+Checks the current Lagoon for its version and sets it in the config file
 
 ## Synopsis
 
-Add a user to lagoon
+Checks the current Lagoon for its version and sets it in the config file
 
 ```text
-lagoon add user [flags]
+lagoon config lagoon-version [flags]
 ```
 
 ## Options
 
 ```text
-  -E, --email string       Email address of the user
-  -F, --firstName string   Firstname of the user
-  -h, --help               help for user
-  -L, --lastName string    Lastname of the user
+  -h, --help   help for lagoon-version
 ```
 
 ## Options inherited from parent commands
@@ -38,5 +35,5 @@ lagoon add user [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
 

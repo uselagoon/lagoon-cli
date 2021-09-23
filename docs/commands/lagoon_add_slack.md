@@ -1,22 +1,22 @@
-# lagoon add user-group
+# lagoon add slack
 
-Add a user to a group in lagoon
+Add a new slack notification
 
 ## Synopsis
 
-Add a user to a group in lagoon
+Add a new slack notification This command is used to set up a new slack notification in lagoon. This requires information to talk to slack like the webhook URL and the name of the channel. It does not configure a project to send notifications to slack though, you need to use project-slack for that.
 
 ```text
-lagoon add user-group [flags]
+lagoon add slack [flags]
 ```
 
 ## Options
 
 ```text
-  -E, --email string   Email address of the user
-  -h, --help           help for user-group
-  -N, --name string    Name of the group
-  -R, --role string    Role in the group [owner, maintainer, developer, reporter, guest]
+  -c, --channel string   The channel for the notification
+  -h, --help             help for slack
+  -n, --name string      The name of the notification
+  -w, --webhook string   The webhook URL of the notification
 ```
 
 ## Options inherited from parent commands
@@ -38,5 +38,5 @@ lagoon add user-group [flags]
 
 ## SEE ALSO
 
-* [lagoon add](./)     - Add a project, or add notifications and variables to projects or environments
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

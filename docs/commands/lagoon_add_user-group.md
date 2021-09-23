@@ -1,19 +1,22 @@
-# lagoon config list
+# lagoon add user-group
 
-View all configured Lagoon instances
+Add a user to a group in lagoon
 
 ## Synopsis
 
-View all configured Lagoon instances
+Add a user to a group in lagoon
 
 ```text
-lagoon config list [flags]
+lagoon add user-group [flags]
 ```
 
 ## Options
 
 ```text
-  -h, --help   help for list
+  -E, --email string   Email address of the user
+  -h, --help           help for user-group
+  -N, --name string    Name of the group
+  -R, --role string    Role in the group [owner, maintainer, developer, reporter, guest]
 ```
 
 ## Options inherited from parent commands
@@ -35,5 +38,5 @@ lagoon config list [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

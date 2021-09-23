@@ -1,26 +1,22 @@
-# lagoon config add
+# lagoon add rocketchat
 
-Add information about an additional Lagoon instance to use
+Add a new rocketchat notification
 
 ## Synopsis
 
-Add information about an additional Lagoon instance to use
+Add a new rocketchat notification This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel. It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.
 
 ```text
-lagoon config add [flags]
+lagoon add rocketchat [flags]
 ```
 
 ## Options
 
 ```text
-      --create-config     Create the config file if it is non existent (to be used with --config-file)
-  -g, --graphql string    Lagoon GraphQL endpoint
-  -h, --help              help for add
-  -H, --hostname string   Lagoon SSH hostname
-  -k, --kibana string     Lagoon Kibana URL (https://logs.amazeeio.cloud)
-  -P, --port string       Lagoon SSH port
-  -t, --token string      Lagoon GraphQL token
-  -u, --ui string         Lagoon UI location (https://dashboard.amazeeio.cloud)
+  -c, --channel string   The channel for the notification
+  -h, --help             help for rocketchat
+  -n, --name string      The name of the notification
+  -w, --webhook string   The webhook URL of the notification
 ```
 
 ## Options inherited from parent commands
@@ -42,5 +38,5 @@ lagoon config add [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon add](lagoon_add.md)     - Add a project, or add notifications and variables to projects or environments
 

@@ -1,21 +1,19 @@
-# lagoon config feature
+# lagoon config list
 
-Enable or disable CLI features
+View all configured Lagoon instances
 
 ## Synopsis
 
-Enable or disable CLI features
+View all configured Lagoon instances
 
 ```text
-lagoon config feature [flags]
+lagoon config list [flags]
 ```
 
 ## Options
 
 ```text
-      --disable-update-check string     Enable or disable checking of updates (true/false)
-      --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
-  -h, --help                            help for feature
+  -h, --help   help for list
 ```
 
 ## Options inherited from parent commands
@@ -37,5 +35,5 @@ lagoon config feature [flags]
 
 ## SEE ALSO
 
-* [lagoon config](./)     - Configure Lagoon CLI
+* [lagoon config](lagoon_config.md)     - Configure Lagoon CLI
 
