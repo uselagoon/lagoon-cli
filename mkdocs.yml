@@ -15,7 +15,7 @@ markdown_extensions:
       permalink: "#"
       baselevel: 2
       separator: "_"
-pages:
-  - Getting Started: index.md
+nav:
+  - Getting Started: README.md
   - Configuration: config.md
   - Commands: commands/lagoon.md
