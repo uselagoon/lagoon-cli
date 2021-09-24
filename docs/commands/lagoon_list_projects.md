@@ -1,10 +1,10 @@
 # lagoon list projects
 
-List all projects you have access to \(alias: p\)
+List all projects you have access to \(alias: p\).
 
 ## Synopsis
 
-List all projects you have access to \(alias: p\)
+List all projects you have access to \(alias: p\).
 
 ```text
 lagoon list projects [flags]
@@ -13,7 +13,7 @@ lagoon list projects [flags]
 ## Options
 
 ```text
-  -h, --help   help for projects
+  -h, --help   Help for projects
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list projects [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

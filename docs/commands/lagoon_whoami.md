@@ -1,10 +1,10 @@
 # lagoon whoami
 
-Whoami will return your user information for lagoon
+Whoami will return your user information for Lagoon.
 
 ## Synopsis
 
-Whoami will return your user information for lagoon. This is useful if you have multiple keys or accounts in multiple lagoons and need to check which you are using.
+Whoami will return your user information for Lagoon. This is useful if you have multiple keys or accounts in multiple Lagoons and need to check which you are using.
 
 ```text
 lagoon whoami [flags]
@@ -13,7 +13,7 @@ lagoon whoami [flags]
 ## Options
 
 ```text
-  -h, --help                help for whoami
+  -h, --help                Help for whoami
       --show-keys strings   Select which fields to display when showing SSH keys. Valid options (others are ignored): type,created,key,fingerprint
 ```
 
@@ -31,10 +31,10 @@ lagoon whoami [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

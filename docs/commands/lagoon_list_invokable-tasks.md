@@ -1,10 +1,10 @@
 # lagoon list invokable-tasks
 
-Print a list of invokable tasks
+Print a list of invokable tasks.
 
 ## Synopsis
 
-Print a list of invokable user defined tasks registered against an environment
+Print a list of invokable user defined tasks registered against an environment.
 
 ```text
 lagoon list invokable-tasks [flags]
@@ -13,7 +13,7 @@ lagoon list invokable-tasks [flags]
 ## Options
 
 ```text
-  -h, --help   help for invokable-tasks
+  -h, --help   Help for invokable-tasks
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list invokable-tasks [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

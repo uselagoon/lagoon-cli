@@ -1,15 +1,15 @@
 # lagoon run
 
-Run a task against an environment
+Run a task against an environment.
 
 ## Synopsis
 
-Run a task against an environment
+Run a task against an environment.
 
 ## Options
 
 ```text
-  -h, --help   help for run
+  -h, --help   Help for run
 ```
 
 ## Options inherited from parent commands
@@ -26,16 +26,16 @@ Run a task against an environment
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
-* [lagoon run activestandby](lagoon_run_activestandby.md)     - Run the active/standby switch for a project
-* [lagoon run custom](lagoon_run_custom.md)     - Run a custom command on an environment
-* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)     - Run a drush archive dump on an environment
-* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)     - Run a drush cache clear on an environment
-* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)     - Run a drush sql dump on an environment
-* [lagoon run invoke](lagoon_run_invoke.md)     - 
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
+* [lagoon run activestandby](lagoon_run_activestandby.md)     - Run the active/standby switch for a project.
+* [lagoon run custom](lagoon_run_custom.md)     - Run a custom command on an environment.
+* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)     - Run a Drush archive dump on an environment.
+* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)     - Run a Drush cache clear on an environment.
+* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)     - Run a Drush sql dump on an environment.
+* [lagoon run invoke](lagoon_run_invoke.md)     - Invoke a task registered against an environment. 
 

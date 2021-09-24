@@ -1,10 +1,10 @@
 # lagoon delete user
 
-Delete a user from lagoon
+Delete a user from Lagoon.
 
 ## Synopsis
 
-Delete a user from lagoon
+Delete a user from Lagoon.
 
 ```text
 lagoon delete user [flags]
@@ -14,7 +14,7 @@ lagoon delete user [flags]
 
 ```text
   -E, --email string   Email address of the user
-  -h, --help           help for user
+  -h, --help           Help for user
 ```
 
 ## Options inherited from parent commands
@@ -31,10 +31,10 @@ lagoon delete user [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

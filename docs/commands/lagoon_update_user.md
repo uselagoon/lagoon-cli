@@ -1,10 +1,10 @@
 # lagoon update user
 
-Update a user in lagoon
+Update a user in Lagoon.
 
 ## Synopsis
 
-Update a user in lagoon \(change name, or email address\)
+Update a user in Lagoon \(change name, or email address\).
 
 ```text
 lagoon update user [flags]
@@ -16,7 +16,7 @@ lagoon update user [flags]
   -C, --current-email string   Current email address of the user
   -E, --email string           New email address of the user
   -F, --firstName string       New firstname of the user
-  -h, --help                   help for user
+  -h, --help                   Help for user
   -L, --lastName string        New lastname of the user
 ```
 
@@ -34,10 +34,10 @@ lagoon update user [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon update](lagoon_update.md)     - Update a resource
+* [lagoon update](lagoon_update.md)     - Update a resource.
 

@@ -1,10 +1,10 @@
 # lagoon ssh
 
-Display the SSH command to access a specific environment in a project
+Display the SSH command to access a specific environment in a project.
 
 ## Synopsis
 
-Display the SSH command to access a specific environment in a project
+Display the SSH command to access a specific environment in a project.
 
 ```text
 lagoon ssh [flags]
@@ -15,9 +15,9 @@ lagoon ssh [flags]
 ```text
   -C, --command string     Command to run on remote
       --conn-string        Display the full ssh connection string
-  -c, --container string   specify a specific container name
-  -h, --help               help for ssh
-  -s, --service string     specify a specific service name
+  -c, --container string   Specify a specific container name
+  -h, --help               Help for ssh
+  -s, --service string     Specify a specific service name
 ```
 
 ## Options inherited from parent commands
@@ -34,10 +34,10 @@ lagoon ssh [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

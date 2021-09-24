@@ -1,10 +1,10 @@
 # lagoon delete environment
 
-Delete an environment
+Delete an environment.
 
 ## Synopsis
 
-Delete an environment
+Delete an environment.
 
 ```text
 lagoon delete environment [flags]
@@ -13,7 +13,7 @@ lagoon delete environment [flags]
 ## Options
 
 ```text
-  -h, --help   help for environment
+  -h, --help   Help for environment
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon delete environment [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

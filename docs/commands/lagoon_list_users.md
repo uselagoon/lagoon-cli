@@ -1,10 +1,10 @@
 # lagoon list users
 
-List all users in groups \(alias: u\)
+List all users in groups \(alias: u\).
 
 ## Synopsis
 
-List all users in groups in lagoon, this only shows users that are in groups.
+List all users in groups in Lagoon, this only shows users that are in groups.
 
 ```text
 lagoon list users [flags]
@@ -13,7 +13,7 @@ lagoon list users [flags]
 ## Options
 
 ```text
-  -h, --help          help for users
+  -h, --help          Help for users
   -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
 ```
 
@@ -31,10 +31,10 @@ lagoon list users [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

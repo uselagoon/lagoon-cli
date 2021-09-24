@@ -1,10 +1,10 @@
 # lagoon deploy promote
 
-Promote an environment
+Promote an environment.
 
 ## Synopsis
 
-Promote one environment to another
+Promote one environment to another.
 
 ```text
 lagoon deploy promote [flags]
@@ -14,7 +14,7 @@ lagoon deploy promote [flags]
 
 ```text
   -d, --destination string   Destination environment name to create
-  -h, --help                 help for promote
+  -h, --help                 Help for promote
   -s, --source string        Source environment name to use as the base to deploy from
 ```
 
@@ -32,10 +32,10 @@ lagoon deploy promote [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in Lagoon.
 

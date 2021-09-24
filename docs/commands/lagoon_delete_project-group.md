@@ -1,10 +1,10 @@
 # lagoon delete project-group
 
-Delete a project from a group in lagoon
+Delete a project from a group in Lagoon.
 
 ## Synopsis
 
-Delete a project from a group in lagoon
+Delete a project from a group in Lagoon.
 
 ```text
 lagoon delete project-group [flags]
@@ -13,7 +13,7 @@ lagoon delete project-group [flags]
 ## Options
 
 ```text
-  -h, --help          help for project-group
+  -h, --help          Help for project-group
   -N, --name string   Name of the group
 ```
 
@@ -31,10 +31,10 @@ lagoon delete project-group [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

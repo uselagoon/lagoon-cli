@@ -1,10 +1,10 @@
 # lagoon list variables
 
-List variables for a project or environment \(alias: v\)
+List variables for a project or environment \(alias: v\).
 
 ## Synopsis
 
-List variables for a project or environment \(alias: v\)
+List variables for a project or environment \(alias: v\).
 
 ```text
 lagoon list variables [flags]
@@ -13,7 +13,7 @@ lagoon list variables [flags]
 ## Options
 
 ```text
-  -h, --help     help for variables
+  -h, --help     Help for variables
       --reveal   Reveal the variable values
 ```
 
@@ -31,10 +31,10 @@ lagoon list variables [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

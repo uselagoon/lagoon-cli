@@ -1,10 +1,10 @@
 # lagoon update rocketchat
 
-Update an existing rocketchat notification
+Update an existing Rocket.Chat notification.
 
 ## Synopsis
 
-Update an existing rocketchat notification
+Update an existing Rocket.Chat notification.
 
 ```text
 lagoon update rocketchat [flags]
@@ -14,7 +14,7 @@ lagoon update rocketchat [flags]
 
 ```text
   -c, --channel string   The channel for the notification
-  -h, --help             help for rocketchat
+  -h, --help             Help for rocketchat
   -j, --json string      JSON string to patch
   -n, --name string      The current name of the notification
   -N, --newname string   The name of the notification
@@ -35,10 +35,10 @@ lagoon update rocketchat [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon update](lagoon_update.md)     - Update a resource
+* [lagoon update](lagoon_update.md)     - Update a resource.
 

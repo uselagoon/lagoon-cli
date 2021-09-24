@@ -1,10 +1,10 @@
 # lagoon deploy latest
 
-Deploy latest environment
+Deploy latest environment.
 
 ## Synopsis
 
-Deploy latest environment This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI
+Deploy latest environment. This environment should already exist in Lagoon. It is analogous with the 'Deploy' button in the Lagoon UI.
 
 ```text
 lagoon deploy latest [flags]
@@ -13,7 +13,7 @@ lagoon deploy latest [flags]
 ## Options
 
 ```text
-  -h, --help   help for latest
+  -h, --help   Help for latest
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon deploy latest [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in Lagoon.
 

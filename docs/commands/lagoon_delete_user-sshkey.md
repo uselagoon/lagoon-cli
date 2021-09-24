@@ -1,10 +1,10 @@
 # lagoon delete user-sshkey
 
-Delete an sshkey from lagoon
+Delete an SSH key from Lagoon.
 
 ## Synopsis
 
-Delete an sshkey from lagoon
+Delete an SSH key from Lagoon.
 
 ```text
 lagoon delete user-sshkey [flags]
@@ -13,7 +13,7 @@ lagoon delete user-sshkey [flags]
 ## Options
 
 ```text
-  -h, --help             help for user-sshkey
+  -h, --help             Help for user-sshkey
   -N, --keyname string   Name of the sshkey
 ```
 
@@ -31,10 +31,10 @@ lagoon delete user-sshkey [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

@@ -1,10 +1,10 @@
 # lagoon list rocketchat
 
-List Rocketchat details about a project \(alias: r\)
+List Rocket.Chat details about a project \(alias: r\).
 
 ## Synopsis
 
-List Rocketchat details about a project \(alias: r\)
+List Rocket.Chat details about a project \(alias: r\).
 
 ```text
 lagoon list rocketchat [flags]
@@ -13,7 +13,7 @@ lagoon list rocketchat [flags]
 ## Options
 
 ```text
-  -h, --help   help for rocketchat
+  -h, --help   Help for Rocket.Chat
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon list rocketchat [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)     - List projects, deployments, variables or notifications.
 

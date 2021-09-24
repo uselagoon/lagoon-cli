@@ -1,10 +1,10 @@
 # lagoon delete slack
 
-Delete a slack notification from lagoon
+Delete a Slack notification from Lagoon.
 
 ## Synopsis
 
-Delete a slack notification from lagoon
+Delete a Slack notification from Lagoon.
 
 ```text
 lagoon delete slack [flags]
@@ -13,7 +13,7 @@ lagoon delete slack [flags]
 ## Options
 
 ```text
-  -h, --help          help for slack
+  -h, --help          Help for slack
   -n, --name string   The name of the notification
 ```
 
@@ -31,10 +31,10 @@ lagoon delete slack [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete](lagoon_delete.md)     - Delete a project, or delete notifications and variables from projects or environments.
 

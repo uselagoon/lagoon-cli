@@ -1,10 +1,10 @@
 # lagoon deploy branch
 
-Deploy a new branch
+Deploy a new branch.
 
 ## Synopsis
 
-Deploy a new branch This branch may or may not already exist in lagoon, if it already exists you may want to use 'lagoon deploy latest' instead
+Deploy a new branch. This branch may or may not already exist in Lagoon, if it already exists you may want to use [`lagoon deploy latest`](lagoon_deploy_latest.md) instead.
 
 ```text
 lagoon deploy branch [flags]
@@ -15,7 +15,7 @@ lagoon deploy branch [flags]
 ```text
   -b, --branch string      Branch name to deploy
   -r, --branchRef string   Branch ref to deploy
-  -h, --help               help for branch
+  -h, --help               Help for branch
 ```
 
 ## Options inherited from parent commands
@@ -32,10 +32,10 @@ lagoon deploy branch [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon deploy](lagoon_deploy.md)     - Actions for deploying or promoting branches or environments in Lagoon.
 

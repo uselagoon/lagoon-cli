@@ -1,10 +1,10 @@
 # lagoon login
 
-Log into a Lagoon instance
+Log into a Lagoon instance.
 
 ## Synopsis
 
-Log into a Lagoon instance
+Log into a Lagoon instance.
 
 ```text
 lagoon login [flags]
@@ -13,7 +13,7 @@ lagoon login [flags]
 ## Options
 
 ```text
-  -h, --help   help for login
+  -h, --help   Help for login
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon login [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
 

@@ -1,10 +1,10 @@
 # lagoon get environment
 
-Get details about an environment
+Get details about an environment.
 
 ## Synopsis
 
-Get details about an environment
+Get details about an environment.
 
 ```text
 lagoon get environment [flags]
@@ -13,7 +13,7 @@ lagoon get environment [flags]
 ## Options
 
 ```text
-  -h, --help   help for environment
+  -h, --help   Help for environment
 ```
 
 ## Options inherited from parent commands
@@ -30,10 +30,10 @@ lagoon get environment [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon get](lagoon_get.md)     - Get info on a resource
+* [lagoon get](lagoon_get.md)     - Get info on a resource.
 

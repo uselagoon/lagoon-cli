@@ -1,15 +1,15 @@
 # lagoon deploy
 
-Actions for deploying or promoting branches or environments in lagoon
+Actions for deploying or promoting branches or environments in Lagoon.
 
 ## Synopsis
 
-Actions for deploying or promoting branches or environments in lagoon
+Actions for deploying or promoting branches or environments in Lagoon.
 
 ## Options
 
 ```text
-  -h, --help   help for deploy
+  -h, --help   Help for deploy
 ```
 
 ## Options inherited from parent commands
@@ -26,14 +26,14 @@ Actions for deploying or promoting branches or environments in lagoon
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+  -i, --ssh-key string       Specify path to a specific SSH key to use for Lagoon authentication
 ```
 
 ## SEE ALSO
 
-* [lagoon](lagoon.md)     - Command line integration for Lagoon
-* [lagoon deploy branch](lagoon_deploy_branch.md)     - Deploy a new branch
-* [lagoon deploy latest](lagoon_deploy_latest.md)     - Deploy latest environment
-* [lagoon deploy promote](lagoon_deploy_promote.md)     - Promote an environment
-* [lagoon deploy pullrequest](lagoon_deploy_pullrequest.md)     - Deploy a pullrequest
+* [lagoon](lagoon.md)     - Command line integration for Lagoon.
+* [lagoon deploy branch](lagoon_deploy_branch.md)     - Deploy a new branch.
+* [lagoon deploy latest](lagoon_deploy_latest.md)     - Deploy latest environment.
+* [lagoon deploy promote](lagoon_deploy_promote.md)     - Promote an environment.
+* [lagoon deploy pullrequest](lagoon_deploy_pullrequest.md)     - Deploy a pull request.
 
