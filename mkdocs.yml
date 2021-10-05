@@ -1,4 +1,5 @@
 site_name: 'Lagoon CLI'
+site_url: https://uselagoon.github.io/lagoon-cli/
 theme:
   name: 'material'
   palette:
