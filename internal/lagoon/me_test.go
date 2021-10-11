@@ -5,9 +5,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/uselagoon/lagoon-cli/internal/mock"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/golang/mock/gomock"
 )
 
 type meCalls struct {

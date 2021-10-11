@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // @TODO re-enable this at some point if more environment based commands are made availab;e

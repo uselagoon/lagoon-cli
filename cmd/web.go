@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 var webCmd = &cobra.Command{

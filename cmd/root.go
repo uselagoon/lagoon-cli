@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/manifoldco/promptui"
+	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	lagooncli "github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -20,9 +23,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
-	"github.com/manifoldco/promptui"
-	"github.com/spf13/cobra"
-	"github.com/spf13/cobra/doc"
 )
 
 var cmdProject app.LagoonProject

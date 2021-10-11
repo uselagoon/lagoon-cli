@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/uselagoon/lagoon-cli/pkg/output"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // ListFlags .

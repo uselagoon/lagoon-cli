@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/spf13/cobra"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 )
 

@@ -1,15 +1,22 @@
-## lagoon get
+## lagoon list projects-by-metadata
 
-Get info on a resource
+List projects by a given metadata key or key:value
 
 ### Synopsis
 
-Get info on a resource
+List projects by a given metadata key or key:value
+
+```
+lagoon list projects-by-metadata [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for get
+  -h, --help            help for projects-by-metadata
+  -K, --key string      The key name of the metadata value you are querying on
+      --show-metadata   Show the metadata for each project as another field (this could be a lot of data)
+  -V, --value string    The value for the key you are querying on
 ```
 
 ### Options inherited from parent commands
@@ -31,13 +38,5 @@ Get info on a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon get all-user-sshkeys](lagoon_get_all-user-sshkeys.md)	 - Get all user SSH keys
-* [lagoon get deployment](lagoon_get_deployment.md)	 - Get a build log by remote id
-* [lagoon get environment](lagoon_get_environment.md)	 - Get details about an environment
-* [lagoon get project](lagoon_get_project.md)	 - Get details about a project
-* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
-* [lagoon get project-metadata](lagoon_get_project-metadata.md)	 - Get all metadata for a project
-* [lagoon get task-by-id](lagoon_get_task-by-id.md)	 - Get information about a task by its ID
-* [lagoon get user-sshkeys](lagoon_get_user-sshkeys.md)	 - Get a users SSH keys
+* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
 

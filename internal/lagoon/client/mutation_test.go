@@ -12,9 +12,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/google/uuid"
 )
 
 var update = flag.Bool("update", false, "update .golden files")

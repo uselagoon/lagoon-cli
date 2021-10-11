@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/google/uuid"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
 )
 
 // AddGroupInput is based on the input to addGroup.

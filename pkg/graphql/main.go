@@ -1,9 +1,9 @@
 package graphql
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
-	"github.com/dgrijalva/jwt-go"
 )
 
 // LagoonAPI .

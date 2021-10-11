@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/hashicorp/go-version"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // APIVersion interface contains methods for getting info on the current version of lagoon.
@@ -72,6 +72,12 @@ func determineLagoonVersion(lagoonVersion string, lagoonSchema schema.LagoonSche
 				}
 				if field.Name == "me" {
 					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.3.0")
+					if err != nil {
+						return lagoonVersion, err
+					}
+				}
+				if field.Name == "projectsByMetadata" {
+					lagoonVersion, err = greaterThanOrEqualVersion(lagoonVersion, "v1.6.0")
 					if err != nil {
 						return lagoonVersion, err
 					}

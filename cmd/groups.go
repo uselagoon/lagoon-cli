@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/uselagoon/lagoon-cli/pkg/api"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 func parseGroup(flags pflag.FlagSet) api.Group {

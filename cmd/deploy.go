@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/spf13/cobra"
 )
 
 var deployCmd = &cobra.Command{

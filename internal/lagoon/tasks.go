@@ -20,6 +20,7 @@ func ActiveStandbySwitch(ctx context.Context, project string, t Tasks) (*schema.
 	return &result, t.RunActiveStandbySwitch(ctx, project, &result)
 }
 
+// TaskByID returns a task by the associated id
 func TaskByID(ctx context.Context, id int, t Tasks) (*schema.Task, error) {
 	result := schema.Task{}
 	return &result, t.GetTaskByID(ctx, id, &result)
