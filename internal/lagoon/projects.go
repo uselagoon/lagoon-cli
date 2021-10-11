@@ -5,7 +5,7 @@ package lagoon
 import (
 	"context"
 
-	"github.com/amazeeio/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // Projects interface contains methods for getting info on projects.

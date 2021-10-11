@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 var listRocketChatsCmd = &cobra.Command{
@@ -17,11 +17,12 @@ var listRocketChatsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var returnedJSON []byte
 		var err error
+		var notificationFlags NotificationFlags
 		if listAllProjects {
 			returnedJSON, err = pClient.ListAllRocketChats()
 			handleError(err)
 		} else {
-			notificationFlags := parseNotificationFlags(*cmd.Flags())
+			notificationFlags = parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
 				fmt.Println("Missing arguments: Project name is not defined")
 				cmd.Help()
@@ -34,8 +35,11 @@ var listRocketChatsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if listAllProjects {
+				output.RenderInfo("No notifications for RocketChat", outputOptions)
+			} else {
+				output.RenderInfo(fmt.Sprintf("No notifications for RocketChat in project '%s'", notificationFlags.Project), outputOptions)
+			}
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -184,6 +188,7 @@ func init() {
 	addProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	deleteProjectRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	deleteRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
 	updateRocketChatNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")

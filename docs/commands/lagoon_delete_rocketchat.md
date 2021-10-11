@@ -13,7 +13,8 @@ lagoon delete rocketchat [flags]
 ### Options
 
 ```
-  -h, --help   help for rocketchat
+  -h, --help          help for rocketchat
+  -n, --name string   The name of the notification
 ```
 
 ### Options inherited from parent commands

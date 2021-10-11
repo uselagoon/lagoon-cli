@@ -42,7 +42,7 @@ func (api *Interface) AddUser(user User) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -78,7 +78,7 @@ func (api *Interface) UpdateUser(user UpdateUser) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -110,7 +110,7 @@ func (api *Interface) DeleteUser(user User) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -140,7 +140,7 @@ func (api *Interface) GetUserBySSHKey(sshKey SSHKeyValue) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -181,7 +181,7 @@ func (api *Interface) AddSSHKey(sshKey AddSSHKey) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -211,7 +211,7 @@ func (api *Interface) DeleteSSHKey(sshKey DeleteSSHKey) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }

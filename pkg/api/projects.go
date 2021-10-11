@@ -49,7 +49,7 @@ func (api *Interface) GetOpenShiftInfoForProject(project Project) ([]byte, error
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -104,7 +104,7 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -140,7 +140,7 @@ func (api *Interface) UpdateProject(project UpdateProject, fragment string) ([]b
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -170,7 +170,7 @@ func (api *Interface) DeleteProject(project Project) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -200,7 +200,7 @@ func (api *Interface) GetProductionEnvironmentForProject(project Project) ([]byt
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -234,7 +234,7 @@ func (api *Interface) GetEnvironmentByOpenshiftProjectName(environment Environme
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -271,7 +271,7 @@ func (api *Interface) GetProjectsByGitURL(project Project) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -304,7 +304,7 @@ func (api *Interface) GetProjectByName(project Project, fragment string) ([]byte
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -336,7 +336,7 @@ func (api *Interface) GetAllProjects(fragment string) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -371,7 +371,7 @@ func (api *Interface) GetRocketChatInfoForProject(project Project, fragment stri
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -406,7 +406,7 @@ func (api *Interface) GetSlackInfoForProject(project Project, fragment string) (
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -439,7 +439,7 @@ func (api *Interface) GetActiveSystemForProject(project Project, task string) ([
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -471,7 +471,7 @@ func (api *Interface) GetEnvironmentsForProject(project Project) ([]byte, error)
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -501,7 +501,7 @@ func (api *Interface) GetDeploymentByRemoteID(deployment Deployment) ([]byte, er
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -540,7 +540,7 @@ func (api *Interface) AddDeployment(deployment Deployment) ([]byte, error) {
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }
@@ -573,7 +573,7 @@ func (api *Interface) UpdateDeployment(deployment UpdateDeployment) ([]byte, err
 		debugResponse(jsonBytes)
 	}
 	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("graphql: returned null")
+		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
 	}
 	return jsonBytes, nil
 }

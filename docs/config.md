@@ -2,6 +2,8 @@
 
 By default the CLI is configured to use the `amazeeio` Lagoon. But you can also define additional Lagoons if you need to.
 
+The `.lagoon.yml` file will be installed in your home directory by default
+
 ## Layout of the configuration file
 The configuration file is laid out like below
 ```yaml

@@ -16,7 +16,7 @@ lagoon add variable [flags]
   -h, --help           help for variable
   -j, --json string    JSON string to patch
   -N, --name string    Name of the variable to add
-  -S, --scope string   Scope of the variable[global, build, runtime]
+  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
   -V, --value string   Value of the variable to add
 ```
 

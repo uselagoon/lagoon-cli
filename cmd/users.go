@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 func parseUser(flags pflag.FlagSet) api.User {
@@ -23,6 +23,8 @@ func parseUser(flags pflag.FlagSet) api.User {
 	jsonStr, _ := json.Marshal(configMap)
 	parsedFlags := api.User{}
 	json.Unmarshal(jsonStr, &parsedFlags)
+	// lowercase user email address
+	parsedFlags.Email = strings.ToLower(parsedFlags.Email)
 	return parsedFlags
 }
 
@@ -188,7 +190,7 @@ var updateUserCmd = &cobra.Command{
 		var customReqResult []byte
 		var err error
 		currentUser := api.User{
-			Email: currentUserEmail,
+			Email: strings.ToLower(currentUserEmail),
 		}
 		customReqResult, err = uClient.ModifyUser(currentUser, userFlags)
 		handleError(err)
@@ -215,14 +217,14 @@ var getUserKeysCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := uClient.ListUserSSHKeys(groupName, userEmail, false)
+		returnedJSON, err := uClient.ListUserSSHKeys(groupName, strings.ToLower(userEmail), false)
 		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No ssh-keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -236,14 +238,14 @@ var getAllUserKeysCmd = &cobra.Command{
 	Short:   "Get all user SSH keys",
 	Long:    `Get all user SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := uClient.ListUserSSHKeys(groupName, userEmail, true)
+		returnedJSON, err := uClient.ListUserSSHKeys(groupName, strings.ToLower(userEmail), true)
 		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("No ssh-keys for any users", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 

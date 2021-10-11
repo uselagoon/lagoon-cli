@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // GetFlags .
@@ -37,7 +36,7 @@ var getCmd = &cobra.Command{
 	Aliases: []string{"g"},
 	Short:   "Get info on a resource",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
 }
 
@@ -64,8 +63,8 @@ var getProjectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No details for project '%s'", getProjectFlags.Project), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -89,8 +88,8 @@ var getDeploymentCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if string(returnedJSON) == "null" {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No deployment for remoteId '%s'", getProjectFlags.RemoteID), outputOptions)
+			os.Exit(0)
 		}
 		var deployment api.Deployment
 		err = json.Unmarshal([]byte(returnedJSON), &deployment)
@@ -123,8 +122,8 @@ var getEnvironmentCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No environment '%s' for project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -148,8 +147,8 @@ var getProjectKeyCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -163,6 +162,9 @@ func init() {
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
+	getCmd.AddCommand(getTaskByID)
+	getTaskByID.Flags().IntP("id", "I", 0, "ID of the task")
+	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
 }

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // Environments .
@@ -32,11 +33,13 @@ type Client interface {
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
+	InvokeAdvancedTaskDefinition(string, string, string) ([]byte, error)
+	ListInvokableAdvancedTaskDefinitions(string, string) ([]byte, error)
 }
 
 // New .
-func New(debug bool) (Client, error) {
-	lagoonAPI, err := graphql.LagoonAPI(debug)
+func New(lc *lagoon.Config, debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(lc, debug)
 	if err != nil {
 		return &Environments{}, err
 	}
@@ -129,7 +132,7 @@ func processEnvInfo(projectByName []byte) ([]byte, error) {
 	var data []output.Data
 	data = append(data, environmentData)
 	dataMain := output.Table{
-		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "Route", "Routes", "MonitoringURLS", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "MonitoringURLS", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -141,6 +144,7 @@ func processEnvExtra(environment api.Environment) []string {
 	envEnvironmentType := returnNonEmptyString(string(environment.EnvironmentType))
 	envDeployType := returnNonEmptyString(string(environment.DeployType))
 	envCreated := returnNonEmptyString(string(environment.Created))
+	envOpenshiftProjectName := returnNonEmptyString(string(environment.OpenshiftProjectName))
 	envRoute := returnNonEmptyString(string(environment.Route))
 	envRoutes := returnNonEmptyString(string(environment.Routes))
 	envMonitoringUrls := returnNonEmptyString(string(environment.MonitoringUrls))
@@ -154,6 +158,7 @@ func processEnvExtra(environment api.Environment) []string {
 		fmt.Sprintf("%v", envEnvironmentType),
 		fmt.Sprintf("%v", envDeployType),
 		fmt.Sprintf("%v", envCreated),
+		fmt.Sprintf("%v", envOpenshiftProjectName),
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
 		fmt.Sprintf("%v", envMonitoringUrls),

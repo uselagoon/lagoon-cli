@@ -233,9 +233,11 @@ type Project struct {
 	ActiveSystemsDeploy          string                `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string                `json:"activeSystemsRemove,omitempty"`
 	ActiveSystemsPromote         string                `json:"activeSystemsPromote,omitempty"`
+	ActiveSystemsMisc            string                `json:"activeSystemsMisc,omitempty"`
 	Branches                     string                `json:"branches,omitempty"`
 	Pullrequests                 string                `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string                `json:"productionEnvironment,omitempty"`
+	StandbyProductionEnvironment string                `json:"standbyProductionEnvironment,omitempty"`
 	AutoIdle                     *int                  `json:"autoIdle,omitempty"`
 	StorageCalc                  *int                  `json:"storageCalc,omitempty"`
 	OpenshiftProjectPattern      string                `json:"openshiftProjectPattern,omitempty"`
@@ -259,9 +261,11 @@ type ProjectPatch struct {
 	ActiveSystemsDeploy          string `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string `json:"activeSystemsRemove,omitempty"`
 	ActiveSystemsPromote         string `json:"activeSystemsPromote,omitempty"`
+	ActiveSystemsMisc            string `json:"activeSystemsMisc,omitempty"`
 	Branches                     string `json:"branches,omitempty"`
 	Pullrequests                 string `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string `json:"productionEnvironment,omitempty"`
+	StandbyProductionEnvironment string `json:"standbyProductionEnvironment,omitempty"`
 	AutoIdle                     *int   `json:"autoIdle,omitempty"`
 	StorageCalc                  *int   `json:"storageCalc,omitempty"`
 	OpenshiftProjectPattern      string `json:"openshiftProjectPattern,omitempty"`
@@ -651,6 +655,7 @@ type Environment struct {
 	Backups              []Backup              `json:"backups,omitempty"`
 	Tasks                []Task                `json:"tasks,omitempty"`
 	Project              int                   `json:"project,omitempty"`
+	AdvancedTasks        []AdvancedTask        `json:"advancedTasks"`
 }
 
 // EnvironmentBackups struct.
@@ -670,6 +675,13 @@ type EnvironmentVariable struct {
 	Name  string `json:"name,omitempty"`
 	Scope string `json:"scope,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+// AdvancedTask task def struct
+type AdvancedTask struct {
+	ID          int    `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description"`
 }
 
 // Backup struct.

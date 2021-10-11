@@ -2,11 +2,15 @@ site_name: 'Lagoon CLI'
 theme:
   name: 'material'
   palette:
-    primary: 'indigo'
+    primary: 'blue'
     accent: 'light blue'
+  favicon: lagoon-cli-logo.png
+  icon:
+    logo: fontawesome/solid/terminal
 markdown_extensions:
   - codehilite
   - admonition
+  - attr_list
   - toc:
       permalink: "#"
       baselevel: 2

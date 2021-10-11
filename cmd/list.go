@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // ListFlags .
@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List projects, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(viper.GetString("current")) // get a new token if the current one is invalid
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
 }
 
@@ -50,8 +50,8 @@ var listProjectsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("No access to any projects in Lagoon", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -69,8 +69,8 @@ var listGroupsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("This account is not in any groups", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -101,8 +101,12 @@ var listGroupProjectsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if !listAllProjects {
+				output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
+			} else {
+				output.RenderInfo("There are no projects in any groups", outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -125,8 +129,8 @@ var listProjectCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no environments for project '%s'", cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -156,8 +160,12 @@ var listVariablesCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if cmdProjectEnvironment != "" {
+				output.RenderInfo(fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			} else {
+				output.RenderInfo(fmt.Sprintf("There are no variables for project '%s'", cmdProjectName), outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -180,8 +188,8 @@ var listDeploymentsCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no deployments for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -204,8 +212,8 @@ var listTasksCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("There are no tasks for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 	},
@@ -225,11 +233,51 @@ var listUsersCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			output.RenderInfo("There are no users in any groups", outputOptions)
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
+	},
+}
+
+var listInvokableTasks = &cobra.Command{
+	Use:     "invokable-tasks",
+	Aliases: []string{"dcc"},
+	Short:   "Print a list of invokable tasks",
+	Long:    "Print a list of invokable user defined tasks registered against an environment",
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+		taskResult, err := eClient.ListInvokableAdvancedTaskDefinitions(cmdProjectName, cmdProjectEnvironment)
+		handleError(err)
+
+		var taskList []api.AdvancedTask
+		err = json.Unmarshal([]byte(taskResult), &taskList)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		var taskListData []output.Data
+		for _, task := range taskList {
+			taskListData = append(taskListData, []string{task.Name, task.Description})
+		}
+
+		var dataMain output.Table
+		dataMain.Header = []string{"Task Name", "Description"}
+
+		dataMain.Data = taskListData
+
+		if len(dataMain.Data) == 0 {
+			output.RenderInfo("There are no user defined tasks for this environment", outputOptions)
+			os.Exit(0)
+		}
+		output.RenderOutput(dataMain, outputOptions)
 	},
 }
 
@@ -244,6 +292,7 @@ func init() {
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)
+	listCmd.AddCommand(listInvokableTasks)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")

@@ -2,16 +2,121 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"io/ioutil"
 	"os"
-
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
-	"github.com/spf13/cobra"
 )
+
+var getTaskByID = &cobra.Command{
+	Use:     "task-by-id",
+	Short:   "Get information about a task by its ID",
+	Long:    `Get information about a task by its ID`,
+	Aliases: []string{"t", "tbi"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		taskID, err := cmd.Flags().GetInt("id")
+		if err != nil {
+			return err
+		}
+		showLogs, err := cmd.Flags().GetBool("logs")
+		if err != nil {
+			return err
+		}
+		if taskID == 0 {
+			return fmt.Errorf("Missing arguments: ID is not defined")
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
+		if err != nil {
+			return err
+		}
+		dataMain := output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"Status",
+				"Created",
+				"Started",
+				"Completed",
+			},
+			Data: []output.Data{
+				{
+					fmt.Sprintf("%d", result.ID),
+					returnNonEmptyString(result.Name),
+					returnNonEmptyString(result.Status),
+					returnNonEmptyString(result.Created),
+					returnNonEmptyString(result.Started),
+					returnNonEmptyString(result.Completed),
+				},
+			},
+		}
+		if showLogs {
+			dataMain.Header = append(dataMain.Header, "Logs")
+			dataMain.Data[0] = append(dataMain.Data[0], returnNonEmptyString(result.Logs))
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
+var runActiveStandbySwitch = &cobra.Command{
+	Use:   "activestandby",
+	Short: "Run the active/standby switch for a project",
+	Long: `Run the active/standby switch for a project
+You should only run this once and then check the status of the task that gets created.
+If the task fails or fails to update, contact your Lagoon administrator for assistance.`,
+	Aliases: []string{"as", "standby"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
+			fmt.Println(fmt.Sprintf(`Created a new task with ID %d
+You can use the following command to query the task status:
+lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
+		}
+		return nil
+	},
+}
 
 var runDrushArchiveDump = &cobra.Command{
 	Use:     "drush-archivedump",
@@ -82,6 +187,35 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
+var invokeDefinedTask = &cobra.Command{
+	Use:     "invoke",
+	Aliases: []string{"i"},
+	Short:   "",
+	Long: `Invoke a task registered against an environment
+The following are supported methods to use
+Direct:
+ lagoon run invoke -p example -e main -N "advanced task name"
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
+			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
+		handleError(err)
+		var resultMap map[string]interface{}
+		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		handleError(err)
+		resultData := output.Result{
+			Result:     "success",
+			ResultData: resultMap,
+		}
+		output.RenderResult(resultData, outputOptions)
+	},
+}
+
 var runCustomTask = &cobra.Command{
 	Use:     "custom",
 	Aliases: []string{"c"},
@@ -89,13 +223,13 @@ var runCustomTask = &cobra.Command{
 	Long: `Run a custom command on an environment
 The following are supported methods to use
 Direct:
-  lagoon run custom -p example -e master -N "My Task" -S cli -c "ps -ef"
+  lagoon run custom -p example -e main -N "My Task" -S cli -c "ps -ef"
 
 STDIN:
-  cat /path/to/my-script.sh | lagoon run custom -p example -e master -N "My Task" -S cli
+  cat /path/to/my-script.sh | lagoon run custom -p example -e main -N "My Task" -S cli
 
 Path:
-  lagoon run custom -p example -e master -N "My Task" -S cli -s /path/to/my-script.sh
+  lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		stat, _ := os.Stdin.Stat()
@@ -144,12 +278,14 @@ Path:
 
 var (
 	taskName        string
+	invokedTaskName string
 	taskService     string
 	taskCommand     string
 	taskCommandFile string
 )
 
 func init() {
+	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")

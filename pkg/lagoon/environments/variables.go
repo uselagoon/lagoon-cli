@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // AddEnvironmentVariableToEnvironment will list all environments for a project
@@ -71,7 +71,7 @@ func (e *Environments) DeleteEnvironmentVariableFromEnvironment(projectName stri
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectEnvironmentEnvVars)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -129,7 +129,7 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectAndEnvironmentEnvVars)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectEnvironmentEnvVars)
 	if err != nil {
 		return []byte(""), err
 	}

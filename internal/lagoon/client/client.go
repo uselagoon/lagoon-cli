@@ -12,9 +12,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/amazeeio/lagoon-cli/internal/lagoon/client/lgraphql"
 	"github.com/hashicorp/go-version"
 	"github.com/machinebox/graphql"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client/lgraphql"
 )
 
 // Client implements the lagoon package interfaces for the Lagoon GraphQL API.

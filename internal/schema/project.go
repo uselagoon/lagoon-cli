@@ -1,23 +1,24 @@
 package schema
 
-import "github.com/amazeeio/lagoon-cli/pkg/api"
+import "github.com/uselagoon/lagoon-cli/pkg/api"
 
 // AddProjectInput is based on the Lagoon API type.
 type AddProjectInput struct {
-	ID                      uint                `json:"id,omitempty"`
-	Name                    string              `json:"name"`
-	GitURL                  string              `json:"gitUrl"`
-	Subfolder               string              `json:"subfolder,omitempty"`
-	Openshift               uint                `json:"openshift"`
-	OpenshiftProjectPattern string              `json:"openshiftProjectPattern,omitempty"`
-	ActiveSystemsDeploy     string              `json:"activeSystemsDeploy,omitempty"`
-	ActiveSystemsPromote    string              `json:"activeSystemsPromote,omitempty"`
-	ActiveSystemsRemove     string              `json:"activeSystemsRemove,omitempty"`
-	ActiveSystemsTask       string              `json:"activeSystemsTask,omitempty"`
-	Branches                string              `json:"branches,omitempty"`
-	PullRequests            string              `json:"pullrequests,omitempty"`
-	ProductionEnvironment   string              `json:"productionEnvironment"`
-	Availability            ProjectAvailability `json:"availability,omitempty"`
+	ID                           uint                `json:"id,omitempty"`
+	Name                         string              `json:"name"`
+	GitURL                       string              `json:"gitUrl"`
+	Subfolder                    string              `json:"subfolder,omitempty"`
+	Openshift                    uint                `json:"openshift"`
+	OpenshiftProjectPattern      string              `json:"openshiftProjectPattern,omitempty"`
+	ActiveSystemsDeploy          string              `json:"activeSystemsDeploy,omitempty"`
+	ActiveSystemsPromote         string              `json:"activeSystemsPromote,omitempty"`
+	ActiveSystemsRemove          string              `json:"activeSystemsRemove,omitempty"`
+	ActiveSystemsTask            string              `json:"activeSystemsTask,omitempty"`
+	Branches                     string              `json:"branches,omitempty"`
+	PullRequests                 string              `json:"pullrequests,omitempty"`
+	ProductionEnvironment        string              `json:"productionEnvironment"`
+	StandbyProductionEnvironment string              `json:"standbyProductionEnvironment,omitempty"`
+	Availability                 ProjectAvailability `json:"availability,omitempty"`
 	// AutoIdle and StorageCalc can't be omitempty because their zero-values are
 	// significant - Lagoon uses it as a boolean (0/1).
 	AutoIdle                     uint   `json:"autoIdle"`

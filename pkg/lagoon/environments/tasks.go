@@ -3,12 +3,13 @@ package environments
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/graphql"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // RunDrushArchiveDump will trigger a drush archive dump task
@@ -301,6 +302,135 @@ func (e *Environments) RunCustomTask(projectName string, environmentName string,
 			"command":     task.Command,
 		},
 		MappedResult: "addTask",
+	}
+	returnResult, err := e.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+const environmentWithTasksFragment = `fragment Environment on Environment {
+	id
+	name
+	route
+	routes
+	deployType
+	environmentType
+	openshiftProjectName
+	updated
+	created
+	deleted
+    advancedTasks {
+      ... on AdvancedTaskDefinitionCommand {
+        id
+        name
+        description
+      }
+      ... on AdvancedTaskDefinitionImage {
+        id
+        name
+        description
+      }
+    }
+}`
+
+// ListInvokableAdvancedTaskDefinitions returns a list of tasks invokable against an environment
+func (e *Environments) ListInvokableAdvancedTaskDefinitions(projectName string, environmentName string) ([]byte, error) {
+	// get project info from lagoon, we need the project ID for later
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// get the environment info from lagoon, we need the environment ID for later
+	// we consume the project ID here
+	environment := api.EnvironmentByName{
+		Name:    environmentName,
+		Project: projectInfo.ID,
+	}
+
+	environmentByName, err := e.api.GetEnvironmentByName(environment, environmentWithTasksFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var environmentInfo api.Environment
+	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	retvar, _ := json.Marshal(environmentInfo.AdvancedTasks)
+	return retvar, nil
+}
+
+// InvokeAdvancedTaskDefinition will attempt to invoke an advanced task definition on an environment
+func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environmentName string, advancedTaskName string) ([]byte, error) {
+	// get project info from lagoon, we need the project ID for later
+	project := api.Project{
+		Name: projectName,
+	}
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var projectInfo api.Project
+	err = json.Unmarshal([]byte(projectByName), &projectInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	// get the environment info from lagoon, we need the environment ID for later
+	// we consume the project ID here
+	environment := api.EnvironmentByName{
+		Name:    environmentName,
+		Project: projectInfo.ID,
+	}
+
+	environmentByName, err := e.api.GetEnvironmentByName(environment, environmentWithTasksFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var environmentInfo api.Environment
+	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	var taskId int
+	for _, task := range environmentInfo.AdvancedTasks {
+		if advancedTaskName == task.Name {
+			taskId = task.ID
+		}
+	}
+
+	if taskId == 0 {
+		return nil, errors.New(fmt.Sprintf("Could not find a task `%v` for project/environment %v/%v",
+			advancedTaskName, projectName, environmentName))
+	}
+
+	// run the query to add the environment variable to lagoon
+	customReq := api.CustomRequest{
+		Query: `mutation invokeRegisteredTask ($environment: Int!, $advancedTaskDefinition: Int!) {
+			invokeRegisteredTask(advancedTaskDefinition: $advancedTaskDefinition, environment: $environment) {
+				id
+				name
+				status
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"advancedTaskDefinition": taskId,
+			"environment":            environmentInfo.ID,
+		},
+		MappedResult: "invokeRegisteredTask",
 	}
 	returnResult, err := e.api.Request(customReq)
 	if err != nil {

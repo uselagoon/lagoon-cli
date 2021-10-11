@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 var listSlackCmd = &cobra.Command{
@@ -17,11 +17,12 @@ var listSlackCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var returnedJSON []byte
 		var err error
+		var notificationFlags NotificationFlags
 		if listAllProjects {
 			returnedJSON, err = pClient.ListAllSlacks()
 			handleError(err)
 		} else {
-			notificationFlags := parseNotificationFlags(*cmd.Flags())
+			notificationFlags = parseNotificationFlags(*cmd.Flags())
 			if notificationFlags.Project == "" {
 				fmt.Println("Missing arguments: Project name is not defined")
 				cmd.Help()
@@ -35,8 +36,12 @@ var listSlackCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderError(noDataError, outputOptions)
-			os.Exit(1)
+			if listAllProjects {
+				output.RenderInfo("No notifications for Slack", outputOptions)
+			} else {
+				output.RenderInfo(fmt.Sprintf("No notifications for Slack in project '%s'", notificationFlags.Project), outputOptions)
+			}
+			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
@@ -189,6 +194,7 @@ func init() {
 	addProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	deleteProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
+	deleteSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
 
 	updateSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
 	updateSlackNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")

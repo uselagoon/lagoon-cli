@@ -15,8 +15,9 @@ lagoon deploy branch [flags]
 ### Options
 
 ```
-  -b, --branch string   Branch name to deploy
-  -h, --help            help for branch
+  -b, --branch string      Branch name to deploy
+  -r, --branchRef string   Branch ref to deploy
+  -h, --help               help for branch
 ```
 
 ### Options inherited from parent commands

@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/amazeeio/lagoon-cli/pkg/api"
-	"github.com/amazeeio/lagoon-cli/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 func parseGroup(flags pflag.FlagSet) api.Group {
@@ -71,7 +71,7 @@ var addUserToGroupCmd = &cobra.Command{
 		}
 		userGroupRole := api.UserGroupRole{
 			User: api.User{
-				Email: userEmail,
+				Email: strings.ToLower(userEmail),
 			},
 			Group: api.Group{
 				Name: groupName,
@@ -140,7 +140,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		userGroupRole := api.UserGroup{
 			User: api.User{
-				Email: userEmail,
+				Email: strings.ToLower(userEmail),
 			},
 			Group: api.Group{
 				Name: groupName,

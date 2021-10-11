@@ -7,7 +7,7 @@ notifications:
     webhook: https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 projects:
 - autoIdle: 1
-  gitUrl: git@github.com:amazeeio/lagoon.git
+  gitUrl: git@github.com:uselagoon/lagoon.git
   groups:
   - kickstart-group
   name: lagoon

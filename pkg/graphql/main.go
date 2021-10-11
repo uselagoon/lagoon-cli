@@ -1,17 +1,17 @@
 package graphql
 
 import (
-	"github.com/amazeeio/lagoon-cli/pkg/api"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/pkg/api"
 )
 
 // LagoonAPI .
-func LagoonAPI(debug bool) (api.Client, error) {
-	lagoon := viper.GetString("current")
+func LagoonAPI(lc *lagoon.Config, debug bool) (api.Client, error) {
+	lagoon := lc.Current
 	lagoonAPI, err := api.NewWithToken(
-		viper.GetString("lagoons."+lagoon+".token"),
-		viper.GetString("lagoons."+lagoon+".graphql"),
+		lc.Lagoons[lagoon].Token,
+		lc.Lagoons[lagoon].GraphQL,
 	)
 	lagoonAPI.Debug(debug)
 	if err != nil {
@@ -20,19 +20,15 @@ func LagoonAPI(debug bool) (api.Client, error) {
 	return lagoonAPI, nil
 }
 
-func getGraphQLToken(lagoon string) string {
-	return viper.GetString("lagoons." + lagoon + ".token")
-}
-
-func hasValidToken(lagoon string) bool {
-	return getGraphQLToken(lagoon) != ""
+func hasValidToken(lc *lagoon.Config, lagoon string) bool {
+	return lc.Lagoons[lagoon].Token != ""
 }
 
 // VerifyTokenExpiry verfies if the current token is valid or not
-func VerifyTokenExpiry(lagoon string) bool {
+func VerifyTokenExpiry(lc *lagoon.Config, lagoon string) bool {
 	var p jwt.Parser
 	token, _, err := p.ParseUnverified(
-		viper.GetString("lagoons."+lagoon+".token"), &jwt.StandardClaims{})
+		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
 	if err != nil {
 		return false
 	}
@@ -76,6 +72,21 @@ var ProjectAndEnvironmentEnvVars = `fragment Project on Project {
 		name
 		scope
 	}
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+		}
+	}
+}`
+
+// ProjectEnvironmentEnvVars .
+var ProjectEnvironmentEnvVars = `fragment Project on Project {
+	id
+	name
 	environments {
 		openshiftProjectName
 		name
@@ -161,6 +172,7 @@ var AllProjectsFragment = `fragment Project on Project {
 	gitUrl
 	name,
 	developmentEnvironmentsLimit,
+	productionEnvironment,
 	environments {
 		environmentType,
 		route
