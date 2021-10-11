@@ -8,7 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
@@ -145,11 +144,11 @@ var listProjectByMetadata = &cobra.Command{
 		if key == "" {
 			return fmt.Errorf("Missing arguments: key is not defined")
 		}
-		current := viper.GetString("current")
+		current := lagoonCLIConfig.Current
 		lc := client.New(
-			viper.GetString("lagoons."+current+".graphql"),
-			viper.GetString("lagoons."+current+".token"),
-			viper.GetString("lagoons."+current+".version"),
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
 		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
@@ -212,11 +211,11 @@ var updateProjectMetadata = &cobra.Command{
 			return fmt.Errorf("Missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
-			current := viper.GetString("current")
+			current := lagoonCLIConfig.Current
 			lc := client.New(
-				viper.GetString("lagoons."+current+".graphql"),
-				viper.GetString("lagoons."+current+".token"),
-				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
 			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -266,11 +265,11 @@ var deleteProjectMetadataByKey = &cobra.Command{
 			return fmt.Errorf("Missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
-			current := viper.GetString("current")
+			current := lagoonCLIConfig.Current
 			lc := client.New(
-				viper.GetString("lagoons."+current+".graphql"),
-				viper.GetString("lagoons."+current+".token"),
-				viper.GetString("lagoons."+current+".version"),
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
 			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
