@@ -13,9 +13,10 @@ lagoon list projects-by-metadata [flags]
 ### Options
 
 ```
-  -h, --help           help for projects-by-metadata
-      --key string     The key name of the metadata value you are querying on
-      --value string   The value for the key you are querying on
+  -h, --help            help for projects-by-metadata
+  -K, --key string      The key name of the metadata value you are querying on
+      --show-metadata   Show the metadata for each project as another field (this could be a lot of data)
+  -V, --value string    The value for the key you are querying on
 ```
 
 ### Options inherited from parent commands

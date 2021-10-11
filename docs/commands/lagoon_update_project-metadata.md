@@ -14,8 +14,8 @@ lagoon update project-metadata [flags]
 
 ```
   -h, --help           help for project-metadata
-      --key string     The key name of the metadata value you are querying on
-      --value string   The value for the key you are querying on
+  -K, --key string     The key name of the metadata value you are querying on
+  -V, --value string   The value for the key you are querying on
 ```
 
 ### Options inherited from parent commands
