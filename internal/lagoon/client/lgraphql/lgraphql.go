@@ -26,6 +26,7 @@
 // _lgraphql/me.graphql
 // _lgraphql/minimalProjectByName.graphql
 // _lgraphql/projectByName.graphql
+// _lgraphql/projectByNameMetadata.graphql
 // _lgraphql/projectsByMetadata.graphql
 // _lgraphql/removeProjectMetadataByKey.graphql
 // _lgraphql/switchActiveStandby.graphql
@@ -607,6 +608,26 @@ func _lgraphqlProjectbynameGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlProjectbynamemetadataGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x00\x0b\x29\x28\x40\x54\x82\x35\xc0\xd4\x81\x40\x66\x0a\x9c\x09\x92\x82\x73\x72\x53\x4b\x12\x53\x12\x4b\x12\xa1\x02\xb5\x5c\x20\x0c\x08\x00\x00\xff\xff\xd4\x75\x13\x1d\x79\x00\x00\x00")
+
+func _lgraphqlProjectbynamemetadataGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlProjectbynamemetadataGraphql,
+		"_lgraphql/projectByNameMetadata.graphql",
+	)
+}
+
+func _lgraphqlProjectbynamemetadataGraphql() (*asset, error) {
+	bytes, err := _lgraphqlProjectbynamemetadataGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/projectByNameMetadata.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var __lgraphqlProjectsbymetadataGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x91\xcd\x4e\x2b\x31\x0c\x85\xf7\xf3\x14\xbe\xd5\x5d\xd0\x4d\x05\x1b\x16\x5d\x22\x2a\x84\x04\xa2\xa2\x85\xbd\x99\x71\xdb\xd0\xfc\x4c\x1d\x67\xa4\x51\x94\x77\x47\xd3\x29\x49\x11\x25\x2b\xeb\x3b\xce\xf1\x91\x1d\x23\xa8\x0d\x60\xab\xde\x89\x1f\x98\x50\x88\xd7\x3b\xb4\x2f\xbc\x38\x04\xd4\x30\x83\xc9\xcd\xec\x76\x76\x3d\x81\x94\xaa\x43\x20\xee\xe1\xaa\x02\x00\xf8\xbf\xa7\x7e\x0e\x2b\x61\x65\xb7\xff\x46\xd2\xa1\x0e\xf4\xcd\xa6\xf1\x08\x5b\x76\x9f\x54\x8b\xbf\xeb\x9f\x49\xb0\x41\xc1\xf1\xfb\xf0\xcc\x89\xcc\x21\x66\x36\xbc\xa3\xf3\xe0\xff\x83\x9e\xdc\xc7\x29\x59\x49\xc7\x6a\x5a\x0c\x54\x93\x4b\x8b\xa6\x34\x62\x10\xf7\xd8\xe8\x02\x3e\x18\x6d\xbd\x23\x9f\x41\x1b\xb4\x66\x3a\x04\xf2\xe2\x7f\x65\x2c\x5d\xec\x9a\x50\x8b\x72\x76\x61\x3b\xc5\xce\x1a\xb2\x52\xa6\xd4\xa2\x3a\x5a\xf5\x5e\xc8\xf8\x7b\x6a\xb5\xeb\x2f\x6b\x6b\xf4\xfb\xcb\xca\x2b\x19\xd7\xd1\x65\x6d\xc9\xce\x38\x29\xa2\x6b\xc9\xfa\x9d\xda\xc8\x72\x5c\xf3\x12\x45\x88\x6d\xd6\x1b\xea\x48\xbb\x76\x88\x78\x96\xd6\x3f\x29\xa3\x4a\xe6\xad\x92\x37\xd6\x7f\x2f\x2a\x0f\x39\xbf\xd2\xd9\x9a\xc7\x13\xa4\x2a\x55\x31\x02\xd9\x06\x52\xfa\x0a\x00\x00\xff\xff\x00\x3e\xbb\x56\x55\x02\x00\x00")
 
 func _lgraphqlProjectsbymetadataGraphqlBytes() ([]byte, error) {
@@ -784,6 +805,7 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/me.graphql":                            _lgraphqlMeGraphql,
 	"_lgraphql/minimalProjectByName.graphql":          _lgraphqlMinimalprojectbynameGraphql,
 	"_lgraphql/projectByName.graphql":                 _lgraphqlProjectbynameGraphql,
+	"_lgraphql/projectByNameMetadata.graphql":         _lgraphqlProjectbynamemetadataGraphql,
 	"_lgraphql/projectsByMetadata.graphql":            _lgraphqlProjectsbymetadataGraphql,
 	"_lgraphql/removeProjectMetadataByKey.graphql":    _lgraphqlRemoveprojectmetadatabykeyGraphql,
 	"_lgraphql/switchActiveStandby.graphql":           _lgraphqlSwitchactivestandbyGraphql,
@@ -858,6 +880,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"me.graphql":                            &bintree{_lgraphqlMeGraphql, map[string]*bintree{}},
 		"minimalProjectByName.graphql":          &bintree{_lgraphqlMinimalprojectbynameGraphql, map[string]*bintree{}},
 		"projectByName.graphql":                 &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
+		"projectByNameMetadata.graphql":         &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
 		"projectsByMetadata.graphql":            &bintree{_lgraphqlProjectsbymetadataGraphql, map[string]*bintree{}},
 		"removeProjectMetadataByKey.graphql":    &bintree{_lgraphqlRemoveprojectmetadatabykeyGraphql, map[string]*bintree{}},
 		"switchActiveStandby.graphql":           &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},

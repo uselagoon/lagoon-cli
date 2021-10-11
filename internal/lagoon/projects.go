@@ -11,6 +11,7 @@ import (
 // Projects interface contains methods for getting info on projects.
 type Projects interface {
 	MinimalProjectByName(ctx context.Context, name string, project *schema.Project) error
+	ProjectByNameMetadata(ctx context.Context, name string, project *schema.ProjectMetadata) error
 	ProjectsByMetadata(ctx context.Context, key string, value string, project *[]schema.ProjectMetadata) error
 	UpdateProjectMetadata(ctx context.Context, id int, key string, value string, project *schema.ProjectMetadata) error
 	RemoveProjectMetadataByKey(ctx context.Context, id int, key string, project *schema.ProjectMetadata) error
@@ -26,6 +27,12 @@ func GetMinimalProjectByName(ctx context.Context, name string, p Projects) (*sch
 func GetProjectsByMetadata(ctx context.Context, key string, value string, p Projects) (*[]schema.ProjectMetadata, error) {
 	project := []schema.ProjectMetadata{}
 	return &project, p.ProjectsByMetadata(ctx, key, value, &project)
+}
+
+// GetProjectMetadata gets the metadata key:values for a lagoon project.
+func GetProjectMetadata(ctx context.Context, name string, p Projects) (*schema.ProjectMetadata, error) {
+	project := schema.ProjectMetadata{}
+	return &project, p.ProjectByNameMetadata(ctx, name, &project)
 }
 
 // UpdateProjectMetadata updates a project with provided metadata.

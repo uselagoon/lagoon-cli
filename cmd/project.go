@@ -187,6 +187,60 @@ var listProjectByMetadata = &cobra.Command{
 	},
 }
 
+var getProjectMetadata = &cobra.Command{
+	Use:     "project-metadata",
+	Aliases: []string{"pm", "projectmeta"},
+	Short:   "Get all metadata for a project",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			fmt.Println("Missing arguments: Project name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		project, err := lagoon.GetProjectMetadata(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		if project.Metadata == "{}" {
+			output.RenderInfo(fmt.Sprintf("There is no metadata for project '%s'", cmdProjectName), outputOptions)
+			return nil
+		}
+		metadataResponse := map[string]string{}
+		json.Unmarshal([]byte(project.Metadata), &metadataResponse)
+		data := []output.Data{}
+		for metaKey, metaVal := range metadataResponse {
+			metadataData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", metaKey)),
+				returnNonEmptyString(fmt.Sprintf("%v", metaVal)),
+			}
+			data = append(data, metadataData)
+		}
+		header := []string{
+			"Key",
+			"Value",
+		}
+		output.RenderOutput(output.Table{
+			Header: header,
+			Data:   data,
+		}, outputOptions)
+		return nil
+	},
+}
+
 var updateProjectMetadata = &cobra.Command{
 	Use:     "project-metadata",
 	Aliases: []string{"pm", "meta", "projectmeta"},
@@ -355,4 +409,6 @@ func init() {
 
 	deleteCmd.AddCommand(deleteProjectMetadataByKey)
 	deleteProjectMetadataByKey.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
+
+	getCmd.AddCommand(getProjectMetadata)
 }

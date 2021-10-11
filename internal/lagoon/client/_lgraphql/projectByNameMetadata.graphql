@@ -1,0 +1,9 @@
+query (
+  $name: String!) {
+    projectByName(
+      name: $name) {
+        id
+        name
+        metadata
+      }
+  }

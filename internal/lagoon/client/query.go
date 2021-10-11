@@ -137,6 +137,26 @@ func (c *Client) MinimalProjectByName(
 	})
 }
 
+// ProjectByNameMetadata queries the Lagoon API for a project by its name, and
+// unmarshals the response into project.
+func (c *Client) ProjectByNameMetadata(
+	ctx context.Context, name string, project *schema.ProjectMetadata) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/projectByNameMetadata.graphql",
+		map[string]interface{}{
+			"name": name,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.ProjectMetadata `json:"projectByName"`
+	}{
+		Response: project,
+	})
+}
+
 // ProjectsByMetadata queries the Lagoon API for a project by its name, and
 // unmarshals the response into project.
 func (c *Client) ProjectsByMetadata(
