@@ -118,6 +118,81 @@ lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
 	},
 }
 
+var runFactsGatherer = &cobra.Command{
+	Use:     "factsgatherer",
+	Aliases: []string{"fg"},
+	DisableSuggestions: true,
+	SuggestionsMinimumDistance: 1,
+	Short:   "Run the facts gatherer on an environment",
+	Long: `Run the facts gatherer command on an environment
+The following are supported methods to use
+Direct:
+  lagoon run factsgatherer -p example -e main -S cli
+`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name and/or environment name are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		var factsGathererCmd = fmt.Sprintf(`
+#!/bin/sh
+
+# Install lagoon-facts binary from Github
+set -e
+
+PROJECT=%s
+ENVIRONMENT=%s
+
+OS_TYPE=linux
+BIN_PATH=/tmp
+LATEST_PATH=https://api.github.com/repos/uselagoon/lagoon-facts-app/releases/latest
+#BIN_PATH=/usr/bin/
+
+echo "Project: " "$PROJECT"
+echo "Environment: " "$ENVIRONMENT"
+echo "Binary path: " "$BIN_PATH"
+
+echo "Downloading lagoon-facts from: $LATEST_PATH"
+
+# Get the URL of the latest release.
+DOWNLOAD_PATH=$(curl -L -s $LATEST_PATH | grep "browser_download_url" | cut -d '"' -f 4)
+
+# Download and extract the release to the build dir.
+wget -O $BIN_PATH/lagoon-facts "$DOWNLOAD_PATH" && chmod +x $BIN_PATH/lagoon-facts
+
+# Run
+if $BIN_PATH/lagoon-facts gather -p $PROJECT -e $ENVIRONMENT -v; then
+    echo "Pushing facts succeeded"
+else
+    echo "Pushing facts failed"
+fi
+
+# Clean up
+#rm -f $BIN_PATH/lagoon-facts
+`, cmdProjectName, cmdProjectEnvironment)
+
+		task := api.Task{
+			Name:    "Lagoon Facts Gatherer",
+			Command: factsGathererCmd,
+			Service: taskService,
+		}
+		taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
+		handleError(err)
+		var resultMap map[string]interface{}
+		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		handleError(err)
+		resultData := output.Result{
+			Result:     "success",
+			ResultData: resultMap,
+		}
+		output.RenderResult(resultData, outputOptions)
+
+		return nil
+	},
+}
+
 var runDrushArchiveDump = &cobra.Command{
 	Use:     "drush-archivedump",
 	Aliases: []string{"dard"},
