@@ -98,6 +98,22 @@ var ProjectEnvironmentEnvVars = `fragment Project on Project {
 	}
 }`
 
+// ProjectEnvironmentEnvVarsRevealed .
+var ProjectEnvironmentEnvVarsRevealed = `fragment Project on Project {
+	id
+	name
+	environments {
+		openshiftProjectName
+		name
+		envVariables {
+			id
+			name
+			scope
+			value
+		}
+	}
+}`
+
 // ProjectAndEnvironmentEnvVarsRevealed .
 var ProjectAndEnvironmentEnvVarsRevealed = `fragment Project on Project {
 	id
@@ -134,29 +150,6 @@ var ProjectEnvVars = `fragment Project on Project {
 // ProjectEnvVarsRevealed .
 var ProjectEnvVarsRevealed = `fragment Project on Project {
 	id
-	name
-	envVariables {
-		id
-		name
-		scope
-		value
-	}
-}`
-
-// EnvironmentEnvVars .
-var EnvironmentEnvVars = `fragment Environment on Environment {
-	openshiftProjectName
-	name
-	envVariables {
-		id
-		name
-		scope
-	}
-}`
-
-// EnvironmentEnvVarsRevealed .
-var EnvironmentEnvVarsRevealed = `fragment Environment on Environment {
-	openshiftProjectName
 	name
 	envVariables {
 		id
