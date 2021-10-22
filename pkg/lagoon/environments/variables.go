@@ -129,7 +129,11 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	project := api.Project{
 		Name: projectName,
 	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectEnvironmentEnvVars)
+	queryFragment := graphql.ProjectEnvironmentEnvVars
+	if revealValue {
+		queryFragment = graphql.ProjectEnvironmentEnvVarsRevealed
+	}
+	projectByName, err := e.api.GetProjectByName(project, queryFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -138,31 +142,19 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	if err != nil {
 		return []byte(""), err
 	}
-	environment := api.EnvironmentByName{
-		Name:    environmentName,
-		Project: projectInfo.ID,
+	for _, v := range projectInfo.Environments {
+		if v.Name == environmentName {
+			returnResult, err := processEnvironmentVariables(v, projectName, revealValue)
+			if err != nil {
+				return []byte(""), err
+			}
+			return returnResult, nil
+		}
 	}
-	queryFragment := graphql.EnvironmentEnvVars
-	if revealValue {
-		queryFragment = graphql.EnvironmentEnvVarsRevealed
-	}
-	environmentByName, err := e.api.GetEnvironmentByName(environment, queryFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processEnvironmentVariables(environmentByName, projectName, revealValue)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
+	return []byte(""), fmt.Errorf(fmt.Sprintf("Environment %s not found, check the environment exists and that you have permission to access it", environmentName))
 }
 
-func processEnvironmentVariables(environmentByName []byte, projectName string, revealValue bool) ([]byte, error) {
-	var envVars api.Environment
-	err := json.Unmarshal([]byte(environmentByName), &envVars)
-	if err != nil {
-		return []byte(""), err
-	}
+func processEnvironmentVariables(envVars api.Environment, projectName string, revealValue bool) ([]byte, error) {
 	data := []output.Data{}
 	if len(envVars.EnvVariables) != 0 {
 		for _, environmentEnvVar := range envVars.EnvVariables {
