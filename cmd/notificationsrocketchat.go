@@ -13,7 +13,7 @@ import (
 var listRocketChatsCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
-	Short:   "List Rocketchat details about a project (alias: r)",
+	Short:   "List Rocket.Chat details about a project (alias: r)",
 	Run: func(cmd *cobra.Command, args []string) {
 		var returnedJSON []byte
 		var err error
@@ -36,9 +36,9 @@ var listRocketChatsCmd = &cobra.Command{
 		handleError(err)
 		if len(dataMain.Data) == 0 {
 			if listAllProjects {
-				output.RenderInfo("No notifications for RocketChat", outputOptions)
+				output.RenderInfo("No notifications for Rocket.Chat", outputOptions)
 			} else {
-				output.RenderInfo(fmt.Sprintf("No notifications for RocketChat in project '%s'", notificationFlags.Project), outputOptions)
+				output.RenderInfo(fmt.Sprintf("No notifications for Rocket.Chat in project '%s'", notificationFlags.Project), outputOptions)
 			}
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -48,14 +48,14 @@ var listRocketChatsCmd = &cobra.Command{
 var addRocketChatNotificationCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
-	Short:   "Add a new rocketchat notification",
-	Long: `Add a new rocketchat notification
-This command is used to set up a new rocketchat notification in lagoon. This requires information to talk to rocketchat like the webhook URL and the name of the channel.
-It does not configure a project to send notifications to rocketchat though, you need to use project-rocketchat for that.`,
+	Short:   "Add a new Rocket.Chat notification",
+	Long: `Add a new Rocket.Chat notification
+This command is used to set up a new Rocket.Chat notification in Lagoon. This requires information to talk to Rocket.Chat like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to Rocket.Chat though, you need to use project-rocketchat for that.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
-			fmt.Println("Missing arguments: Notifcation name, channel, or webhook url are not defined")
+			fmt.Println("Missing arguments: Notification name, channel, or webhook url are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -75,13 +75,13 @@ It does not configure a project to send notifications to rocketchat though, you 
 var addProjectRocketChatNotificationCmd = &cobra.Command{
 	Use:     "project-rocketchat",
 	Aliases: []string{"pr"},
-	Short:   "Add a rocketchat notification to a project",
-	Long: `Add a rocketchat notification to a project
-This command is used to add an existing rocketchat notification in lagoon to a project.`,
+	Short:   "Add a Rocket.Chat notification to a project",
+	Long: `Add a Rocket.Chat notification to a project
+This command is used to add an existing Rocket.Chat notification in Lagoon to a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
+			fmt.Println("Missing arguments: Project name or notification name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -101,11 +101,11 @@ This command is used to add an existing rocketchat notification in lagoon to a p
 var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 	Use:     "project-rocketchat",
 	Aliases: []string{"pr"},
-	Short:   "Delete a rocketchat notification from a project",
+	Short:   "Delete a Rocket.Chat notification from a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
+			fmt.Println("Missing arguments: Project name or notification name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -125,15 +125,15 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 var deleteRocketChatNotificationCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
-	Short:   "Delete a rocketchat notification from lagoon",
+	Short:   "Delete a Rocket.Chat notification from Lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Notifcation name is not defined")
+			fmt.Println("Missing arguments: notification name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from lagoon, are you sure?", notificationFlags.NotificationName)) {
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from Lagoon, are you sure?", notificationFlags.NotificationName)) {
 			deleteResult, err := pClient.DeleteRocketChatNotification(notificationFlags.NotificationName)
 			handleError(err)
 			resultData := output.Result{
@@ -147,11 +147,11 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 var updateRocketChatNotificationCmd = &cobra.Command{
 	Use:     "rocketchat",
 	Aliases: []string{"r"},
-	Short:   "Update an existing rocketchat notification",
+	Short:   "Update an existing Rocket.Chat notification",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Current notifcation name is not defined")
+			fmt.Println("Missing arguments: Current notification name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}

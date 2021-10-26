@@ -51,14 +51,14 @@ var listSlackCmd = &cobra.Command{
 var addSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
-	Short:   "Add a new slack notification",
-	Long: `Add a new slack notification
-This command is used to set up a new slack notification in lagoon. This requires information to talk to slack like the webhook URL and the name of the channel.
-It does not configure a project to send notifications to slack though, you need to use project-slack for that.`,
+	Short:   "Add a new Slack notification",
+	Long: `Add a new Slack notification
+This command is used to set up a new Slack notification in Lagoon. This requires information to talk to Slack like the webhook URL and the name of the channel.
+It does not configure a project to send notifications to Slack though, you need to use project-slack for that.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
-			fmt.Println("Missing arguments: Notifcation name, channel, or webhook url are not defined")
+			fmt.Println("Missing arguments: Notification name, channel, or webhook url are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -78,13 +78,13 @@ It does not configure a project to send notifications to slack though, you need 
 var addProjectSlackNotificationCmd = &cobra.Command{
 	Use:     "project-slack",
 	Aliases: []string{"ps"},
-	Short:   "Add a slack notification to a project",
-	Long: `Add a slack notification to a project
-This command is used to add an existing slack notification in lagoon to a project.`,
+	Short:   "Add a Slack notification to a project",
+	Long: `Add a Slack notification to a project
+This command is used to add an existing Slack notification in Lagoon to a project.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
+			fmt.Println("Missing arguments: Project name or notification name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -104,11 +104,11 @@ This command is used to add an existing slack notification in lagoon to a projec
 var deleteProjectSlackNotificationCmd = &cobra.Command{
 	Use:     "project-slack",
 	Aliases: []string{"ps"},
-	Short:   "Delete a slack notification from a project",
+	Short:   "Delete a Slack notification from a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notifcation name are not defined")
+			fmt.Println("Missing arguments: Project name or notification name are not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -129,17 +129,17 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 var deleteSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
-	Short:   "Delete a slack notification from lagoon",
+	Short:   "Delete a Slack notification from Lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Notifcation name is not defined")
+			fmt.Println("Missing arguments: Notification name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
 		fmt.Println(fmt.Sprintf("Deleting notification %s", notificationFlags.NotificationName))
 
-		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from lagoon, are you sure?", notificationFlags.NotificationName)) {
+		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from Lagoon, are you sure?", notificationFlags.NotificationName)) {
 			deleteResult, err := pClient.DeleteSlackNotification(notificationFlags.NotificationName)
 			handleError(err)
 			resultData := output.Result{
@@ -153,11 +153,11 @@ var deleteSlackNotificationCmd = &cobra.Command{
 var updateSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
-	Short:   "Update an existing slack notification",
+	Short:   "Update an existing Slack notification",
 	Run: func(cmd *cobra.Command, args []string) {
 		notificationFlags := parseNotificationFlags(*cmd.Flags())
 		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Current notifcation name is not defined")
+			fmt.Println("Missing arguments: Current notification name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
