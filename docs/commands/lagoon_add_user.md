@@ -14,9 +14,9 @@ lagoon add user [flags]
 
 ```
   -E, --email string       Email address of the user
-  -F, --firstName string   Firstname of the user
+  -F, --firstName string   First name of the user
   -h, --help               help for user
-  -L, --lastName string    Lastname of the user
+  -L, --lastName string    Last name of the user
 ```
 
 ### Options inherited from parent commands

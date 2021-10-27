@@ -1,10 +1,10 @@
 ## lagoon update rocketchat
 
-Update an existing rocketchat notification
+Update an existing Rocket.Chat notification
 
 ### Synopsis
 
-Update an existing rocketchat notification
+Update an existing Rocket.Chat notification
 
 ```
 lagoon update rocketchat [flags]

@@ -1,10 +1,10 @@
 ## lagoon add project
 
-Add a new project to lagoon
+Add a new project to Lagoon
 
 ### Synopsis
 
-Add a new project to lagoon
+Add a new project to Lagoon
 
 ```
 lagoon add project [flags]

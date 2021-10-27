@@ -1,10 +1,10 @@
 ## lagoon add user-sshkey
 
-Add an sshkey to a user
+Add an SSH key to a user
 
 ### Synopsis
 
-Add an sshkey to a user
+Add an SSH key to a user
 
 Examples:
 Add key from public key file:
@@ -30,7 +30,7 @@ lagoon add user-sshkey [flags]
 ```
   -E, --email string      Email address of the user
   -h, --help              help for user-sshkey
-  -N, --keyname string    Name of the sshkey (optional, if not provided will try use what is in the pubkey file)
+  -N, --keyname string    Name of the SSH key (optional, if not provided will try use what is in the pubkey file)
   -V, --keyvalue string   Value of the public key to add (ssh-ed25519 AAA..)
   -K, --pubkey string     Specify path to the public key to add
 ```

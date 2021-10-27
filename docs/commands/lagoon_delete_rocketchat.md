@@ -1,10 +1,10 @@
 ## lagoon delete rocketchat
 
-Delete a rocketchat notification from lagoon
+Delete a Rocket.Chat notification from Lagoon
 
 ### Synopsis
 
-Delete a rocketchat notification from lagoon
+Delete a Rocket.Chat notification from Lagoon
 
 ```
 lagoon delete rocketchat [flags]

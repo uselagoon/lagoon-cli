@@ -1,10 +1,10 @@
 ## lagoon get user-sshkeys
 
-Get a users SSH keys
+Get a user's SSH keys
 
 ### Synopsis
 
-Get a users SSH keys. This will only work for users that are part of a group
+Get a user's SSH keys. This will only work for users that are part of a group
 
 ```
 lagoon get user-sshkeys [flags]
