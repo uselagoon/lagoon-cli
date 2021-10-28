@@ -1,4 +1,5 @@
 site_name: 'Lagoon CLI'
+site_url: https://uselagoon.github.io/lagoon-cli/
 theme:
   name: 'material'
   palette:
@@ -7,6 +8,10 @@ theme:
   favicon: lagoon-cli-logo.png
   icon:
     logo: fontawesome/solid/terminal
+extra:
+  analytics:
+    provider: google
+    property: G-W1SJFEVFDB
 markdown_extensions:
   - codehilite
   - admonition
