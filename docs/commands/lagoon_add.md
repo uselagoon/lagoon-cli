@@ -33,14 +33,14 @@ Add a project, or add notifications and variables to projects or environments
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
 * [lagoon add group](lagoon_add_group.md)	 - Add a group to lagoon
-* [lagoon add project](lagoon_add_project.md)	 - Add a new project to lagoon
+* [lagoon add project](lagoon_add_project.md)	 - Add a new project to Lagoon
 * [lagoon add project-group](lagoon_add_project-group.md)	 - Add a project to a group in lagoon
-* [lagoon add project-rocketchat](lagoon_add_project-rocketchat.md)	 - Add a rocketchat notification to a project
-* [lagoon add project-slack](lagoon_add_project-slack.md)	 - Add a slack notification to a project
-* [lagoon add rocketchat](lagoon_add_rocketchat.md)	 - Add a new rocketchat notification
-* [lagoon add slack](lagoon_add_slack.md)	 - Add a new slack notification
+* [lagoon add project-rocketchat](lagoon_add_project-rocketchat.md)	 - Add a Rocket.Chat notification to a project
+* [lagoon add project-slack](lagoon_add_project-slack.md)	 - Add a Slack notification to a project
+* [lagoon add rocketchat](lagoon_add_rocketchat.md)	 - Add a new Rocket.Chat notification
+* [lagoon add slack](lagoon_add_slack.md)	 - Add a new Slack notification
 * [lagoon add user](lagoon_add_user.md)	 - Add a user to lagoon
 * [lagoon add user-group](lagoon_add_user-group.md)	 - Add a user to a group in lagoon
-* [lagoon add user-sshkey](lagoon_add_user-sshkey.md)	 - Add an sshkey to a user
+* [lagoon add user-sshkey](lagoon_add_user-sshkey.md)	 - Add an SSH key to a user
 * [lagoon add variable](lagoon_add_variable.md)	 - Add a variable to an environment or project
 

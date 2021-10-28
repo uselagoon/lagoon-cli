@@ -1,10 +1,10 @@
 ## lagoon delete project-slack
 
-Delete a slack notification from a project
+Delete a Slack notification from a project
 
 ### Synopsis
 
-Delete a slack notification from a project
+Delete a Slack notification from a project
 
 ```
 lagoon delete project-slack [flags]

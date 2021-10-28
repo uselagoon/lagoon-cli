@@ -1,10 +1,10 @@
 ## lagoon delete user-sshkey
 
-Delete an sshkey from lagoon
+Delete an SSH key from Lagoon
 
 ### Synopsis
 
-Delete an sshkey from lagoon
+Delete an SSH key from Lagoon
 
 ```
 lagoon delete user-sshkey [flags]
@@ -14,7 +14,7 @@ lagoon delete user-sshkey [flags]
 
 ```
   -h, --help             help for user-sshkey
-  -N, --keyname string   Name of the sshkey
+  -N, --keyname string   Name of the SSH key
 ```
 
 ### Options inherited from parent commands

@@ -58,7 +58,7 @@ var deleteProjectCmd = &cobra.Command{
 var addProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
-	Short:   "Add a new project to lagoon",
+	Short:   "Add a new project to Lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectFlags := parseProjectFlags(*cmd.Flags())
 		if cmdProjectName == "" {

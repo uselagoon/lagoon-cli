@@ -1,10 +1,10 @@
 ## lagoon update slack
 
-Update an existing slack notification
+Update an existing Slack notification
 
 ### Synopsis
 
-Update an existing slack notification
+Update an existing Slack notification
 
 ```
 lagoon update slack [flags]

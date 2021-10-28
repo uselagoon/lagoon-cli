@@ -1,10 +1,10 @@
 ## lagoon update user
 
-Update a user in lagoon
+Update a user in Lagoon
 
 ### Synopsis
 
-Update a user in lagoon (change name, or email address)
+Update a user in Lagoon (change name, or email address)
 
 ```
 lagoon update user [flags]
@@ -15,9 +15,9 @@ lagoon update user [flags]
 ```
   -C, --current-email string   Current email address of the user
   -E, --email string           New email address of the user
-  -F, --firstName string       New firstname of the user
+  -F, --firstName string       New first name of the user
   -h, --help                   help for user
-  -L, --lastName string        New lastname of the user
+  -L, --lastName string        New last name of the user
 ```
 
 ### Options inherited from parent commands

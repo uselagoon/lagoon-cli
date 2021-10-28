@@ -1,10 +1,10 @@
 ## lagoon delete project-rocketchat
 
-Delete a rocketchat notification from a project
+Delete a Rocket.Chat notification from a project
 
 ### Synopsis
 
-Delete a rocketchat notification from a project
+Delete a Rocket.Chat notification from a project
 
 ```
 lagoon delete project-rocketchat [flags]

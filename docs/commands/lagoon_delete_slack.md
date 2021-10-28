@@ -1,10 +1,10 @@
 ## lagoon delete slack
 
-Delete a slack notification from lagoon
+Delete a Slack notification from Lagoon
 
 ### Synopsis
 
-Delete a slack notification from lagoon
+Delete a Slack notification from Lagoon
 
 ```
 lagoon delete slack [flags]

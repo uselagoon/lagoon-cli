@@ -88,8 +88,8 @@ var addUserCmd = &cobra.Command{
 var addUserSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"uk"},
-	Short:   "Add an sshkey to a user",
-	Long: `Add an sshkey to a user
+	Short:   "Add an SSH key to a user",
+	Long: `Add an SSH key to a user
 
 Examples:
 Add key from public key file:
@@ -131,7 +131,7 @@ Add key by defining key value, but not specifying a key name (will default to tr
 var deleteSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
 	Aliases: []string{"u"},
-	Short:   "Delete an sshkey from lagoon",
+	Short:   "Delete an SSH key from Lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		if sshKeyName == "" {
 			fmt.Println("Missing arguments: SSH key name is not defined")
@@ -140,7 +140,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 		}
 		var customReqResult []byte
 		var err error
-		if yesNo(fmt.Sprintf("You are attempting to delete ssh key named '%s', are you sure?", sshKeyName)) {
+		if yesNo(fmt.Sprintf("You are attempting to delete SSH key named '%s', are you sure?", sshKeyName)) {
 			customReqResult, err = uClient.DeleteSSHKey(sshKeyName)
 			handleError(err)
 			resultData := output.Result{
@@ -154,7 +154,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 var deleteUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
-	Short:   "Delete a user from lagoon",
+	Short:   "Delete a user from Lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
@@ -178,8 +178,8 @@ var deleteUserCmd = &cobra.Command{
 var updateUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
-	Short:   "Update a user in lagoon",
-	Long:    "Update a user in lagoon (change name, or email address)",
+	Short:   "Update a user in Lagoon",
+	Long:    "Update a user in Lagoon (change name, or email address)",
 	Run: func(cmd *cobra.Command, args []string) {
 		userFlags := parseUser(*cmd.Flags())
 		if userFlags.Email == "" {
@@ -209,8 +209,8 @@ var getUserKeysCmd = &cobra.Command{
 	//@TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "user-sshkeys",
 	Aliases: []string{"us"},
-	Short:   "Get a users SSH keys",
-	Long:    `Get a users SSH keys. This will only work for users that are part of a group`,
+	Short:   "Get a user's SSH keys",
+	Long:    `Get a user's SSH keys. This will only work for users that are part of a group`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if userEmail == "" {
 			fmt.Println("Missing arguments: Email address is not defined")
@@ -223,7 +223,7 @@ var getUserKeysCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No ssh-keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
+			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
 			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -244,7 +244,7 @@ var getAllUserKeysCmd = &cobra.Command{
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderInfo("No ssh-keys for any users", outputOptions)
+			output.RenderInfo("No SSH keys for any users", outputOptions)
 			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -258,17 +258,17 @@ var (
 )
 
 func init() {
-	addUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "Firstname of the user")
-	addUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "Lastname of the user")
+	addUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "First name of the user")
+	addUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "Last name of the user")
 	addUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey (optional, if not provided will try use what is in the pubkey file)")
+	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the SSH key (optional, if not provided will try use what is in the pubkey file)")
 	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "Specify path to the public key to add")
 	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyValue, "keyvalue", "V", "", "Value of the public key to add (ssh-ed25519 AAA..)")
 	deleteUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	deleteSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the sshkey")
-	updateUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "New firstname of the user")
-	updateUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "New lastname of the user")
+	deleteSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the SSH key")
+	updateUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "New first name of the user")
+	updateUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "New last name of the user")
 	updateUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
 	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
