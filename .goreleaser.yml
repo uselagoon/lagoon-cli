@@ -1,0 +1,106 @@
+env:
+  - GO111MODULE=on
+  - GOPROXY=https://gocenter.io
+  - LOCAL_ORG={{ .Env.LOCAL_ORG }}
+
+builds:
+  - id: lagoon
+    binary: lagoon
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    # Custom ldflags templates.
+    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    ldflags:
+      - -s -w -X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIVersion=v{{ .Version }}
+        -X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIBuild={{ .Date }}
+        -X github.com/uselagoon/lagoon-cli/cmd.lagoonCLIBuildGoVersion=go-{{ .Env.GOVERSION }}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+# universal_binaries:
+# - id: lagoon
+#   name_template: lagoon
+#   replace: true
+
+release:
+  # Repo in which the release will be created.
+  # Default is extracted from the origin remote URL or empty if its private hosted.
+  header: |
+    ## Lagoon CLI (v{{.Version}})
+    ### Installation via Brew
+    The preferred method is installation via [Homebrew](https://brew.sh/).
+    ```
+    brew tap {{ .Env.LOCAL_ORG }}/lagoon-cli
+    brew install lagoon
+    ```
+    ### Running from released binaries
+    Alternatively, you may install by downloading one of the pre-compiled binaries (replace `amd64` with `arm64` for ARM-compatible binaries)
+    ```
+    # MacOS
+    sudo curl -L "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/releases/download/v{{.Version}}/lagoon-cli-v{{.Version}}-darwin-amd64" -o /usr/local/bin/lagoon && sudo chmod +x /usr/local/bin/lagoon
+    # Linux
+    sudo curl -L "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/releases/download/v{{.Version}}/lagoon-cli-v{{.Version}}-linux-amd64" -o /usr/local/bin/lagoon && sudo chmod +x /usr/local/bin/lagoon
+    ```
+    ### Running from a Dockerfile
+    Alternatively, you may download the latest release as a Dockerfile from [GitHub](https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/pkgs/container/lagoon-cli) or [Docker Hub](https://hub.docker.com/r/{{ .Env.LOCAL_ORG }}/lagoon-cli)
+    See the [docs](https://uselagoon.github.io/lagoon-cli/#running_as_a_docker_image) for information on running as a Dockerfile
+    ```
+    docker pull ghcr.io/{{ .Env.LOCAL_ORG }}/lagoon-cli:v{{.Version}}
+    docker pull docker.io/{{ .Env.LOCAL_ORG }}/lagoon-cli:v{{.Version}}
+    ```
+  # Defaults to empty.
+  name_template: "{{.ProjectName}}-v{{.Version}}"
+
+archives:
+  - id: binaries
+    builds:
+    - lagoon
+    format: binary
+    name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+    wrap_in_directory: true
+    files:
+      - none*
+  - id: binaries-targz
+    builds:
+      - lagoon
+    format: tar.gz
+    name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+    wrap_in_directory: true
+
+source:
+  enabled: true
+  format: 'tar.gz'
+  name_template: "{{ .ProjectName }}-v{{ .Version }}-source"
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+  # signs:
+#   - artifacts: checksum
+#     args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+brews:
+  - name: lagoon
+    tap:
+      owner: "{{ .Env.LOCAL_ORG }}"
+      name: homebrew-lagoon-cli
+    homepage: "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli"
+    description: "Lagoon's local development helper tool"
+    skip_upload: false
+    test: system "#{bin}/lagoon version"
+    install: bin.install "lagoon"
+    ids:
+      - binaries-targz
