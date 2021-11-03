@@ -1,0 +1,64 @@
+name: goreleaser action
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goversion:
+        - 1.16
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: "0"
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{matrix.goversion}}
+    - name: Build
+      run: |
+        go get github.com/golang/mock/mockgen@v1.4.3
+        go get -u github.com/go-bindata/go-bindata/...
+        ARTIFACT_DESTINATION=./builds make build
+    # - name: Check version
+    #   run: |
+    #     ./builds/lagoon --version
+
+  goreleaser:
+    needs: test-suite
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        goversion:
+        - 1.16
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{matrix.goversion}}
+      -
+        name: Fetch Dependencies
+        run: go mod download
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --debug --skip-validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
+          GOVERSION: ${{ matrix.goversion }}
+          LOCAL_ORG: ${{ github.repository_owner }}
