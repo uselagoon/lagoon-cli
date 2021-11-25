@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -199,9 +200,13 @@ You can check the status of the backup using the list backups or get backup comm
 				debug)
 			result, err := lagoon.AddBackupRestore(context.TODO(), backupID, lc)
 			if err != nil {
+				if strings.Contains(err.Error(), "Duplicate entry") {
+					// this error reports a lot about the sql backup, need to fix that in Lagoon upstream
+					return fmt.Errorf("restore for %s has already been created", backupID)
+				}
 				return err
 			}
-			fmt.Println(result)
+			fmt.Println("successfully created restore with ID:", result.ID)
 		}
 		return nil
 	},
