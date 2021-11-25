@@ -95,10 +95,12 @@ var rootCmd = &cobra.Command{
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
 			}
+			fmt.Println("Documentation updated")
+			return
 		}
 		if versionFlag {
 			displayVersionInfo()
-			os.Exit(0)
+			return
 		}
 		cmd.Help()
 		os.Exit(1)

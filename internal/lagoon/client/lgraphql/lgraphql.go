@@ -13,9 +13,11 @@
 // _lgraphql/addOrUpdateEnvironment.graphql
 // _lgraphql/addProject.graphql
 // _lgraphql/addProjectToBillingGroup.graphql
+// _lgraphql/addRestore.graphql
 // _lgraphql/addSshKey.graphql
 // _lgraphql/addUser.graphql
 // _lgraphql/addUserToGroup.graphql
+// _lgraphql/backupsForEnvironmentByName.graphql
 // _lgraphql/deployEnvironmentBranch.graphql
 // _lgraphql/deployEnvironmentLatest.graphql
 // _lgraphql/deployEnvironmentPromote.graphql
@@ -348,6 +350,26 @@ func _lgraphqlAddprojecttobillinggroupGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlAddrestoreGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\x49\x4a\x4c\xce\x2e\x2d\xc8\x4c\xb1\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x4c\x49\x09\x4a\x2d\x2e\xc9\x2f\x4a\xd5\xc8\xcc\x2b\x28\x2d\xb1\x52\xa8\x86\xa8\xf5\x4c\xb1\x42\x68\xab\x85\x29\x57\x50\xc8\x4c\x01\x33\x6a\xb9\x40\x18\x10\x00\x00\xff\xff\xdc\x18\x6c\xe7\x65\x00\x00\x00")
+
+func _lgraphqlAddrestoreGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlAddrestoreGraphql,
+		"_lgraphql/addRestore.graphql",
+	)
+}
+
+func _lgraphqlAddrestoreGraphql() (*asset, error) {
+	bytes, err := _lgraphqlAddrestoreGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/addRestore.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var __lgraphqlAddsshkeyGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x64\x8e\xc1\x0a\xc2\x30\x10\x44\xef\xf9\x8a\x11\x3c\xb4\xe0\x17\xf4\xee\xc9\xa3\xe2\x7d\x21\x41\x17\x9b\x58\xda\xe4\x50\x24\xff\x2e\xe9\xa6\x59\xc1\x53\xc2\x9b\x61\xdf\xf8\x14\x29\xf2\x3b\xa0\x33\xc0\x31\x90\x77\x03\xae\x71\xe6\xf0\x38\x9c\x0a\x79\xb9\xf5\x4e\x63\xfa\xa7\xb7\x75\x2a\x70\x79\x5e\xe4\x2f\x41\x5a\xdc\x7c\xf6\xc4\x63\xeb\xf7\xf8\x18\x00\x20\x6b\xa5\xdc\x71\x98\x52\x1c\x2a\x06\xc4\xb9\xa9\x2b\x51\x67\xd3\x6b\x22\xde\x7d\x41\xe5\x45\xab\x17\x01\x27\x13\x74\x4e\x4d\xf2\xf6\xe6\xbe\x55\xd9\xfe\xac\x30\x7b\x25\x9b\x6f\x00\x00\x00\xff\xff\xbf\xff\xb7\x89\x17\x01\x00\x00")
 
 func _lgraphqlAddsshkeyGraphqlBytes() ([]byte, error) {
@@ -404,6 +426,26 @@ func _lgraphqlAddusertogroupGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/addUserToGroup.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlBackupsforenvironmentbynameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x8e\x4d\x6e\x84\x30\x0c\x85\xf7\x39\xc5\x43\xea\x02\x24\x4e\xc0\xb2\x3b\xa4\xaa\x9b\x9e\x20\x0d\x56\x95\xb6\x24\x8c\xe3\x8c\x84\x10\x77\x1f\xf1\x33\x99\xc0\xcc\xca\xce\x67\xbf\xcf\xb9\x44\xe2\x11\xa5\x02\xde\x9c\xee\xa9\xc1\x97\xb0\x75\x3f\x45\xbd\x90\x81\xfd\x2f\x19\x69\xd0\x3a\x29\x2a\x4c\x0a\x00\xc8\x5d\x2d\x7b\xd7\x93\x93\xf7\xf1\x53\xf7\x54\xae\x18\xd8\xf2\xab\xa6\xde\x51\x12\xdc\x55\xd5\x3e\x98\xf6\x0a\xd8\x2e\xb5\x4b\x32\x3d\xbe\xb5\xf9\x8b\x43\x78\x2c\x1e\x56\x81\xe0\x23\x1b\xca\xc0\x16\x68\xf3\x1d\xc3\xa4\x85\x72\xd2\xd1\x3f\x1d\x09\x53\x10\xcf\x94\xdf\x39\x5d\x02\x82\x68\x89\xe1\x80\x9e\xd5\x2f\x7f\x90\xfc\x1f\xde\x68\xb1\xde\x65\xb3\x59\x9d\xbb\xa5\xce\xea\x16\x00\x00\xff\xff\x0c\x15\x4e\x54\x93\x01\x00\x00")
+
+func _lgraphqlBackupsforenvironmentbynameGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlBackupsforenvironmentbynameGraphql,
+		"_lgraphql/backupsForEnvironmentByName.graphql",
+	)
+}
+
+func _lgraphqlBackupsforenvironmentbynameGraphql() (*asset, error) {
+	bytes, err := _lgraphqlBackupsforenvironmentbynameGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/backupsForEnvironmentByName.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -792,9 +834,11 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/addOrUpdateEnvironment.graphql":        _lgraphqlAddorupdateenvironmentGraphql,
 	"_lgraphql/addProject.graphql":                    _lgraphqlAddprojectGraphql,
 	"_lgraphql/addProjectToBillingGroup.graphql":      _lgraphqlAddprojecttobillinggroupGraphql,
+	"_lgraphql/addRestore.graphql":                    _lgraphqlAddrestoreGraphql,
 	"_lgraphql/addSshKey.graphql":                     _lgraphqlAddsshkeyGraphql,
 	"_lgraphql/addUser.graphql":                       _lgraphqlAdduserGraphql,
 	"_lgraphql/addUserToGroup.graphql":                _lgraphqlAddusertogroupGraphql,
+	"_lgraphql/backupsForEnvironmentByName.graphql":   _lgraphqlBackupsforenvironmentbynameGraphql,
 	"_lgraphql/deployEnvironmentBranch.graphql":       _lgraphqlDeployenvironmentbranchGraphql,
 	"_lgraphql/deployEnvironmentLatest.graphql":       _lgraphqlDeployenvironmentlatestGraphql,
 	"_lgraphql/deployEnvironmentPromote.graphql":      _lgraphqlDeployenvironmentpromoteGraphql,
@@ -867,9 +911,11 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"addOrUpdateEnvironment.graphql":        &bintree{_lgraphqlAddorupdateenvironmentGraphql, map[string]*bintree{}},
 		"addProject.graphql":                    &bintree{_lgraphqlAddprojectGraphql, map[string]*bintree{}},
 		"addProjectToBillingGroup.graphql":      &bintree{_lgraphqlAddprojecttobillinggroupGraphql, map[string]*bintree{}},
+		"addRestore.graphql":                    &bintree{_lgraphqlAddrestoreGraphql, map[string]*bintree{}},
 		"addSshKey.graphql":                     &bintree{_lgraphqlAddsshkeyGraphql, map[string]*bintree{}},
 		"addUser.graphql":                       &bintree{_lgraphqlAdduserGraphql, map[string]*bintree{}},
 		"addUserToGroup.graphql":                &bintree{_lgraphqlAddusertogroupGraphql, map[string]*bintree{}},
+		"backupsForEnvironmentByName.graphql":   &bintree{_lgraphqlBackupsforenvironmentbynameGraphql, map[string]*bintree{}},
 		"deployEnvironmentBranch.graphql":       &bintree{_lgraphqlDeployenvironmentbranchGraphql, map[string]*bintree{}},
 		"deployEnvironmentLatest.graphql":       &bintree{_lgraphqlDeployenvironmentlatestGraphql, map[string]*bintree{}},
 		"deployEnvironmentPromote.graphql":      &bintree{_lgraphqlDeployenvironmentpromoteGraphql, map[string]*bintree{}},

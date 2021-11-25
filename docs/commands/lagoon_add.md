@@ -37,6 +37,7 @@ Add a project, or add notifications and variables to projects or environments
 * [lagoon add project-group](lagoon_add_project-group.md)	 - Add a project to a group in lagoon
 * [lagoon add project-rocketchat](lagoon_add_project-rocketchat.md)	 - Add a Rocket.Chat notification to a project
 * [lagoon add project-slack](lagoon_add_project-slack.md)	 - Add a Slack notification to a project
+* [lagoon add restore](lagoon_add_restore.md)	 - Restore a backup
 * [lagoon add rocketchat](lagoon_add_rocketchat.md)	 - Add a new Rocket.Chat notification
 * [lagoon add slack](lagoon_add_slack.md)	 - Add a new Slack notification
 * [lagoon add user](lagoon_add_user.md)	 - Add a user to lagoon
