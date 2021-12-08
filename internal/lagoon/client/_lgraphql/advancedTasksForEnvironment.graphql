@@ -1,0 +1,28 @@
+query advancedTasksForEnvironment($environment: Int!) {
+    advancedTasksForEnvironment(environment: $environment) {
+        ... on AdvancedTaskDefinitionCommand {
+            id
+            name
+            description
+            type
+            service
+            command
+            groupName
+            environment
+            project
+            permission
+        }
+        ... on AdvancedTaskDefinitionImage {
+            id
+            name
+            description
+            type
+            image
+            service
+            groupName
+            environment
+            project
+            permission
+        }
+    }
+}

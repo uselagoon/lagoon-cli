@@ -1,0 +1,52 @@
+mutation (
+  $name: String,
+  $description: String,
+  $image: String,
+  $type: AdvancedTaskDefinitionTypes,
+  $service: String,
+  $command: String,
+  $environment: Int,
+  $project: Int,
+  $groupName: String,
+  $permission: TaskPermission,
+) {
+    addAdvancedTaskDefinition(input: {
+      name: $name,
+      description: $description,
+      image: $image,
+      type: $type,
+      service: $service,
+      command: $command,
+      environment: $environment,
+      project: $project,
+      groupName: $groupName,
+      permission: $permission,
+    }) {
+      ... on AdvancedTaskDefinitionCommand {
+        id
+        name
+        type
+        command
+        created
+        service
+        project
+        groupName
+        permission
+        environment
+        description
+      }
+      ... on AdvancedTaskDefinitionImage {
+        id
+        name
+        type
+        image
+        created
+        service
+        project
+        groupName
+        permission
+        environment
+        description
+      }
+    }
+  }

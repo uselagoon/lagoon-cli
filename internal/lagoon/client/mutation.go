@@ -331,3 +331,36 @@ func (c *Client) RemoveProjectMetadataByKey(
 		Response: projects,
 	})
 }
+
+// AddAdvancedTaskDefinition adds an advanced task definition
+func (c *Client) AddAdvancedTaskDefinition(ctx context.Context, input *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinition) error {
+	req, err := c.newVersionedRequest("_lgraphql/addAdvancedTaskDefinition.graphql", input)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AdvancedTaskDefinition `json:"addAdvancedTaskDefinition"`
+	}{
+		Response: taskDefinition,
+	})
+}
+
+// UpdateAdvancedTaskDefinition updates a task definition
+func (c *Client) UpdateAdvancedTaskDefinition(
+	ctx context.Context, id int, patch *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinition) error {
+	req, err := c.newVersionedRequest("_lgraphql/updateAdvancedTaskDefinition.graphql",
+		map[string]interface{}{
+			"id":  id,
+			"patch": patch,
+	})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AdvancedTaskDefinition `json:"updateAdvancedTaskDefinition"`
+	}{
+		Response: taskDefinition,
+	})
+}

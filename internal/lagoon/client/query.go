@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
@@ -117,6 +116,25 @@ func (c *Client) GetTaskByID(
 	})
 }
 
+// GetTaskDefinitionByID returns an advanced task definition by its ID
+func (c *Client) GetTaskDefinitionByID(
+	ctx context.Context, id int, taskDefinition *schema.AdvancedTaskDefinition) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/getTaskDefinitionByID.graphql",
+		map[string]interface{}{
+			"id": id,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AdvancedTaskDefinition `json:"advancedTaskDefinitionById"`
+	}{
+		Response: taskDefinition,
+	})
+}
+
 // MinimalProjectByName queries the Lagoon API for a project by its name, and
 // unmarshals the response into project.
 func (c *Client) MinimalProjectByName(
@@ -177,3 +195,24 @@ func (c *Client) ProjectsByMetadata(
 		Response: projects,
 	})
 }
+
+// GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
+// unmarshals the response.
+func (c *Client) GetAdvancedTasksByEnvironment(
+	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinition) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/advancedTasksForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.AdvancedTaskDefinition `json:"advancedTasksForEnvironment"`
+	}{
+		Response: tasks,
+	})
+}
+
