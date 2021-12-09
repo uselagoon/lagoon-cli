@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
+	diff "github.com/yudai/gojsondiff"
+	"github.com/yudai/gojsondiff/formatter"
 	"log"
 	"os"
 )
@@ -66,4 +68,37 @@ func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []byte) {
 	if hasNonProceedableErrors {
 		os.Exit(1)
 	}
+}
+
+func DiffPatchChangesAgainstAPI(apiConfig interface{}, patchConfig []byte) (string, bool, error) {
+	currAdvTaskJSON, _ := json.Marshal(apiConfig)
+
+	differ := diff.New()
+	d, err := differ.Compare(currAdvTaskJSON, patchConfig)
+	if err != nil {
+		fmt.Printf("Failed to unmarshal file: %s\n", err.Error())
+		os.Exit(3)
+	}
+
+	if !d.Modified() {
+		return "", false, nil
+	}
+
+	var aJSON map[string]interface{}
+	json.Unmarshal(currAdvTaskJSON, &aJSON)
+
+	var diffString string
+	config := formatter.AsciiFormatterConfig{
+		ShowArrayIndex: true,
+		Coloring:       true,
+	}
+
+	formatter := formatter.NewAsciiFormatter(aJSON, config)
+	diffString, err = formatter.Format(d)
+	if err != nil {
+		fmt.Printf("Failed to diff config: %s\n", err.Error())
+		os.Exit(3)
+	}
+
+	return diffString, true, nil
 }
