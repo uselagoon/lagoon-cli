@@ -110,7 +110,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 					// Marshal to JSON to flip capitalisation of struct keys from yaml unmarshalling
 					encodedJSONTaskInput, err := json.Marshal(advancedTaskInput)
 					if err != nil {
-						fmt.Errorf("Unable to marhsal yaml config to JSON '%s': %v", t, err)
+						return fmt.Errorf("unable to marhsal yaml config to JSON '%v': %v", t, err)
 					}
 
 					// If matched task name exists, we diff and update
