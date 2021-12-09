@@ -19,23 +19,10 @@ import (
 )
 
 type FileConfigRoot struct {
-	Event EventConfig `json:"event,omitempty" yaml:"event,omitempty"`
-	Task  []struct {
-		ID          uint                              `json:"id,omitempty" yaml:"id,omitempty"`
-		Name        string                            `json:"name,omitempty" yaml:"name,omitempty"`
-		Description string                            `json:"description,omitempty" yaml:"description,omitempty"`
-		Type        schema.AdvancedTaskDefinitionType `json:"type,omitempty" yaml:"type,omitempty"`
-		Command     string                            `json:"command,omitempty" yaml:"command,omitempty"`
-		Image       string                            `json:"image,omitempty" yaml:"image,omitempty"`
-		Service     string                            `json:"service,omitempty" yaml:"service,omitempty"`
-		GroupName   string                            `json:"group,omitempty" yaml:"group,omitempty"`
-		Project     string                            `json:"project,omitempty" yaml:"project,omitempty"`
-		Environment string                            `json:"environment,omitempty" yaml:"environment,omitempty"`
-		Permission  string                            `json:"permission,omitempty" yaml:"permission,omitempty"`
-		//AdvancedTaskDefinitionArgument []AdvancedTaskDefinitionArgument `yaml:"arguments,omitempty"`
-	} `json:"task,omitempty" yaml:"task,omitempty"`
-	Workflow WorkflowConfig `json:"workflow,omitempty" yaml:"workflow,omitempty"`
-	Settings Settings       `json:"settings,omitempty" yaml:"settings,omitempty"`
+	Event    EventConfig          `json:"event,omitempty" yaml:"event,omitempty"`
+	Tasks    []AdvancedTasksInput `json:"tasks,omitempty" yaml:"tasks,omitempty"`
+	Workflow WorkflowConfig       `json:"workflow,omitempty" yaml:"workflow,omitempty"`
+	Settings Settings             `json:"settings,omitempty" yaml:"settings,omitempty"`
 }
 
 type EventConfig struct {
@@ -70,39 +57,18 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 	var advancedTaskDefinitionResult *schema.AdvancedTaskDefinition
 	var data []output.Data
 
-	// Apply from file
-	hasTasks := len(fileConfig.Task)
+	advancedTasksJSON, err := json.Marshal(fileConfig.Tasks)
+	if err != nil {
+		return err
+	}
 
-	// Add task definition for each task found
-	if hasTasks > 0 {
-		for _, t := range fileConfig.Task {
+	// Preprocess validation
+	PreprocessAdvancedTaskDefinitionsInputValidation(advancedTasksJSON)
+
+	// Add task definitions for each task found
+	if len(fileConfig.Tasks) > 0 {
+		for _, t := range fileConfig.Tasks {
 			var hasTaskMatches = false
-
-			// If project or environment arguments are given, use those.
-			if cmdProjectName != "" {
-				t.Project = cmdProjectName
-			}
-			if cmdProjectEnvironment != "" {
-				t.Environment = cmdProjectEnvironment
-			}
-
-			// Required input checks
-			if t.Name == "" {
-				fmt.Println("Task name is required")
-				os.Exit(1)
-			}
-			if t.Project == "" {
-				fmt.Println("Project name is required")
-				os.Exit(1)
-			}
-			if t.Environment == "" {
-				fmt.Println("An Environment name is required")
-				os.Exit(1)
-			}
-			if t.Permission == "" {
-				fmt.Printf("Permission is required for task '%s'\n", t.Name)
-				os.Exit(1)
-			}
 
 			// Get project environments from name
 			project, err := lagoon.GetMinimalProjectByName(context.TODO(), t.Project, lc)
