@@ -99,6 +99,10 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 				fmt.Println("An Environment name is required")
 				os.Exit(1)
 			}
+			if t.Permission == "" {
+				fmt.Printf("Permission is required for task '%s'\n", t.Name)
+				os.Exit(1)
+			}
 
 			// Get project environments from name
 			project, err := lagoon.GetMinimalProjectByName(context.TODO(), t.Project, lc)

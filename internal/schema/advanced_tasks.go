@@ -35,21 +35,21 @@ type AdvancedTaskDefinition struct {
 	//AdvancedTaskDefinitionArguments []AdvancedTaskDefinitionArgument `json:"advancedTaskDefinitionArguments,omitempty" yaml:"advancedTaskDefinitionArguments,omitempty"`
 }
 
-// AdvancedTask An Advanced Task is based on the Lagoon API GraphQL type.
-type AdvancedTask struct {
-	ID           uint        `json:"id,omitempty"`
-	Name         string      `json:"name,omitempty"`
-	Status       string      `json:"status,omitempty"`
-	Created      string      `json:"created,omitempty"`
-	Started      string      `json:"started,omitempty"`
-	Completed    string      `json:"completed,omitempty"`
-	Environment  Environment `json:"environment,omitempty"`
-	Service      string      `json:"service,omitempty"`
-	AdvancedTask string      `json:"string,omitempty"`
-	RemoteID     string      `json:"remoteId,omitempty"`
-	Logs         string      `json:"logs,omitempty"`
-	Files        []File      `json:"files,omitempty"`
-}
+//// AdvancedTask An Advanced Task is based on the Lagoon API GraphQL type.
+//type AdvancedTask struct {
+//	ID           uint        `json:"id,omitempty"`
+//	Name         string      `json:"name,omitempty"`
+//	Status       string      `json:"status,omitempty"`
+//	Created      string      `json:"created,omitempty"`
+//	Started      string      `json:"started,omitempty"`
+//	Completed    string      `json:"completed,omitempty"`
+//	Environment  Environment `json:"environment,omitempty"`
+//	Service      string      `json:"service,omitempty"`
+//	AdvancedTask string      `json:"string,omitempty"`
+//	RemoteID     string      `json:"remoteId,omitempty"`
+//	Logs         string      `json:"logs,omitempty"`
+//	Files        []File      `json:"files,omitempty"`
+//}
 
 type File struct {
 	ID       uint `json:"id,omitempty"`

@@ -215,4 +215,3 @@ func (c *Client) GetAdvancedTasksByEnvironment(
 		Response: tasks,
 	})
 }
-

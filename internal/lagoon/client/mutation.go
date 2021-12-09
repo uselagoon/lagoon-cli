@@ -351,9 +351,9 @@ func (c *Client) UpdateAdvancedTaskDefinition(
 	ctx context.Context, id int, patch *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinition) error {
 	req, err := c.newVersionedRequest("_lgraphql/updateAdvancedTaskDefinition.graphql",
 		map[string]interface{}{
-			"id":  id,
+			"id":    id,
 			"patch": patch,
-	})
+		})
 	if err != nil {
 		return err
 	}
