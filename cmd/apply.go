@@ -4,9 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
-	"os"
-
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -14,6 +11,8 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
+	"log"
+	"os"
 )
 
 type FileConfigRoot struct {
@@ -51,20 +50,17 @@ type WorkflowConfig struct {
 	Type string `json:"type,omitempty" yaml:"type,omitempty"`
 }
 
-func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot) error {
+var fileName string
+var debug bool
+
+// ApplyAdvancedTaskDefinitions Apply advanced task definition configurations from file.
+func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput) error {
 	var advancedTaskDefinitionResult *schema.AdvancedTaskDefinition
 	var data []output.Data
 
-	// Preprocess validation
-	advancedTasksJSON, err := json.Marshal(fileConfig.Tasks)
-	if err != nil {
-		return err
-	}
-	PreprocessAdvancedTaskDefinitionsInputValidation(advancedTasksJSON)
-
 	// Add task definitions for each task found
-	if len(fileConfig.Tasks) > 0 {
-		for _, t := range fileConfig.Tasks {
+	if len(tasks) > 0 {
+		for _, t := range tasks {
 			var hasTaskMatches = false
 
 			// Get project environments from name
@@ -110,44 +106,32 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 					// Marshal to JSON to flip capitalisation of struct keys from yaml unmarshalling
 					encodedJSONTaskInput, err := json.Marshal(advancedTaskInput)
 					if err != nil {
-						return fmt.Errorf("unable to marhsal yaml config to JSON '%v': %v", t, err)
+						return fmt.Errorf("unable to marhsal yaml config to JSON '%v': %w", t, err)
 					}
 
 					// If matched task name exists, we diff and update
 					if currAdvTask.Name == advancedTaskInput.Name {
 						hasTaskMatches = true
 
-						diffString, hasChanges, diffErr := DiffPatchChangesAgainstAPI(currAdvTask, encodedJSONTaskInput)
+						diffString, diffErr := DiffPatchChangesAgainstAPI(encodedJSONTaskInput, currAdvTask)
 						if diffErr != nil {
 							return diffErr
 						}
-						if !hasChanges {
+						if diffString == "" {
 							log.Printf("No changes found for task '%s'", advancedTaskInput.Name)
 						}
 
-						if hasChanges {
+						if diffString != "" {
 							log.Println("The following changes will be applied:\n", diffString)
 							if forceAction || !forceAction && yesNo(fmt.Sprintf("Are you sure you want to update '%s'", advancedTaskInput.Name)) {
 								// Update changes
-								advancedTaskDefinitionResult, err = lagoon.UpdateAdvancedTaskDefinition(context.TODO(), int(advancedTaskInput.ID), &schema.AdvancedTaskDefinitionInput{
-									Name:        advancedTaskInput.Name,
-									Description: advancedTaskInput.Description,
-									Type:        advancedTaskInput.Type,
-									Service:     advancedTaskInput.Service,
-									Image:       advancedTaskInput.Image,
-									Command:     advancedTaskInput.Command,
-									GroupName:   advancedTaskInput.GroupName,
-									Project:     advancedTaskInput.Project,
-									Environment: advancedTaskInput.Environment,
-									Permission:  advancedTaskInput.Permission,
-									//AdvancedTaskDefinitionArguments: advancedTaskInput.AdvancedTaskDefinitionArgument,
-								}, lc)
+								advancedTaskDefinitionResult, err = lagoon.UpdateAdvancedTaskDefinition(context.TODO(), int(advancedTaskInput.ID), advancedTaskInput, lc)
 								if err != nil {
 									return err
 								}
 							}
 						}
-					} else if hasTaskMatches != true {
+					} else if !hasTaskMatches {
 						hasTaskMatches = false
 					}
 				}
@@ -166,7 +150,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 						Command:     t.Command,
 						GroupName:   t.GroupName,
 						Project:     int(project.ID),
-						Environment: envID,
+						Environment: t.EnvironmentID,
 						Permission:  t.Permission,
 					}, lc)
 					if err != nil {
@@ -185,11 +169,12 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Description)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Type)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Service)),
+			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Image)),
+			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Command)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.GroupName)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Project)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Environment)),
-			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Image)),
-			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Command)),
+			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Permission)),
 		})
 		output.RenderOutput(output.Table{
 			Header: []string{
@@ -212,14 +197,23 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, fileConfig *FileConfigRoot)
 	return nil
 }
 
-func parseFile(file string) (*FileConfigRoot, error) {
-	// Check file exists
-	if _, err := os.Stat(file); err != nil {
+// ReadConfigFile Checks if file exists, reads yaml config from file name and returns the config.
+func ReadConfigFile(fileName string) (*FileConfigRoot, error) {
+	if _, err := os.Stat(fileName); err != nil {
 		if os.IsNotExist(err) {
 			log.Fatal("File does not exist")
 		}
 	}
+	fileConfig, err := parseFile(fileName)
+	if err != nil {
+		return nil, fmt.Errorf("parsing config error %w", err)
+	}
 
+	return fileConfig, nil
+}
+
+// Attempts to parse the configuration
+func parseFile(file string) (*FileConfigRoot, error) {
 	source, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to read config file contents '%s': %v", file, err)
@@ -243,15 +237,28 @@ var viewLastApplied = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		debug, err := cmd.Flags().GetBool("debug")
+		fileName, err := cmd.Flags().GetString("file")
 		if err != nil {
 			return err
 		}
 
-		if cmdProjectEnvironment == "" || cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		var tasksInput []AdvancedTasksInput
+		if fileName != "" {
+			fileConfig, err := ReadConfigFile(fileName)
+			if err != nil {
+				log.Fatalln("Parsing config error:", err)
+			}
+
+			// Preprocess validation
+			tasksInput, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
+			if err != nil {
+				return err
+			}
+		} else {
+			tasksInput = append(tasksInput, AdvancedTasksInput{
+				Project:     cmdProjectName,
+				Environment: cmdProjectEnvironment,
+			})
 		}
 
 		current := lagoonCLIConfig.Current
@@ -262,38 +269,52 @@ var viewLastApplied = &cobra.Command{
 			lagoonCLIVersion,
 			debug)
 
-		// Get project environment from name
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
+		for _, t := range tasksInput {
+			// Get project environment from name
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), t.Project, lc)
+			if err != nil {
+				return err
+			}
 
-		var envID int
-		if project.Environments != nil {
-			if len(project.Environments) > 0 && cmdProjectEnvironment != "" {
-				for _, e := range project.Environments {
-					if e.Name == cmdProjectEnvironment {
-						envID = int(e.ID)
+			if project.Environments != nil {
+				if len(project.Environments) > 0 && t.Environment != "" {
+					for _, e := range project.Environments {
+						if e.Name == t.Environment {
+							t.EnvironmentID = int(e.ID)
+						}
 					}
 				}
 			}
-		}
 
-		// Get current advanced tasks by Environment ID
-		advancedTasks, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), envID, lc)
-		if err != nil {
-			return err
-		}
-		if advancedTasks != nil {
-			fmt.Printf("Found %d tasks for '%s:%s'\n", len(*advancedTasks), cmdProjectName, cmdProjectEnvironment)
-			for _, task := range *advancedTasks {
-				taskJSON, err := json.Marshal(task)
-				if err != nil {
-					return err
+			// Get current advanced tasks by Environment ID
+			advancedTasks, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), t.EnvironmentID, lc)
+			if err != nil {
+				return err
+			}
+
+			if advancedTasks != nil {
+				var tasksJSON []byte
+				if cmdProjectName != "" && fileName == "" {
+					fmt.Printf("Found tasks for '%s:%s'\n", t.Project, t.Environment)
+					tasksJSON, err = json.MarshalIndent(advancedTasks, "", "  ")
+					if err != nil {
+						return err
+					}
+
+				} else {
+					fmt.Printf("Found '%s' for '%s:%s'\n", t.Name, t.Project, t.Environment)
+					for _, task := range *advancedTasks {
+						if task.Name == t.Name {
+							tasksJSON, err = json.Marshal(task)
+							if err != nil {
+								return err
+							}
+						}
+					}
 				}
 
 				resultData := output.Result{
-					Result: string(taskJSON),
+					Result: string(tasksJSON),
 				}
 				output.RenderResult(resultData, outputOptions)
 			}
@@ -302,35 +323,33 @@ var viewLastApplied = &cobra.Command{
 	},
 }
 
+// setLastApplied Finds a resource match in the API and updates the configuration with local input
 var setLastApplied = &cobra.Command{
 	Use:   "set-last-applied -f FILENAME",
-	Short: "View the latest applied workflows or advanced task definitions for project/environment.",
-	Long:  `View the latest applied workflows or advanced task definitions for project/environment.`,
+	Short: "Set the latest applied workflows or advanced task definitions for project/environment.",
+	Long:  `Finds latest configuration match by workflow/task definition 'Name' and sets the latest applied workflow or advanced task definition for project/environment with the contents of file.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		debug, err := cmd.Flags().GetBool("debug")
+		fileName, err := cmd.Flags().GetString("file")
 		if err != nil {
 			return err
 		}
-
-		fileName, err := cmd.Flags().GetString("file")
-		// Read yaml config from file
 		if fileName == "" {
-			fmt.Errorf("Missing arguments: 'file' is not defined")
+			return fmt.Errorf("no file name given to apply (pass a configuration file as 'apply set-last-applied -f [FILENAME])")
 		}
-		fileConfig, err := parseFile(fileName)
+
+		fileConfig, err := ReadConfigFile(fileName)
 		if err != nil {
 			log.Fatalln("Parsing config error:", err)
 		}
 
 		// Validate tasks input
-		advancedTasksJSON, err := json.Marshal(fileConfig.Tasks)
+		_, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
 		if err != nil {
 			return err
 		}
-		PreprocessAdvancedTaskDefinitionsInputValidation(advancedTasksJSON)
 
 		current := lagoonCLIConfig.Current
 		lc := client.New(
@@ -341,7 +360,7 @@ var setLastApplied = &cobra.Command{
 			debug)
 
 		// Apply Advanced Tasks
-		err = ApplyAdvancedTaskDefinitions(lc, fileConfig)
+		err = ApplyAdvancedTaskDefinitions(lc, fileConfig.Tasks)
 		if err != nil {
 			return err
 		}
@@ -350,23 +369,41 @@ var setLastApplied = &cobra.Command{
 	},
 }
 
+// Applies the latest configuration from a given yaml file. A file is required.
 var applyCmd = &cobra.Command{
 	Use:     "apply",
 	Aliases: []string{"ap"},
 	Short:   "Apply the configuration of workflows or tasks from a given yaml configuration file",
 	Long: `Apply the configuration of workflows or tasks from a given yaml configuration file.
-Workflows or task definitions will be created if they do not already exist.`,
+Workflows or advanced task definitions will be created if they do not already exist.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		fileName, err := cmd.Flags().GetString("file")
+		if err != nil {
+			return err
+		}
+
+		if fileName == "" {
+			return fmt.Errorf("no file name given to apply (pass a configuration file as 'apply -f [FILENAME])")
+		}
 
 		// Read yaml config from file
-		fileName, err := cmd.Flags().GetString("file")
-		fileConfig, err := parseFile(fileName)
+		fileConfig, err := ReadConfigFile(fileName)
 		if err != nil {
 			log.Fatalln("Parsing config error:", err)
+		}
+
+		// Validate input
+		_, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
+		if err != nil {
+			return err
 		}
 
 		// Create lagoon client
@@ -379,7 +416,7 @@ Workflows or task definitions will be created if they do not already exist.`,
 			debug)
 
 		// Apply Advanced Tasks
-		err = ApplyAdvancedTaskDefinitions(lc, fileConfig)
+		err = ApplyAdvancedTaskDefinitions(lc, fileConfig.Tasks)
 		if err != nil {
 			return err
 		}
@@ -396,4 +433,6 @@ func init() {
 
 	applyCmd.AddCommand(viewLastApplied)
 	applyCmd.AddCommand(setLastApplied)
+	viewLastApplied.InheritedFlags()
+	setLastApplied.InheritedFlags()
 }

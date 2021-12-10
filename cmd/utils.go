@@ -6,37 +6,32 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 	diff "github.com/yudai/gojsondiff"
 	"github.com/yudai/gojsondiff/formatter"
-	"log"
 	"os"
 )
 
 type AdvancedTasksInput struct {
-	ID          uint                              `json:"id,omitempty" yaml:"id,omitempty"`
-	Name        string                            `json:"name,omitempty" yaml:"name,omitempty"`
-	Description string                            `json:"description,omitempty" yaml:"description,omitempty"`
-	Type        schema.AdvancedTaskDefinitionType `json:"type,omitempty" yaml:"type,omitempty"`
-	Command     string                            `json:"command,omitempty" yaml:"command,omitempty"`
-	Image       string                            `json:"image,omitempty" yaml:"image,omitempty"`
-	Service     string                            `json:"service,omitempty" yaml:"service,omitempty"`
-	GroupName   string                            `json:"group,omitempty" yaml:"group,omitempty"`
-	Project     string                            `json:"project,omitempty" yaml:"project,omitempty"`
-	Environment string                            `json:"environment,omitempty" yaml:"environment,omitempty"`
-	Permission  string                            `json:"permission,omitempty" yaml:"permission,omitempty"`
+	ID            uint                              `json:"id,omitempty" yaml:"id,omitempty"`
+	Name          string                            `json:"name,omitempty" yaml:"name,omitempty"`
+	Description   string                            `json:"description,omitempty" yaml:"description,omitempty"`
+	Type          schema.AdvancedTaskDefinitionType `json:"type,omitempty" yaml:"type,omitempty"`
+	Command       string                            `json:"command,omitempty" yaml:"command,omitempty"`
+	Image         string                            `json:"image,omitempty" yaml:"image,omitempty"`
+	Service       string                            `json:"service,omitempty" yaml:"service,omitempty"`
+	GroupName     string                            `json:"group,omitempty" yaml:"group,omitempty"`
+	Project       string                            `json:"project,omitempty" yaml:"project,omitempty"`
+	Environment   string                            `json:"environment,omitempty" yaml:"environment,omitempty"`
+	EnvironmentID int                               `json:"environmentID,omitempty" yaml:"environmentID,omitempty"`
+	Permission    string                            `json:"permission,omitempty" yaml:"permission,omitempty"`
 	//AdvancedTaskDefinitionArgument []AdvancedTaskDefinitionArgument `yaml:"arguments,omitempty"`
 }
 
-func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []byte) {
-	var tasks []AdvancedTasksInput
-	err := json.Unmarshal(tasksInput, &tasks)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
+// PreprocessAdvancedTaskDefinitionsInputValidation Unmarshal input, iterate over inputs and validate
+func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []AdvancedTasksInput) ([]AdvancedTasksInput, error) {
 	var hasNonProceedableErrors = false
 
-	if len(tasks) > 0 {
+	if len(tasksInput) > 0 {
 		// Check and collate each task for validation issues
-		for _, t := range tasks {
+		for _, t := range tasksInput {
 			// If project or environment arguments are given, use those.
 			if cmdProjectName != "" {
 				t.Project = cmdProjectName
@@ -64,28 +59,29 @@ func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []byte) {
 			}
 		}
 	}
-
 	if hasNonProceedableErrors {
-		os.Exit(1)
+		return nil, fmt.Errorf("validation checks failed")
 	}
+	return tasksInput, nil
 }
 
-func DiffPatchChangesAgainstAPI(apiConfig interface{}, patchConfig []byte) (string, bool, error) {
-	currAdvTaskJSON, _ := json.Marshal(apiConfig)
+// DiffPatchChangesAgainstAPI Diffs input config from patch against API config.
+func DiffPatchChangesAgainstAPI(patchConfig []byte, apiConfig interface{}) (string, error) {
+	currAPIJSON, _ := json.Marshal(apiConfig)
 
 	differ := diff.New()
-	d, err := differ.Compare(currAdvTaskJSON, patchConfig)
+	d, err := differ.Compare(currAPIJSON, patchConfig)
 	if err != nil {
 		fmt.Printf("Failed to unmarshal file: %s\n", err.Error())
 		os.Exit(3)
 	}
 
 	if !d.Modified() {
-		return "", false, nil
+		return "", nil
 	}
 
 	var aJSON map[string]interface{}
-	json.Unmarshal(currAdvTaskJSON, &aJSON)
+	json.Unmarshal(currAPIJSON, &aJSON)
 
 	var diffString string
 	config := formatter.AsciiFormatterConfig{
@@ -100,5 +96,5 @@ func DiffPatchChangesAgainstAPI(apiConfig interface{}, patchConfig []byte) (stri
 		os.Exit(3)
 	}
 
-	return diffString, true, nil
+	return diffString, nil
 }
