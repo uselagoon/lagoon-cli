@@ -5,57 +5,219 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 type FileConfigRoot struct {
-	Event    EventConfig          `json:"event,omitempty" yaml:"event,omitempty"`
-	Tasks    []AdvancedTasksInput `json:"tasks,omitempty" yaml:"tasks,omitempty"`
-	Workflow WorkflowConfig       `json:"workflow,omitempty" yaml:"workflow,omitempty"`
-	Settings Settings             `json:"settings,omitempty" yaml:"settings,omitempty"`
+	Tasks     []AdvancedTasksFileInput `json:"tasks,omitempty" yaml:"tasks,omitempty"`
+	Workflows []WorkflowsFileInput     `json:"workflows,omitempty" yaml:"workflows,omitempty"`
+	Settings  Settings                 `json:"settings,omitempty" yaml:"settings,omitempty"`
 }
 
-type EventConfig struct {
-	Type string `json:"type,omitempty" yaml:"type,omitempty"`
+type WorkflowsFileInput struct {
+	ID                       uint   `json:"id,omitempty" yaml:"id,omitempty"`
+	Name                     string `json:"name,omitempty" yaml:"name,omitempty"`
+	Event                    string `json:"event,omitempty" yaml:"event,omitempty"`
+	Project                  string `json:"project,omitempty" yaml:"project,omitempty"`
+	Environment              string `json:"environment,omitempty" yaml:"environment,omitempty"`
+	AdvancedTaskDefinition   string `json:"task,omitempty" yaml:"task,omitempty"`
+	AdvancedTaskDefinitionID int
+	Target                   string   `json:"target,omitempty" yaml:"target,omitempty"`
+	Cron                     string   `json:"cron,omitempty" yaml:"cron,omitempty"`
+	Settings                 Settings `json:"settings,omitempty" yaml:"settings,omitempty"`
 }
 
-type AdvancedTaskDefinitionArgument struct {
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
-	Type string `json:"type,omitempty" yaml:"type,omitempty"`
-}
-
-type Command struct {
-	Cmd       string          `json:"cmd,omitempty" yaml:"cmd,omitempty"`
-	Arguments CommandArgument `json:"arguments,omitempty" yaml:"arguments,omitempty"`
-}
-
-type CommandArgument struct {
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
-	Type string `json:"type,omitempty" yaml:"type,omitempty"`
+type AdvancedTasksFileInput struct {
+	ID            uint                                    `json:"id,omitempty" yaml:"id,omitempty"`
+	Name          string                                  `json:"name,omitempty" yaml:"name,omitempty"`
+	Description   string                                  `json:"description,omitempty" yaml:"description,omitempty"`
+	Type          schema.AdvancedTaskDefinitionType       `json:"type,omitempty" yaml:"type,omitempty"`
+	Command       string                                  `json:"command,omitempty" yaml:"command,omitempty"`
+	Image         string                                  `json:"image,omitempty" yaml:"image,omitempty"`
+	Service       string                                  `json:"service,omitempty" yaml:"service,omitempty"`
+	GroupName     string                                  `json:"group,omitempty" yaml:"group,omitempty"`
+	Project       string                                  `json:"project,omitempty" yaml:"project,omitempty"`
+	Environment   string                                  `json:"environment,omitempty" yaml:"environment,omitempty"`
+	EnvironmentID int                                     `json:"environmentID,omitempty" yaml:"environmentID,omitempty"`
+	Permission    string                                  `json:"permission,omitempty" yaml:"permission,omitempty"`
+	Arguments     []schema.AdvancedTaskDefinitionArgument `json:"arguments,omitempty" yaml:"arguments,omitempty"`
 }
 
 type Settings struct {
 	Enabled bool `json:"enabled,omitempty" yaml:"enabled,omitempty"`
 }
 
-type WorkflowConfig struct {
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
-	Type string `json:"type,omitempty" yaml:"type,omitempty"`
-}
-
 var fileName string
 var debug bool
 
+// ApplyWorkflows Apply workflow configurations from file.
+func ApplyWorkflows(lc *client.Client, workflows []WorkflowsFileInput) error {
+	var workflowsResult *schema.WorkflowResponse
+	var data []output.Data
+
+	if len(workflows) > 0 {
+		for _, w := range workflows {
+			var hasWorkflowMatches = false
+
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), w.Project, lc)
+			if err != nil {
+				return err
+			}
+
+			// Find environment ID if given
+			var envID int
+			if len(project.Environments) > 0 && w.Environment != "" {
+				for _, e := range project.Environments {
+					if e.Name == w.Environment {
+						envID = int(e.ID)
+					}
+				}
+			}
+
+			// Get current workflows by Environment ID
+			liveWorkflows, err := lagoon.GetWorkflowsByEnvironment(context.TODO(), envID, lc)
+			if err != nil {
+				return err
+			}
+
+			// Match Event input string to a known Lagoon event type
+			eventType := matchEventToEventType(w.Event)
+			if eventType == "" {
+				return fmt.Errorf("event type did not match a Lagoon event type")
+			}
+
+			// Match Advanced Task Definition string input to associated Lagoon int id.
+			liveAdvancedTasks, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), envID, lc)
+			if err != nil {
+				return err
+			}
+
+			if liveAdvancedTasks != nil {
+				for _, task := range *liveAdvancedTasks {
+					if task.Name == w.AdvancedTaskDefinition {
+						w.AdvancedTaskDefinitionID = int(task.ID)
+					}
+				}
+			}
+
+			if w.AdvancedTaskDefinitionID == 0 {
+				fmt.Printf("task '%s' does not match one in Lagoon resource '%s', you should create it first\n", w.AdvancedTaskDefinition, w.Project)
+				os.Exit(1)
+			}
+
+			// Check if given workflows already exists - if they do, we attempt to update them.
+			if liveWorkflows != nil {
+				for _, currWorkflow := range *liveWorkflows {
+					// Convert struct from file config to input the update mutation can understand
+					workflowInput := &schema.WorkflowInput{
+						ID:                     currWorkflow.ID,
+						Name:                   w.Name,
+						Event:                  eventType,
+						AdvancedTaskDefinition: w.AdvancedTaskDefinitionID,
+						Project:                currWorkflow.Project,
+					}
+
+					encodedDiffWorkflowInput, err := json.Marshal(struct {
+						ID                     uint                               `json:"id,omitempty"`
+						Name                   string                             `json:"name,omitempty"`
+						Event                  schema.EventType                   `json:"event,omitempty"`
+						AdvancedTaskDefinition schema.AdvancedTaskDefinitionInput `json:"advancedTaskDefinition,omitempty"`
+						Project                int                                `json:"project,omitempty"`
+					}{
+						ID:    currWorkflow.ID,
+						Name:  w.Name,
+						Event: eventType,
+						AdvancedTaskDefinition: schema.AdvancedTaskDefinitionInput{
+							ID: currWorkflow.AdvancedTaskDefinition.ID,
+						},
+						Project: currWorkflow.Project,
+					})
+					if err != nil {
+						return fmt.Errorf("unable to marhsal yaml config to JSON '%v': %w", w, err)
+					}
+
+					// If matched workflow exists, we diff and update
+					if currWorkflow.Name == workflowInput.Name {
+						hasWorkflowMatches = true
+
+						diffString, diffErr := DiffPatchChangesAgainstAPI(encodedDiffWorkflowInput, currWorkflow)
+						if diffErr != nil {
+							return diffErr
+						}
+
+						if diffString == "" {
+							log.Printf("No changes found for workflow '%s'", currWorkflow.Name)
+						}
+
+						if diffString != "" {
+							log.Println("The following changes will be applied:\n", diffString)
+							if forceAction || !forceAction && yesNo(fmt.Sprintf("Are you sure you want to update '%s'", workflowInput.Name)) {
+								// Unset ID as it's not required for patch.
+								workflowInput.ID = 0
+								workflowsResult, err = lagoon.UpdateWorkflow(context.TODO(), int(currWorkflow.ID), workflowInput, lc)
+								if err != nil {
+									return err
+								}
+							}
+						}
+					} else if !hasWorkflowMatches {
+						hasWorkflowMatches = false
+					}
+				}
+			}
+
+			// If no match - we add a new one
+			if !hasWorkflowMatches {
+				if yesNo(fmt.Sprintf("You are attempting to add a new workflow '%s', are you sure?", w.Name)) { // Add TaskDefinition
+					workflowsResult, err = lagoon.AddWorkflow(context.TODO(), &schema.WorkflowInput{
+						Name:                   w.Name,
+						Event:                  eventType,
+						Project:                int(project.ID),
+						AdvancedTaskDefinition: w.AdvancedTaskDefinitionID,
+					}, lc)
+					if err != nil {
+						return err
+					}
+					fmt.Println("successfully added workflow with ID:", workflowsResult.ID)
+				}
+			}
+		}
+	}
+
+	if workflowsResult != nil {
+		data = append(data, []string{
+			returnNonEmptyString(fmt.Sprintf("%v", workflowsResult.ID)),
+			returnNonEmptyString(fmt.Sprintf("%v", workflowsResult.Name)),
+			returnNonEmptyString(fmt.Sprintf("%v", workflowsResult.Event)),
+			returnNonEmptyString(fmt.Sprintf("%v", workflowsResult.Project)),
+			returnNonEmptyString(fmt.Sprintf("%v", workflowsResult.AdvancedTaskDefinition.ID)),
+		})
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"Event",
+				"Project",
+				"Advanced Task",
+			},
+			Data: data,
+		}, outputOptions)
+	}
+
+	return nil
+}
+
 // ApplyAdvancedTaskDefinitions Apply advanced task definition configurations from file.
-func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput) error {
-	var advancedTaskDefinitionResult *schema.AdvancedTaskDefinition
+func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksFileInput) error {
+	var advancedTaskDefinitionResult *schema.AdvancedTaskDefinitionResponse
 	var data []output.Data
 
 	// Add task definitions for each task found
@@ -88,7 +250,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 			// Check if given task already exists
 			if liveAdvancedTasks != nil {
 				for _, currAdvTask := range *liveAdvancedTasks {
-					// Convert AdvancedTaskDefinition struct from file to input the update mutation can understand
+					// Convert AdvancedTaskDefinitionResponse struct from file to input the update mutation can understand
 					advancedTaskInput := &schema.AdvancedTaskDefinitionInput{
 						ID:          currAdvTask.ID,
 						Name:        t.Name,
@@ -101,6 +263,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 						Project:     currAdvTask.Project,
 						Environment: currAdvTask.Environment,
 						Permission:  t.Permission,
+						Arguments:   t.Arguments,
 					}
 
 					// Marshal to JSON to flip capitalisation of struct keys from yaml unmarshalling
@@ -117,6 +280,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 						if diffErr != nil {
 							return diffErr
 						}
+
 						if diffString == "" {
 							log.Printf("No changes found for task '%s'", advancedTaskInput.Name)
 						}
@@ -124,8 +288,10 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 						if diffString != "" {
 							log.Println("The following changes will be applied:\n", diffString)
 							if forceAction || !forceAction && yesNo(fmt.Sprintf("Are you sure you want to update '%s'", advancedTaskInput.Name)) {
+								// Unset ID as it's not required for task patch.
+								advancedTaskInput.ID = 0
 								// Update changes
-								advancedTaskDefinitionResult, err = lagoon.UpdateAdvancedTaskDefinition(context.TODO(), int(advancedTaskInput.ID), advancedTaskInput, lc)
+								advancedTaskDefinitionResult, err = lagoon.UpdateAdvancedTaskDefinition(context.TODO(), int(currAdvTask.ID), advancedTaskInput, lc)
 								if err != nil {
 									return err
 								}
@@ -152,6 +318,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 						Project:     int(project.ID),
 						Environment: t.EnvironmentID,
 						Permission:  t.Permission,
+						Arguments:   t.Arguments,
 					}, lc)
 					if err != nil {
 						return err
@@ -175,6 +342,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Project)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Environment)),
 			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Permission)),
+			returnNonEmptyString(fmt.Sprintf("%v", advancedTaskDefinitionResult.Arguments)),
 		})
 		output.RenderOutput(output.Table{
 			Header: []string{
@@ -189,6 +357,7 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksInput)
 				"Project",
 				"Environment",
 				"Permission",
+				"Arguments",
 			},
 			Data: data,
 		}, outputOptions)
@@ -216,14 +385,14 @@ func ReadConfigFile(fileName string) (*FileConfigRoot, error) {
 func parseFile(file string) (*FileConfigRoot, error) {
 	source, err := ioutil.ReadFile(file)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read config file contents '%s': %v", file, err)
+		return nil, fmt.Errorf("unable to read config file contents '%s': %v", file, err)
 	}
 
 	// Unmarshal yaml
 	parsedConfig := &FileConfigRoot{}
 	err = yaml.Unmarshal(source, &parsedConfig)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to decode config in file '%s': %v", file, err)
+		return nil, fmt.Errorf("unable to decode config in file '%s': %v", file, err)
 	}
 
 	return parsedConfig, nil
@@ -242,7 +411,7 @@ var viewLastApplied = &cobra.Command{
 			return err
 		}
 
-		var tasksInput []AdvancedTasksInput
+		var tasksInput []AdvancedTasksFileInput
 		if fileName != "" {
 			fileConfig, err := ReadConfigFile(fileName)
 			if err != nil {
@@ -255,7 +424,7 @@ var viewLastApplied = &cobra.Command{
 				return err
 			}
 		} else {
-			tasksInput = append(tasksInput, AdvancedTasksInput{
+			tasksInput = append(tasksInput, AdvancedTasksFileInput{
 				Project:     cmdProjectName,
 				Environment: cmdProjectEnvironment,
 			})
@@ -401,6 +570,11 @@ Workflows or advanced task definitions will be created if they do not already ex
 		}
 
 		// Validate input
+		_, err = PreprocessWorkflowsInputValidation(fileConfig.Workflows)
+		if err != nil {
+			return err
+		}
+
 		_, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
 		if err != nil {
 			return err
@@ -415,8 +589,14 @@ Workflows or advanced task definitions will be created if they do not already ex
 			lagoonCLIVersion,
 			debug)
 
-		// Apply Advanced Tasks
+		// Apply Advanced Tasks first since they can be added to workflows.
 		err = ApplyAdvancedTaskDefinitions(lc, fileConfig.Tasks)
+		if err != nil {
+			return err
+		}
+
+		// Apply Workflows
+		err = ApplyWorkflows(lc, fileConfig.Workflows)
 		if err != nil {
 			return err
 		}

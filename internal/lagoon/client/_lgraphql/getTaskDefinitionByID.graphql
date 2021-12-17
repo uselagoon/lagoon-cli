@@ -1,6 +1,4 @@
-query (
-  $id: Int!,
-){
+query ($id: Int!) {
   advancedTaskDefinitionById(id: $id) {
     ... on AdvancedTaskDefinitionImage {
       id

@@ -118,7 +118,7 @@ func (c *Client) GetTaskByID(
 
 // GetTaskDefinitionByID returns an advanced task definition by its ID
 func (c *Client) GetTaskDefinitionByID(
-	ctx context.Context, id int, taskDefinition *schema.AdvancedTaskDefinition) error {
+	ctx context.Context, id int, taskDefinition *schema.AdvancedTaskDefinitionResponse) error {
 
 	req, err := c.newVersionedRequest("_lgraphql/getTaskDefinitionByID.graphql",
 		map[string]interface{}{
@@ -129,7 +129,7 @@ func (c *Client) GetTaskDefinitionByID(
 	}
 
 	return c.client.Run(ctx, req, &struct {
-		Response *schema.AdvancedTaskDefinition `json:"advancedTaskDefinitionById"`
+		Response *schema.AdvancedTaskDefinitionResponse `json:"advancedTaskDefinitionById"`
 	}{
 		Response: taskDefinition,
 	})
@@ -196,10 +196,30 @@ func (c *Client) ProjectsByMetadata(
 	})
 }
 
+// GetWorkflowsByEnvironment queries the Lagoon API for workflows by environment name, and
+// unmarshal the response.
+func (c *Client) GetWorkflowsByEnvironment(
+	ctx context.Context, environment int, workflows *[]schema.WorkflowResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/workflowsForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.WorkflowResponse `json:"workflowsForEnvironment"`
+	}{
+		Response: workflows,
+	})
+}
+
 // GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
-// unmarshals the response.
+// unmarshal the response.
 func (c *Client) GetAdvancedTasksByEnvironment(
-	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinition) error {
+	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinitionResponse) error {
 
 	req, err := c.newVersionedRequest("_lgraphql/advancedTasksForEnvironment.graphql",
 		map[string]interface{}{
@@ -210,7 +230,7 @@ func (c *Client) GetAdvancedTasksByEnvironment(
 	}
 
 	return c.client.Run(ctx, req, &struct {
-		Response *[]schema.AdvancedTaskDefinition `json:"advancedTasksForEnvironment"`
+		Response *[]schema.AdvancedTaskDefinitionResponse `json:"advancedTasksForEnvironment"`
 	}{
 		Response: tasks,
 	})

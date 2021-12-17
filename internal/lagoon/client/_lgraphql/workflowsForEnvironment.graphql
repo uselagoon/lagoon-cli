@@ -1,0 +1,16 @@
+query workflowsForEnvironment($environment: Int!) {
+    workflowsForEnvironment(environment: $environment) {
+        id
+        name
+        event
+        project
+        advancedTaskDefinition {
+            ... on AdvancedTaskDefinitionCommand {
+                id
+            }
+            ... on AdvancedTaskDefinitionImage {
+                id
+            }
+        }
+    }
+}

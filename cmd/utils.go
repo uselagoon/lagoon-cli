@@ -9,24 +9,138 @@ import (
 	"os"
 )
 
-type AdvancedTasksInput struct {
-	ID            uint                              `json:"id,omitempty" yaml:"id,omitempty"`
-	Name          string                            `json:"name,omitempty" yaml:"name,omitempty"`
-	Description   string                            `json:"description,omitempty" yaml:"description,omitempty"`
-	Type          schema.AdvancedTaskDefinitionType `json:"type,omitempty" yaml:"type,omitempty"`
-	Command       string                            `json:"command,omitempty" yaml:"command,omitempty"`
-	Image         string                            `json:"image,omitempty" yaml:"image,omitempty"`
-	Service       string                            `json:"service,omitempty" yaml:"service,omitempty"`
-	GroupName     string                            `json:"group,omitempty" yaml:"group,omitempty"`
-	Project       string                            `json:"project,omitempty" yaml:"project,omitempty"`
-	Environment   string                            `json:"environment,omitempty" yaml:"environment,omitempty"`
-	EnvironmentID int                               `json:"environmentID,omitempty" yaml:"environmentID,omitempty"`
-	Permission    string                            `json:"permission,omitempty" yaml:"permission,omitempty"`
-	//AdvancedTaskDefinitionArgument []AdvancedTaskDefinitionArgument `yaml:"arguments,omitempty"`
+//matchEventToEventType Maps Event types from file input to event types that exist on Lagoon
+func matchEventToEventType(event string) schema.EventType {
+	switch event {
+	case "DeployEnvironmentLatest":
+		return schema.APIDeployEnvironmentLatest
+	case "DeployEnvironmentBranch":
+		return schema.APIDeployEnvironmentBranch
+	case "APIDeleteEnvironment":
+		return schema.APIDeleteEnvironment
+
+	case "DeployOSFinished":
+		return schema.DeployOSFinished
+	case "DeployKubernetesFinished":
+		return schema.DeployKubernetesFinished
+	case "RemoveOSFinished":
+		return schema.RemoveOSFinished
+	case "RemoveKubernetesFinished":
+		return schema.RemoveKubernetesFinished
+
+	case "DeployErrorRemoveKubernetes":
+		return schema.DeployErrorRemoveKubernetes
+	case "DeployErrorRemoveOS":
+		return schema.DeployErrorRemoveOS
+	case "DeployErrorBuildDeployKubernetes":
+		return schema.DeployErrorBuildDeployKubernetes
+	case "DeployErrorBuildDeployOS":
+		return schema.DeployErrorBuildDeployOS
+
+	case "GithubPush":
+		return schema.GithubPush
+	case "GithubPROpened":
+		return schema.GithubPROpened
+	case "GithubPRUpdated":
+		return schema.GithubPRUpdated
+	case "GithubPRClosed":
+		return schema.GithubPRClosed
+	case "GithubPushSkip":
+		return schema.GithubPushSkip
+	case "GithubDeleteEnvironment":
+		return schema.GithubDeleteEnvironment
+	case "GithubPRNotDeleted":
+		return schema.GithubPRNotDeleted
+	case "GithubPushNotDeleted":
+		return schema.GithubPushNotDeleted
+
+	case "GitlabPush":
+		return schema.GitlabPush
+	case "GitlabPushSkip":
+		return schema.GitlabPushSkip
+	case "GitlabPROpened":
+		return schema.GitlabPROpened
+	case "GitlabPRUpdated":
+		return schema.GitlabPRUpdated
+	case "GitlabPRClosed":
+		return schema.GitlabPRClosed
+	case "GitlabDeleteEnvironment":
+		return schema.GitlabDeleteEnvironment
+	case "GitlabPushNotDeleted":
+		return schema.GitlabPushNotDeleted
+
+	case "BitbucketPush":
+		return schema.BitbucketPush
+	case "BitbucketPushSkip":
+		return schema.BitbucketPushSkip
+	case "BitbucketPROpened":
+		return schema.BitbucketPROpened
+	case "BitbucketPRCreatedOpened":
+		return schema.BitbucketPRCreatedOpened
+	case "BitbucketPRUpdated":
+		return schema.BitbucketPRUpdated
+	case "BitbucketPRUpdatedOpened":
+		return schema.BitbucketPRUpdatedOpened
+	case "BitbucketPRFulfilled":
+		return schema.BitbucketPRFulfilled
+	case "BitbucketPRRejected":
+		return schema.BitbucketPRRejected
+	case "BitbucketDeleteEnvironment":
+		return schema.BitbucketDeleteEnvironment
+	case "BitbucketPushNotDeleted":
+		return schema.BitbucketPushNotDeleted
+
+	default:
+		return ""
+	}
 }
 
-// PreprocessAdvancedTaskDefinitionsInputValidation Unmarshal input, iterate over inputs and validate
-func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []AdvancedTasksInput) ([]AdvancedTasksInput, error) {
+// PreprocessWorkflowsInputValidation Validates input from workflow configuration file
+func PreprocessWorkflowsInputValidation(workflowsInput []WorkflowsFileInput) ([]WorkflowsFileInput, error) {
+	var hasNonProceedableErrors = false
+
+	if len(workflowsInput) > 0 {
+		for _, w := range workflowsInput {
+			if cmdProjectName != "" {
+				w.Project = cmdProjectName
+			}
+			if cmdProjectEnvironment != "" {
+				w.Environment = cmdProjectEnvironment
+			}
+
+			if w.Name == "" {
+				hasNonProceedableErrors = true
+				fmt.Printf("Workflow 'name' is required for '%s'\n\n", w.Name)
+			}
+			if w.Project == "" {
+				hasNonProceedableErrors = true
+				fmt.Printf("'project' name is required for workflow '%s'\n\n", w.Name)
+			}
+			if w.Environment == "" {
+				hasNonProceedableErrors = true
+				fmt.Printf("An 'environment' name is required for workflow '%s'\n\n", w.Name)
+			}
+			if w.Event == "" {
+				hasNonProceedableErrors = true
+				fmt.Printf("'event' name is required for workflow '%s'\n\n", w.Name)
+			} else {
+				// find a Lagoon event type match
+				eventType := matchEventToEventType(w.Event)
+				if eventType == "" {
+					hasNonProceedableErrors = true
+					fmt.Printf("Event '%s' did not match a Lagoon event type \n\n", w.Event)
+				}
+			}
+		}
+	}
+	if hasNonProceedableErrors {
+		return nil, fmt.Errorf("validation checks failed\n")
+	}
+	return workflowsInput, nil
+}
+
+// PreprocessAdvancedTaskDefinitionsInputValidation validates task inputs
+func PreprocessAdvancedTaskDefinitionsInputValidation(tasksInput []AdvancedTasksFileInput) ([]AdvancedTasksFileInput, error) {
 	var hasNonProceedableErrors = false
 
 	if len(tasksInput) > 0 {

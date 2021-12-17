@@ -23,6 +23,11 @@ query advancedTasksForEnvironment($environment: Int!) {
             environment
             project
             permission
+            advancedTaskDefinitionArguments {
+                id
+                name
+                type
+            }
         }
     }
 }

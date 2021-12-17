@@ -29,6 +29,11 @@ mutation (
             groupName
             project
             environment
+            advancedTaskDefinitionArguments {
+                id
+                name
+                type
+            }
         }
     }
 }

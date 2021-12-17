@@ -332,15 +332,48 @@ func (c *Client) RemoveProjectMetadataByKey(
 	})
 }
 
+// AddWorkflow adds a new workflow
+func (c *Client) AddWorkflow(ctx context.Context, input *schema.WorkflowInput, workflow *schema.WorkflowResponse) error {
+	req, err := c.newVersionedRequest("_lgraphql/addWorkflow.graphql", input)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.WorkflowResponse `json:"addWorkflow"`
+	}{
+		Response: workflow,
+	})
+}
+
+// UpdateWorkflow updates a workflow
+func (c *Client) UpdateWorkflow(
+	ctx context.Context, id int, patch *schema.WorkflowInput, workflow *schema.WorkflowResponse) error {
+	req, err := c.newVersionedRequest("_lgraphql/updateWorkflow.graphql",
+		map[string]interface{}{
+			"id":    id,
+			"patch": patch,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.WorkflowResponse `json:"updateWorkflow"`
+	}{
+		Response: workflow,
+	})
+}
+
 // AddAdvancedTaskDefinition adds an advanced task definition
-func (c *Client) AddAdvancedTaskDefinition(ctx context.Context, input *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinition) error {
+func (c *Client) AddAdvancedTaskDefinition(ctx context.Context, input *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinitionResponse) error {
 	req, err := c.newVersionedRequest("_lgraphql/addAdvancedTaskDefinition.graphql", input)
 	if err != nil {
 		return err
 	}
 
 	return c.client.Run(ctx, req, &struct {
-		Response *schema.AdvancedTaskDefinition `json:"addAdvancedTaskDefinition"`
+		Response *schema.AdvancedTaskDefinitionResponse `json:"addAdvancedTaskDefinition"`
 	}{
 		Response: taskDefinition,
 	})
@@ -348,7 +381,7 @@ func (c *Client) AddAdvancedTaskDefinition(ctx context.Context, input *schema.Ad
 
 // UpdateAdvancedTaskDefinition updates a task definition
 func (c *Client) UpdateAdvancedTaskDefinition(
-	ctx context.Context, id int, patch *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinition) error {
+	ctx context.Context, id int, patch *schema.AdvancedTaskDefinitionInput, taskDefinition *schema.AdvancedTaskDefinitionResponse) error {
 	req, err := c.newVersionedRequest("_lgraphql/updateAdvancedTaskDefinition.graphql",
 		map[string]interface{}{
 			"id":    id,
@@ -359,7 +392,7 @@ func (c *Client) UpdateAdvancedTaskDefinition(
 	}
 
 	return c.client.Run(ctx, req, &struct {
-		Response *schema.AdvancedTaskDefinition `json:"updateAdvancedTaskDefinition"`
+		Response *schema.AdvancedTaskDefinitionResponse `json:"updateAdvancedTaskDefinition"`
 	}{
 		Response: taskDefinition,
 	})
