@@ -1,0 +1,16 @@
+workflows:
+  - name: "Teardown ephemeral environment after PR close"
+    event: "GithubPRClosed"
+    task: "Teardown PR"
+    target: "PROJECT"
+    project: "high-cotton"
+    environment: "Master"
+      cron: "*/15 * * * *"
+      settings:
+        enabled: false
+  - name: "Run ClamAV scan on push"
+    event: "GithubPush"
+    task: "ClamAV scan"
+    target: "GROUP"
+    project: "high-cotton"
+    environment: "Master"
