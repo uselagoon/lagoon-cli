@@ -28,6 +28,7 @@ type WorkflowsFileInput struct {
 	Event                    string `json:"event,omitempty" yaml:"event,omitempty"`
 	Project                  string `json:"project,omitempty" yaml:"project,omitempty"`
 	Environment              string `json:"environment,omitempty" yaml:"environment,omitempty"`
+	EnvironmentID            int    `json:"environmentID,omitempty" yaml:"environmentID,omitempty"`
 	AdvancedTaskDefinition   string `json:"task,omitempty" yaml:"task,omitempty"`
 	AdvancedTaskDefinitionID int
 	Target                   string   `json:"target,omitempty" yaml:"target,omitempty"`
@@ -277,6 +278,11 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksFileIn
 					if currAdvTask.Name == advancedTaskInput.Name {
 						hasTaskMatches = true
 
+						// Set found task argument IDs to 0 since we do not want to compare IDs. When adding or updating arguments, all existing arguments will be deleted so their IDs do not matter.
+						for i := range currAdvTask.Arguments {
+							currAdvTask.Arguments[i].ID = 0
+						}
+
 						diffString, diffErr := DiffPatchChangesAgainstAPI(encodedJSONTaskInput, currAdvTask)
 						if diffErr != nil {
 							return diffErr
@@ -289,8 +295,9 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksFileIn
 						if diffString != "" {
 							log.Println("The following changes will be applied:\n", diffString)
 							if forceAction || !forceAction && yesNo(fmt.Sprintf("Are you sure you want to update '%s'", advancedTaskInput.Name)) {
-								// Unset ID as it's not required for task patch.
+								// Unset task ID as it's not required for task patch.
 								advancedTaskInput.ID = 0
+
 								// Update changes
 								advancedTaskDefinitionResult, err = lagoon.UpdateAdvancedTaskDefinition(context.TODO(), int(currAdvTask.ID), advancedTaskInput, lc)
 								if err != nil {
@@ -374,7 +381,7 @@ func ReadConfigFile(fileName string) (*FileConfigRoot, error) {
 			log.Fatal("File does not exist")
 		}
 	}
-	fileConfig, err := parseFile(fileName)
+	fileConfig, err := ParseFile(fileName)
 	if err != nil {
 		return nil, fmt.Errorf("parsing config error %w", err)
 	}
@@ -382,8 +389,8 @@ func ReadConfigFile(fileName string) (*FileConfigRoot, error) {
 	return fileConfig, nil
 }
 
-// Attempts to parse the configuration
-func parseFile(file string) (*FileConfigRoot, error) {
+// ParseFile Attempts to parse the configuration
+func ParseFile(file string) (*FileConfigRoot, error) {
 	source, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read config file contents '%s': %v", file, err)
@@ -401,7 +408,7 @@ func parseFile(file string) (*FileConfigRoot, error) {
 
 var viewLastApplied = &cobra.Command{
 	Use:   "view-last-applied",
-	Short: "View the latest applied workflows or advanced task definitions for project/environment.",
+	Short: "View the latest applied configuration for project/environment.",
 	Long:  `View the latest applied workflows or advanced task definitions for project/environment.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -413,90 +420,215 @@ var viewLastApplied = &cobra.Command{
 		}
 
 		var tasksInput []AdvancedTasksFileInput
+		var workflowsInput []WorkflowsFileInput
 		if fileName != "" {
-			fileConfig, err := ReadConfigFile(fileName)
+			tasksInput, err = getTasksInput(fileName)
 			if err != nil {
-				log.Fatalln("Parsing config error:", err)
+				return err
 			}
-
-			// Preprocess validation
-			tasksInput, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
+			workflowsInput, err = getWorkflowsInput(fileName)
 			if err != nil {
 				return err
 			}
 		} else {
+			if cmdProjectName == "" || cmdProjectEnvironment == "" {
+				log.Fatalln("Project name and/or environment name must be given")
+			}
+
 			tasksInput = append(tasksInput, AdvancedTasksFileInput{
+				Project:     cmdProjectName,
+				Environment: cmdProjectEnvironment,
+			})
+			workflowsInput = append(workflowsInput, WorkflowsFileInput{
 				Project:     cmdProjectName,
 				Environment: cmdProjectEnvironment,
 			})
 		}
 
-		current := lagoonCLIConfig.Current
-		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
-			lagoonCLIVersion,
-			debug)
-
-		for _, t := range tasksInput {
-			// Get project environment from name
-			project, err := lagoon.GetMinimalProjectByName(context.TODO(), t.Project, lc)
+		if showAdvancedTasks {
+			err = GetLastAppliedTasksAndPrintFromInput(tasksInput)
 			if err != nil {
 				return err
 			}
+		}
 
-			if project.Environments != nil {
-				if len(project.Environments) > 0 && t.Environment != "" {
-					for _, e := range project.Environments {
-						if e.Name == t.Environment {
-							t.EnvironmentID = int(e.ID)
-						}
-					}
-				}
-			}
-
-			// Get current advanced tasks by Environment ID
-			advancedTasks, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), t.EnvironmentID, lc)
+		if showWorkflows {
+			err = GetLastAppliedWorkflowsAndPrintFromInput(workflowsInput)
 			if err != nil {
 				return err
 			}
+		}
 
-			if advancedTasks != nil {
-				var tasksJSON []byte
-				if cmdProjectName != "" && fileName == "" {
-					fmt.Printf("Found tasks for '%s:%s'\n", t.Project, t.Environment)
-					tasksJSON, err = json.MarshalIndent(advancedTasks, "", "  ")
-					if err != nil {
-						return err
-					}
-
-				} else {
-					fmt.Printf("Found '%s' for '%s:%s'\n", t.Name, t.Project, t.Environment)
-					for _, task := range *advancedTasks {
-						if task.Name == t.Name {
-							tasksJSON, err = json.Marshal(task)
-							if err != nil {
-								return err
-							}
-						}
-					}
-				}
-
-				resultData := output.Result{
-					Result: string(tasksJSON),
-				}
-				output.RenderResult(resultData, outputOptions)
+		if !showAdvancedTasks && !showWorkflows {
+			err = GetLastAppliedTasksAndPrintFromInput(tasksInput)
+			if err != nil {
+				return err
+			}
+			err = GetLastAppliedWorkflowsAndPrintFromInput(workflowsInput)
+			if err != nil {
+				return err
 			}
 		}
 		return nil
 	},
 }
 
+func GetLastAppliedWorkflowsAndPrintFromInput(workflowsInput []WorkflowsFileInput) error {
+	current := lagoonCLIConfig.Current
+	lc := client.New(
+		lagoonCLIConfig.Lagoons[current].GraphQL,
+		lagoonCLIConfig.Lagoons[current].Token,
+		lagoonCLIConfig.Lagoons[current].Version,
+		lagoonCLIVersion,
+		debug)
+
+	for _, w := range workflowsInput {
+		// Get project environment from name
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), w.Project, lc)
+		if err != nil {
+			return err
+		}
+
+		if project.Environments != nil {
+			if len(project.Environments) > 0 && w.Environment != "" {
+				for _, e := range project.Environments {
+					if e.Name == w.Environment {
+						w.EnvironmentID = int(e.ID)
+					}
+				}
+			}
+		}
+
+		// Get current advanced tasks by Environment ID
+		workflows, err := lagoon.GetWorkflowsByEnvironment(context.TODO(), w.EnvironmentID, lc)
+		if err != nil {
+			return err
+		}
+
+		if workflows != nil {
+			var workflowsJSON []byte
+			if cmdProjectName != "" && fileName == "" {
+				fmt.Printf("Found workflows for '%s:%s'\n", w.Project, w.Environment)
+				workflowsJSON, err = json.MarshalIndent(workflows, "", "  ")
+				if err != nil {
+					return err
+				}
+
+			} else {
+				fmt.Printf("Found workflow '%s' for '%s:%s'\n", w.Name, w.Project, w.Environment)
+				for _, workflow := range *workflows {
+					if workflow.Name == w.Name {
+						workflowsJSON, err = json.MarshalIndent(workflow, "", "  ")
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+
+			resultData := output.Result{
+				Result: string(workflowsJSON),
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+	}
+	return nil
+}
+
+func GetLastAppliedTasksAndPrintFromInput(tasksInput []AdvancedTasksFileInput) error {
+	current := lagoonCLIConfig.Current
+	lc := client.New(
+		lagoonCLIConfig.Lagoons[current].GraphQL,
+		lagoonCLIConfig.Lagoons[current].Token,
+		lagoonCLIConfig.Lagoons[current].Version,
+		lagoonCLIVersion,
+		debug)
+
+	for _, t := range tasksInput {
+		// Get project environment from name
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), t.Project, lc)
+		if err != nil {
+			return err
+		}
+
+		if project.Environments != nil {
+			if len(project.Environments) > 0 && t.Environment != "" {
+				for _, e := range project.Environments {
+					if e.Name == t.Environment {
+						t.EnvironmentID = int(e.ID)
+					}
+				}
+			}
+		}
+
+		// Get current advanced tasks by Environment ID
+		advancedTasks, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), t.EnvironmentID, lc)
+		if err != nil {
+			return err
+		}
+
+		if advancedTasks != nil {
+			var tasksJSON []byte
+			if cmdProjectName != "" && fileName == "" {
+				fmt.Printf("Found tasks for '%s:%s'\n", t.Project, t.Environment)
+				tasksJSON, err = json.MarshalIndent(advancedTasks, "", "  ")
+				if err != nil {
+					return err
+				}
+
+			} else {
+				fmt.Printf("Found task '%s' for '%s:%s'\n", t.Name, t.Project, t.Environment)
+				for _, task := range *advancedTasks {
+					if task.Name == t.Name {
+						tasksJSON, err = json.MarshalIndent(task, "", "  ")
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+
+			resultData := output.Result{
+				Result: string(tasksJSON),
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+	}
+	return nil
+}
+
+func getTasksInput(fileName string) ([]AdvancedTasksFileInput, error) {
+	fileConfig, err := ReadConfigFile(fileName)
+	if err != nil {
+		log.Fatalln("Parsing config error:", err)
+	}
+
+	// Preprocess validation
+	tasksInput, err := PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
+	if err != nil {
+		return nil, err
+	}
+	return tasksInput, nil
+}
+
+func getWorkflowsInput(fileName string) ([]WorkflowsFileInput, error) {
+	fileConfig, err := ReadConfigFile(fileName)
+	if err != nil {
+		log.Fatalln("Parsing config error:", err)
+	}
+
+	// Preprocess validation
+	workflowsInput, err := PreprocessWorkflowsInputValidation(fileConfig.Workflows)
+	if err != nil {
+		return nil, err
+	}
+	return workflowsInput, nil
+}
+
 // setLastApplied Finds a resource match in the API and updates the configuration with local input
 var setLastApplied = &cobra.Command{
 	Use:   "set-last-applied -f FILENAME",
-	Short: "Set the latest applied workflows or advanced task definitions for project/environment.",
+	Short: "Set the latest applied configuration for project/environment.",
 	Long:  `Finds latest configuration match by workflow/task definition 'Name' and sets the latest applied workflow or advanced task definition for project/environment with the contents of file.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -510,13 +642,7 @@ var setLastApplied = &cobra.Command{
 			return fmt.Errorf("no file name given to apply (pass a configuration file as 'apply set-last-applied -f [FILENAME])")
 		}
 
-		fileConfig, err := ReadConfigFile(fileName)
-		if err != nil {
-			log.Fatalln("Parsing config error:", err)
-		}
-
-		// Validate tasks input
-		_, err = PreprocessAdvancedTaskDefinitionsInputValidation(fileConfig.Tasks)
+		tasks, err := getTasksInput(fileName)
 		if err != nil {
 			return err
 		}
@@ -530,7 +656,7 @@ var setLastApplied = &cobra.Command{
 			debug)
 
 		// Apply Advanced Tasks
-		err = ApplyAdvancedTaskDefinitions(lc, fileConfig.Tasks)
+		err = ApplyAdvancedTaskDefinitions(lc, tasks)
 		if err != nil {
 			return err
 		}
@@ -609,11 +735,9 @@ Workflows or advanced task definitions will be created if they do not already ex
 func init() {
 	applyCmd.PersistentFlags().StringP("file", "f", "", "lagoon apply (-f FILENAME) [options]")
 	applyCmd.MarkFlagRequired("file")
-	applyCmd.Flags().BoolVarP(&showAdvancedTasks, "advanced-tasks", "t", false, "Target advanced tasks only")
-	applyCmd.Flags().BoolVarP(&showWorkflows, "workflows", "w", false, "Target workflows only")
-
 	applyCmd.AddCommand(viewLastApplied)
 	applyCmd.AddCommand(setLastApplied)
-	viewLastApplied.InheritedFlags()
-	setLastApplied.InheritedFlags()
+
+	viewLastApplied.Flags().BoolVarP(&showAdvancedTasks, "advanced-tasks", "t", false, "Target advanced tasks only")
+	viewLastApplied.Flags().BoolVarP(&showWorkflows, "workflows", "w", false, "Target workflows only")
 }
