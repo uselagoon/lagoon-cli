@@ -108,6 +108,7 @@ func ApplyWorkflows(lc *client.Client, workflows []WorkflowsFileInput) error {
 				}
 			}
 
+			// If advanced task given does not exist inside project, then exit.
 			if w.AdvancedTaskDefinitionID == 0 {
 				fmt.Printf("task '%s' does not match one in Lagoon resource '%s', you should create it first\n", w.AdvancedTaskDefinition, w.Project)
 				os.Exit(1)

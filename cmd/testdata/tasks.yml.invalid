@@ -1,0 +1,10 @@
+tasks:
+  - name: "Custom Advanced Task"
+    description: "A custom advanced task defined inside a yml file"
+    group: "amazeeio"
+project: "high-cotton"
+environment: "Master"
+    type: "COMMAND"
+    command: "$BIN_PATH/lagoon-cli"
+    service: "cli"
+    permission: "DEVELOPER"
