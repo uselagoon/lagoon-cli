@@ -138,7 +138,7 @@ func processProjectInfo(projectByName []byte) ([]byte, error) {
 	var data []output.Data
 	data = append(data, projectData)
 	dataMain := output.Table{
-		Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "AutoIdle"},
+		Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -166,6 +166,7 @@ func processProjectExtra(project api.Project) []string {
 		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.ProductionEnvironment),
+		fmt.Sprintf("%s", project.RouterPattern),
 		fmt.Sprintf("%v", *project.AutoIdle),
 	}
 	return data

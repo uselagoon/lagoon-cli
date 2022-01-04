@@ -47,6 +47,7 @@ var ProjectByNameFragment = `fragment Project on Project {
 	name
 	gitUrl
 	subfolder
+	routerPattern
 	branches
 	pullrequests
 	productionEnvironment
