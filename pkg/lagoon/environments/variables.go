@@ -138,8 +138,7 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	if err != nil {
 		return []byte(""), err
 	}
-	// get the environment info from lagoon, we need the environment ID for later
-	// we consume the project ID here
+	// get the environment info from lagoon, we consume the project ID here
 	environment := api.EnvironmentByName{
 		Name:    environmentName,
 		Project: projectInfo.ID,
@@ -159,7 +158,6 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 		return []byte(""), err
 	}
 	return returnResult, nil
-	// return []byte(""), fmt.Errorf(fmt.Sprintf("Environment %s not found, check the environment exists and that you have permission to access it", environmentName))
 }
 
 func processEnvironmentVariables(envVars api.Environment, projectName string, revealValue bool) ([]byte, error) {
