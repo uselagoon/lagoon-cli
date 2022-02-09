@@ -129,11 +129,7 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	project := api.Project{
 		Name: projectName,
 	}
-	queryFragment := graphql.ProjectEnvironmentEnvVars
-	if revealValue {
-		queryFragment = graphql.ProjectEnvironmentEnvVarsRevealed
-	}
-	projectByName, err := e.api.GetProjectByName(project, queryFragment)
+	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameMinimalFragment)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -142,16 +138,28 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	if err != nil {
 		return []byte(""), err
 	}
-	for _, v := range projectInfo.Environments {
-		if v.Name == environmentName {
-			returnResult, err := processEnvironmentVariables(v, projectName, revealValue)
-			if err != nil {
-				return []byte(""), err
-			}
-			return returnResult, nil
-		}
+	// get the environment info from lagoon, we need the environment ID for later
+	// we consume the project ID here
+	environment := api.EnvironmentByName{
+		Name:    environmentName,
+		Project: projectInfo.ID,
 	}
-	return []byte(""), fmt.Errorf(fmt.Sprintf("Environment %s not found, check the environment exists and that you have permission to access it", environmentName))
+	queryFragment := graphql.EnvironmentEnvVars
+	if revealValue {
+		queryFragment = graphql.EnvironmentEnvVarsRevealed
+	}
+	environmentByName, err := e.api.GetEnvironmentByName(environment, queryFragment)
+	if err != nil {
+		return []byte(""), err
+	}
+	var environmentInfo api.Environment
+	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
+	returnResult, err := processEnvironmentVariables(environmentInfo, projectName, revealValue)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+	// return []byte(""), fmt.Errorf(fmt.Sprintf("Environment %s not found, check the environment exists and that you have permission to access it", environmentName))
 }
 
 func processEnvironmentVariables(envVars api.Environment, projectName string, revealValue bool) ([]byte, error) {
