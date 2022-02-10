@@ -1,0 +1,10 @@
+workflows:
+  - name: "Teardown ephemeral environment after PR close"
+    event: "GithubPRClosed"
+    task: "Custom task"
+    target: "PROJECT"
+        project: "high-cotton"
+        environment: "Master"
+    cron: "*/15 * * * *"
+    settings:
+      enabled: false

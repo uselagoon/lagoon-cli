@@ -1,0 +1,25 @@
+{
+  "data": {
+    "addAdvancedTaskDefinition": {
+      "id": 1,
+      "name": "Custom task",
+      "description": "A custom advanced task definition",
+      "type": "COMMAND",
+      "command": "$BIN_PATH/lagoon-cli",
+      "service": "cli",
+      "groupName": "project-high-cotton",
+      "project": 18,
+      "environment": 3,
+      "permission": "DEVELOPER",
+      "advancedTaskDefinitionArguments": [
+        {
+          "id": 31,
+          "name": "scan",
+          "type": "STRING"
+        }
+      ],
+      "deleted": "0000-00-00 00:00:00",
+      "created": "2021-12-17 17:20:50"
+    }
+  }
+}

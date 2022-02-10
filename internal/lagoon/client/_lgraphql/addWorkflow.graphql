@@ -1,0 +1,28 @@
+mutation (
+  $name: String,
+  $event: String,
+  $project: Int,
+  $advancedTaskDefinition: Int
+) {
+  addWorkflow(input: {
+    name: $name,
+    event: $event,
+    project: $project,
+    advancedTaskDefinition: $advancedTaskDefinition
+  }) {
+    id
+    name
+    event
+    project
+    advancedTaskDefinition {
+      ... on AdvancedTaskDefinitionImage {
+        id
+        name
+      }
+      ... on AdvancedTaskDefinitionCommand {
+        id
+        name
+      }
+    }
+  }
+}

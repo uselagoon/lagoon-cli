@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
@@ -117,6 +116,25 @@ func (c *Client) GetTaskByID(
 	})
 }
 
+// GetTaskDefinitionByID returns an advanced task definition by its ID
+func (c *Client) GetTaskDefinitionByID(
+	ctx context.Context, id int, taskDefinition *schema.AdvancedTaskDefinitionResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/getTaskDefinitionByID.graphql",
+		map[string]interface{}{
+			"id": id,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AdvancedTaskDefinitionResponse `json:"advancedTaskDefinitionById"`
+	}{
+		Response: taskDefinition,
+	})
+}
+
 // MinimalProjectByName queries the Lagoon API for a project by its name, and
 // unmarshals the response into project.
 func (c *Client) MinimalProjectByName(
@@ -175,5 +193,45 @@ func (c *Client) ProjectsByMetadata(
 		Response *[]schema.ProjectMetadata `json:"projectsByMetadata"`
 	}{
 		Response: projects,
+	})
+}
+
+// GetWorkflowsByEnvironment queries the Lagoon API for workflows by environment name, and
+// unmarshal the response.
+func (c *Client) GetWorkflowsByEnvironment(
+	ctx context.Context, environment int, workflows *[]schema.WorkflowResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/workflowsForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.WorkflowResponse `json:"workflowsForEnvironment"`
+	}{
+		Response: workflows,
+	})
+}
+
+// GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
+// unmarshal the response.
+func (c *Client) GetAdvancedTasksByEnvironment(
+	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinitionResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/advancedTasksForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.AdvancedTaskDefinitionResponse `json:"advancedTasksForEnvironment"`
+	}{
+		Response: tasks,
 	})
 }

@@ -1,0 +1,31 @@
+query ($id: Int!) {
+  advancedTaskDefinitionById(id: $id) {
+    ... on AdvancedTaskDefinitionImage {
+      id
+      name
+      description
+      type
+      image
+      created
+      service
+      groupName
+      project
+      environment
+      permission
+    }
+
+    ... on AdvancedTaskDefinitionCommand {
+      id
+      name
+      description
+      type
+      command
+      created
+      service
+      groupName
+      project
+      environment
+      permission
+    }
+  }
+}

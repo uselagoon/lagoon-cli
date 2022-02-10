@@ -1,0 +1,24 @@
+mutation (
+    $id: Int!,
+    $patch: UpdateWorkflowPatchInput!,
+){
+    updateWorkflow(
+        input: {
+            id: $id
+            patch: $patch
+        }
+    ){
+        id
+        name
+        event
+        project
+        advancedTaskDefinition {
+            ... on AdvancedTaskDefinitionImage {
+                id
+            }
+            ... on AdvancedTaskDefinitionCommand {
+                id
+            }
+        }
+    }
+}

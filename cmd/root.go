@@ -176,6 +176,7 @@ Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
 Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
 `)
 	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(applyCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(deployCmd)
