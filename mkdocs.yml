@@ -1,5 +1,10 @@
 site_name: 'Lagoon CLI'
 site_url: https://uselagoon.github.io/lagoon-cli/
+repo_url: https://github.com/uselagoon/lagoon-cli/
+repo_name: uselagoon/lagoon-cli
+edit_uri: edit/main/docs
+site_author: The Lagoon Authors
+
 theme:
   name: 'material'
   palette:
@@ -8,18 +13,26 @@ theme:
   favicon: lagoon-cli-logo.png
   icon:
     logo: fontawesome/solid/terminal
+    repo: fontawesome/brands/github  
+    
 extra:
   analytics:
     provider: google
     property: G-W1SJFEVFDB
+
 markdown_extensions:
-  - codehilite
-  - admonition
-  - attr_list
   - toc:
       permalink: "#"
       baselevel: 2
-      separator: "_"
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+plugins:
+  - search
+
 pages:
   - Getting Started: index.md
   - Configuration: config.md

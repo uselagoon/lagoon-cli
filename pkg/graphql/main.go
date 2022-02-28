@@ -63,6 +63,12 @@ var ProjectByNameFragment = `fragment Project on Project {
 	developmentEnvironmentsLimit
 }`
 
+// ProjectByNameMinimalFragment .
+var ProjectByNameMinimalFragment = `fragment Project on Project {
+	id
+	name
+}`
+
 // ProjectAndEnvironmentEnvVars .
 var ProjectAndEnvironmentEnvVars = `fragment Project on Project {
 	id
@@ -197,6 +203,29 @@ var EnvironmentVariablesFragment = `fragment Environment on Environment {
 	envVariables {
 		id
 		name
+	}
+}`
+
+// EnvironmentEnvVars .
+var EnvironmentEnvVars = `fragment Environment on Environment {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+	}
+}`
+
+// EnvironmentEnvVarsRevealed .
+var EnvironmentEnvVarsRevealed = `fragment Environment on Environment {
+	id
+	name
+	envVariables {
+		id
+		name
+		scope
+		value
 	}
 }`
 
