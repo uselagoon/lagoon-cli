@@ -25,5 +25,4 @@ func init() {
 	addCmd.AddCommand(addUserToGroupCmd)
 	addCmd.AddCommand(addUserSSHKeyCmd)
 	addCmd.AddCommand(addVariableCmd)
-	addCmd.AddCommand(addRestoreCmd)
 }
