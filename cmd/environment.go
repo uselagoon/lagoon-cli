@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -47,4 +50,123 @@ var deleteEnvCmd = &cobra.Command{
 			output.RenderResult(resultData, outputOptions)
 		}
 	},
+}
+
+var listBackupsCmd = &cobra.Command{
+	Use:     "backups",
+	Aliases: []string{"b"},
+	Short:   "List an environments backups",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectEnvironment == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, backup := range backupsResult.Backups {
+			alreadyRestored := "false"
+			switch backup.Restore.Status {
+			case "pending":
+			case "failed":
+			case "successful":
+				alreadyRestored = "true"
+			}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", backup.BackupID)),
+				returnNonEmptyString(fmt.Sprintf("%v", backup.Source)),
+				returnNonEmptyString(fmt.Sprintf("%v", backup.Created)),
+				alreadyRestored,
+				returnNonEmptyString(fmt.Sprintf("%v", backup.Restore.Status)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"BackupID",
+				"Source",
+				"Created",
+				"Restored",
+				"RestoreStatus",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
+	},
+}
+
+var getBackupCmd = &cobra.Command{
+	Use:     "backup",
+	Aliases: []string{"b"},
+	Short:   "Get a backup download link",
+	Long: `Get a backup download link
+This returns a direct URL to the backup, this is a signed download link with a limited time to initiate the download (usually 5 minutes).`,
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		backupID, err := cmd.Flags().GetString("backup-id")
+		if err != nil {
+			return err
+		}
+		if cmdProjectEnvironment == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		status := ""
+		for _, backup := range backupsResult.Backups {
+			if backup.BackupID == backupID {
+				if backup.Restore.RestoreLocation != "" {
+					fmt.Println(backup.Restore.RestoreLocation)
+					return nil
+				}
+				status = backup.Restore.Status
+			}
+		}
+		if status != "" {
+			return fmt.Errorf("no download file found, status of backups restoration is %s", status)
+		}
+		return fmt.Errorf("backup has not been restored")
+	},
+}
+
+func init() {
+	getCmd.AddCommand(getBackupCmd)
+	getBackupCmd.Flags().StringP("backup-id", "B", "", "The backup ID you want to restore")
 }

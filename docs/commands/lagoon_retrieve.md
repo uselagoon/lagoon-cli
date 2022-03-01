@@ -1,15 +1,15 @@
-## lagoon get
+## lagoon retrieve
 
-Get info on a resource
+Trigger a retrieval operation on backups
 
 ### Synopsis
 
-Get info on a resource
+Trigger a retrieval operation on backups
 
 ### Options
 
 ```
-  -h, --help   help for get
+  -h, --help   help for retrieve
 ```
 
 ### Options inherited from parent commands
@@ -32,13 +32,5 @@ Get info on a resource
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon get all-user-sshkeys](lagoon_get_all-user-sshkeys.md)	 - Get all user SSH keys
-* [lagoon get backup](lagoon_get_backup.md)	 - Get a backup download link
-* [lagoon get deployment](lagoon_get_deployment.md)	 - Get a build log by remote id
-* [lagoon get environment](lagoon_get_environment.md)	 - Get details about an environment
-* [lagoon get project](lagoon_get_project.md)	 - Get details about a project
-* [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
-* [lagoon get project-metadata](lagoon_get_project-metadata.md)	 - Get all metadata for a project
-* [lagoon get task-by-id](lagoon_get_task-by-id.md)	 - Get information about a task by its ID
-* [lagoon get user-sshkeys](lagoon_get_user-sshkeys.md)	 - Get a user's SSH keys
+* [lagoon retrieve backup](lagoon_retrieve_backup.md)	 - Retrieve a backup
 

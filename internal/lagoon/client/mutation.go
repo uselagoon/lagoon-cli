@@ -331,3 +331,20 @@ func (c *Client) RemoveProjectMetadataByKey(
 		Response: projects,
 	})
 }
+
+// AddRestore adds a restore.
+func (c *Client) AddRestore(
+	ctx context.Context, backupID string, out *schema.Restore) error {
+	req, err := c.newRequest("_lgraphql/addRestore.graphql",
+		map[string]interface{}{
+			"backupid": backupID,
+		})
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Restore `json:"addRestore"`
+	}{
+		Response: out,
+	})
+}

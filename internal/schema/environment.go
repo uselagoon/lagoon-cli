@@ -23,6 +23,7 @@ type Environment struct {
 	EnvVariables []EnvKeyValue `json:"envVariables,omitempty"`
 	Route        string        `json:"route,omitempty"`
 	Routes       string        `json:"routes,omitempty"`
+	Backups      []Backup      `json:"backups,omitempty"`
 	// TODO use a unixtime type
 	Updated string `json:"updated,omitempty"`
 	Created string `json:"created,omitempty"`
