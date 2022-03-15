@@ -1,15 +1,24 @@
-## lagoon update
+## lagoon update deploytarget-config
 
-Update a resource
+Update a deploytarget config
 
 ### Synopsis
 
-Update a resource
+Update a deploytarget config
+
+```
+lagoon update deploytarget-config [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -b, --branches string       Branches regex
+  -d, --deploytarget uint     Deploytarget id
+  -h, --help                  help for deploytarget-config
+  -I, --id uint               Deploytarget config id
+  -P, --pullrequests string   Pullrequests title regex
+  -w, --weight uint           Deploytarget config weighting (default:1) (default 1)
 ```
 
 ### Options inherited from parent commands
@@ -31,11 +40,5 @@ Update a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update deploytarget-config](lagoon_update_deploytarget-config.md)	 - Update a deploytarget config
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update project-metadata](lagoon_update_project-metadata.md)	 - Update a projects metadata with a given key or key:value
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing Rocket.Chat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing Slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Update a user in Lagoon
+* [lagoon update](lagoon_update.md)	 - Update a resource
 
