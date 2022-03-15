@@ -198,3 +198,23 @@ func (c *Client) ProjectsByMetadata(
 		Response: projects,
 	})
 }
+
+// DeployTargetConfigsByProjectID queries the Lagoon API for a projects deploytarget configs by its id, and
+// unmarshals the response into deploytargetconfigs.
+func (c *Client) DeployTargetConfigsByProjectID(
+	ctx context.Context, project int, deploytargetconfigs *[]schema.DeployTargetConfig) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/deployTargetConfigsByProjectId.graphql",
+		map[string]interface{}{
+			"project": project,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.DeployTargetConfig `json:"deployTargetConfigsByProjectId"`
+	}{
+		Response: deploytargetconfigs,
+	})
+}

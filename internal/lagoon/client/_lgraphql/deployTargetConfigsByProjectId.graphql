@@ -1,0 +1,19 @@
+query (
+  $project: Int!
+){
+  deployTargetConfigsByProjectId(
+    project: $project
+  ){
+    id
+    deployTarget{
+        id
+        name
+        friendlyName
+        cloudProvider
+        cloudRegion
+    }
+    branches
+    pullrequests
+    weight
+  }
+}

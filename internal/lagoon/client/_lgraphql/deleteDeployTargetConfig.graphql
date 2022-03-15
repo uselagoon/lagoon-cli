@@ -1,0 +1,9 @@
+mutation (
+    $id: Int!
+    $project: Int!
+){
+    deleteDeployTargetConfig(input:{
+        id: $id
+        project: $project
+    })
+}

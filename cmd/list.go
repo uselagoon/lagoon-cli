@@ -294,6 +294,7 @@ func init() {
 	listCmd.AddCommand(listVariablesCmd)
 	listCmd.AddCommand(listInvokableTasks)
 	listCmd.AddCommand(listBackupsCmd)
+	listCmd.AddCommand(listDeployTargetConfigsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")

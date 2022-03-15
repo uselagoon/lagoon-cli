@@ -348,3 +348,45 @@ func (c *Client) AddRestore(
 		Response: out,
 	})
 }
+
+// AddDeployTargetConfiguration adds a deploytarget configuration to a project.
+func (c *Client) AddDeployTargetConfiguration(ctx context.Context,
+	in *schema.AddDeployTargetConfigInput, out *schema.DeployTargetConfig) error {
+	req, err := c.newRequest("_lgraphql/addDeployTargetConfig.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.DeployTargetConfig `json:"addDeployTargetConfig"`
+	}{
+		Response: out,
+	})
+}
+
+// UpdateDeployTargetConfiguration adds a deploytarget configuration to a project.
+func (c *Client) UpdateDeployTargetConfiguration(ctx context.Context,
+	in *schema.UpdateDeployTargetConfigInput, out *schema.DeployTargetConfig) error {
+	req, err := c.newRequest("_lgraphql/updateDeployTargetConfig.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.DeployTargetConfig `json:"updateDeployTargetConfig"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteDeployTargetConfig deletes a deploytarget config from a project.
+func (c *Client) DeleteDeployTargetConfiguration(ctx context.Context,
+	id int, project int, out *schema.DeleteDeployTargetConfig) error {
+	req, err := c.newRequest("_lgraphql/deleteDeployTargetConfig.graphql",
+		map[string]interface{}{
+			"id":      id,
+			"project": project,
+		})
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &out)
+}
