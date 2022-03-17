@@ -32,6 +32,7 @@ Add a project, or add notifications and variables to projects or environments
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon add deploytarget-config](lagoon_add_deploytarget-config.md)	 - Add deploytarget config to a project
 * [lagoon add group](lagoon_add_group.md)	 - Add a group to lagoon
 * [lagoon add project](lagoon_add_project.md)	 - Add a new project to Lagoon
 * [lagoon add project-group](lagoon_add_project-group.md)	 - Add a project to a group in lagoon

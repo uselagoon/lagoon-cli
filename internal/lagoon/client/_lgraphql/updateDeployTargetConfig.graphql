@@ -1,0 +1,31 @@
+mutation (
+    $id: Int!
+    $weight: Int
+    $branches: String
+    $pullrequests: String
+    $deployTarget: Int
+    $deployTargetProjectPattern: String
+){
+    updateDeployTargetConfig(input:{
+        id: $id
+        patch:{
+            deployTarget: $deployTarget
+            weight: $weight
+            branches: $branches
+            pullrequests: $pullrequests
+            deployTargetProjectPattern: $deployTargetProjectPattern
+        }
+    }){
+        id
+        deployTarget{
+            id
+            name
+            friendlyName
+            cloudProvider
+            cloudRegion
+        }
+        branches
+        pullrequests
+        weight
+    }
+}
