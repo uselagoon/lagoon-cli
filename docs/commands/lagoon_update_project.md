@@ -30,6 +30,7 @@ lagoon update project [flags]
   -I, --privateKey string                     Private key to use for the project
   -E, --productionEnvironment string          Which environment(the name) should be marked as the production environment
   -m, --pullrequests string                   Which Pull Requests should be deployed
+  -Z, --routerPattern string                  Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
       --standbyProductionEnvironment string   Which environment(the name) should be marked as the standby production environment
   -C, --storageCalc int                       Should storage for this environment be calculated
   -s, --subfolder string                      Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository

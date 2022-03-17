@@ -80,8 +80,8 @@ func TestProjectInfo(t *testing.T) {
 		{"deployType":"branch","environmentType":"development","id":5,"name":"Development","openshiftProjectName":"high-cotton-development","route":"https://varnish-highcotton-org-development.us.amazee.io"},
 		{"deployType":"pullrequest","environmentType":"development","id":6,"name":"PR-175","openshiftProjectName":"high-cotton-pr-175","route":""},
 		{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
-		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"doopdd","pullrequests":"false","storageCalc":1,"subfolder":null}`
-	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments","DevEnvLimit","ProductionEnv","AutoIdle"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5","5","doopdd","1"]]}`
+		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"doopdd","routerPattern":"${environment}-${project}.lagoon.example.com","pullrequests":"false","storageCalc":1,"subfolder":null}`
+	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments","DevEnvLimit","ProductionEnv","RouterPattern","AutoIdle"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5","5","doopdd","${environment}-${project}.lagoon.example.com","1"]]}`
 
 	returnResult, err := processProjectInfo([]byte(projectInfo))
 	if err != nil {
@@ -100,7 +100,7 @@ func TestProjectUpdate(t *testing.T) {
 		{"deployType":"branch","environmentType":"development","id":5,"name":"Development","openshiftProjectName":"high-cotton-development","route":"https://varnish-highcotton-org-development.us.amazee.io"},
 		{"deployType":"pullrequest","environmentType":"development","id":6,"name":"PR-175","openshiftProjectName":"high-cotton-pr-175","route":""},
 		{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
-		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"Master","pullrequests":"true","storageCalc":1,"subfolder":null}`
+		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"Master","routerPattern":"${environment}-${project}.lagoon.example.com","pullrequests":"true","storageCalc":1,"subfolder":null}`
 
 	var jsonPatch = `{"branches":"false"}`
 	var updateProjectsSuccess = `{"id":18,"patch":{"branches":"false"}}`

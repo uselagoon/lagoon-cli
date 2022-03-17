@@ -229,6 +229,7 @@ type Project struct {
 	GitURL                       string                `json:"gitUrl,omitempty"`
 	PrivateKey                   string                `json:"privateKey,omitempty"`
 	Subfolder                    string                `json:"subfolder,omitempty"`
+	RouterPattern                string                `json:"routerPattern,omitempty"`
 	ActiveSystemsTask            string                `json:"activeSystemsTask,omitempty"`
 	ActiveSystemsDeploy          string                `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string                `json:"activeSystemsRemove,omitempty"`
@@ -257,6 +258,7 @@ type ProjectPatch struct {
 	GitURL                       string `json:"gitUrl,omitempty"`
 	PrivateKey                   string `json:"privateKey,omitempty"`
 	Subfolder                    string `json:"subfolder,omitempty"`
+	RouterPattern                string `json:"routerPattern,omitempty"`
 	ActiveSystemsTask            string `json:"activeSystemsTask,omitempty"`
 	ActiveSystemsDeploy          string `json:"activeSystemsDeploy,omitempty"`
 	ActiveSystemsRemove          string `json:"activeSystemsRemove,omitempty"`
