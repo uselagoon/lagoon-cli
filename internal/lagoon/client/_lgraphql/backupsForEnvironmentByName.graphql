@@ -1,0 +1,25 @@
+query (
+  $name: String!,
+  $project: Int!) {
+    environmentByName(
+      name: $name,
+      project: $project)
+      {
+        id
+        name
+        backups{
+          id
+          source
+          backupId
+          created
+          deleted
+          restore{
+            id
+            status
+            created
+            backupId
+            restoreLocation
+          }
+        }
+      }
+  }

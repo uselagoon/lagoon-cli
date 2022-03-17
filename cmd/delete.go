@@ -26,4 +26,5 @@ func init() {
 	deleteCmd.AddCommand(deleteSSHKeyCmd)
 	deleteCmd.AddCommand(deleteUserFromGroupCmd)
 	deleteCmd.AddCommand(deleteVariableCmd)
+	deleteCmd.AddCommand(deleteDeployTargetConfigCmd)
 }

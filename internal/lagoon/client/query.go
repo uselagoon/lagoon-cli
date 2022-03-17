@@ -65,6 +65,27 @@ func (c *Client) EnvironmentByName(ctx context.Context, name string,
 	})
 }
 
+// BackupsForEnvironmentByName queries the Lagoon API for an environment by its name and
+// parent projectID, and unmarshals the response into environment.
+func (c *Client) BackupsForEnvironmentByName(ctx context.Context, name string,
+	projectID uint, environment *schema.Environment) error {
+
+	req, err := c.newRequest("_lgraphql/backupsForEnvironmentByName.graphql",
+		map[string]interface{}{
+			"name":    name,
+			"project": projectID,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Environment `json:"environmentByName"`
+	}{
+		Response: environment,
+	})
+}
+
 // LagoonAPIVersion queries the Lagoon API for its version, and
 // unmarshals the response.
 func (c *Client) LagoonAPIVersion(
@@ -175,5 +196,25 @@ func (c *Client) ProjectsByMetadata(
 		Response *[]schema.ProjectMetadata `json:"projectsByMetadata"`
 	}{
 		Response: projects,
+	})
+}
+
+// DeployTargetConfigsByProjectID queries the Lagoon API for a projects deploytarget configs by its id, and
+// unmarshals the response into deploytargetconfigs.
+func (c *Client) DeployTargetConfigsByProjectID(
+	ctx context.Context, project int, deploytargetconfigs *[]schema.DeployTargetConfig) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/deployTargetConfigsByProjectId.graphql",
+		map[string]interface{}{
+			"project": project,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.DeployTargetConfig `json:"deployTargetConfigsByProjectId"`
+	}{
+		Response: deploytargetconfigs,
 	})
 }

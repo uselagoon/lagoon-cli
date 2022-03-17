@@ -1,15 +1,22 @@
-## lagoon update
+## lagoon add restore
 
-Update a resource
+Restore a backup
 
 ### Synopsis
 
-Update a resource
+Restore a backup
+Given a backup-id, you can initiate a restore for it.
+You can check the status of the backup using the list backups or get backup command.
+
+```
+lagoon add restore [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+  -B, --backup-id string   The backup ID you want to restore
+  -h, --help               help for restore
 ```
 
 ### Options inherited from parent commands
@@ -31,11 +38,5 @@ Update a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update deploytarget-config](lagoon_update_deploytarget-config.md)	 - Update a deploytarget config
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update project-metadata](lagoon_update_project-metadata.md)	 - Update a projects metadata with a given key or key:value
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing Rocket.Chat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing Slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Update a user in Lagoon
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

@@ -95,10 +95,12 @@ var rootCmd = &cobra.Command{
 				output.RenderError(err.Error(), outputOptions)
 				os.Exit(1)
 			}
+			fmt.Println("Documentation updated")
+			return
 		}
 		if versionFlag {
 			displayVersionInfo()
-			os.Exit(0)
+			return
 		}
 		cmd.Help()
 		os.Exit(1)
@@ -186,6 +188,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(sshEnvCmd)
 	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(retrieveCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(importCmd)
