@@ -69,9 +69,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			// fmt.Println(projectResult)
 			data := []output.Data{}
-			// for _, dtc := range *projectResult {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.Weight)),
@@ -82,7 +80,6 @@ var addDeployTargetConfigCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudRegion)),
 			})
-			// }
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
@@ -164,9 +161,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			// fmt.Println(projectResult)
 			data := []output.Data{}
-			// for _, dtc := range *projectResult {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.Weight)),
@@ -177,7 +172,6 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudRegion)),
 			})
-			// }
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
@@ -267,7 +261,6 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		// fmt.Println(projectResult)
 		data := []output.Data{}
 		for _, deployTargetConfig := range *deployTargetConfigs {
 			data = append(data, []string{
