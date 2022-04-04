@@ -172,15 +172,16 @@ type Group struct {
 
 // Openshift struct.
 type Openshift struct {
-	ID            int    `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	ConsoleURL    string `json:"consoleUrl,omitempty"`
-	Token         string `json:"token,omitempty"`
-	RouterPattern string `json:"routerPattern,omitempty"`
-	ProjectUser   string `json:"projectUser,omitempty"`
-	SSHHost       string `json:"sshHost,omitempty"`
-	SSHPort       string `json:"sshPort,omitempty"`
-	Created       string `json:"created,omitempty"`
+	ID               int    `json:"id,omitempty"`
+	Name             string `json:"name,omitempty"`
+	ConsoleURL       string `json:"consoleUrl,omitempty"`
+	Token            string `json:"token,omitempty"`
+	RouterPattern    string `json:"routerPattern,omitempty"`
+	ProjectUser      string `json:"projectUser,omitempty"`
+	SSHHost          string `json:"sshHost,omitempty"`
+	SSHPort          string `json:"sshPort,omitempty"`
+	Created          string `json:"created,omitempty"`
+	MonitoringConfig string `json:"monitoringConfig,omitempty"`
 }
 
 // NotificationRocketChat struct.
@@ -248,6 +249,7 @@ type Project struct {
 	Environments                 []Environment         `json:"environments,omitempty"`
 	Deployments                  []Deployment          `json:"deployments,omitempty"`
 	Notifications                []interface{}         `json:"notifications,omitempty"`
+	Availability                 string                `json:"availability,omitempty"`
 }
 
 // ProjectPatch struct.

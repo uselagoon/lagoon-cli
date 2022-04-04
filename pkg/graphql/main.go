@@ -61,6 +61,10 @@ var ProjectByNameFragment = `fragment Project on Project {
 	autoIdle
 	storageCalc
 	developmentEnvironmentsLimit
+	availability
+	openshift {
+		monitoringConfig
+	}
 }`
 
 // ProjectAndEnvironmentEnvVars .
