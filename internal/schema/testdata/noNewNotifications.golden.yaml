@@ -1,6 +1,8 @@
 groups:
 - name: ci-group
   users:
+  - email: ci-customer-user-ecdsa521@example.com
+    role: OWNER
   - email: ci-customer-user-ed25519@example.com
     role: OWNER
   - email: ci-customer-user-rsa@example.com
