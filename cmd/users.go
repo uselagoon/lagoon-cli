@@ -37,7 +37,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	}
 	splitKey := strings.Split(keyValue, " ")
 	var keyType api.SSHKeyType
-	var err Error
+	var err error
 
 	// will fail if value is not right
 	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
