@@ -37,24 +37,23 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	}
 	splitKey := strings.Split(keyValue, " ")
 	var keyType api.SSHKeyType
-	parsedKeyType = strings.EqualFold(string(splitKey[0])
 
 	// will fail if value is not right
-	if parsedKeyType, "ssh-rsa") {
+	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
 		keyType = api.SSHRsa
-	} else if parsedKeyType, "ssh-ed25519") {
+	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
 		keyType = api.SSHEd25519
-	} else if parsedKeyType, "ecdsa-sha2-nistp256") {
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
 		keyType = api.SSHECDSA256
-	} else if parsedKeyType, "ecdsa-sha2-nistp384") {
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
 		keyType = api.SSHECDSA384
-	} else if parsedKeyType, "ecdsa-sha2-nistp521") {
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
 		keyType = api.SSHECDSA521
 	} else {
 		// return error stating key type not supported
 		log.Fatalln(fmt.Sprintf("SSH key type %s not supported", parsedKeyType))
 	}
-	
+
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
 		//strip new line
