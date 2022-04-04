@@ -44,6 +44,13 @@ users:
     keyType: ssh-ed25519
     keyValue: AAAAC3NzaC1lZDI1NTE5AAAAIMdEs1h19jv2UrbtKcqPDatUxT9lPYcbGlEAbInsY8Ka
     name: ci-customer-sshkey-ed25519
+- email: ci-customer-user-ecdsa521@example.com
+  sshKeys:
+  - created: "2020-02-11 09:00:42"
+    keyFingerprint: ""
+    keyType: ecdsa-sha2-nistp521
+    keyValue: AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAFAX0rkOBwlrXr2rJNxYVi0fRj8IiHBaFCsAM0zO+o2fh+h4EuL1Mx4F237SX5G0zuL8R6Sbf9LrY2lhKZdDpiFdgF7pP1TZ8RuDvKgasppGDEzAIm9+7bmHR118CejWF7llgHD3oz+/aRHTZVpOOaCyTGkF2oPeUejrI74KoPHk3HHpQ==
+    name: ci-customer-sshkey-ecdsa-nistp521
 - email: ci-customer-user-rsa@example.com
   sshKeys:
   - created: "2020-02-11 09:00:42"
