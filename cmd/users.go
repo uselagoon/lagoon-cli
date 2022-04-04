@@ -37,6 +37,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	}
 	splitKey := strings.Split(keyValue, " ")
 	var keyType api.SSHKeyType
+	var err Error
 
 	// will fail if value is not right
 	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
@@ -51,23 +52,27 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyType = api.SSHECDSA521
 	} else {
 		// return error stating key type not supported
-		log.Fatalln(fmt.Sprintf("SSH key type %s not supported", parsedKeyType))
+		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
 
-	// if the sshkey has a comment/name in it, we can use that
-	if keyName == "" && len(splitKey) == 3 {
-		//strip new line
-		keyName = stripNewLines(splitKey[2])
-	} else if keyName == "" && len(splitKey) == 2 {
-		keyName = userEmail
-		output.RenderInfo("no name provided, using email address as key name", outputOptions)
+	if err != nil {
+		// if the sshkey has a comment/name in it, we can use that
+		if keyName == "" && len(splitKey) == 3 {
+			//strip new line
+			keyName = stripNewLines(splitKey[2])
+		} else if keyName == "" && len(splitKey) == 2 {
+			keyName = userEmail
+			output.RenderInfo("no name provided, using email address as key name", outputOptions)
+		}
+		parsedFlags := api.SSHKey{
+			KeyType:  keyType,
+			KeyValue: stripNewLines(splitKey[1]),
+			Name:     keyName,
+		}
+		return parsedFlags, nil
+	} else {
+		return nil, err
 	}
-	parsedFlags := api.SSHKey{
-		KeyType:  keyType,
-		KeyValue: stripNewLines(splitKey[1]),
-		Name:     keyName,
-	}
-	return parsedFlags
 }
 
 var addUserCmd = &cobra.Command{
@@ -123,9 +128,10 @@ Add key by defining key value, but not specifying a key name (will default to tr
 			cmd.Help()
 			os.Exit(1)
 		}
-		userSSHKey := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
-		var customReqResult []byte
 		var err error
+		userSSHKey, err := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
+		handleError(err)
+		var customReqResult []byte
 		customReqResult, err = uClient.AddSSHKeyToUser(userFlags, userSSHKey)
 		handleError(err)
 		returnResultData := map[string]interface{}{}
