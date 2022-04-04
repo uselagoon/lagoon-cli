@@ -52,27 +52,24 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyType = api.SSHECDSA521
 	} else {
 		// return error stating key type not supported
-		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
+		keyType = api.SSHRsa
+		err = error.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
 
-	if err != nil {
-		// if the sshkey has a comment/name in it, we can use that
-		if keyName == "" && len(splitKey) == 3 {
-			//strip new line
-			keyName = stripNewLines(splitKey[2])
-		} else if keyName == "" && len(splitKey) == 2 {
-			keyName = userEmail
-			output.RenderInfo("no name provided, using email address as key name", outputOptions)
-		}
-		parsedFlags := api.SSHKey{
-			KeyType:  keyType,
-			KeyValue: stripNewLines(splitKey[1]),
-			Name:     keyName,
-		}
-		return parsedFlags, nil
-	} else {
-		return nil, err
+	// if the sshkey has a comment/name in it, we can use that
+	if keyName == "" && len(splitKey) == 3 {
+		//strip new line
+		keyName = stripNewLines(splitKey[2])
+	} else if keyName == "" && len(splitKey) == 2 {
+		keyName = userEmail
+		output.RenderInfo("no name provided, using email address as key name", outputOptions)
 	}
+	parsedFlags := api.SSHKey{
+		KeyType:  keyType,
+		KeyValue: stripNewLines(splitKey[1]),
+		Name:     keyName,
+	}
+	return parsedFlags, err
 }
 
 var addUserCmd = &cobra.Command{
