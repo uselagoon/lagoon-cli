@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -53,7 +54,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	} else {
 		// return error stating key type not supported
 		keyType = api.SSHRsa
-		err = error.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
+		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
 
 	// if the sshkey has a comment/name in it, we can use that
