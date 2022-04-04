@@ -28,7 +28,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) api.SSHKey, error {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (api.SSHKey, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
