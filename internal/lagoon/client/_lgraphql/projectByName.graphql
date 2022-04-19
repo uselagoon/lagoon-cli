@@ -36,14 +36,6 @@ query (
               role
             }
           }
-          {{ if apiVerGreaterThanOrEqual . "1.2.0" }}
-          ... on BillingGroup {
-            __typename
-            name
-            currency
-            billingSoftware
-          }
-          {{ end }}
         }
         notifications {
           ... on NotificationSlack {

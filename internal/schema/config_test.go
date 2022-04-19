@@ -28,14 +28,6 @@ func TestProjectsToConfig(t *testing.T) {
 			input:  "testdata/ciBranchPicky.json",
 			expect: "testdata/ciBranchPicky.golden.yaml",
 		},
-		"noBillingGroups": {
-			input:  "testdata/noBillingGroups.json",
-			expect: "testdata/noBillingGroups.golden.yaml",
-		},
-		"withBillingGroups": {
-			input:  "testdata/withBillingGroups.json",
-			expect: "testdata/withBillingGroups.golden.yaml",
-		},
 		"noNewNotifications": {
 			input:  "testdata/noNewNotifications.json",
 			expect: "testdata/noNewNotifications.golden.yaml",
