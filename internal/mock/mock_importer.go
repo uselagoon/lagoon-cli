@@ -35,20 +35,6 @@ func (m *MockImporter) EXPECT() *MockImporterMockRecorder {
 	return m.recorder
 }
 
-// AddBillingGroup mocks base method.
-func (m *MockImporter) AddBillingGroup(arg0 context.Context, arg1 *schema.AddBillingGroupInput, arg2 *schema.BillingGroup) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddBillingGroup", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddBillingGroup indicates an expected call of AddBillingGroup.
-func (mr *MockImporterMockRecorder) AddBillingGroup(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBillingGroup", reflect.TypeOf((*MockImporter)(nil).AddBillingGroup), arg0, arg1, arg2)
-}
-
 // AddEnvVariable mocks base method.
 func (m *MockImporter) AddEnvVariable(arg0 context.Context, arg1 *schema.EnvVariableInput, arg2 *schema.EnvKeyValue) error {
 	m.ctrl.T.Helper()
@@ -187,20 +173,6 @@ func (m *MockImporter) AddProject(arg0 context.Context, arg1 *schema.AddProjectI
 func (mr *MockImporterMockRecorder) AddProject(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddProject", reflect.TypeOf((*MockImporter)(nil).AddProject), arg0, arg1, arg2)
-}
-
-// AddProjectToBillingGroup mocks base method.
-func (m *MockImporter) AddProjectToBillingGroup(arg0 context.Context, arg1 *schema.ProjectBillingGroupInput, arg2 *schema.Project) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddProjectToBillingGroup", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddProjectToBillingGroup indicates an expected call of AddProjectToBillingGroup.
-func (mr *MockImporterMockRecorder) AddProjectToBillingGroup(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddProjectToBillingGroup", reflect.TypeOf((*MockImporter)(nil).AddProjectToBillingGroup), arg0, arg1, arg2)
 }
 
 // AddSSHKey mocks base method.
