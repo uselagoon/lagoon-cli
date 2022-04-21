@@ -249,6 +249,7 @@ type Project struct {
 	Environments                 []Environment         `json:"environments,omitempty"`
 	Deployments                  []Deployment          `json:"deployments,omitempty"`
 	Notifications                []interface{}         `json:"notifications,omitempty"`
+	FactsUI                      *int                  `json:"factsUi,omitempty"`
 }
 
 // ProjectPatch struct.
@@ -273,6 +274,7 @@ type ProjectPatch struct {
 	OpenshiftProjectPattern      string `json:"openshiftProjectPattern,omitempty"`
 	DevelopmentEnvironmentsLimit *int   `json:"developmentEnvironmentsLimit,omitempty"`
 	Openshift                    *int   `json:"openshift,omitempty"`
+	FactsUI                      *int   `json:"factsUi,omitempty"`
 }
 
 // AddSSHKey .

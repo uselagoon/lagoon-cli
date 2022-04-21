@@ -274,7 +274,7 @@ func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdatePro
 	var projects api.Project
 	var projectUpdate api.UpdateProject
 	var project api.ProjectPatch
-	err := json.Unmarshal([]byte(projectByName), &projects)
+	err := json.Unmarshal(projectByName, &projects)
 	if err != nil {
 		return projectUpdate, err
 	}

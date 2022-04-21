@@ -101,8 +101,15 @@ var updateProjectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		jsonPatch, _ := json.Marshal(projectFlags)
-		projectUpdateID, err := pClient.UpdateProject(cmdProjectName, string(jsonPatch))
+		var jsonPatchFromProjectFlags string
+		if string(jsonPatch) != "" {
+			jsonPatchFromProjectFlags = jsonPatch
+		} else {
+			jsonMarshalPatch, _ := json.Marshal(projectFlags)
+			jsonPatchFromProjectFlags = string(jsonMarshalPatch)
+		}
+
+		projectUpdateID, err := pClient.UpdateProject(cmdProjectName, jsonPatchFromProjectFlags)
 		handleError(err)
 		var updatedProject api.Project
 		err = json.Unmarshal([]byte(projectUpdateID), &updatedProject)
