@@ -28,6 +28,11 @@ var pubKeyFile string
 var nameInPubKeyFile bool
 var sshKeyName string
 
+// openshift vars
+var osName string
+var osConsoleUrl string
+var osToken string
+
 // group vars
 var groupName string
 var groupRole string

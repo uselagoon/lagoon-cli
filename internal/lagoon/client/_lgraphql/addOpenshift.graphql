@@ -1,0 +1,27 @@
+mutation (
+  $name: String!,
+  $consoleUrl: String!,
+  $token: String,
+  $routerPattern: String,
+  $sshHost: String,
+  $sshPort: String,
+  $monitoringConfig: JSON,
+  $friendlyName: String,
+  $cloudProvider: String,
+  $cloudRegion: String) {
+    addOpenshift(input: {
+      name: $name,
+      consoleUrl: $consoleUrl,
+      token: $token
+      routerPattern: $routerPattern,
+      sshHost: $sshHost,
+      sshPort: $sshPort,
+      monitoringConfig: $monitoringConfig,
+      friendlyName: $friendlyName,
+      cloudProvider: $cloudProvider,
+      cloudRegion: $cloudRegion
+    }) {
+      id
+      name
+    }
+  }

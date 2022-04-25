@@ -20,6 +20,29 @@ func wrapErr(err error) error {
 	return err
 }
 
+// AddOpenShift adds an openshift.
+func (c *Client) AddOpenshift(ctx context.Context, in *schema.AddOpenshiftInput, out *schema.AddOpenshiftResponse) error {
+	req, err := c.newRequest("_lgraphql/addOpenshift.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AddOpenshiftResponse `json:"addOpenshift"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteOpenShift deletes an openshift.
+func (c *Client) DeleteOpenshift(ctx context.Context, in *schema.DeleteOpenshiftInput, out *schema.DeleteOpenshiftResponse) error {
+	req, err := c.newRequest("_lgraphql/deleteOpenshift.graphql", in)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &out)
+}
+
 // AddGroup adds a group.
 func (c *Client) AddGroup(
 	ctx context.Context, in *schema.AddGroupInput, out *schema.Group) error {

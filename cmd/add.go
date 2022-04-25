@@ -14,6 +14,7 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
+	addCmd.AddCommand(addOSCmd)
 	addCmd.AddCommand(addGroupCmd)
 	addCmd.AddCommand(addProjectCmd)
 	addCmd.AddCommand(addProjectToGroupCmd)
