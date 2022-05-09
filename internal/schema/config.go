@@ -14,11 +14,10 @@ import (
 // Fields for comprising structs are dictated by the add* Lagoon APIs.
 type Config struct {
 	// API objects
-	Projects      []ProjectConfig        `json:"projects,omitempty"`
-	Groups        []GroupConfig          `json:"groups,omitempty"`
-	BillingGroups []AddBillingGroupInput `json:"billingGroups,omitempty"`
-	Users         []User                 `json:"users,omitempty"`
-	Notifications *NotificationsConfig   `json:"notifications,omitempty"`
+	Projects      []ProjectConfig      `json:"projects,omitempty"`
+	Groups        []GroupConfig        `json:"groups,omitempty"`
+	Users         []User               `json:"users,omitempty"`
+	Notifications *NotificationsConfig `json:"notifications,omitempty"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface to control how lagoon
@@ -153,18 +152,6 @@ func ProjectsToConfig(
 				config.Users = append(config.Users, member.User)
 			}
 			config.Groups = append(config.Groups, newGroup)
-		}
-		// add billing groups
-		for _, billingGroup := range project.Groups.BillingGroups {
-			projectConfig.BillingGroups =
-				append(projectConfig.BillingGroups, billingGroup.Name)
-			// skip creating the group if already done
-			if groups[billingGroup.Name] {
-				continue // next group
-			}
-			groups[billingGroup.Name] = true
-			config.BillingGroups =
-				append(config.BillingGroups, billingGroup.AddBillingGroupInput)
 		}
 		// add notifications
 		for _, n := range project.Notifications.Slack {

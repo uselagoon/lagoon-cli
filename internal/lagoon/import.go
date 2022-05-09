@@ -48,10 +48,6 @@ type Importer interface {
 		context.Context, *schema.ProjectGroupsInput, *schema.Project) error
 	AddNotificationToProject(context.Context,
 		*schema.AddNotificationToProjectInput, *schema.Project) error
-	AddBillingGroup(
-		context.Context, *schema.AddBillingGroupInput, *schema.BillingGroup) error
-	AddProjectToBillingGroup(context.Context, *schema.ProjectBillingGroupInput,
-		*schema.Project) error
 }
 
 // Import creates objects in the Lagoon API based on a configuration object.
@@ -70,15 +66,6 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 
 	// import the config
 	l := log.New(os.Stderr, "import: ", 0)
-	// add billing groups
-	for _, bg := range config.BillingGroups {
-		if err := i.AddBillingGroup(ctx, &bg, nil); err != nil {
-			if !keepGoing {
-				return fmt.Errorf("couldn't add billing group: %w", err)
-			}
-			l.Printf("couldn't add billing group: %v", err)
-		}
-	}
 	// add groups
 	for _, group := range config.Groups {
 		if err := i.AddGroup(ctx, &group.AddGroupInput, nil); err != nil {
@@ -259,26 +246,6 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 						`couldn't add Groups to Project "%s": %w`, p.Name, err)
 				}
 				l.Printf(`couldn't add Groups to Project "%s": %v`, p.Name, err)
-			}
-		}
-		if len(p.BillingGroups) > 1 {
-			return fmt.Errorf(
-				`project can only have one billing group: %v`, p.BillingGroups)
-		}
-		// add project to billing group
-		for _, bgName := range p.BillingGroups {
-			err = i.AddProjectToBillingGroup(ctx, &schema.ProjectBillingGroupInput{
-				Group:   schema.GroupInput{Name: bgName},
-				Project: schema.ProjectInput{Name: p.Name},
-			}, nil)
-			if err != nil {
-				if !keepGoing {
-					return fmt.Errorf(
-						`couldn't add Project "%s" to Billing Group "%s": %w`, p.Name,
-						bgName, err)
-				}
-				l.Printf(`couldn't add Project "%s" to Billing Group "%s": %v`, p.Name,
-					bgName, err)
 			}
 		}
 		// add project users

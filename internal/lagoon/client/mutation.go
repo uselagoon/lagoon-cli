@@ -205,34 +205,6 @@ func (c *Client) AddNotificationToProject(ctx context.Context,
 	})
 }
 
-// AddBillingGroup adds a Billing Group.
-func (c *Client) AddBillingGroup(ctx context.Context,
-	in *schema.AddBillingGroupInput, out *schema.BillingGroup) error {
-	req, err := c.newRequest("_lgraphql/addBillingGroup.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.BillingGroup `json:"addBillingGroup"`
-	}{
-		Response: out,
-	})
-}
-
-// AddProjectToBillingGroup adds a Project to a Billing Group.
-func (c *Client) AddProjectToBillingGroup(ctx context.Context,
-	in *schema.ProjectBillingGroupInput, out *schema.Project) error {
-	req, err := c.newRequest("_lgraphql/addProjectToBillingGroup.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.Project `json:"addProjectToBillingGroup"`
-	}{
-		Response: out,
-	})
-}
-
 // DeployEnvironmentLatest deploys a latest environment.
 func (c *Client) DeployEnvironmentLatest(ctx context.Context,
 	in *schema.DeployEnvironmentLatestInput, out *schema.DeployEnvironmentLatest) error {
