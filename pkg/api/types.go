@@ -5,8 +5,11 @@ type SSHKeyType string
 
 // . .
 const (
-	SSHRsa     SSHKeyType = "SSH_RSA"
-	SSHEd25519 SSHKeyType = "SSH_ED25519"
+	SSHRsa      SSHKeyType = "SSH_RSA"
+	SSHEd25519  SSHKeyType = "SSH_ED25519"
+	SSHECDSA256 SSHKeyType = "ECDSA_SHA2_NISTP256"
+	SSHECDSA384 SSHKeyType = "ECDSA_SHA2_NISTP384"
+	SSHECDSA521 SSHKeyType = "ECDSA_SHA2_NISTP521"
 )
 
 // DeployType .

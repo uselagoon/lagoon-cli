@@ -32,8 +32,11 @@ func (c *Config) UnmarshalJSON(data []byte) error {
 	}
 	// post-process the unmarshaled object to Lagoon API requirements
 	sshKeyType := map[api.SSHKeyType]api.SSHKeyType{
-		"ssh-rsa":     api.SSHRsa,
-		"ssh-ed25519": api.SSHEd25519,
+		"ssh-rsa":             api.SSHRsa,
+		"ssh-ed25519":         api.SSHEd25519,
+		"ecdsa-sha2-nistp256": api.SSHECDSA256,
+		"ecdsa-sha2-nistp384": api.SSHECDSA384,
+		"ecdsa-sha2-nistp521": api.SSHECDSA521,
 	}
 	for _, user := range uc.Users {
 		for j, sshKey := range user.SSHKeys {
