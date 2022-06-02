@@ -3,6 +3,7 @@ package schema
 // DeployEnvironmentLatestInput is used as the input for deploying an environment.
 type DeployEnvironmentLatestInput struct {
 	Environment EnvironmentInput `json:"environment"`
+	ReturnData  bool             `json:"returnData"`
 }
 
 // DeployEnvironmentLatest is the response.
@@ -19,6 +20,7 @@ type DeployEnvironmentPullrequestInput struct {
 	BaseBranchRef  string       `json:"baseBranchRef"`
 	HeadBranchName string       `json:"headBranchName"`
 	HeadBranchRef  string       `json:"headBranchRef"`
+	ReturnData     bool         `json:"returnData"`
 }
 
 // DeployEnvironmentPullrequest is the response.
@@ -28,9 +30,10 @@ type DeployEnvironmentPullrequest struct {
 
 // DeployEnvironmentBranchInput is used as the input for deploying a branch.
 type DeployEnvironmentBranchInput struct {
-	Project   string `json:"project"`
-	Branch    string `json:"branch"`
-	BranchRef string `json:"branchRef"`
+	Project    string `json:"project"`
+	Branch     string `json:"branch"`
+	BranchRef  string `json:"branchRef"`
+	ReturnData bool   `json:"returnData"`
 }
 
 // DeployEnvironmentBranch is the response.
@@ -43,6 +46,7 @@ type DeployEnvironmentPromoteInput struct {
 	Project                string `json:"project"`
 	SourceEnvironment      string `json:"sourceEnvironment"`
 	DestinationEnvironment string `json:"destinationEnvironment"`
+	ReturnData             bool   `json:"returnData"`
 }
 
 // DeployEnvironmentPromote is the response.
