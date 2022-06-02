@@ -255,7 +255,7 @@ func init() {
 	deployCmd.AddCommand(deployLatestCmd)
 	deployCmd.AddCommand(deployPullrequestCmd)
 
-	const returnDataUsageText = "Returns deployment information rather than simple string"
+	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
