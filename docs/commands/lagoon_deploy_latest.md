@@ -15,7 +15,7 @@ lagoon deploy latest [flags]
 
 ```
   -h, --help         help for latest
-      --returnData   Returns deployment information rather than simple string
+      --returnData   Returns the build name instead of success text
 ```
 
 ### Options inherited from parent commands
