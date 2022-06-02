@@ -1,7 +1,8 @@
 mutation (
   $project: String!, 
   $sourceEnvironment: String!, 
-  $destinationEnvironment: String!) {
+  $destinationEnvironment: String!,
+  $returnData: Boolean!) {
     deployEnvironmentPromote(input:{
       sourceEnvironment:{
         name: $sourceEnvironment
@@ -13,6 +14,7 @@ mutation (
         name: $project
       }
       destinationEnvironment: $destinationEnvironment
+      returnData: $returnData
     }
   )
 }

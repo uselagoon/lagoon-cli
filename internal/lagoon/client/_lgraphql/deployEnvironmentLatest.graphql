@@ -1,7 +1,8 @@
 mutation (
-  $environment: EnvironmentInput!) {
+  $environment: EnvironmentInput!, $returnData: Boolean!) {
     deployEnvironmentLatest(input: {
       environment: $environment
+      returnData: $returnData
     }
   )
 }
