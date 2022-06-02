@@ -14,7 +14,8 @@ lagoon deploy latest [flags]
 ### Options
 
 ```
-  -h, --help   help for latest
+  -h, --help         help for latest
+      --returnData   Returns deployment information rather than simple string
 ```
 
 ### Options inherited from parent commands

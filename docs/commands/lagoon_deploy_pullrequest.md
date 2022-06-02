@@ -20,6 +20,7 @@ lagoon deploy pullrequest [flags]
   -M, --headBranchRef string    Pullrequest head branch reference hash
   -h, --help                    help for pullrequest
   -n, --number uint             Pullrequest number
+      --returnData              Returns deployment information rather than simple string
   -t, --title string            Pullrequest title
 ```
 
