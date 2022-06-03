@@ -155,6 +155,18 @@ var getProjectKeyCmd = &cobra.Command{
 	},
 }
 
+var getToken = &cobra.Command{
+	Use:     "token",
+	Aliases: []string{"tk"},
+	Short:   "Gets and prints a bearer token",
+	Run: func(cmd *cobra.Command, args []string) {
+		token, err := retrieveTokenViaSsh()
+		handleError(err)
+		output.RenderInfo(string(token), outputOptions)
+
+	},
+}
+
 func init() {
 	getCmd.AddCommand(getAllUserKeysCmd)
 	getCmd.AddCommand(getDeploymentCmd)
@@ -163,6 +175,7 @@ func init() {
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
 	getCmd.AddCommand(getTaskByID)
+	getCmd.AddCommand(getToken)
 	getTaskByID.Flags().IntP("id", "I", 0, "ID of the task")
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
