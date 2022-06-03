@@ -71,7 +71,7 @@ func loginToken() error {
 	}
 
 	lc := lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current]
-	lc.Token = strings.TrimSpace(string(out))
+	lc.Token = out
 	lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current] = lc
 	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
@@ -80,7 +80,7 @@ func loginToken() error {
 	return nil
 }
 
-func retrieveTokenViaSsh() ([]byte, error) {
+func retrieveTokenViaSsh() (string, error) {
 	skipAgent := false
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 	if cmdSSHKey != "" {
@@ -102,18 +102,18 @@ func retrieveTokenViaSsh() ([]byte, error) {
 		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
+		return "", fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
 	}
 	defer conn.Close()
 
 	session, err := conn.NewSession()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't open session: %v", err)
+		return "", fmt.Errorf("couldn't open session: %v", err)
 	}
 
 	out, err := session.CombinedOutput("token")
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get token: %v", err)
+		return "", fmt.Errorf("couldn't get token: %v", err)
 	}
-	return out, err
+	return strings.TrimSpace(string(out)), err
 }

@@ -158,12 +158,11 @@ var getProjectKeyCmd = &cobra.Command{
 var getToken = &cobra.Command{
 	Use:     "token",
 	Aliases: []string{"tk"},
-	Short:   "Gets and prints a bearer token",
+	Short:   "Generates a Lagoon auth token (for use in, for example, graphQL queries)",
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := retrieveTokenViaSsh()
 		handleError(err)
-		output.RenderInfo(string(token), outputOptions)
-
+		fmt.Println(token)
 	},
 }
 
