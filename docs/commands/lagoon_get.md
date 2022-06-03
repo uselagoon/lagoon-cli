@@ -40,5 +40,6 @@ Get info on a resource
 * [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
 * [lagoon get project-metadata](lagoon_get_project-metadata.md)	 - Get all metadata for a project
 * [lagoon get task-by-id](lagoon_get_task-by-id.md)	 - Get information about a task by its ID
+* [lagoon get token](lagoon_get_token.md)	 - Generates a Lagoon auth token (for use in, for example, graphQL queries)
 * [lagoon get user-sshkeys](lagoon_get_user-sshkeys.md)	 - Get a user's SSH keys
 
