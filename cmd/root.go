@@ -425,6 +425,10 @@ func getLagoonConfigFile(configPath *string, configName *string, configExtension
 		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); ok {
 			configFilePath = lagoonConfigEnvar
 		}
+		// prefer LAGOON_CONFIG_FILE
+		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOON_CONFIG_FILE"); ok {
+			configFilePath = lagoonConfigEnvar
+		}
 	}
 	if configFilePath != "" {
 		if fileExists(configFilePath) || createConfig {
@@ -450,6 +454,10 @@ func getLagoonContext(lagoonCLIConfig *lagoon.Config, lagoon *string, cmd *cobra
 	if lagoonContext == "" {
 		if lagoonContextEnvar, ok := os.LookupEnv("LAGOONCONTEXT"); ok {
 			lagoonContext = lagoonContextEnvar
+		}
+		// prefer LAGOON_CONTEXT
+		if lagoonContextEnvar, ok := os.LookupEnv("LAGOON_CONTEXT"); ok {
+			configFilePath = lagoonContextEnvar
 		}
 	}
 	if lagoonContext != "" {
