@@ -83,6 +83,12 @@ func loginToken() error {
 func retrieveTokenViaSsh() (string, error) {
 	skipAgent := false
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
+	// if the user has a key defined in their lagoon cli config, use it
+	if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
+		privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+		skipAgent = true
+	}
+	// otherwise check if one has been provided by the override flag
 	if cmdSSHKey != "" {
 		privateKey = cmdSSHKey
 		skipAgent = true

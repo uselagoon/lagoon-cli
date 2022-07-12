@@ -117,15 +117,3 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	fmt.Println(b.String())
 	return nil
 }
-
-// GenerateSSHConnectionString .
-func GenerateSSHConnectionString(lagoon map[string]string, service string, container string) string {
-	connString := fmt.Sprintf("ssh -t -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" -p %v %s@%s", lagoon["port"], lagoon["username"], lagoon["hostname"])
-	if service != "" {
-		connString = fmt.Sprintf("%s service=%s", connString, service)
-	}
-	if container != "" && service != "" {
-		connString = fmt.Sprintf("%s container=%s", connString, container)
-	}
-	return connString
-}
