@@ -33,7 +33,7 @@ markdown_extensions:
 plugins:
   - search
 
-pages:
+nav:
   - Getting Started: index.md
   - Configuration: config.md
   - Commands: commands/lagoon.md
