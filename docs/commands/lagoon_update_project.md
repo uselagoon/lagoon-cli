@@ -13,11 +13,6 @@ lagoon update project [flags]
 ### Options
 
 ```
-  -D, --activeSystemsDeploy string            Which internal Lagoon System is responsible for deploying 
-  -M, --activeSystemsMisc string              Which internal Lagoon System is responsible for miscellaneous tasks
-  -P, --activeSystemsPromote string           Which internal Lagoon System is responsible for promoting
-  -R, --activeSystemsRemove string            Which internal Lagoon System is responsible for removing
-  -T, --activeSystemsTask string              Which internal Lagoon System is responsible for tasks
   -a, --autoIdle int                          Auto idle setting of the project
   -b, --branches string                       Which branches should be deployed
   -L, --developmentEnvironmentsLimit int      How many environments can be deployed at one time
