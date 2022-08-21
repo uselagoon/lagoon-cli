@@ -9,10 +9,6 @@ query (
         pullrequests
         privateKey
         productionEnvironment
-        activeSystemsDeploy
-        activeSystemsTask
-        activeSystemsRemove
-        activeSystemsPromote
         storageCalc
         openshiftProjectPattern
         developmentEnvironmentsLimit

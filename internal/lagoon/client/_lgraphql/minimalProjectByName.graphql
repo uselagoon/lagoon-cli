@@ -8,10 +8,6 @@ query (
         branches
         pullrequests
         productionEnvironment
-        activeSystemsDeploy
-        activeSystemsTask
-        activeSystemsRemove
-        activeSystemsPromote
         openshiftProjectPattern
         developmentEnvironmentsLimit
         gitUrl
