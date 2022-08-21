@@ -26,6 +26,12 @@ var sshEnvCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
+
+		// allow the use of the `feature/branch` and standard `feature-branch` type environment names to be used
+		// since ssh requires the `feature-branch` type name to be used as the ssh username
+		// run the environment through the makesafe and shorted functions that lagoon uses
+		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
+
 		// get private key that the cli is using
 		skipAgent := false
 
@@ -43,7 +49,7 @@ var sshEnvCmd = &cobra.Command{
 		sshConfig := map[string]string{
 			"hostname": lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
 			"port":     lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port,
-			"username": cmdProjectName + "-" + cmdProjectEnvironment,
+			"username": cmdProjectName + "-" + environmentName,
 			"sshkey":   privateKey,
 		}
 		if sshConnString {
