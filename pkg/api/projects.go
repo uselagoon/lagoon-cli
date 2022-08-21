@@ -63,7 +63,6 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 	req := graphql.NewRequest(`
 	mutation ($name: String!, $gitUrl: String!, $openshift: Int!, $productionEnvironment: String!, 
 		$id: Int, $privateKey: String, $subfolder: String, $openshiftProjectPattern: String, 
-		$activeSystemsDeploy: String, $activeSystemsPromote: String, $activeSystemsRemove: String, $activeSystemsTask: String,
 		$branches: String, $pullrequests: String, $availability: ProjectAvailability, $autoIdle: Int, $developmentEnvironmentsLimit: Int) {
 		addProject(input: {
 			name: $name,
@@ -74,10 +73,6 @@ func (api *Interface) AddProject(project ProjectPatch, fragment string) ([]byte,
 			privateKey: $privateKey,
 			subfolder: $subfolder,
 			openshiftProjectPattern: $openshiftProjectPattern,
-			activeSystemsDeploy: $activeSystemsDeploy,
-			activeSystemsPromote: $activeSystemsPromote,
-			activeSystemsRemove: $activeSystemsRemove,
-			activeSystemsTask: $activeSystemsTask,
 			branches: $branches,
 			pullrequests: $pullrequests,
 			availability: $availability,
@@ -390,39 +385,6 @@ func (api *Interface) GetSlackInfoForProject(project Project, fragment string) (
 		}
 	}` + fragment)
 	generateVars(req, project)
-	if api.debug {
-		debugRequest(req)
-	}
-	returnType, err := api.RunQuery(req, Data{})
-	if err != nil {
-		return []byte(""), err
-	}
-	reMappedResult := returnType.(map[string]interface{})
-	jsonBytes, err := json.Marshal(reMappedResult["project"])
-	if err != nil {
-		return []byte(""), err
-	}
-	if api.debug {
-		debugResponse(jsonBytes)
-	}
-	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
-	}
-	return jsonBytes, nil
-}
-
-// GetActiveSystemForProject . @TODO
-func (api *Interface) GetActiveSystemForProject(project Project, task string) ([]byte, error) {
-	req := graphql.NewRequest(`
-	query ($name: String!){
-		project:projectByName(name: $name){
-			${field}
-			branches
-			pullrequests
-		}
-	}` + notificationsSlackFragment)
-	generateVars(req, project)
-	req.Var("task", task)
 	if api.debug {
 		debugRequest(req)
 	}

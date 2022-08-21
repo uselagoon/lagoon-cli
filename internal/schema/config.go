@@ -251,18 +251,6 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 
 	// don't set options if they're already set to default values
 	defaults := projectDefaults()
-	if p.ActiveSystemsDeploy == defaults.ActiveSystemsDeploy {
-		p.ActiveSystemsDeploy = ""
-	}
-	if p.ActiveSystemsPromote == defaults.ActiveSystemsPromote {
-		p.ActiveSystemsPromote = ""
-	}
-	if p.ActiveSystemsRemove == defaults.ActiveSystemsRemove {
-		p.ActiveSystemsRemove = ""
-	}
-	if p.ActiveSystemsTask == defaults.ActiveSystemsTask {
-		p.ActiveSystemsTask = ""
-	}
 	if p.PullRequests == defaults.PullRequests {
 		p.PullRequests = ""
 	}
@@ -303,10 +291,6 @@ func projectDefaults() *ProjectConfig {
 	return &ProjectConfig{
 		Project: Project{
 			AddProjectInput: AddProjectInput{
-				ActiveSystemsDeploy:          "lagoon_openshiftBuildDeploy",
-				ActiveSystemsPromote:         "lagoon_openshiftBuildDeploy",
-				ActiveSystemsRemove:          "lagoon_openshiftRemove",
-				ActiveSystemsTask:            "lagoon_openshiftJob",
 				PullRequests:                 "true",
 				Branches:                     "true",
 				DevelopmentEnvironmentsLimit: 5,
