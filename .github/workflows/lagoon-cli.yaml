@@ -2,6 +2,8 @@ name: Lagoon CLI Test
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*.*.*'
   pull_request:
