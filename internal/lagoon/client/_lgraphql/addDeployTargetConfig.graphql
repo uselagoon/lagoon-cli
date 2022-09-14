@@ -1,8 +1,8 @@
 mutation (
     $project: Int!
     $weight: Int
-    $branches: String
-    $pullrequests: String
+    $branches: String!
+    $pullrequests: String!
     $deployTarget: Int!
     $deployTargetProjectPattern: String
 ){
