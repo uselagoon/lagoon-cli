@@ -31,6 +31,7 @@
 // _lgraphql/projectByNameMetadata.graphql
 // _lgraphql/projectsByMetadata.graphql
 // _lgraphql/removeProjectMetadataByKey.graphql
+// _lgraphql/sshEndpointsByProject.graphql
 // _lgraphql/switchActiveStandby.graphql
 // _lgraphql/taskByID.graphql
 // _lgraphql/updateDeployTargetConfig.graphql
@@ -731,6 +732,26 @@ func _lgraphqlRemoveprojectmetadatabykeyGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlSshendpointsbyprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x00\xab\x83\x48\x2b\x28\x64\xa6\x80\x29\x90\x10\x98\x91\x9a\x57\x96\x59\x94\x9f\x97\x9b\x9a\x57\x52\x0c\x55\x02\x57\x84\xa4\x4c\x41\x21\xbf\x20\x35\xaf\x38\x23\x33\xad\x24\x00\x62\x85\x1f\x16\x29\x98\x7e\x24\x13\x14\x14\x8a\x8b\x33\x3c\xf2\x8b\x4b\x90\xf9\x01\xf9\x45\x30\x7e\x2d\x17\x8c\xac\xe5\xaa\xe5\x02\x04\x00\x00\xff\xff\x54\x7c\x7d\xf6\xda\x00\x00\x00")
+
+func _lgraphqlSshendpointsbyprojectGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlSshendpointsbyprojectGraphql,
+		"_lgraphql/sshEndpointsByProject.graphql",
+	)
+}
+
+func _lgraphqlSshendpointsbyprojectGraphql() (*asset, error) {
+	bytes, err := _lgraphqlSshendpointsbyprojectGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/sshEndpointsByProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var __lgraphqlSwitchactivestandbyGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\x8c\xb1\x8f\x82\x50\x0c\x87\xf7\xfe\x15\xbf\x23\x37\x1c\x0b\xb9\x1b\x8f\xcd\xc1\x38\x3a\x60\xdc\x2b\x54\xa9\x91\x82\xcf\xa2\x31\x2f\xef\x7f\x37\x18\xb0\x43\x93\x7e\xe9\xf7\xc5\x08\x3d\x82\x07\xdd\x4b\xd8\x04\x61\x97\xb0\x6b\xd9\xb6\x61\x7d\x1d\xf9\x82\x02\xd9\x5f\xf1\x5f\xfc\x66\x48\x89\xba\xd1\xd9\xb5\x37\xfc\x10\xf0\x3d\x84\xfe\x2c\xb5\x97\xa8\x3c\xa8\x9d\xbe\x08\xc8\x11\x09\xb8\x3d\xd4\xeb\x76\x55\xbb\xde\xa5\x72\xb6\xe6\xf0\x9c\x04\x40\x6d\x18\xbd\x7c\xff\x4c\xb3\x04\x96\x1b\x30\xee\xa4\xfc\x94\x67\x9c\x68\xd9\xf9\xac\x6a\x43\x13\x48\x14\x23\xc4\x1a\xa4\xf4\x0a\x00\x00\xff\xff\xf9\xe3\xea\x42\xc6\x00\x00\x00")
 
 func _lgraphqlSwitchactivestandbyGraphqlBytes() ([]byte, error) {
@@ -894,6 +915,7 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/projectByNameMetadata.graphql":          _lgraphqlProjectbynamemetadataGraphql,
 	"_lgraphql/projectsByMetadata.graphql":             _lgraphqlProjectsbymetadataGraphql,
 	"_lgraphql/removeProjectMetadataByKey.graphql":     _lgraphqlRemoveprojectmetadatabykeyGraphql,
+	"_lgraphql/sshEndpointsByProject.graphql":          _lgraphqlSshendpointsbyprojectGraphql,
 	"_lgraphql/switchActiveStandby.graphql":            _lgraphqlSwitchactivestandbyGraphql,
 	"_lgraphql/taskByID.graphql":                       _lgraphqlTaskbyidGraphql,
 	"_lgraphql/updateDeployTargetConfig.graphql":       _lgraphqlUpdatedeploytargetconfigGraphql,
@@ -973,6 +995,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"projectByNameMetadata.graphql":          &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
 		"projectsByMetadata.graphql":             &bintree{_lgraphqlProjectsbymetadataGraphql, map[string]*bintree{}},
 		"removeProjectMetadataByKey.graphql":     &bintree{_lgraphqlRemoveprojectmetadatabykeyGraphql, map[string]*bintree{}},
+		"sshEndpointsByProject.graphql":          &bintree{_lgraphqlSshendpointsbyprojectGraphql, map[string]*bintree{}},
 		"switchActiveStandby.graphql":            &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},
 		"taskByID.graphql":                       &bintree{_lgraphqlTaskbyidGraphql, map[string]*bintree{}},
 		"updateDeployTargetConfig.graphql":       &bintree{_lgraphqlUpdatedeploytargetconfigGraphql, map[string]*bintree{}},

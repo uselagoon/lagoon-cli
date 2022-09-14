@@ -18,6 +18,8 @@ type DeployTarget struct {
 	FriendlyName  string `json:"friendlyName"`
 	CloudProvider string `json:"cloudProvider"`
 	CloudRegion   string `json:"cloudRegion"`
+	SSHHost       string `json:"sshHost"`
+	SSHPort       string `json:"sshPort"`
 }
 
 // AddDeployTargetConfigInput .

@@ -15,6 +15,7 @@ type Projects interface {
 	ProjectsByMetadata(ctx context.Context, key string, value string, project *[]schema.ProjectMetadata) error
 	UpdateProjectMetadata(ctx context.Context, id int, key string, value string, project *schema.ProjectMetadata) error
 	RemoveProjectMetadataByKey(ctx context.Context, id int, key string, project *schema.ProjectMetadata) error
+	SSHEndpointsByProject(ctx context.Context, name string, project *schema.Project) error
 }
 
 // GetMinimalProjectByName gets info of projects in lagoon that have matching metadata.
@@ -45,4 +46,10 @@ func UpdateProjectMetadata(ctx context.Context, id int, key string, value string
 func RemoveProjectMetadataByKey(ctx context.Context, id int, key string, p Projects) (*schema.ProjectMetadata, error) {
 	project := schema.ProjectMetadata{}
 	return &project, p.RemoveProjectMetadataByKey(ctx, id, key, &project)
+}
+
+// GetSSHEndpointsByProject gets info of projects in lagoon that have matching metadata.
+func GetSSHEndpointsByProject(ctx context.Context, name string, p Projects) (*schema.Project, error) {
+	project := schema.Project{}
+	return &project, p.SSHEndpointsByProject(ctx, name, &project)
 }

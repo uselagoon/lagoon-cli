@@ -16,24 +16,56 @@ projects:
     deployType: branch
     environmentType: production
     name: master
+    openshift:
+      cloudProvider: ""
+      cloudRegion: ""
+      friendlyName: ""
+      id: 0
+      name: ""
+      sshHost: ""
+      sshPort: ""
     openshiftProjectName: ci-branch-picky
   - autoIdle: 1
     deployBaseRef: develop
     deployType: branch
     environmentType: development
     name: develop
+    openshift:
+      cloudProvider: ""
+      cloudRegion: ""
+      friendlyName: ""
+      id: 0
+      name: ""
+      sshHost: ""
+      sshPort: ""
     openshiftProjectName: ci-branch-picky
   - autoIdle: 1
     deployBaseRef: stage
     deployType: branch
     environmentType: development
     name: stage
+    openshift:
+      cloudProvider: ""
+      cloudRegion: ""
+      friendlyName: ""
+      id: 0
+      name: ""
+      sshHost: ""
+      sshPort: ""
     openshiftProjectName: ci-branch-picky
   - autoIdle: 1
     deployBaseRef: banana
     deployType: branch
     environmentType: development
     name: banana
+    openshift:
+      cloudProvider: ""
+      cloudRegion: ""
+      friendlyName: ""
+      id: 0
+      name: ""
+      sshHost: ""
+      sshPort: ""
     openshiftProjectName: ci-branch-picky
   gitUrl: ssh://git@192.168.42.1:2222/git/node.git
   groups:

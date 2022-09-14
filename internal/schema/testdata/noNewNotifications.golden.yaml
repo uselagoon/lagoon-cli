@@ -20,6 +20,14 @@ projects:
     deployType: branch
     environmentType: production
     name: master
+    openshift:
+      cloudProvider: ""
+      cloudRegion: ""
+      friendlyName: ""
+      id: 0
+      name: ""
+      sshHost: ""
+      sshPort: ""
     openshiftProjectName: ci-local
   gitUrl: ssh://git@192.168.42.1:2222/git/github.git
   groups:
