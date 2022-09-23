@@ -56,7 +56,7 @@ lagoon config default
 ```
 ## Example
 ```bash
-lagoon config default amazeeio
+lagoon config default --lagoon amazeeio
 ```
 
 # Use a different Lagoon
