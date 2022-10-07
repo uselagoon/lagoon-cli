@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
@@ -55,6 +58,68 @@ var listProjectsCmd = &cobra.Command{
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
+	},
+}
+
+var listDeployTargetsCmd = &cobra.Command{
+	Use:     "deploytargets",
+	Aliases: []string{"deploytarget", "dt"},
+	Short:   "List all DeployTargets in Lagoon",
+	Long:    "List all DeployTargets (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, deploytarget := range *deploytargets {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ConsoleURL)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Token)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHHost)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHPort)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudRegion)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"ConsoleUrl",
+				"Token",
+				"SshHost",
+				"SshPort",
+				"CloudRegion",
+				"CloudProvider",
+				"FriendlyName",
+				"RouterPattern",
+				"Created",
+				"MonitoringConfig",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
@@ -282,6 +347,7 @@ var listInvokableTasks = &cobra.Command{
 }
 
 func init() {
+	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)

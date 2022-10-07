@@ -19,4 +19,5 @@ func init() {
 	updateCmd.AddCommand(updateSlackNotificationCmd)
 	updateCmd.AddCommand(updateUserCmd)
 	updateCmd.AddCommand(updateDeployTargetConfigCmd)
+	updateCmd.AddCommand(updateDeployTargetCmd)
 }

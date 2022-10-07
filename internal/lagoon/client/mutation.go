@@ -20,6 +20,42 @@ func wrapErr(err error) error {
 	return err
 }
 
+// AddDeployTarget adds a deploytarget (kubernetes/openshift).
+func (c *Client) AddDeployTarget(ctx context.Context, in *schema.AddDeployTargetInput, out *schema.AddDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/addDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AddDeployTargetResponse `json:"addDeployTarget"`
+	}{
+		Response: out,
+	})
+}
+
+// UpdateDeployTarget updates a deploytarget (kubernetes/openshift).
+func (c *Client) UpdateDeployTarget(ctx context.Context, in *schema.UpdateDeployTargetInput, out *schema.UpdateDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/updateDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.UpdateDeployTargetResponse `json:"updateDeployTarget"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteDeployTarget deletes a deploytarget (kubernetes/openshift).
+func (c *Client) DeleteDeployTarget(ctx context.Context, in *schema.DeleteDeployTargetInput, out *schema.DeleteDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/deleteDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &out)
+}
+
 // AddGroup adds a group.
 func (c *Client) AddGroup(
 	ctx context.Context, in *schema.AddGroupInput, out *schema.Group) error {

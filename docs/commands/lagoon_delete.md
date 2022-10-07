@@ -32,6 +32,7 @@ Delete a project, or delete notifications and variables from projects or environ
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon delete deploytarget](lagoon_delete_deploytarget.md)	 - Delete a DeployTarget from lagoon
 * [lagoon delete deploytarget-config](lagoon_delete_deploytarget-config.md)	 - Delete a deploytarget config
 * [lagoon delete environment](lagoon_delete_environment.md)	 - Delete an environment
 * [lagoon delete group](lagoon_delete_group.md)	 - Delete a group from lagoon

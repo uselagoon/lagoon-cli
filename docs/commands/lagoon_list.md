@@ -36,6 +36,7 @@ List projects, deployments, variables or notifications
 * [lagoon list backups](lagoon_list_backups.md)	 - List an environments backups
 * [lagoon list deployments](lagoon_list_deployments.md)	 - List deployments for an environment (alias: d)
 * [lagoon list deploytarget-configs](lagoon_list_deploytarget-configs.md)	 - List deploytarget configs for a project
+* [lagoon list deploytargets](lagoon_list_deploytargets.md)	 - List all DeployTargets in Lagoon
 * [lagoon list environments](lagoon_list_environments.md)	 - List environments for a project (alias: e)
 * [lagoon list group-projects](lagoon_list_group-projects.md)	 - List projects in a group (alias: gp)
 * [lagoon list groups](lagoon_list_groups.md)	 - List groups you have access to (alias: g)

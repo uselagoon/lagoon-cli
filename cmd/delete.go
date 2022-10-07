@@ -16,6 +16,7 @@ var deleteCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteEnvCmd)
 	deleteCmd.AddCommand(deleteGroupCmd)
+	deleteCmd.AddCommand(deleteDeployTargetCmd)
 	deleteCmd.AddCommand(deleteProjectCmd)
 	deleteCmd.AddCommand(deleteProjectFromGroupCmd)
 	deleteCmd.AddCommand(deleteProjectRocketChatNotificationCmd)

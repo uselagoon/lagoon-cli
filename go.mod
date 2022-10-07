@@ -31,6 +31,7 @@ require (
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 )
 
