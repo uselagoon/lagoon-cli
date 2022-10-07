@@ -123,7 +123,6 @@ var addDeployTargetCmd = &cobra.Command{
 					"Name",
 					"ConsoleUrl",
 					"Token",
-					"ConsoleUrl",
 					"SshHost",
 					"SshPort",
 					"CloudRegion",

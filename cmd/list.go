@@ -89,18 +89,30 @@ var listDeployTargetsCmd = &cobra.Command{
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ConsoleURL)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Token)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHHost)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHPort)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudRegion)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
 			})
 		}
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
 				"Name",
-				"FriendlyName",
-				"CloudProvider",
+				"ConsoleUrl",
+				"Token",
+				"SshHost",
+				"SshPort",
 				"CloudRegion",
+				"CloudProvider",
+				"FriendlyName",
+				"RouterPattern",
+				"MonitoringConfig",
 			},
 			Data: data,
 		}, outputOptions)
