@@ -14,8 +14,8 @@ import (
 var addDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
-	Short:   "Add a deploytarget to lagoon",
-	Long:    "Add a deploytarget (kubernetes or openshift) to lagoon, this requires admin level permissions",
+	Short:   "Add a DeployTarget to lagoon",
+	Long:    "Add a DeployTarget (kubernetes or openshift) to lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -97,7 +97,7 @@ var addDeployTargetCmd = &cobra.Command{
 			lagoonCLIVersion,
 			debug)
 
-		if yesNo(fmt.Sprintf("You are attempting to add '%s' deploytarget, are you sure?", addDeployTarget.Name)) {
+		if yesNo(fmt.Sprintf("You are attempting to add '%s' DeployTarget, are you sure?", addDeployTarget.Name)) {
 			addDeployTargetResponse, err := lagoon.AddDeployTarget(context.TODO(), addDeployTarget, lc)
 			if err != nil {
 				handleError(err)
@@ -143,8 +143,8 @@ var addDeployTargetCmd = &cobra.Command{
 var updateDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
-	Short:   "Update a deploytarget in lagoon",
-	Long:    "Update a deploytarget (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	Short:   "Update a DeployTarget in lagoon",
+	Long:    "Update a DeployTarget (kubernetes or openshift) in lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -211,7 +211,7 @@ var updateDeployTargetCmd = &cobra.Command{
 				SSHPort:       sshPort,
 			},
 		}
-		if yesNo(fmt.Sprintf("You are attempting to update '%d' deploytarget, are you sure?", updateDeployTarget.ID)) {
+		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
 			updateDeployTargetResponse, err := lagoon.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
 			if err != nil {
 				handleError(err)
@@ -257,8 +257,8 @@ var updateDeployTargetCmd = &cobra.Command{
 var deleteDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
-	Short:   "Delete a deploytarget from lagoon",
-	Long:    "Delete a deploytarget (kubernetes or openshift) from lagoon, this requires admin level permissions",
+	Short:   "Delete a DeployTarget from lagoon",
+	Long:    "Delete a DeployTarget (kubernetes or openshift) from lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -284,7 +284,7 @@ var deleteDeployTargetCmd = &cobra.Command{
 		deleteDeployTarget := &schema.DeleteDeployTargetInput{
 			Name: name,
 		}
-		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget '%s', are you sure?", deleteDeployTarget.Name)) {
+		if yesNo(fmt.Sprintf("You are attempting to delete DeployTarget '%s', are you sure?", deleteDeployTarget.Name)) {
 			deleteDeployTargetResponse, err := lagoon.DeleteDeployTarget(context.TODO(), deleteDeployTarget, lc)
 			if err != nil {
 				handleError(err)
@@ -301,27 +301,27 @@ var deleteDeployTargetCmd = &cobra.Command{
 }
 
 func init() {
-	addDeployTargetCmd.Flags().UintP("id", "", 0, "Deploytarget id")
-	addDeployTargetCmd.Flags().StringP("name", "", "", "Name of deploytarget")
-	addDeployTargetCmd.Flags().StringP("console-url", "", "", "Console URL")
-	addDeployTargetCmd.Flags().StringP("token", "", "", "deploytarget token")
-	addDeployTargetCmd.Flags().StringP("router-pattern", "", "", "deploytarget router-pattern")
-	addDeployTargetCmd.Flags().StringP("friendly-name", "", "", "deploytarget friendly name")
-	addDeployTargetCmd.Flags().StringP("cloud-provider", "", "", "deploytarget cloud provider")
-	addDeployTargetCmd.Flags().StringP("cloud-region", "", "", "deploytarget cloud region")
-	addDeployTargetCmd.Flags().StringP("ssh-host", "", "", "deploytarget ssh host")
-	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "deploytarget ssh port")
+	addDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
+	addDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
+	addDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")
+	addDeployTargetCmd.Flags().StringP("token", "", "", "DeployTarget token")
+	addDeployTargetCmd.Flags().StringP("router-pattern", "", "", "DeployTarget router-pattern")
+	addDeployTargetCmd.Flags().StringP("friendly-name", "", "", "DeployTarget friendly name")
+	addDeployTargetCmd.Flags().StringP("cloud-provider", "", "", "DeployTarget cloud provider")
+	addDeployTargetCmd.Flags().StringP("cloud-region", "", "", "DeployTarget cloud region")
+	addDeployTargetCmd.Flags().StringP("ssh-host", "", "", "DeployTarget ssh host")
+	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 
-	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "Deploytarget id")
-	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of deploytarget")
+	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
+	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	updateDeployTargetCmd.Flags().UintP("id", "", 0, "Deploytarget id")
-	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "Console URL")
-	updateDeployTargetCmd.Flags().StringP("token", "", "", "deploytarget token")
-	updateDeployTargetCmd.Flags().StringP("router-pattern", "", "", "deploytarget router-pattern")
-	updateDeployTargetCmd.Flags().StringP("friendly-name", "", "", "deploytarget friendly name")
-	updateDeployTargetCmd.Flags().StringP("cloud-provider", "", "", "deploytarget cloud provider")
-	updateDeployTargetCmd.Flags().StringP("cloud-region", "", "", "deploytarget cloud region")
-	updateDeployTargetCmd.Flags().StringP("ssh-host", "", "", "deploytarget ssh host")
-	updateDeployTargetCmd.Flags().StringP("ssh-port", "", "", "deploytarget ssh port")
+	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
+	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")
+	updateDeployTargetCmd.Flags().StringP("token", "", "", "DeployTarget token")
+	updateDeployTargetCmd.Flags().StringP("router-pattern", "", "", "DeployTarget router-pattern")
+	updateDeployTargetCmd.Flags().StringP("friendly-name", "", "", "DeployTarget friendly name")
+	updateDeployTargetCmd.Flags().StringP("cloud-provider", "", "", "DeployTarget cloud provider")
+	updateDeployTargetCmd.Flags().StringP("cloud-region", "", "", "DeployTarget cloud region")
+	updateDeployTargetCmd.Flags().StringP("ssh-host", "", "", "DeployTarget ssh host")
+	updateDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 }
