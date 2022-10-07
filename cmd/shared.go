@@ -14,6 +14,7 @@ var lagoonGraphQL string
 var lagoonToken string
 var lagoonUI string
 var lagoonKibana string
+var lagoonSSHKey string
 
 // variable vars
 var variableValue string

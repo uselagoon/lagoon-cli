@@ -72,7 +72,6 @@ type Client interface {
 	GetAllProjects(string) ([]byte, error)
 	GetRocketChatInfoForProject(Project, string) ([]byte, error)
 	GetSlackInfoForProject(Project, string) ([]byte, error)
-	GetActiveSystemForProject(Project, string) ([]byte, error)
 	GetEnvironmentsForProject(Project) ([]byte, error)
 	GetDeploymentByRemoteID(Deployment) ([]byte, error)
 	AddDeployment(Deployment) ([]byte, error)

@@ -1,21 +1,19 @@
-## lagoon deploy latest
+## lagoon get token
 
-Deploy latest environment
+Generates a Lagoon auth token (for use in, for example, graphQL queries)
 
 ### Synopsis
 
-Deploy latest environment
-This environment should already exist in lagoon. It is analogous with the 'Deploy' button in the Lagoon UI
+Generates a Lagoon auth token (for use in, for example, graphQL queries)
 
 ```
-lagoon deploy latest [flags]
+lagoon get token [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help         help for latest
-      --returnData   Returns the build name instead of success text
+  -h, --help   help for token
 ```
 
 ### Options inherited from parent commands
@@ -37,5 +35,5 @@ lagoon deploy latest [flags]
 
 ### SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

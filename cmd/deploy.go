@@ -39,6 +39,10 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
+		returnData, err := cmd.Flags().GetBool("returnData")
+		if err != nil {
+			return err
+		}
 		if cmdProjectName == "" || branch == "" {
 			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
 		}
@@ -51,8 +55,9 @@ use 'lagoon deploy latest' instead`,
 				lagoonCLIVersion,
 				debug)
 			depBranch := &schema.DeployEnvironmentBranchInput{
-				Branch:  branch,
-				Project: cmdProjectName,
+				Branch:     branch,
+				Project:    cmdProjectName,
+				ReturnData: returnData,
 			}
 			if branchRef != "" {
 				depBranch.BranchRef = branchRef
@@ -88,6 +93,10 @@ var deployPromoteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		returnData, err := cmd.Flags().GetBool("returnData")
+		if err != nil {
+			return err
+		}
 		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
 			return fmt.Errorf("Missing arguments: Project name, source environment, or destination environment is not defined")
 		}
@@ -103,6 +112,7 @@ var deployPromoteCmd = &cobra.Command{
 				SourceEnvironment:      sourceEnvironment,
 				DestinationEnvironment: destinationEnvironment,
 				Project:                cmdProjectName,
+				ReturnData:             returnData,
 			}, lc)
 			if err != nil {
 				return err
@@ -124,6 +134,11 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		returnData, err := cmd.Flags().GetBool("returnData")
+		if err != nil {
+			return err
+		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
@@ -146,6 +161,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 						Name: cmdProjectName,
 					},
 				},
+				ReturnData: returnData,
 			}, lc)
 			if err != nil {
 				return err
@@ -239,11 +255,16 @@ func init() {
 	deployCmd.AddCommand(deployLatestCmd)
 	deployCmd.AddCommand(deployPullrequestCmd)
 
+	const returnDataUsageText = "Returns the build name instead of success text"
+	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
+	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
+	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
@@ -251,4 +272,5 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("baseBranchRef", "R", "", "Pullrequest base branch reference hash")
 	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
 	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
+	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
 }

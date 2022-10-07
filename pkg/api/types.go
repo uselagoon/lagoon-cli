@@ -5,8 +5,11 @@ type SSHKeyType string
 
 // . .
 const (
-	SSHRsa     SSHKeyType = "SSH_RSA"
-	SSHEd25519 SSHKeyType = "SSH_ED25519"
+	SSHRsa      SSHKeyType = "SSH_RSA"
+	SSHEd25519  SSHKeyType = "SSH_ED25519"
+	SSHECDSA256 SSHKeyType = "ECDSA_SHA2_NISTP256"
+	SSHECDSA384 SSHKeyType = "ECDSA_SHA2_NISTP384"
+	SSHECDSA521 SSHKeyType = "ECDSA_SHA2_NISTP521"
 )
 
 // DeployType .
@@ -230,11 +233,6 @@ type Project struct {
 	PrivateKey                   string                `json:"privateKey,omitempty"`
 	Subfolder                    string                `json:"subfolder,omitempty"`
 	RouterPattern                string                `json:"routerPattern,omitempty"`
-	ActiveSystemsTask            string                `json:"activeSystemsTask,omitempty"`
-	ActiveSystemsDeploy          string                `json:"activeSystemsDeploy,omitempty"`
-	ActiveSystemsRemove          string                `json:"activeSystemsRemove,omitempty"`
-	ActiveSystemsPromote         string                `json:"activeSystemsPromote,omitempty"`
-	ActiveSystemsMisc            string                `json:"activeSystemsMisc,omitempty"`
 	Branches                     string                `json:"branches,omitempty"`
 	Pullrequests                 string                `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string                `json:"productionEnvironment,omitempty"`
@@ -260,11 +258,6 @@ type ProjectPatch struct {
 	PrivateKey                   string `json:"privateKey,omitempty"`
 	Subfolder                    string `json:"subfolder,omitempty"`
 	RouterPattern                string `json:"routerPattern,omitempty"`
-	ActiveSystemsTask            string `json:"activeSystemsTask,omitempty"`
-	ActiveSystemsDeploy          string `json:"activeSystemsDeploy,omitempty"`
-	ActiveSystemsRemove          string `json:"activeSystemsRemove,omitempty"`
-	ActiveSystemsPromote         string `json:"activeSystemsPromote,omitempty"`
-	ActiveSystemsMisc            string `json:"activeSystemsMisc,omitempty"`
 	Branches                     string `json:"branches,omitempty"`
 	Pullrequests                 string `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string `json:"productionEnvironment,omitempty"`

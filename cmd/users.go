@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -28,7 +29,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) api.SSHKey {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (api.SSHKey, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
@@ -37,12 +38,25 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	}
 	splitKey := strings.Split(keyValue, " ")
 	var keyType api.SSHKeyType
-	// default to ssh-rsa, otherwise check if ssh-ed25519
-	// will fail if neither are right
-	keyType = api.SSHRsa
-	if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
+	var err error
+
+	// will fail if value is not right
+	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
+		keyType = api.SSHRsa
+	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
 		keyType = api.SSHEd25519
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
+		keyType = api.SSHECDSA256
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
+		keyType = api.SSHECDSA384
+	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
+		keyType = api.SSHECDSA521
+	} else {
+		// return error stating key type not supported
+		keyType = api.SSHRsa
+		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
+
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
 		//strip new line
@@ -56,7 +70,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		KeyValue: stripNewLines(splitKey[1]),
 		Name:     keyName,
 	}
-	return parsedFlags
+	return parsedFlags, err
 }
 
 var addUserCmd = &cobra.Command{
@@ -112,9 +126,10 @@ Add key by defining key value, but not specifying a key name (will default to tr
 			cmd.Help()
 			os.Exit(1)
 		}
-		userSSHKey := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
-		var customReqResult []byte
 		var err error
+		userSSHKey, err := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
+		handleError(err)
+		var customReqResult []byte
 		customReqResult, err = uClient.AddSSHKeyToUser(userFlags, userSSHKey)
 		handleError(err)
 		returnResultData := map[string]interface{}{}

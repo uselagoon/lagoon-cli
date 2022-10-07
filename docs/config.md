@@ -29,11 +29,11 @@ There are a few sections to cover off
 # Add a Lagoon
 If you want to add a different Lagoon to use, then you can use the CLI command to view the flags available
 ```bash
-lagoon config add
+lagoon config add --lagoon LagoonName
 ```
 ## Example
 ```bash
-lagoon config add amazeeio \
+lagoon config add --lagoon amazeeio \
     --graphql https://api.lagoon.amazeeio.cloud/graphql \
     --hostname ssh.lagoon.amazeeio.cloud \
     --port 32222
@@ -42,21 +42,21 @@ lagoon config add amazeeio \
 # Delete a Lagoon
 If you want to remove a Lagoon, you can use
 ```bash
-lagoon config delete
+lagoon config delete --lagoon LagoonName
 ```
 ## Example
 ```bash
-lagoon config delete amazeeio
+lagoon config delete --lagoon amazeeio
 ```
 
 # Change default Lagoon
 If you add additional Lagoons, you can select which one is the default you want to use by running
 ```bash
-lagoon config default
+lagoon config default --lagoon LagoonName
 ```
 ## Example
 ```bash
-lagoon config default amazeeio
+lagoon config default --lagoon amazeeio
 ```
 
 # Use a different Lagoon

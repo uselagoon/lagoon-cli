@@ -32,8 +32,11 @@ func (c *Config) UnmarshalJSON(data []byte) error {
 	}
 	// post-process the unmarshaled object to Lagoon API requirements
 	sshKeyType := map[api.SSHKeyType]api.SSHKeyType{
-		"ssh-rsa":     api.SSHRsa,
-		"ssh-ed25519": api.SSHEd25519,
+		"ssh-rsa":             api.SSHRsa,
+		"ssh-ed25519":         api.SSHEd25519,
+		"ecdsa-sha2-nistp256": api.SSHECDSA256,
+		"ecdsa-sha2-nistp384": api.SSHECDSA384,
+		"ecdsa-sha2-nistp521": api.SSHECDSA521,
 	}
 	for _, user := range uc.Users {
 		for j, sshKey := range user.SSHKeys {
@@ -248,18 +251,6 @@ func minimiseProjectConfig(p *ProjectConfig, exclude map[string]bool) {
 
 	// don't set options if they're already set to default values
 	defaults := projectDefaults()
-	if p.ActiveSystemsDeploy == defaults.ActiveSystemsDeploy {
-		p.ActiveSystemsDeploy = ""
-	}
-	if p.ActiveSystemsPromote == defaults.ActiveSystemsPromote {
-		p.ActiveSystemsPromote = ""
-	}
-	if p.ActiveSystemsRemove == defaults.ActiveSystemsRemove {
-		p.ActiveSystemsRemove = ""
-	}
-	if p.ActiveSystemsTask == defaults.ActiveSystemsTask {
-		p.ActiveSystemsTask = ""
-	}
 	if p.PullRequests == defaults.PullRequests {
 		p.PullRequests = ""
 	}
@@ -300,10 +291,6 @@ func projectDefaults() *ProjectConfig {
 	return &ProjectConfig{
 		Project: Project{
 			AddProjectInput: AddProjectInput{
-				ActiveSystemsDeploy:          "lagoon_openshiftBuildDeploy",
-				ActiveSystemsPromote:         "lagoon_openshiftBuildDeploy",
-				ActiveSystemsRemove:          "lagoon_openshiftRemove",
-				ActiveSystemsTask:            "lagoon_openshiftJob",
 				PullRequests:                 "true",
 				Branches:                     "true",
 				DevelopmentEnvironmentsLimit: 5,

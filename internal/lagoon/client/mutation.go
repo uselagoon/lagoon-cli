@@ -360,7 +360,7 @@ func (c *Client) AddRestore(
 // AddDeployTargetConfiguration adds a deploytarget configuration to a project.
 func (c *Client) AddDeployTargetConfiguration(ctx context.Context,
 	in *schema.AddDeployTargetConfigInput, out *schema.DeployTargetConfig) error {
-	req, err := c.newRequest("_lgraphql/addDeployTargetConfig.graphql", in)
+	req, err := c.newVersionedRequest("_lgraphql/addDeployTargetConfig.graphql", in)
 	if err != nil {
 		return err
 	}

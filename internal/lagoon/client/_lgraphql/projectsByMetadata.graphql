@@ -15,10 +15,6 @@ query (
         pullrequests
         metadata
         productionEnvironment
-        activeSystemsDeploy
-        activeSystemsTask
-        activeSystemsRemove
-        activeSystemsPromote
         openshiftProjectPattern
         developmentEnvironmentsLimit
         gitUrl

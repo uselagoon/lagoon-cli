@@ -10,10 +10,6 @@ type AddProjectInput struct {
 	Subfolder                    string              `json:"subfolder,omitempty"`
 	Openshift                    uint                `json:"openshift"`
 	OpenshiftProjectPattern      string              `json:"openshiftProjectPattern,omitempty"`
-	ActiveSystemsDeploy          string              `json:"activeSystemsDeploy,omitempty"`
-	ActiveSystemsPromote         string              `json:"activeSystemsPromote,omitempty"`
-	ActiveSystemsRemove          string              `json:"activeSystemsRemove,omitempty"`
-	ActiveSystemsTask            string              `json:"activeSystemsTask,omitempty"`
 	Branches                     string              `json:"branches,omitempty"`
 	PullRequests                 string              `json:"pullrequests,omitempty"`
 	ProductionEnvironment        string              `json:"productionEnvironment"`

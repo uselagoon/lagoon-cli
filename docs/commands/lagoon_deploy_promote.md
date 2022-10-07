@@ -15,6 +15,7 @@ lagoon deploy promote [flags]
 ```
   -d, --destination string   Destination environment name to create
   -h, --help                 help for promote
+      --returnData           Returns the build name instead of success text
   -s, --source string        Source environment name to use as the base to deploy from
 ```
 

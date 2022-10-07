@@ -16,7 +16,7 @@ import (
 // EnvironmentVariableFlags .
 type EnvironmentVariableFlags struct {
 	Name  string `json:"name,omitempty"`
-	Value string `json:"value,omitempty"`
+	Value string `json:"value"`
 	Scope string `json:"scope,omitempty"`
 }
 
@@ -48,8 +48,8 @@ var addVariableCmd = &cobra.Command{
 			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
 			handleError(err)
 		}
-		if envVarFlags.Name == "" || envVarFlags.Value == "" || envVarFlags.Scope == "" {
-			output.RenderError("Must define a variable name, value and scope", outputOptions)
+		if envVarFlags.Name == "" || envVarFlags.Scope == "" {
+			output.RenderError("Must define a variable name and scope", outputOptions)
 			os.Exit(1)
 		}
 		if strings.EqualFold(string(envVarFlags.Scope), "global") {
@@ -90,7 +90,6 @@ var addVariableCmd = &cobra.Command{
 	},
 }
 
-// var deleteVariableEnvCmd = &cobra.Command{
 var deleteVariableCmd = &cobra.Command{
 	Use:     "variable",
 	Aliases: []string{"v"},

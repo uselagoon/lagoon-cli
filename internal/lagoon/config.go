@@ -18,4 +18,5 @@ type Context struct {
 	Port     string `json:"port"`
 	Token    string `json:"token,omitempty"`
 	Version  string `json:"version,omitempty"`
+	SSHKey   string `json:"sshkey,omitempty"`
 }

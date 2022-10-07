@@ -26,22 +26,36 @@ var sshEnvCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
+
+		// allow the use of the `feature/branch` and standard `feature-branch` type environment names to be used
+		// since ssh requires the `feature-branch` type name to be used as the ssh username
+		// run the environment through the makesafe and shorted functions that lagoon uses
+		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
+
+		// get private key that the cli is using
+		skipAgent := false
+
+		privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
+		// if the user has a key defined in their lagoon cli config, use it
+		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
+			privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+			skipAgent = true
+		}
+		// otherwise check if one has been provided by the override flag
+		if cmdSSHKey != "" {
+			privateKey = cmdSSHKey
+			skipAgent = true
+		}
 		sshConfig := map[string]string{
 			"hostname": lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
 			"port":     lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port,
-			"username": cmdProjectName + "-" + cmdProjectEnvironment,
+			"username": cmdProjectName + "-" + environmentName,
+			"sshkey":   privateKey,
 		}
 		if sshConnString {
-			fmt.Println(lagoonssh.GenerateSSHConnectionString(sshConfig, sshService, sshContainer))
+			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer))
 		} else {
-			// get private key that the cli is using
-			skipAgent := false
 
-			privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
-			if cmdSSHKey != "" {
-				privateKey = cmdSSHKey
-				skipAgent = true
-			}
 			// start an interactive ssh session
 			authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
 			config := &ssh.ClientConfig{
@@ -74,4 +88,16 @@ func init() {
 	sshEnvCmd.Flags().StringVarP(&sshContainer, "container", "c", "", "specify a specific container name")
 	sshEnvCmd.Flags().BoolVarP(&sshConnString, "conn-string", "", false, "Display the full ssh connection string")
 	sshEnvCmd.Flags().StringVarP(&sshCommand, "command", "C", "", "Command to run on remote")
+}
+
+// generateSSHConnectionString .
+func generateSSHConnectionString(lagoon map[string]string, service string, container string) string {
+	connString := fmt.Sprintf("ssh -t %s-o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" -p %v %s@%s", lagoon["sshKey"], lagoon["port"], lagoon["username"], lagoon["hostname"])
+	if service != "" {
+		connString = fmt.Sprintf("%s service=%s", connString, service)
+	}
+	if container != "" && service != "" {
+		connString = fmt.Sprintf("%s container=%s", connString, container)
+	}
+	return connString
 }

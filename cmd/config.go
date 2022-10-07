@@ -29,6 +29,7 @@ type LagoonConfigFlags struct {
 	Token    string `json:"token,omitempty"`
 	UI       string `json:"ui,omitempty"`
 	Kibana   string `json:"kibana,omitempty"`
+	SSHKey   string `json:"sshkey,omitempty"`
 }
 
 func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
@@ -107,25 +108,32 @@ var configLagoonsCmd = &cobra.Command{
 				returnNonEmptyString(lc.GraphQL),
 				returnNonEmptyString(lc.HostName),
 				returnNonEmptyString(lc.Port),
-				returnNonEmptyString(lc.UI),
-				returnNonEmptyString(lc.Kibana),
 			}
+			if fullConfigList {
+				mapData = append(mapData, returnNonEmptyString(lc.UI))
+				mapData = append(mapData, returnNonEmptyString(lc.Kibana))
+			}
+			mapData = append(mapData, returnNonEmptyString(lc.SSHKey))
 			data = append(data, mapData)
 		}
 		sort.Slice(data, func(i, j int) bool {
 			return data[i][0] < data[j][0]
 		})
+		tableHeader := []string{
+			"Name",
+			"Version",
+			"GraphQL",
+			"SSH-Hostname",
+			"SSH-Port",
+		}
+		if fullConfigList {
+			tableHeader = append(tableHeader, "UI-URL")
+			tableHeader = append(tableHeader, "Kibana-URL")
+		}
+		tableHeader = append(tableHeader, "SSH-Key")
 		output.RenderOutput(output.Table{
-			Header: []string{
-				"Name",
-				"Version",
-				"GraphQL",
-				"SSH-Hostname",
-				"SSH-Port",
-				"UI-URL",
-				"Kibana-URL",
-			},
-			Data: data,
+			Header: tableHeader,
+			Data:   data,
 		}, outputOptions)
 		return nil
 	},
@@ -155,6 +163,9 @@ var configAddCmd = &cobra.Command{
 			if lagoonConfig.Token != "" {
 				lc.Token = lagoonConfig.Token
 			}
+			if lagoonConfig.SSHKey != "" {
+				lc.SSHKey = lagoonConfig.SSHKey
+			}
 			lagoonCLIConfig.Lagoons[lagoonConfig.Lagoon] = lc
 			if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 				return fmt.Errorf("couldn't write config: %v", err)
@@ -167,6 +178,7 @@ var configAddCmd = &cobra.Command{
 					"SSH-Port",
 					"UI-URL",
 					"Kibana-URL",
+					"SSH-Key",
 				},
 				Data: []output.Data{
 					[]string{
@@ -176,6 +188,7 @@ var configAddCmd = &cobra.Command{
 						lagoonConfig.Port,
 						lagoonConfig.UI,
 						lagoonConfig.Kibana,
+						lagoonConfig.SSHKey,
 					},
 				},
 			}, outputOptions)
@@ -277,6 +290,7 @@ var configLagoonVersionCmd = &cobra.Command{
 
 var updateCheck string
 var environmentFromDirectory string
+var fullConfigList bool
 
 func init() {
 	configCmd.AddCommand(configAddCmd)
@@ -300,6 +314,10 @@ func init() {
 		"Create the config file if it is non existent (to be used with --config-file)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "",
 		"Lagoon Kibana URL (https://logs.amazeeio.cloud)")
+	configAddCmd.Flags().StringVarP(&lagoonSSHKey, "ssh-key", "", "",
+		"SSH Key to use for this cluster for generating tokens")
+	configLagoonsCmd.Flags().BoolVarP(&fullConfigList, "show-full", "", false,
+		"Show full config output when listing Lagoon configurations")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "",
 		"Enable or disable checking of updates (true/false)")
 	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "",
