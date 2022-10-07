@@ -20,22 +20,35 @@ func wrapErr(err error) error {
 	return err
 }
 
-// AddOpenShift adds an openshift.
-func (c *Client) AddOpenshift(ctx context.Context, in *schema.AddOpenshiftInput, out *schema.AddOpenshiftResponse) error {
-	req, err := c.newRequest("_lgraphql/addOpenshift.graphql", in)
+// AddDeployTarget adds a deploytarget (kubernetes/openshift).
+func (c *Client) AddDeployTarget(ctx context.Context, in *schema.AddDeployTargetInput, out *schema.AddDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/addDeployTarget.graphql", in)
 	if err != nil {
 		return err
 	}
 	return c.client.Run(ctx, req, &struct {
-		Response *schema.AddOpenshiftResponse `json:"addOpenshift"`
+		Response *schema.AddDeployTargetResponse `json:"addDeployTarget"`
 	}{
 		Response: out,
 	})
 }
 
-// DeleteOpenShift deletes an openshift.
-func (c *Client) DeleteOpenshift(ctx context.Context, in *schema.DeleteOpenshiftInput, out *schema.DeleteOpenshiftResponse) error {
-	req, err := c.newRequest("_lgraphql/deleteOpenshift.graphql", in)
+// UpdateDeployTarget updates a deploytarget (kubernetes/openshift).
+func (c *Client) UpdateDeployTarget(ctx context.Context, in *schema.UpdateDeployTargetInput, out *schema.UpdateDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/updateDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.UpdateDeployTargetResponse `json:"updateDeployTarget"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteDeployTarget deletes a deploytarget (kubernetes/openshift).
+func (c *Client) DeleteDeployTarget(ctx context.Context, in *schema.DeleteDeployTargetInput, out *schema.DeleteDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/deleteDeployTarget.graphql", in)
 	if err != nil {
 		return err
 	}

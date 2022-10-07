@@ -1,0 +1,15 @@
+query {
+  listDeployTargets: allKubernetes{
+    id
+    name
+    consoleUrl
+    cloudRegion
+    cloudProvider
+    friendlyName
+    token
+    sshHost
+    sshPort
+    routerPattern
+    monitoringConfig
+  }
+}

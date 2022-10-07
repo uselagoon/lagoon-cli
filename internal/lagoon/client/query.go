@@ -218,3 +218,19 @@ func (c *Client) DeployTargetConfigsByProjectID(
 		Response: deploytargetconfigs,
 	})
 }
+
+// ListDeployTargets queries the Lagoon API for a deploytargets and unmarshals the response into deploytargets.
+func (c *Client) ListDeployTargets(
+	ctx context.Context, deploytargets *[]schema.DeployTarget) error {
+
+	req, err := c.newRequest("_lgraphql/listDeployTargets.graphql", nil)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.DeployTarget `json:"listDeployTargets"`
+	}{
+		Response: deploytargets,
+	})
+}

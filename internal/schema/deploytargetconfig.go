@@ -11,15 +11,6 @@ type DeployTargetConfig struct {
 	DeployTargetProjectPattern string       `json:"deployTargetProjectPattern"`
 }
 
-// DeployTarget .
-type DeployTarget struct {
-	ID            uint   `json:"id"`
-	Name          string `json:"name"`
-	FriendlyName  string `json:"friendlyName"`
-	CloudProvider string `json:"cloudProvider"`
-	CloudRegion   string `json:"cloudRegion"`
-}
-
 // AddDeployTargetConfigInput .
 type AddDeployTargetConfigInput struct {
 	ID                         uint   `json:"id,omitempty"`

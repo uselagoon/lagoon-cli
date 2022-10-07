@@ -9,7 +9,7 @@ mutation (
   $friendlyName: String,
   $cloudProvider: String,
   $cloudRegion: String) {
-    addOpenshift(input: {
+    addDeployTarget: addOpenshift(input: {
       name: $name,
       consoleUrl: $consoleUrl,
       token: $token
@@ -23,5 +23,13 @@ mutation (
     }) {
       id
       name
+      consoleUrl
+      sshHost
+      sshPort
+      cloudProvider
+      cloudRegion
+      friendlyName
+      routerPattern
+      monitoringConfig
     }
   }

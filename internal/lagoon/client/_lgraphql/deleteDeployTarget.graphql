@@ -1,7 +1,7 @@
 mutation (
   $name: String!
 ) {
-  deleteOpenshift(input: {
+  deleteDeployTarget: deleteOpenshift(input: {
     name: $name
   })
 }
