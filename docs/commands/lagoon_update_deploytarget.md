@@ -1,15 +1,28 @@
-## lagoon update
+## lagoon update deploytarget
 
-Update a resource
+Update a DeployTarget in lagoon
 
 ### Synopsis
 
-Update a resource
+Update a DeployTarget (kubernetes or openshift) in lagoon, this requires admin level permissions
+
+```
+lagoon update deploytarget [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for update
+      --cloud-provider string   DeployTarget cloud provider
+      --cloud-region string     DeployTarget cloud region
+      --console-url string      DeployTarget console URL
+      --friendly-name string    DeployTarget friendly name
+  -h, --help                    help for deploytarget
+      --id uint                 ID of the DeployTarget
+      --router-pattern string   DeployTarget router-pattern
+      --ssh-host string         DeployTarget ssh host
+      --ssh-port string         DeployTarget ssh port
+      --token string            DeployTarget token
 ```
 
 ### Options inherited from parent commands
@@ -31,12 +44,5 @@ Update a resource
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon update deploytarget](lagoon_update_deploytarget.md)	 - Update a DeployTarget in lagoon
-* [lagoon update deploytarget-config](lagoon_update_deploytarget-config.md)	 - Update a deploytarget config
-* [lagoon update project](lagoon_update_project.md)	 - Update a project
-* [lagoon update project-metadata](lagoon_update_project-metadata.md)	 - Update a projects metadata with a given key or key:value
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing Rocket.Chat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing Slack notification
-* [lagoon update user](lagoon_update_user.md)	 - Update a user in Lagoon
+* [lagoon update](lagoon_update.md)	 - Update a resource
 
