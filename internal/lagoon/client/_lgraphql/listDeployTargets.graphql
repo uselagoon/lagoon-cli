@@ -2,6 +2,7 @@ query {
   listDeployTargets: allKubernetes{
     id
     name
+    created
     consoleUrl
     cloudRegion
     cloudProvider

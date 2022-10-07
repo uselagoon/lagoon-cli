@@ -115,6 +115,7 @@ var addDeployTargetCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.FriendlyName)),
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.Created)),
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.MonitoringConfig)),
 			})
 			output.RenderOutput(output.Table{
@@ -129,6 +130,7 @@ var addDeployTargetCmd = &cobra.Command{
 					"CloudProvider",
 					"FriendlyName",
 					"RouterPattern",
+					"Created",
 					"MonitoringConfig",
 				},
 				Data: data,
@@ -227,6 +229,7 @@ var updateDeployTargetCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.FriendlyName)),
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.Created)),
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.MonitoringConfig)),
 			})
 			output.RenderOutput(output.Table{
@@ -241,6 +244,7 @@ var updateDeployTargetCmd = &cobra.Command{
 					"CloudProvider",
 					"FriendlyName",
 					"RouterPattern",
+					"Created",
 					"MonitoringConfig",
 				},
 				Data: data,

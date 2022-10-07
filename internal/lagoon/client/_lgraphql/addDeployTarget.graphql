@@ -23,6 +23,8 @@ mutation (
     }) {
       id
       name
+      created
+      token
       consoleUrl
       sshHost
       sshPort

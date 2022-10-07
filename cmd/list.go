@@ -97,6 +97,7 @@ var listDeployTargetsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Created)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
 			})
 		}
@@ -112,6 +113,7 @@ var listDeployTargetsCmd = &cobra.Command{
 				"CloudProvider",
 				"FriendlyName",
 				"RouterPattern",
+				"Created",
 				"MonitoringConfig",
 			},
 			Data: data,
