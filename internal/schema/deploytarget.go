@@ -13,6 +13,7 @@ type AddDeployTargetInput struct {
 	RouterPattern    string `json:"routerPattern,omitempty"`
 	SSHHost          string `json:"sshHost,omitempty"`
 	SSHPort          string `json:"sshPort,omitempty"`
+	BuildImage       string `json:"buildImage,omitempty"`
 	Created          string `json:"created,omitempty"`
 	MonitoringConfig string `json:"monitoringConfig,omitempty"`
 	FriendlyName     string `json:"friendlyName,omitempty"`

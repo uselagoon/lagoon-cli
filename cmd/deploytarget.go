@@ -56,6 +56,10 @@ var addDeployTargetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		buildImage, err := cmd.Flags().GetString("build-image")
+		if err != nil {
+			return err
+		}
 
 		if name == "" {
 			return fmt.Errorf("Missing arguments: name is not defined")
@@ -77,6 +81,7 @@ var addDeployTargetCmd = &cobra.Command{
 			ConsoleURL:    consoleURL,
 			SSHHost:       sshHost,
 			SSHPort:       sshPort,
+			BuildImage:    buildImage,
 		}
 		id, err := cmd.Flags().GetUint("id")
 		if err != nil {
@@ -185,6 +190,10 @@ var updateDeployTargetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		buildImage, err := cmd.Flags().GetString("build-image")
+		if err != nil {
+			return err
+		}
 
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
@@ -209,6 +218,7 @@ var updateDeployTargetCmd = &cobra.Command{
 				ConsoleURL:    consoleURL,
 				SSHHost:       sshHost,
 				SSHPort:       sshPort,
+				BuildImage:    buildImage,
 			},
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
@@ -311,6 +321,7 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("cloud-region", "", "", "DeployTarget cloud region")
 	addDeployTargetCmd.Flags().StringP("ssh-host", "", "", "DeployTarget ssh host")
 	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
+	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
@@ -324,4 +335,5 @@ func init() {
 	updateDeployTargetCmd.Flags().StringP("cloud-region", "", "", "DeployTarget cloud region")
 	updateDeployTargetCmd.Flags().StringP("ssh-host", "", "", "DeployTarget ssh host")
 	updateDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
+	updateDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 }
