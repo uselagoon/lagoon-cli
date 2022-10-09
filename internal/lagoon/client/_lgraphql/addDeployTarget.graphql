@@ -6,6 +6,7 @@ mutation (
   $sshHost: String,
   $sshPort: String,
   $monitoringConfig: JSON,
+  $buildImage: String,
   $friendlyName: String,
   $cloudProvider: String,
   $cloudRegion: String) {
@@ -16,6 +17,7 @@ mutation (
       routerPattern: $routerPattern,
       sshHost: $sshHost,
       sshPort: $sshPort,
+      buildImage: $buildImage,
       monitoringConfig: $monitoringConfig,
       friendlyName: $friendlyName,
       cloudProvider: $cloudProvider,
@@ -31,6 +33,7 @@ mutation (
       cloudProvider
       cloudRegion
       friendlyName
+      buildImage
       routerPattern
       monitoringConfig
     }

@@ -10,6 +10,7 @@ query {
     token
     sshHost
     sshPort
+    buildImage
     routerPattern
     monitoringConfig
   }
