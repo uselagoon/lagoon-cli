@@ -40,6 +40,13 @@ var addDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		if pullrequests == "" {
+			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
+		}
+		if branches == "" {
+			return fmt.Errorf("Missing arguments: branches is a required flag")
+		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
