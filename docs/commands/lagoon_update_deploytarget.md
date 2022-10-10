@@ -13,6 +13,7 @@ lagoon update deploytarget [flags]
 ### Options
 
 ```
+      --build-image string      DeployTarget build image to use (if different to the default)
       --cloud-provider string   DeployTarget cloud provider
       --cloud-region string     DeployTarget cloud region
       --console-url string      DeployTarget console URL
