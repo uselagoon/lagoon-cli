@@ -268,6 +268,7 @@ type ProjectPatch struct {
 	DevelopmentEnvironmentsLimit *int   `json:"developmentEnvironmentsLimit,omitempty"`
 	Openshift                    *int   `json:"openshift,omitempty"`
 	FactsUI                      *int   `json:"factsUi,omitempty"`
+	ProblemsUI                   *int   `json:"problemsUi,omitempty"`
 	DeploymentsDisabled          *int   `json:"deploymentsDisabled,omitempty"`
 }
 
