@@ -20,6 +20,7 @@ var projectAutoIdle int
 var projectStorageCalc int
 var projectDevelopmentEnvironmentsLimit int
 var projectOpenshift int
+var projectDeploymentsDisabled int
 
 func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
 	configMap := make(map[string]interface{})
@@ -379,6 +380,7 @@ func init() {
 	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "C", 0, "Should storage for this environment be calculated")
 	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	updateProjectCmd.Flags().IntVarP(&projectDeploymentsDisabled, "deploymentsDisabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
 
 	addProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 

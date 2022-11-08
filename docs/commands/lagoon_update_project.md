@@ -15,6 +15,7 @@ lagoon update project [flags]
 ```
   -a, --autoIdle int                          Auto idle setting of the project
   -b, --branches string                       Which branches should be deployed
+      --deploymentsDisabled int               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
   -L, --developmentEnvironmentsLimit int      How many environments can be deployed at one time
   -g, --gitUrl string                         GitURL of the project
   -h, --help                                  help for project
