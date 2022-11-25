@@ -1,6 +1,12 @@
 package cmd
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+
+	"github.com/guregu/null"
+	"github.com/spf13/pflag"
+)
 
 func Test_makeSafe(t *testing.T) {
 	tests := []struct {
@@ -88,6 +94,72 @@ func Test_shortenEnvironment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := shortenEnvironment(tt.args.project, tt.args.environment); got != tt.want {
 				t.Errorf("shortenEnvironment() got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_flagStringNullValueOrNil(t *testing.T) {
+	type args struct {
+		flags map[string]interface{}
+		flag  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *null.String
+		wantErr bool
+	}{
+		{
+			name: "test1",
+			args: args{
+				flags: map[string]interface{}{
+					"build-image": nil,
+				},
+				flag: "build-image",
+			},
+			want: nil,
+		},
+		{
+			name: "test1",
+			args: args{
+				flags: map[string]interface{}{
+					"build-image": "",
+				},
+				flag: "build-image",
+			},
+			want: &null.String{},
+		},
+		{
+			name: "test1",
+			args: args{
+				flags: map[string]interface{}{
+					"build-image": "buildimage",
+				},
+				flag: "build-image",
+			},
+			want: func() *null.String {
+				l := null.StringFrom("buildimage")
+				return &l
+			}(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			flags := &pflag.FlagSet{}
+			for k, v := range tt.args.flags {
+				flags.StringP(k, "", "", "")
+				if v != nil {
+					flags.Set(k, v.(string))
+				}
+			}
+			got, err := flagStringNullValueOrNil(flags, tt.args.flag)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("flagStringNullValueOrNil() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("flagStringNullValueOrNil() = %v, want %v", got, tt.want)
 			}
 		})
 	}
