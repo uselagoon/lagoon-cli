@@ -1,5 +1,9 @@
 package schema
 
+import (
+	"github.com/guregu/null"
+)
+
 type DeployTarget struct {
 	AddDeployTargetInput
 }
@@ -24,6 +28,8 @@ type AddDeployTargetInput struct {
 // UpdateDeployTargetInput is based on the input to addDeployTarget.
 type UpdateDeployTargetInput struct {
 	AddDeployTargetInput
+	// `null` is valid graphql, use a pointer to allow `nil` to be empty
+	BuildImage *null.String `json:"buildImage,omitempty"`
 }
 
 type UpdateDeployTargetResponse struct {

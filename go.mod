@@ -26,6 +26,7 @@ require (
 require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/guregu/null v4.0.0+incompatible
 	github.com/matryer/is v1.2.0 // indirect
 	// workaround for https://github.com/manifoldco/promptui/issues/98
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect

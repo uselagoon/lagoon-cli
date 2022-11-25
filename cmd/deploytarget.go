@@ -192,7 +192,12 @@ var updateDeployTargetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		buildImage, err := cmd.Flags().GetString("build-image")
+		// since there needs to be a way to unset the build image (using `null`)
+		// use this helper function to get the `null` representation
+		// the buildimage field in the schema is *null.String so that it is omit if it is empty
+		// but if it is set to "" to clear the value, will pass the json `null` representation
+		// or if set to a string, will pass this into the payload
+		buildImage, err := flagStringNullValueOrNil(cmd.Flags(), "build-image")
 		if err != nil {
 			return err
 		}
@@ -220,8 +225,8 @@ var updateDeployTargetCmd = &cobra.Command{
 				ConsoleURL:    consoleURL,
 				SSHHost:       sshHost,
 				SSHPort:       sshPort,
-				BuildImage:    buildImage,
 			},
+			BuildImage: buildImage,
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
 			updateDeployTargetResponse, err := lagoon.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
@@ -339,5 +344,5 @@ func init() {
 	updateDeployTargetCmd.Flags().StringP("cloud-region", "", "", "DeployTarget cloud region")
 	updateDeployTargetCmd.Flags().StringP("ssh-host", "", "", "DeployTarget ssh host")
 	updateDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
-	updateDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
+	updateDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default, use \"\" to clear)")
 }
