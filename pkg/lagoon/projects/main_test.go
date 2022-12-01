@@ -74,14 +74,14 @@ func TestProjectEnvironmentList(t *testing.T) {
 
 func TestProjectInfo(t *testing.T) {
 	var projectInfo = `
-	{"autoIdle":1,"branches":"false","developmentEnvironmentsLimit":5,"environments":[
+	{"autoIdle":1,"branches":"false","developmentEnvironmentsLimit":5,"factsUI":0,"problemsUI":0,"environments":[
 		{"deployType":"branch","environmentType":"production","id":3,"name":"Master","openshiftProjectName":"high-cotton-master","route":"http://highcotton.org"},
 		{"deployType":"branch","environmentType":"development","id":4,"name":"Staging","openshiftProjectName":"high-cotton-staging","route":"https://varnish-highcotton-org-staging.us.amazee.io"},
 		{"deployType":"branch","environmentType":"development","id":5,"name":"Development","openshiftProjectName":"high-cotton-development","route":"https://varnish-highcotton-org-development.us.amazee.io"},
 		{"deployType":"pullrequest","environmentType":"development","id":6,"name":"PR-175","openshiftProjectName":"high-cotton-pr-175","route":""},
 		{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
 		"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"doopdd","routerPattern":"${environment}-${project}.lagoon.example.com","pullrequests":"false","storageCalc":1,"subfolder":null}`
-	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments","DevEnvLimit","ProductionEnv","RouterPattern","AutoIdle"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5","5","doopdd","${environment}-${project}.lagoon.example.com","1"]]}`
+	var projectInfoSuccess = `{"header":["ID","ProjectName","GitURL","Branches","PullRequests","ProductionRoute","DevEnvironments","DevEnvLimit","ProductionEnv","RouterPattern","AutoIdle","FactsUI","ProblemsUI"],"data":[["18","high-cotton","test","false","false","http://highcotton.org","4/5","5","doopdd","${environment}-${project}.lagoon.example.com","1","0","0"]]}`
 
 	returnResult, err := processProjectInfo([]byte(projectInfo))
 	if err != nil {

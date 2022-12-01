@@ -50,6 +50,8 @@ var ProjectByNameFragment = `fragment Project on Project {
 	routerPattern
 	branches
 	pullrequests
+	problemsUi
+	factsUi
 	productionEnvironment
 	environments {
 		id
