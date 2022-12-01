@@ -13,6 +13,10 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!.
 
 # Extending
 
+## Code Generation
+
+Some parts of the Lagoon CLI use code generation. Ensure you run `make gen` or `make test`.
+
 ## Documentation
 
 When implementing new commands or updating flags, ensure to update the documentation. This can be done with the following
