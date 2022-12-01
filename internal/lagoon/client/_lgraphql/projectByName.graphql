@@ -14,6 +14,8 @@ query (
         developmentEnvironmentsLimit
         gitUrl
         autoIdle
+        factsUi
+        problemsUi
         groups{
           ... on Group {
             __typename
