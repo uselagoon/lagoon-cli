@@ -248,6 +248,7 @@ type Project struct {
 	Deployments                  []Deployment          `json:"deployments,omitempty"`
 	Notifications                []interface{}         `json:"notifications,omitempty"`
 	FactsUI                      *int                  `json:"factsUi,omitempty"`
+	ProblemsUI                   *int                  `json:"problemsUi,omitempty"`
 }
 
 // ProjectPatch struct.
