@@ -53,6 +53,11 @@ jobs:
         name: Fetch Dependencies
         run: go mod download
       -
+        name: Install Snapcraft
+        uses: samuelmeuli/action-snapcraft@v1
+        with:
+          snapcraft_token: ${{ secrets.SNAPCRAFT_CREDENTIALS }}
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:

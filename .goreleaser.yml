@@ -104,3 +104,9 @@ brews:
     install: bin.install "lagoon"
     ids:
       - binaries-targz
+
+snapcrafts:
+  - publish: true
+    summary: "Lagoon's local development helper tool"
+    description: "Lagoon's local development helper tool"
+    grade: stable
