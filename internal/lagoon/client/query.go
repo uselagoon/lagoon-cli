@@ -234,3 +234,22 @@ func (c *Client) ListDeployTargets(
 		Response: deploytargets,
 	})
 }
+
+// GetEnvVariablesByProjectEnvironmentName queries the Lagoon API for a envvars by project environment and unmarshals the response.
+func (c *Client) GetEnvVariablesByProjectEnvironmentName(
+	ctx context.Context, in *schema.EnvVariableByProjectEnvironmentNameInput, envkeyvalue *[]schema.EnvKeyValue) error {
+
+	req, err := c.newRequest("_lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql",
+		map[string]interface{}{
+			"input": in,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.EnvKeyValue `json:"getEnvVariablesByProjectEnvironmentName"`
+	}{
+		Response: envkeyvalue,
+	})
+}

@@ -39,4 +39,5 @@ Update a resource
 * [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing Rocket.Chat notification
 * [lagoon update slack](lagoon_update_slack.md)	 - Update an existing Slack notification
 * [lagoon update user](lagoon_update_user.md)	 - Update a user in Lagoon
+* [lagoon update variable](lagoon_update_variable.md)	 - Add or update a variable to an environment or project
 
