@@ -21,6 +21,13 @@ func (api *Interface) GetOpenShiftInfoForProject(project Project) ([]byte, error
 				routerPattern
 			}
 			gitUrl
+			deployTargetConfigs{
+				deployTarget{
+				  id
+				  name
+				  token
+				}
+			  }
 			privateKey
 			subfolder
 			openshiftProjectPattern

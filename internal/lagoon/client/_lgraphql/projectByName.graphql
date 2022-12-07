@@ -16,6 +16,15 @@ query (
         autoIdle
         factsUi
         problemsUi
+        deployTargetConfigs{
+          id
+          project
+          deployTarget{
+            id
+            name
+            token
+          }
+        }
         groups{
           ... on Group {
             __typename
