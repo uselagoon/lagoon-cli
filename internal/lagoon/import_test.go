@@ -132,19 +132,19 @@ func TestImport(t *testing.T) {
 				{
 					EnvKeyValue: schema.EnvKeyValue{
 						Name:  "ENABLE_REDIS",
-						Scope: api.GlobalVar,
+						Scope: schema.GlobalVar,
 						Value: "1",
 					},
-					Type: api.ProjectVar,
+					Type: schema.ProjectVar,
 					// NewProjectID
 					TypeID: 99,
 				}, {
 					EnvKeyValue: schema.EnvKeyValue{
 						Name:  "ENABLE_REDIS",
-						Scope: api.BuildVar,
+						Scope: schema.BuildVar,
 						Value: "1",
 					},
-					Type: api.EnvironmentVar,
+					Type: schema.EnvironmentVar,
 					// NewEnvironmentID
 					TypeID: 88,
 				},
