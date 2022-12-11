@@ -10,6 +10,7 @@
       "storageCalc": 1,
       "openshiftProjectPattern": null,
       "developmentEnvironmentsLimit": 10,
+      "deployTargetConfigs": null,
       "gitUrl": "git@github.amazee.io:foo-bar/bananas-au.git",
       "groups": [
         {

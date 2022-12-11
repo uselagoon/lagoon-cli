@@ -10,6 +10,7 @@
       "storageCalc": 1,
       "openshiftProjectPattern": "lagoon",
       "developmentEnvironmentsLimit": 5,
+      "deployTargetConfigs": null,
       "gitUrl": "git@github.com:uselagoon/lagoon.git",
       "groups": [
         {

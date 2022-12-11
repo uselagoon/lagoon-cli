@@ -14,10 +14,11 @@ import (
 // Fields for comprising structs are dictated by the add* Lagoon APIs.
 type Config struct {
 	// API objects
-	Projects      []ProjectConfig      `json:"projects,omitempty"`
-	Groups        []GroupConfig        `json:"groups,omitempty"`
-	Users         []User               `json:"users,omitempty"`
-	Notifications *NotificationsConfig `json:"notifications,omitempty"`
+	Projects           []ProjectConfig      `json:"projects,omitempty"`
+	Groups             []GroupConfig        `json:"groups,omitempty"`
+	Users              []User               `json:"users,omitempty"`
+	Notifications      *NotificationsConfig `json:"notifications,omitempty"`
+	DeployTargetConfig []DeployTargetConfig `json:"deployTargetConfigs,omitempty"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface to control how lagoon
@@ -98,10 +99,12 @@ func ProjectsToConfig(
 	rocketChatNotifications := map[string]bool{}
 	emailNotifications := map[string]bool{}
 	microsoftTeamsNotifications := map[string]bool{}
+	deployTargetConfigs := map[uint]bool{}
 
 	for _, project := range projects {
 		projectConfig :=
 			ProjectConfig{Project: project, Notifications: &ProjectNotifications{}}
+
 		for _, group := range project.Groups.Groups {
 			// project group users are appended to the project directly because this
 			// group is automatically created in Lagoon.
@@ -196,6 +199,16 @@ func ProjectsToConfig(
 			microsoftTeamsNotifications[n.Name] = true
 			config.Notifications.MicrosoftTeams =
 				append(config.Notifications.MicrosoftTeams, n)
+		}
+
+		for _, deployTargetConfig := range project.DeployTargetConfig {
+			if project.Name == deployTargetConfig.Project.Name {
+				projectConfig.DeployTargetConfig = append(projectConfig.DeployTargetConfig,
+					deployTargetConfig)
+				deployTargetConfigs[deployTargetConfig.ID] = true
+				config.DeployTargetConfig = append(config.DeployTargetConfig, deployTargetConfig)
+
+			}
 		}
 		minimiseProjectConfig(&projectConfig, exclude)
 		config.Projects = append(config.Projects, projectConfig)

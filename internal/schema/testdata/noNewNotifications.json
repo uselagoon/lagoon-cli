@@ -11,6 +11,7 @@
       "storageCalc": 1,
       "openshiftProjectPattern": null,
       "developmentEnvironmentsLimit": 5,
+      "deployTargetConfigs": null,
       "gitUrl": "ssh://git@192.168.42.1:2222/git/github.git",
       "groups": [
         {
