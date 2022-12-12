@@ -44,5 +44,5 @@ Add a project, or add notifications and variables to projects or environments
 * [lagoon add user](lagoon_add_user.md)	 - Add a user to lagoon
 * [lagoon add user-group](lagoon_add_user-group.md)	 - Add a user to a group in lagoon
 * [lagoon add user-sshkey](lagoon_add_user-sshkey.md)	 - Add an SSH key to a user
-* [lagoon add variable](lagoon_add_variable.md)	 - Add a variable to an environment or project
+* [lagoon add variable](lagoon_add_variable.md)	 - Add or update a variable to an environment or project
 

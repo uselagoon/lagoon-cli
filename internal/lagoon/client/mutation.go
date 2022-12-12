@@ -398,3 +398,32 @@ func (c *Client) DeleteDeployTargetConfiguration(ctx context.Context,
 	}
 	return c.client.Run(ctx, req, &out)
 }
+
+// AddOrUpdateEnvVariableByName adds or updates an environment variable in the api
+func (c *Client) AddOrUpdateEnvVariableByName(ctx context.Context, in *schema.EnvVariableByNameInput, out *schema.UpdateEnvVarResponse) error {
+	req, err := c.newRequest("_lgraphql/variables/addOrUpdateEnvVariableByName.graphql",
+		map[string]interface{}{
+			"input": in,
+		})
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.UpdateEnvVarResponse `json:"addOrUpdateEnvVariableByName"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteEnvVariableByName deletes an environment variable from the api
+func (c *Client) DeleteEnvVariableByName(ctx context.Context, in *schema.DeleteEnvVariableByNameInput, out *schema.DeleteEnvVarResponse) error {
+	req, err := c.newRequest("_lgraphql/variables/deleteEnvVariableByName.graphql",
+		map[string]interface{}{
+			"input": in,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &out)
+}

@@ -180,7 +180,7 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 		for _, ev := range p.EnvVariables {
 			err := i.AddEnvVariable(ctx, &schema.EnvVariableInput{
 				EnvKeyValue: ev,
-				Type:        api.ProjectVar,
+				Type:        schema.ProjectVar,
 				TypeID:      newProj.ID,
 			}, nil)
 			if err != nil {
@@ -219,7 +219,7 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 			for _, ev := range env.EnvVariables {
 				err = i.AddEnvVariable(ctx, &schema.EnvVariableInput{
 					EnvKeyValue: ev,
-					Type:        api.EnvironmentVar,
+					Type:        schema.EnvironmentVar,
 					TypeID:      newEnv.ID,
 				}, nil)
 				if err != nil {
