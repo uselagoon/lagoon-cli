@@ -16,7 +16,6 @@ query (
         autoIdle
         factsUi
         problemsUi
-<<<<<<< HEAD
         deployTargetConfigs {
           branches
           deployTarget{
@@ -35,8 +34,6 @@ query (
           pullrequests
           weight
         }
-=======
->>>>>>> b6829b1c951f24899e9b832b5d9bc0d7058bc64e
         groups{
           ... on Group {
             __typename

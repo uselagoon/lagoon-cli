@@ -203,8 +203,7 @@ func ProjectsToConfig(
 
 		for _, deployTargetConfig := range project.DeployTargetConfig {
 			if project.Name == deployTargetConfig.Project.Name {
-				projectConfig.DeployTargetConfig = append(projectConfig.DeployTargetConfig,
-					deployTargetConfig)
+
 				deployTargetConfigs[deployTargetConfig.ID] = true
 				config.DeployTargetConfig = append(config.DeployTargetConfig, deployTargetConfig)
 
