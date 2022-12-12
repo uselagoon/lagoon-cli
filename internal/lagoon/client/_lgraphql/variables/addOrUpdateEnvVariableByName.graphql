@@ -1,0 +1,10 @@
+mutation (
+  $input: EnvVariableByNameInput!
+) {
+    addOrUpdateEnvVariableByName(input: $input) {
+        id
+        name
+        value
+        scope
+    }
+}
