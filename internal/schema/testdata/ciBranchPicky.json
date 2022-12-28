@@ -11,7 +11,25 @@
       "storageCalc": 1,
       "openshiftProjectPattern": null,
       "developmentEnvironmentsLimit": 5,
-      "deployTargetConfigs": null,
+      "deployTargetConfigs": [
+        {
+      "branches": "qa",
+      "deployTarget": {
+      "id": 157,
+      "name": "test.amazee.io",
+      "token": "test"  },
+      "id": 2094,
+      "project": {
+      "autoIdle": 1,
+      "gitUrl": "ssh://git@bitbucket.biscrum.com:7999/wpsites/test.git",
+      "name": "test-template",
+      "productionEnvironment": "master",
+      "storageCalc": 1
+                  },
+      "pullrequests": "false",
+      "weight": 102
+            }
+      ],
       "gitUrl": "ssh://git@192.168.42.1:2222/git/node.git",
       "groups": [
         {
