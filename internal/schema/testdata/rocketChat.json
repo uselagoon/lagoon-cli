@@ -1,78 +1,70 @@
 {
-  "data": {
-    "projectByName": {
-      "name": "lagoon",
-      "autoIdle": 1,
-      "branches": "true",
-      "pullrequests": "true",
-      "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACCFAC4qLImDr5RrciJoPMBusxQZaLWdvmAOsoY68om9dwAAAIjkFOGA5BTh\ngAAAAAtzc2gtZWQyNTUxOQAAACCFAC4qLImDr5RrciJoPMBusxQZaLWdvmAOsoY68om9dw\nAAAECHDZUyo80V7E46OSEt7fYuQaXZPrIjRn7W3nIW3ekpqYUALiosiYOvlGtyImg8wG6z\nFBlotZ2+YA6yhjryib13AAAAAAECAwQF\n-----END OPENSSH PRIVATE KEY-----\n",
-      "productionEnvironment": "master",
-      "storageCalc": 1,
-      "openshiftProjectPattern": "lagoon",
-      "developmentEnvironmentsLimit": 5,
-      "deployTargetConfigs": [
-        {
-          "branches": "qa",
-          "deployTarget": {
-              "id": 157,
-              "name": "test.amazee.io",
-              "token": "test"  },
-          "id": 2094,
-          "project": {
-              "autoIdle": 1,
-              "gitUrl": "ssh://git@bitbucket.biscrum.com:7999/wpsites/test.git",
-              "name": "test-template",
-              "productionEnvironment": "master",
-              "storageCalc": 1
-                  },
-          "pullrequests": "false",
-          "weight": 102
-            }
-          ],
-      "gitUrl": "git@github.com:uselagoon/lagoon.git",
-      "groups": [
-        {
-          "__typename": "Group",
-          "name": "kickstart-group",
-          "members": []
-        },
-        {
-          "__typename": "Group",
-          "name": "project-lagoon",
-          "members": [
-            {
-              "user": {
-                "email": "default-user@lagoon",
-                "sshKeys": [
-                  {
-                    "name": "auto-add via api",
-                    "created": "2020-02-11 09:00:42",
-                    "keyFingerprint": "",
-                    "keyType": "ssh-ed25519",
-                    "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIIUALiosiYOvlGtyImg8wG6zFBlotZ2+YA6yhjryib13"
-                  }
-                ],
-                "firstName": null,
-                "lastName": null
-              },
-              "role": "MAINTAINER"
-            }
-          ]
-        }
-      ],
-      "notifications": [
-        {
-          "__typename": "NotificationRocketChat",
-          "webhook": "https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn",
-          "name": "amazeeio--lagoon-kickstart",
-          "channel": "lagoon-kickstart"
-        }
-      ],
-      "openshift": {
-        "id": 3
-      },
-      "envVariables": [],
-      "environments": []
-    }
-  }
+	"data": {
+		"projectByName": {
+			"name": "lagoon",
+			"autoIdle": 1,
+			"branches": "true",
+			"pullrequests": "true",
+			"privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACCFAC4qLImDr5RrciJoPMBusxQZaLWdvmAOsoY68om9dwAAAIjkFOGA5BTh\ngAAAAAtzc2gtZWQyNTUxOQAAACCFAC4qLImDr5RrciJoPMBusxQZaLWdvmAOsoY68om9dw\nAAAECHDZUyo80V7E46OSEt7fYuQaXZPrIjRn7W3nIW3ekpqYUALiosiYOvlGtyImg8wG6z\nFBlotZ2+YA6yhjryib13AAAAAAECAwQF\n-----END OPENSSH PRIVATE KEY-----\n",
+			"productionEnvironment": "master",
+			"storageCalc": 1,
+			"openshiftProjectPattern": "lagoon",
+			"developmentEnvironmentsLimit": 5,
+			"deployTargetConfigs": [{
+				"branches": "qa",
+				"deployTarget": {
+					"id": 157,
+					"name": "test.amazee.io",
+					"token": "test"
+				},
+				"id": 2094,
+				"project": {
+					"autoIdle": 1,
+					"gitUrl": "ssh://git@bitbucket.biscrum.com:7999/wpsites/test.git",
+					"name": "test-template",
+					"productionEnvironment": "master",
+					"storageCalc": 1
+				},
+				"pullrequests": "false",
+				"weight": 102
+			}],
+			"gitUrl": "git@github.com:uselagoon/lagoon.git",
+			"groups": [{
+					"__typename": "Group",
+					"name": "kickstart-group",
+					"members": []
+				},
+				{
+					"__typename": "Group",
+					"name": "project-lagoon",
+					"members": [{
+						"user": {
+							"email": "default-user@lagoon",
+							"sshKeys": [{
+								"name": "auto-add via api",
+								"created": "2020-02-11 09:00:42",
+								"keyFingerprint": "",
+								"keyType": "ssh-ed25519",
+								"keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIIUALiosiYOvlGtyImg8wG6zFBlotZ2+YA6yhjryib13"
+							}],
+							"firstName": null,
+							"lastName": null
+						},
+						"role": "MAINTAINER"
+					}]
+				}
+			],
+			"notifications": [{
+				"__typename": "NotificationRocketChat",
+				"webhook": "https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn",
+				"name": "amazeeio--lagoon-kickstart",
+				"channel": "lagoon-kickstart"
+			}],
+			"openshift": {
+				"id": 3
+			},
+			"envVariables": [],
+			"environments": []
+		}
+	}
 }
