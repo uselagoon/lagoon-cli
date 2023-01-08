@@ -14,6 +14,31 @@ notifications:
     webhook: https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 projects:
 - autoIdle: 1
+  deployTargetConfigs:
+  - branches: qa
+    deployTarget:
+      id: 157
+      name: test.amazee.io
+      token: test
+    id: 1245
+    project:
+      autoIdle: 1
+      gitUrl: ssh://git@bitbucket.biscrum.com:888/wpsites/test.git
+      name: test-template
+      productionEnvironment: master
+      storageCalc: 1
+  - branches: master
+    deployTarget:
+      id: 158
+      name: test.amazee.io
+      token: test
+    id: 1246
+    project:
+      autoIdle: 1
+      gitUrl: ssh://git@bitbucket.biscrum.com:889/wpsites/test.git
+      name: test-template
+      productionEnvironment: master
+      storageCalc: 1
   environments:
   - autoIdle: 1
     deployBaseRef: master

@@ -7,6 +7,21 @@ notifications:
     webhook: https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 projects:
 - autoIdle: 1
+  deployTargetConfigs:
+  - branches: qa
+    deployTarget:
+      id: 157
+      name: test.amazee.io
+      token: test
+    id: 2094
+    project:
+      autoIdle: 1
+      gitUrl: ssh://git@bitbucket.biscrum.com:7999/wpsites/test.git
+      name: test-template
+      productionEnvironment: master
+      storageCalc: 1
+    pullrequests: "false"
+    weight: 102
   gitUrl: git@github.com:uselagoon/lagoon.git
   groups:
   - kickstart-group

@@ -53,6 +53,15 @@ var ProjectByNameFragment = `fragment Project on Project {
 	problemsUi
 	factsUi
 	productionEnvironment
+	deployTargetConfigs{
+		id
+		deployTarget{
+		  id
+		  name
+		  token
+		}
+		
+	  }
 	environments {
 		id
 		name

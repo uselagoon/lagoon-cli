@@ -102,6 +102,7 @@ func ProjectsToConfig(
 	for _, project := range projects {
 		projectConfig :=
 			ProjectConfig{Project: project, Notifications: &ProjectNotifications{}}
+
 		for _, group := range project.Groups.Groups {
 			// project group users are appended to the project directly because this
 			// group is automatically created in Lagoon.
@@ -197,6 +198,7 @@ func ProjectsToConfig(
 			config.Notifications.MicrosoftTeams =
 				append(config.Notifications.MicrosoftTeams, n)
 		}
+
 		minimiseProjectConfig(&projectConfig, exclude)
 		config.Projects = append(config.Projects, projectConfig)
 	}
