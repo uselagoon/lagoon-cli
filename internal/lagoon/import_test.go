@@ -32,6 +32,8 @@ type importCalls struct {
 	AddEnvironmentInputs                []schema.AddEnvironmentInput
 	ProjectGroupsInputs                 []schema.ProjectGroupsInput
 	AddNotificationToProjectInputs      []schema.AddNotificationToProjectInput
+	AddDeployTargetConfigInputs         []schema.AddDeployTargetConfigInput
+	AddDeployTargetInputs               []schema.AddDeployTargetInput
 }
 
 func TestImport(t *testing.T) {
@@ -42,6 +44,7 @@ func TestImport(t *testing.T) {
 		"exhaustive": {input: "testdata/exhaustive.import.yaml", expect: &importCalls{
 			NewProjectID:     99,
 			NewEnvironmentID: 88,
+
 			AddGroupInputs: []schema.AddGroupInput{
 				{Name: "abc"},
 			},
@@ -88,6 +91,16 @@ func TestImport(t *testing.T) {
 					UserEmail: "projectuser@example.com",
 					GroupName: "project-bananas",
 					GroupRole: api.MaintainerRole,
+				},
+			},
+			AddDeployTargetConfigInputs: []schema.AddDeployTargetConfigInput{
+				{
+
+					ID:                         1234,
+					Weight:                     123,
+					Branches:                   "master",
+					Pullrequests:               "This project is configured with DeployTargets",
+					DeployTargetProjectPattern: "test",
 				},
 			},
 			AddNotificationSlackInputs: []schema.AddNotificationSlackInput{
@@ -200,6 +213,12 @@ func TestImport(t *testing.T) {
 				importer.EXPECT().AddUserToGroup(
 					ctx, &tc.expect.UserGroupRoleInputs[i], nil)
 			}
+
+			for i := range tc.expect.AddDeployTargetConfigInputs {
+				importer.EXPECT().AddDeployTargetConfiguration(
+					ctx, &tc.expect.AddDeployTargetConfigInputs[i], nil)
+			}
+
 			for i := range tc.expect.AddNotificationSlackInputs {
 				importer.EXPECT().AddNotificationSlack(
 					ctx, &tc.expect.AddNotificationSlackInputs[i], nil)

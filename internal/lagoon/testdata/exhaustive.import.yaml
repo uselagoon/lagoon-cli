@@ -23,6 +23,12 @@ notifications:
 projects:
 - autoIdle: 1
   branches: ^(master|develop|production)$
+  deployTargetConfigs:
+  - branches: master
+    id: 1234
+    pullrequests: "This project is configured with DeployTargets"
+    weight: 123
+    deployTargetProjectPattern: test
   developmentEnvironmentsLimit: 10
   envVariables:
   - name: ENABLE_REDIS

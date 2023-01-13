@@ -35,6 +35,20 @@ func (m *MockImporter) EXPECT() *MockImporterMockRecorder {
 	return m.recorder
 }
 
+// AddDeployTargetConfiguration mocks base method.
+func (m *MockImporter) AddDeployTargetConfiguration(arg0 context.Context, arg1 *schema.AddDeployTargetConfigInput, arg2 *schema.DeployTargetConfig) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddDeployTargetConfiguration", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddDeployTargetConfiguration indicates an expected call of AddDeployTargetConfiguration.
+func (mr *MockImporterMockRecorder) AddDeployTargetConfiguration(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDeployTargetConfiguration", reflect.TypeOf((*MockImporter)(nil).AddDeployTargetConfiguration), arg0, arg1, arg2)
+}
+
 // AddEnvVariable mocks base method.
 func (m *MockImporter) AddEnvVariable(arg0 context.Context, arg1 *schema.EnvVariableInput, arg2 *schema.EnvKeyValue) error {
 	m.ctrl.T.Helper()

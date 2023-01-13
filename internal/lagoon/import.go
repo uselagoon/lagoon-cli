@@ -48,6 +48,8 @@ type Importer interface {
 		context.Context, *schema.ProjectGroupsInput, *schema.Project) error
 	AddNotificationToProject(context.Context,
 		*schema.AddNotificationToProjectInput, *schema.Project) error
+	AddDeployTargetConfiguration(context.Context,
+		*schema.AddDeployTargetConfigInput, *schema.DeployTargetConfig) error
 }
 
 // Import creates objects in the Lagoon API based on a configuration object.
@@ -176,6 +178,7 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 				continue // next project
 			}
 		}
+
 		// add project env-vars
 		for _, ev := range p.EnvVariables {
 			err := i.AddEnvVariable(ctx, &schema.EnvVariableInput{
@@ -188,6 +191,23 @@ func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 					return fmt.Errorf("couldn't add Project EnvVariable: %w", err)
 				}
 				l.Printf("couldn't add Project EnvVariable: %v", err)
+			}
+		}
+		for _, d := range p.DeployTargetConfig {
+			err := i.AddDeployTargetConfiguration(ctx, &schema.AddDeployTargetConfigInput{
+				ID:                         d.ID,
+				Project:                    p.ID,
+				Weight:                     d.Weight,
+				Branches:                   d.Branches,
+				Pullrequests:               d.Pullrequests,
+				DeployTarget:               d.DeployTarget.ID,
+				DeployTargetProjectPattern: d.DeployTargetProjectPattern,
+			}, nil)
+			if err != nil {
+				if !keepGoing {
+					return fmt.Errorf("couldn't add Project DeployTargetConfig: %w", err)
+				}
+				l.Printf("couldn't add Project DeployTargetConfig: %v", err)
 			}
 		}
 		// add project environments
