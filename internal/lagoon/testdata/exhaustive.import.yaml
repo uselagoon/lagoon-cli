@@ -1,3 +1,9 @@
+deployTargetConfigs:
+  - branches: master
+    id: 1234
+    pullrequests: "This project is configured with DeployTargets"
+    weight: 123
+    deployTargetProjectPattern: test
 groups:
 - name: abc
   users:
