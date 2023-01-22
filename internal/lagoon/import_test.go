@@ -33,7 +33,6 @@ type importCalls struct {
 	ProjectGroupsInputs                 []schema.ProjectGroupsInput
 	AddNotificationToProjectInputs      []schema.AddNotificationToProjectInput
 	AddDeployTargetConfigInputs         []schema.AddDeployTargetConfigInput
-	AddDeployTargetInputs               []schema.AddDeployTargetInput
 }
 
 func TestImport(t *testing.T) {
