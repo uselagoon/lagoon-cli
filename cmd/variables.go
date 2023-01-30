@@ -30,6 +30,11 @@ var addVariableCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if varName == "" {
+			fmt.Println("Missing arguments: variable name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
 		varValue, err := cmd.Flags().GetString("value")
 		if err != nil {
 			return err
