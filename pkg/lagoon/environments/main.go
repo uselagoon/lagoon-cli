@@ -147,7 +147,6 @@ func processEnvExtra(environment api.Environment) []string {
 	envOpenshiftProjectName := returnNonEmptyString(string(environment.OpenshiftProjectName))
 	envRoute := returnNonEmptyString(string(environment.Route))
 	envRoutes := returnNonEmptyString(string(environment.Routes))
-	envMonitoringUrls := returnNonEmptyString(string(environment.MonitoringUrls))
 	envDeployTitle := returnNonEmptyString(string(environment.DeployTitle))
 	envDeployBaseRef := returnNonEmptyString(string(environment.DeployBaseRef))
 	envDeployHeadRef := returnNonEmptyString(string(environment.DeployHeadRef))
@@ -161,7 +160,7 @@ func processEnvExtra(environment api.Environment) []string {
 		fmt.Sprintf("%v", envOpenshiftProjectName),
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
-		fmt.Sprintf("%v", envMonitoringUrls),
+		fmt.Sprintf("%v", "-"), // MonitoringURLS is deprecated, don't query this data
 		fmt.Sprintf("%v", envAutoIdle),
 		fmt.Sprintf("%v", envDeployTitle),
 		fmt.Sprintf("%v", envDeployBaseRef),

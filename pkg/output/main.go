@@ -19,7 +19,7 @@ type Table struct {
 // Data .
 type Data []string
 
-//Options .
+// Options .
 type Options struct {
 	Header bool
 	CSV    bool

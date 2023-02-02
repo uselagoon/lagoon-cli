@@ -115,7 +115,7 @@ func Execute() {
 	}
 }
 
-//IsInternetActive() checks to see if we have a viable
+// IsInternetActive() checks to see if we have a viable
 // internet connection. It just tries a quick DNS query.
 // This requires that the named record be query-able.
 func isInternetActive() bool {

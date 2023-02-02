@@ -259,7 +259,6 @@ var EnvironmentByNameFragment = `fragment Environment on Environment {
 	updated
 	created
 	deleted
-	monitoringUrls
 	deployTitle
 	deployBaseRef
 	deployHeadRef
