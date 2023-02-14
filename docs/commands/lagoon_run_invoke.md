@@ -1,10 +1,10 @@
 ## lagoon run invoke
 
-
+Invoke a custom task registered against an environment
 
 ### Synopsis
 
-Invoke a task registered against an environment
+Invoke a custom task registered against an environment
 The following are supported methods to use
 Direct:
  lagoon run invoke -p example -e main -N "advanced task name"
@@ -17,8 +17,9 @@ lagoon run invoke [flags]
 ### Options
 
 ```
-  -h, --help          help for invoke
-  -N, --name string   Name of the task that will be invoked
+      --argument strings   Arguments to be passed to invoked task, of the form NAME=VALUE
+  -h, --help               help for invoke
+  -N, --name string        Name of the task that will be invoked
 ```
 
 ### Options inherited from parent commands
