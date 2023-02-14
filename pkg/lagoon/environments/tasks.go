@@ -373,7 +373,7 @@ func (e *Environments) ListInvokableAdvancedTaskDefinitions(projectName string, 
 }
 
 // InvokeAdvancedTaskDefinition will attempt to invoke an advanced task definition on an environment
-func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environmentName string, advancedTaskName string) ([]byte, error) {
+func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environmentName string, advancedTaskName string, taskArguments map[string]string) ([]byte, error) {
 	// get project info from lagoon, we need the project ID for later
 	project := api.Project{
 		Name: projectName,
@@ -417,10 +417,25 @@ func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environm
 			advancedTaskName, projectName, environmentName))
 	}
 
+	//transform any variables to appropriate structre
+	type AdvancedTaskDefinitionArgumentValueInput struct {
+		AdvancedTaskDefinitionArgumentName string `json:"advancedTaskDefinitionArgumentName"`
+		Value                              string `json:"value"`
+	}
+	taskArgumentValues := []AdvancedTaskDefinitionArgumentValueInput{}
+	for k, v := range taskArguments {
+		fmt.Println(k + " " + v)
+		taskArgument := AdvancedTaskDefinitionArgumentValueInput{
+			AdvancedTaskDefinitionArgumentName: k,
+			Value:                              v,
+		}
+		taskArgumentValues = append(taskArgumentValues, taskArgument)
+	}
+
 	// run the query to add the environment variable to lagoon
 	customReq := api.CustomRequest{
-		Query: `mutation invokeRegisteredTask ($environment: Int!, $advancedTaskDefinition: Int!) {
-			invokeRegisteredTask(advancedTaskDefinition: $advancedTaskDefinition, environment: $environment) {
+		Query: `mutation invokeRegisteredTask ($environment: Int!, $advancedTaskDefinition: Int!, $taskArgumentValues: [AdvancedTaskDefinitionArgumentValueInput]) {
+			invokeRegisteredTask(advancedTaskDefinition: $advancedTaskDefinition, environment: $environment, argumentValues: $taskArgumentValues) {
 				id
 				name
 				status
@@ -429,6 +444,7 @@ func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environm
 		Variables: map[string]interface{}{
 			"advancedTaskDefinition": taskId,
 			"environment":            environmentInfo.ID,
+			"taskArgumentValues":     taskArgumentValues,
 		},
 		MappedResult: "invokeRegisteredTask",
 	}
