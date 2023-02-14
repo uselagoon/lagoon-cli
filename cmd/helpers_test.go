@@ -164,3 +164,51 @@ func Test_flagStringNullValueOrNil(t *testing.T) {
 		})
 	}
 }
+
+func Test_splitInvokeTaskArguments(t *testing.T) {
+	type args struct {
+		invokedTaskArguments []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    map[string]string
+		wantErr bool
+	}{
+		{
+			name: "Standard parsing, single argument",
+			args: args{
+				invokedTaskArguments: []string{
+					"KEY1=VALUE1",
+				},
+			},
+			want: map[string]string{
+				"KEY1": "VALUE1",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Invalid Input, multiple arguments",
+			args: args{
+				invokedTaskArguments: []string{
+					"KEY1=VALUE1",
+					"INVALID_ARGUMENT",
+				},
+			},
+			want:    map[string]string{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := splitInvokeTaskArguments(tt.args.invokedTaskArguments)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("splitInvokeTaskArguments() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("splitInvokeTaskArguments() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
