@@ -59,7 +59,6 @@ func splitInvokeTaskArguments(invokedTaskArguments []string) (map[string]string,
 	parsedArgs := map[string]string{}
 
 	for _, v := range invokedTaskArguments {
-		fmt.Println(v)
 		split := strings.Split(v, "=")
 		if len(split) != 2 {
 			return map[string]string{}, errors.New(fmt.Sprintf("Unable to parse `%v`, the form of arguments should be `KEY=VALUE`", v))

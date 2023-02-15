@@ -7,7 +7,7 @@ Invoke a custom task registered against an environment
 Invoke a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run invoke -p example -e main -N "advanced task name"
+ lagoon run invoke -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 
 
 ```

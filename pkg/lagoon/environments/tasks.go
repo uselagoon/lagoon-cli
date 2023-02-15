@@ -424,7 +424,6 @@ func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environm
 	}
 	taskArgumentValues := []AdvancedTaskDefinitionArgumentValueInput{}
 	for k, v := range taskArguments {
-		fmt.Println(k + " " + v)
 		taskArgument := AdvancedTaskDefinitionArgumentValueInput{
 			AdvancedTaskDefinitionArgumentName: k,
 			Value:                              v,
