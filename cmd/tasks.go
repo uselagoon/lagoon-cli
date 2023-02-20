@@ -230,7 +230,7 @@ var invokeInteractiveTask = &cobra.Command{
 	Long: `Interactively run a custom task against an environment
 Provides prompts for arguments
 example:
- lagoon run invoke interactive -p example -e main
+ lagoon run task interactive -p example -e main
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		debug, err := cmd.Flags().GetBool("debug")

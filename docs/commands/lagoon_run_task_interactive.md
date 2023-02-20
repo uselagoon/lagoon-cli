@@ -7,7 +7,7 @@ Interactively run a custom task against an environment
 Interactively run a custom task against an environment
 Provides prompts for arguments
 example:
- lagoon run invoke interactive -p example -e main
+ lagoon run task interactive -p example -e main
 
 
 ```
