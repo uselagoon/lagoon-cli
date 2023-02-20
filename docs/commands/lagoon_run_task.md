@@ -7,7 +7,7 @@ Run a custom task registered against an environment
 Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run run -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
+ lagoon run task -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 
 
 ```
@@ -17,9 +17,9 @@ lagoon run task [flags]
 ### Options
 
 ```
-      --argument strings   Arguments to be passed to invoked task, of the form NAME=VALUE
+      --argument strings   Arguments to be passed to custom task, of the form NAME=VALUE
   -h, --help               help for task
-  -N, --name string        Name of the task that will be invoked
+  -N, --name string        Name of the task that will be run
 ```
 
 ### Options inherited from parent commands

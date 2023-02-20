@@ -195,7 +195,7 @@ var runDefinedTask = &cobra.Command{
 	Long: `Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run run -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
+ lagoon run task -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
