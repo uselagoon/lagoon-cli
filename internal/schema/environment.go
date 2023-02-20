@@ -19,15 +19,31 @@ type AddEnvironmentInput struct {
 // Environment is the Lagoon API Environment object.
 type Environment struct {
 	AddEnvironmentInput
-	AutoIdle     uint          `json:"autoIdle"`
-	EnvVariables []EnvKeyValue `json:"envVariables,omitempty"`
-	Route        string        `json:"route,omitempty"`
-	Routes       string        `json:"routes,omitempty"`
-	Backups      []Backup      `json:"backups,omitempty"`
+	AutoIdle      uint                     `json:"autoIdle"`
+	EnvVariables  []EnvKeyValue            `json:"envVariables,omitempty"`
+	Route         string                   `json:"route,omitempty"`
+	Routes        string                   `json:"routes,omitempty"`
+	Backups       []Backup                 `json:"backups,omitempty"`
+	AdvancedTasks []AdvancedTaskDefinition `json:"advancedTasks"`
 	// TODO use a unixtime type
 	Updated string `json:"updated,omitempty"`
 	Created string `json:"created,omitempty"`
 	Deleted string `json:"deleted,omitempty"`
+}
+
+type AdvancedTaskDefinition struct {
+	Id                              uint                             `json:"id"`
+	Name                            string                           `json:"name"`
+	Description                     string                           `json:"description"`
+	AdvancedTaskDefinitionArguments []AdvancedTaskDefinitionArgument `json:"advancedTaskDefinitionArguments"`
+}
+
+type AdvancedTaskDefinitionArgument struct {
+	Id          uint     `json:"id"`
+	Name        string   `json:"name"`
+	DisplayName string   `json:"displayName"`
+	Type        string   `json:"type"`
+	Range       []string `json:"range"`
 }
 
 // EnvironmentConfig contains Environment configuration.

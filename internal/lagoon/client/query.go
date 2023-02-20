@@ -65,6 +65,27 @@ func (c *Client) EnvironmentByName(ctx context.Context, name string,
 	})
 }
 
+// EnvironmentByName queries the Lagoon API for an environment by its name and
+// parent projectID, and unmarshals the response into environment.
+func (c *Client) EnvironmentAndTasksByEnvironmentName(ctx context.Context, name string,
+	projectID uint, environment *schema.Environment) error {
+
+	req, err := c.newRequest("_lgraphql/environmentAndTasksByEnvironmentName.graphql",
+		map[string]interface{}{
+			"name":    name,
+			"project": projectID,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.Environment `json:"environmentByName"`
+	}{
+		Response: environment,
+	})
+}
+
 // BackupsForEnvironmentByName queries the Lagoon API for an environment by its name and
 // parent projectID, and unmarshals the response into environment.
 func (c *Client) BackupsForEnvironmentByName(ctx context.Context, name string,
