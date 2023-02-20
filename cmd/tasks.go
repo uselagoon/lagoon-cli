@@ -187,7 +187,7 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
-var invokeDefinedTask = &cobra.Command{
+var runDefinedTask = &cobra.Command{
 	Use:     "task",
 	Aliases: []string{"i"},
 	Short:   "Run a custom task registered against an environment",
@@ -292,8 +292,8 @@ var (
 )
 
 func init() {
-	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
-	invokeDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to invoked task, of the form NAME=VALUE")
+	runDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be run")
+	runDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to custom task, of the form NAME=VALUE")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
