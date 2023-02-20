@@ -188,13 +188,13 @@ var runDrushCacheClear = &cobra.Command{
 }
 
 var invokeDefinedTask = &cobra.Command{
-	Use:     "invoke",
+	Use:     "task",
 	Aliases: []string{"i"},
-	Short:   "Invoke a custom task registered against an environment",
-	Long: `Invoke a custom task registered against an environment
+	Short:   "Run a custom task registered against an environment",
+	Long: `Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run invoke -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
+ lagoon run run -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
