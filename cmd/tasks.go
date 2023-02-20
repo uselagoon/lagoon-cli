@@ -240,7 +240,6 @@ example:
 			os.Exit(1)
 		}
 
-		//TODO: get project id for subsequent queries
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
@@ -262,17 +261,17 @@ example:
 		}
 
 		if len(environment.AdvancedTasks) == 0 {
-			fmt.Println("No custom tasks registered against environment - exiting")
+			fmt.Printf("There are no custom tasks registered against %v %v\n", cmdProjectName, environment.Name)
 			return
 		}
 
 		prompt := promptui.Select{
-			Label: "Select Task",
+			Label: "Select", //fmt.Sprintf("Select a custom task to run on %v %v\n", cmdProjectName, environment.Name),
 			Items: environment.AdvancedTasks,
 			Templates: &promptui.SelectTemplates{
 				Active:   fmt.Sprintf("%s {{ .Name | underline }} -- {{ .Description }}", promptui.IconSelect),
-				Inactive: "{{ .Name }} -- {{ .Description }}",
-				Selected: fmt.Sprintf("%s {{ .Name | green }}", promptui.IconGood),
+				Inactive: "  {{ .Name }} -- {{ .Description }}",
+				Selected: fmt.Sprintf("Task: {{ .Name }}"),
 			},
 		}
 
@@ -285,23 +284,30 @@ example:
 
 		task := environment.AdvancedTasks[taskIndex]
 		taskArguments := map[string]string{}
-		taskArgumentString := ""
 		for _, v := range task.AdvancedTaskDefinitionArguments {
 			if len(v.Range) != 0 { //we have a selection
-				prompt = promptui.Select{
-					Label: v.DisplayName,
+				argPrompt := promptui.Select{
+					Label: fmt.Sprintf("%v", v.DisplayName),
 					Items: v.Range,
+					Templates: &promptui.SelectTemplates{
+						Active:   fmt.Sprintf("%s {{ . | underline }}", promptui.IconSelect),
+						Inactive: "  {{ . }}",
+						Selected: fmt.Sprintf("-- %s : {{ . }}", v.DisplayName),
+					},
 				}
-				_, argumentValue, err := prompt.Run()
+				_, argumentValue, err := argPrompt.Run()
 				if err != nil {
 					fmt.Printf("Prompt failed %v\n", err)
 					return
 				}
 				taskArguments[v.Name] = argumentValue
-				taskArgumentString = taskArgumentString + fmt.Sprintf("%v(%v) : %v", v.DisplayName, v.Name, argumentValue)
 			} else { // standard prompt
 				prompt := promptui.Prompt{
 					Label: fmt.Sprintf("%v", v.DisplayName),
+					Templates: &promptui.PromptTemplates{
+						Valid:   fmt.Sprintf("-- {{ . }} : "),
+						Success: fmt.Sprintf("-- {{ . }} : "),
+					},
 				}
 				argumentValue, err := prompt.Run()
 
@@ -310,11 +316,10 @@ example:
 					return
 				}
 				taskArguments[v.Name] = argumentValue
-				taskArgumentString = taskArgumentString + fmt.Sprintf(", %v(%v) : %v", v.DisplayName, v.Name, argumentValue)
 			}
 		}
 
-		if !yesNo(fmt.Sprintf("Run command `%v` with arguments %v", task.Name, taskArgumentString)) {
+		if !yesNo(fmt.Sprintf("Run above command on %s %s", cmdProjectName, cmdProjectEnvironment)) {
 			fmt.Println("Exiting")
 			return
 		}
