@@ -272,10 +272,9 @@ example:
 			Label: "Select Task",
 			Items: environment.AdvancedTasks,
 			Templates: &promptui.SelectTemplates{
-				Active:   "\U0001F336 {{ .Name }}",
-				Inactive: "  {{ .Name }}",
-				Selected: "\U0001F336 {{ .Name | red | cyan }}",
-				Details:  `{{ .Name }} -- {{ .Description }}`,
+				Active:   fmt.Sprintf("%s {{ .Name | underline }} -- {{ .Description }}", promptui.IconSelect),
+				Inactive: "{{ .Name }} -- {{ .Description }}",
+				Selected: fmt.Sprintf("%s {{ .Name | green }}", promptui.IconGood),
 			},
 		}
 
