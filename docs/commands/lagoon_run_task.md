@@ -1,15 +1,25 @@
-## lagoon run
+## lagoon run task
 
-Run a task against an environment
+Run a custom task registered against an environment
 
 ### Synopsis
 
-Run a task against an environment
+Run a custom task registered against an environment
+The following are supported methods to use
+Direct:
+ lagoon run run -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
+
+
+```
+lagoon run task [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for run
+      --argument strings   Arguments to be passed to invoked task, of the form NAME=VALUE
+  -h, --help               help for task
+  -N, --name string        Name of the task that will be invoked
 ```
 
 ### Options inherited from parent commands
@@ -31,11 +41,5 @@ Run a task against an environment
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
-* [lagoon run activestandby](lagoon_run_activestandby.md)	 - Run the active/standby switch for a project
-* [lagoon run custom](lagoon_run_custom.md)	 - Run a custom command on an environment
-* [lagoon run drush-archivedump](lagoon_run_drush-archivedump.md)	 - Run a drush archive dump on an environment
-* [lagoon run drush-cacheclear](lagoon_run_drush-cacheclear.md)	 - Run a drush cache clear on an environment
-* [lagoon run drush-sqldump](lagoon_run_drush-sqldump.md)	 - Run a drush sql dump on an environment
-* [lagoon run task](lagoon_run_task.md)	 - Run a custom task registered against an environment
+* [lagoon run](lagoon_run.md)	 - Run a task against an environment
 

@@ -188,14 +188,14 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
-var invokeDefinedTask = &cobra.Command{
-	Use:     "invoke",
+var runDefinedTask = &cobra.Command{
+	Use:     "task",
 	Aliases: []string{"i"},
-	Short:   "Invoke a custom task registered against an environment",
-	Long: `Invoke a custom task registered against an environment
+	Short:   "Run a custom task registered against an environment",
+	Long: `Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run invoke -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
+ lagoon run run -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
@@ -407,9 +407,9 @@ var (
 
 func init() {
 	//register sub tasks
-	invokeDefinedTask.AddCommand(invokeInteractiveTask)
-	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
-	invokeDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to invoked task, of the form NAME=VALUE")
+	runDefinedTask.AddCommand(invokeInteractiveTask)
+	runDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be run")
+	runDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to custom task, of the form NAME=VALUE")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
