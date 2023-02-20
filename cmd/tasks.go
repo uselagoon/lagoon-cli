@@ -254,8 +254,6 @@ example:
 			return
 		}
 
-		//TODO: get list of tasks and their arguments
-
 		environment, err := lagoon.TasksForEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 
 		if err != nil {
@@ -285,7 +283,6 @@ example:
 			return
 		}
 
-		//TODO: fill out any arguments
 		task := environment.AdvancedTasks[taskIndex]
 		taskArguments := map[string]string{}
 		taskArgumentString := ""

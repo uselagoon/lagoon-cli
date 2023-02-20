@@ -24,7 +24,7 @@ type Environment struct {
 	Route         string                   `json:"route,omitempty"`
 	Routes        string                   `json:"routes,omitempty"`
 	Backups       []Backup                 `json:"backups,omitempty"`
-	AdvancedTasks []AdvancedTaskDefinition `json:"advancedTasks"`
+	AdvancedTasks []AdvancedTaskDefinition `json:"advancedTasks,omitempty"`
 	// TODO use a unixtime type
 	Updated string `json:"updated,omitempty"`
 	Created string `json:"created,omitempty"`
