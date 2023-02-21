@@ -266,7 +266,7 @@ example:
 		}
 
 		prompt := promptui.Select{
-			Label: "Select", //fmt.Sprintf("Select a custom task to run on %v %v\n", cmdProjectName, environment.Name),
+			Label: "Select",
 			Items: environment.AdvancedTasks,
 			Templates: &promptui.SelectTemplates{
 				Active:   fmt.Sprintf("%s {{ .Name | underline }} -- {{ .Description }}", promptui.IconSelect),
