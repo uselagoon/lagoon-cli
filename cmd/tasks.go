@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -187,14 +188,14 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
-var invokeDefinedTask = &cobra.Command{
-	Use:     "invoke",
+var runDefinedTask = &cobra.Command{
+	Use:     "task",
 	Aliases: []string{"i"},
-	Short:   "",
-	Long: `Invoke a task registered against an environment
+	Short:   "Run a custom task registered against an environment",
+	Long: `Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run invoke -p example -e main -N "advanced task name"
+ lagoon run task -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
@@ -203,7 +204,127 @@ Direct:
 			os.Exit(1)
 		}
 
-		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
+		taskArguments, err := splitInvokeTaskArguments(invokedTaskArguments)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+
+		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName, taskArguments)
+		handleError(err)
+		var resultMap map[string]interface{}
+		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		handleError(err)
+		resultData := output.Result{
+			Result:     "success",
+			ResultData: resultMap,
+		}
+		output.RenderResult(resultData, outputOptions)
+	},
+}
+
+var invokeInteractiveTask = &cobra.Command{
+	Use:     "interactive",
+	Aliases: []string{"i"},
+	Short:   "Interactively run a custom task against an environment",
+	Long: `Interactively run a custom task against an environment
+Provides prompts for arguments
+example:
+ lagoon run task interactive -p example -e main
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		debug, err := cmd.Flags().GetBool("debug")
+		if cmdProjectName == "" || cmdProjectEnvironment == "" {
+			fmt.Println("Missing arguments: Project name or environment name are not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		environment, err := lagoon.TasksForEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		if len(environment.AdvancedTasks) == 0 {
+			fmt.Printf("There are no custom tasks registered against %v %v\n", cmdProjectName, environment.Name)
+			return
+		}
+
+		prompt := promptui.Select{
+			Label: "Select",
+			Items: environment.AdvancedTasks,
+			Templates: &promptui.SelectTemplates{
+				Active:   fmt.Sprintf("%s {{ .Name | underline }} -- {{ .Description }}", promptui.IconSelect),
+				Inactive: "  {{ .Name }} -- {{ .Description }}",
+				Selected: fmt.Sprintf("Task: {{ .Name }}"),
+			},
+		}
+
+		taskIndex, _, err := prompt.Run()
+
+		if err != nil {
+			fmt.Printf("Prompt failed %v\n", err)
+			return
+		}
+
+		task := environment.AdvancedTasks[taskIndex]
+		taskArguments := map[string]string{}
+		for _, v := range task.AdvancedTaskDefinitionArguments {
+			if len(v.Range) != 0 { //we have a selection
+				argPrompt := promptui.Select{
+					Label: fmt.Sprintf("%v", v.DisplayName),
+					Items: v.Range,
+					Templates: &promptui.SelectTemplates{
+						Active:   fmt.Sprintf("%s {{ . | underline }}", promptui.IconSelect),
+						Inactive: "  {{ . }}",
+						Selected: fmt.Sprintf("-- %s : {{ . }}", v.DisplayName),
+					},
+				}
+				_, argumentValue, err := argPrompt.Run()
+				if err != nil {
+					fmt.Printf("Prompt failed %v\n", err)
+					return
+				}
+				taskArguments[v.Name] = argumentValue
+			} else { // standard prompt
+				prompt := promptui.Prompt{
+					Label: fmt.Sprintf("%v", v.DisplayName),
+					Templates: &promptui.PromptTemplates{
+						Valid:   fmt.Sprintf("-- {{ . }} : "),
+						Success: fmt.Sprintf("-- {{ . }} : "),
+					},
+				}
+				argumentValue, err := prompt.Run()
+
+				if err != nil {
+					fmt.Printf("Prompt failed %v\n", err)
+					return
+				}
+				taskArguments[v.Name] = argumentValue
+			}
+		}
+
+		if !yesNo(fmt.Sprintf("Run above command on %s %s", cmdProjectName, cmdProjectEnvironment)) {
+			fmt.Println("Exiting")
+			return
+		}
+
+		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, task.Name, taskArguments)
 		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
@@ -277,15 +398,19 @@ Path:
 }
 
 var (
-	taskName        string
-	invokedTaskName string
-	taskService     string
-	taskCommand     string
-	taskCommandFile string
+	taskName             string
+	invokedTaskName      string
+	invokedTaskArguments []string
+	taskService          string
+	taskCommand          string
+	taskCommandFile      string
 )
 
 func init() {
-	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
+	//register sub tasks
+	runDefinedTask.AddCommand(invokeInteractiveTask)
+	runDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be run")
+	runDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to custom task, of the form NAME=VALUE")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")

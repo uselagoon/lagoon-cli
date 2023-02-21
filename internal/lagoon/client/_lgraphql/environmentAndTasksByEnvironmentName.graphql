@@ -1,0 +1,45 @@
+query (
+  $name: String!,
+  $project: Int!) {
+    environmentByName(
+      name: $name,
+      project: $project)
+      {
+        id
+        name
+        route
+        routes
+        deployType
+        environmentType
+        openshiftProjectName
+        updated
+        created
+        deleted
+        advancedTasks {
+            ... on AdvancedTaskDefinitionImage {
+            id
+            name
+            description
+            advancedTaskDefinitionArguments {
+                id
+                displayName
+                name
+                type
+                range
+                }
+            }
+            ... on AdvancedTaskDefinitionCommand {
+            id
+            name
+            description
+            advancedTaskDefinitionArguments {
+                id
+                displayName
+                name
+                type
+                range
+                }
+            }
+        }
+      }
+  }

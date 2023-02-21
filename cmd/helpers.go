@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -52,4 +53,17 @@ func flagStringNullValueOrNil(flags *pflag.FlagSet, flag string) (*null.String, 
 	}
 	// if not defined, return nil
 	return nil, nil
+}
+
+func splitInvokeTaskArguments(invokedTaskArguments []string) (map[string]string, error) {
+	parsedArgs := map[string]string{}
+
+	for _, v := range invokedTaskArguments {
+		split := strings.Split(v, "=")
+		if len(split) != 2 {
+			return map[string]string{}, errors.New(fmt.Sprintf("Unable to parse `%v`, the form of arguments should be `KEY=VALUE`", v))
+		}
+		parsedArgs[split[0]] = split[1]
+	}
+	return parsedArgs, nil
 }
