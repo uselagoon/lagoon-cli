@@ -650,7 +650,6 @@ type Environment struct {
 	Deleted              string                `json:"deleted,omitempty"`
 	Route                string                `json:"route,omitempty"`
 	Routes               string                `json:"routes,omitempty"`
-	MonitoringUrls       string                `json:"monitoringUrls,omitempty"`
 	EnvVariables         []EnvironmentVariable `json:"envVariables,omitempty"`
 	Backups              []Backup              `json:"backups,omitempty"`
 	Tasks                []Task                `json:"tasks,omitempty"`

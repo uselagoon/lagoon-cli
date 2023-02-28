@@ -88,5 +88,5 @@ type AddNotificationToProjectInput struct {
 // ProjectMetadata .
 type ProjectMetadata struct {
 	Project
-	Metadata string `json:"metadata"`
+	Metadata map[string]string `json:"metadata"`
 }
