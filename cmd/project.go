@@ -178,7 +178,8 @@ var listProjectByMetadata = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
 			}
 			if showMetadata {
-				projectData = append(projectData, returnNonEmptyString(fmt.Sprintf("%v", project.Metadata)))
+				metaData, _ := json.Marshal(project.Metadata)
+				projectData = append(projectData, returnNonEmptyString(fmt.Sprintf("%v", string(metaData))))
 			}
 			data = append(data, projectData)
 		}
@@ -225,14 +226,12 @@ var getProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if project.Metadata == "{}" {
+		if len(project.Metadata) == 0 {
 			output.RenderInfo(fmt.Sprintf("There is no metadata for project '%s'", cmdProjectName), outputOptions)
 			return nil
 		}
-		metadataResponse := map[string]string{}
-		json.Unmarshal([]byte(project.Metadata), &metadataResponse)
 		data := []output.Data{}
-		for metaKey, metaVal := range metadataResponse {
+		for metaKey, metaVal := range project.Metadata {
 			metadataData := []string{
 				returnNonEmptyString(fmt.Sprintf("%v", metaKey)),
 				returnNonEmptyString(fmt.Sprintf("%v", metaVal)),
@@ -291,10 +290,11 @@ var updateProjectMetadata = &cobra.Command{
 				return err
 			}
 			data := []output.Data{}
+			metaData, _ := json.Marshal(projectResult.Metadata)
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
 			output.RenderOutput(output.Table{
 				Header: []string{
@@ -345,10 +345,11 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				return err
 			}
 			data := []output.Data{}
+			metaData, _ := json.Marshal(projectResult.Metadata)
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
 			output.RenderOutput(output.Table{
 				Header: []string{
