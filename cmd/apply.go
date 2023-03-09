@@ -143,19 +143,23 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksFileIn
 			if !hasTaskMatches {
 				if yesNo(fmt.Sprintf("You are attempting to add a new task '%s', are you sure?", t.Name)) {
 					// Add TaskDefinition
-					advancedTaskDefinitionResult, err = lagoon.AddAdvancedTaskDefinition(context.TODO(), &schema.AdvancedTaskDefinitionInput{
-						Name:        t.Name,
-						Description: t.Description,
-						Type:        t.Type,
-						Service:     t.Service,
-						Image:       t.Image,
-						Command:     t.Command,
-						GroupName:   t.GroupName,
-						Project:     int(project.ID),
-						Environment: t.EnvironmentID,
-						Permission:  t.Permission,
-						Arguments:   t.Arguments,
-					}, lc)
+					advancedTaskDefinitionResult, err = lagoon.AddAdvancedTaskDefinition(
+						context.TODO(),
+						&schema.AdvancedTaskDefinitionInput{
+							Name:        t.Name,
+							Description: t.Description,
+							Type:        t.Type,
+							Service:     t.Service,
+							Image:       t.Image,
+							Command:     t.Command,
+							GroupName:   t.GroupName,
+							Project:     int(project.ID),
+							Environment: t.EnvironmentID,
+							Permission:  t.Permission,
+							Arguments:   t.Arguments,
+						},
+						lc,
+					)
 					if err != nil {
 						return err
 					}
