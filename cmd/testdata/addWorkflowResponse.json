@@ -1,0 +1,14 @@
+{
+  "data": {
+    "addWorkflow": {
+      "id": 1,
+      "name": "Teardown ephemeral environment after PR close",
+      "event": "GithubPRClosed",
+      "project": 18,
+      "advancedTaskDefinition": {
+        "id": 1,
+        "name": "Custom task"
+      }
+    }
+  }
+}

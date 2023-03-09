@@ -118,6 +118,25 @@ func (c *Client) LagoonSchema(
 	})
 }
 
+// GetTaskDefinitionByID returns an advanced task definition by its ID
+func (c *Client) GetTaskDefinitionByID(
+	ctx context.Context, id int, taskDefinition *schema.AdvancedTaskDefinitionResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/getTaskDefinitionByID.graphql",
+		map[string]interface{}{
+			"id": id,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AdvancedTaskDefinitionResponse `json:"advancedTaskDefinitionById"`
+	}{
+		Response: taskDefinition,
+	})
+}
+
 // GetTaskByID queries the Lagoon API for a task by its ID, and
 // unmarshals the response.
 func (c *Client) GetTaskByID(
@@ -175,6 +194,46 @@ func (c *Client) ProjectByNameMetadata(
 		Response *schema.ProjectMetadata `json:"projectByName"`
 	}{
 		Response: project,
+	})
+}
+
+// GetWorkflowsByEnvironment queries the Lagoon API for workflows by environment name, and
+// unmarshal the response.
+func (c *Client) GetWorkflowsByEnvironment(
+	ctx context.Context, environment int, workflows *[]schema.WorkflowResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/workflowsForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.WorkflowResponse `json:"workflowsForEnvironment"`
+	}{
+		Response: workflows,
+	})
+}
+
+// GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
+// unmarshal the response.
+func (c *Client) GetAdvancedTasksByEnvironment(
+	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinitionResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/advancedTasksForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.AdvancedTaskDefinitionResponse `json:"advancedTasksForEnvironment"`
+	}{
+		Response: tasks,
 	})
 }
 
