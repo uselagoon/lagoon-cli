@@ -178,6 +178,26 @@ func (c *Client) ProjectByNameMetadata(
 	})
 }
 
+// GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
+// unmarshal the response.
+func (c *Client) GetAdvancedTasksByEnvironment(
+	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinitionResponse) error {
+
+	req, err := c.newVersionedRequest("_lgraphql/advancedTasksForEnvironment.graphql",
+		map[string]interface{}{
+			"environment": environment,
+		})
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &struct {
+		Response *[]schema.AdvancedTaskDefinitionResponse `json:"advancedTasksForEnvironment"`
+	}{
+		Response: tasks,
+	})
+}
+
 // ProjectsByMetadata queries the Lagoon API for a project by its name, and
 // unmarshals the response into project.
 func (c *Client) ProjectsByMetadata(
