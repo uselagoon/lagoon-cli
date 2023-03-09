@@ -105,7 +105,8 @@ func ApplyAdvancedTaskDefinitions(lc *client.Client, tasks []AdvancedTasksFileIn
 					if currAdvTask.Name == advancedTaskInput.Name {
 						hasTaskMatches = true
 
-						// Set found task argument IDs to 0 since we do not want to compare IDs. When adding or updating arguments, all existing arguments will be deleted so their IDs do not matter.
+						// Set found task argument IDs to 0 since we do not want to compare IDs. When adding or updating arguments,
+						// all existing arguments will be deleted so their IDs do not matter.
 						for i := range currAdvTask.Arguments {
 							currAdvTask.Arguments[i].ID = 0
 						}
@@ -236,7 +237,7 @@ func ParseFile(file string) (*FileConfigRoot, error) {
 var viewLastApplied = &cobra.Command{
 	Use:   "view-last-applied",
 	Short: "View the latest applied configuration for project/environment.",
-	Long:  `View the latest applied workflows or advanced task definitions for project/environment.`,
+	Long:  `View the latest applied advanced task definitions for project/environment.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -354,7 +355,7 @@ func getTasksInput(fileName string) ([]AdvancedTasksFileInput, error) {
 var setLastApplied = &cobra.Command{
 	Use:   "set-last-applied -f FILENAME",
 	Short: "Set the latest applied configuration for project/environment.",
-	Long:  `Finds latest configuration match by workflow/task definition 'Name' and sets the latest applied workflow or advanced task definition for project/environment with the contents of file.`,
+	Long:  `Finds latest configuration match by task definition 'Name' and sets the latest applied advanced task definition for project/environment with the contents of file.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -394,9 +395,9 @@ var setLastApplied = &cobra.Command{
 var applyCmd = &cobra.Command{
 	Use:     "apply",
 	Aliases: []string{"ap"},
-	Short:   "Apply the configuration of workflows or tasks from a given yaml configuration file",
-	Long: `Apply the configuration of workflows or tasks from a given yaml configuration file.
-Workflows or advanced task definitions will be created if they do not already exist.`,
+	Short:   "Apply the configuration of tasks from a given yaml configuration file",
+	Long: `Apply the configuration of tasks from a given yaml configuration file.
+Advanced task definitions will be created if they do not already exist.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -436,7 +437,7 @@ Workflows or advanced task definitions will be created if they do not already ex
 			lagoonCLIVersion,
 			debug)
 
-		// Apply Advanced Tasks first since they can be added to workflows.
+		// Apply Advanced Tasks
 		err = ApplyAdvancedTaskDefinitions(lc, fileConfig.Tasks)
 		if err != nil {
 			return err

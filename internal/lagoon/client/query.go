@@ -178,7 +178,7 @@ func (c *Client) ProjectByNameMetadata(
 	})
 }
 
-// GetAdvancedTasksByEnvironment queries the Lagoon API for a advanced tasks by environment name, and
+// GetAdvancedTasksByEnvironment queries the Lagoon API for an advanced tasks by environment name, and
 // unmarshal the response.
 func (c *Client) GetAdvancedTasksByEnvironment(
 	ctx context.Context, environment int, tasks *[]schema.AdvancedTaskDefinitionResponse) error {
