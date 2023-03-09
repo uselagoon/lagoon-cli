@@ -17,8 +17,8 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
-	github.com/stretchr/testify v1.4.0
-	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
+	github.com/stretchr/testify v1.5.1
+	golang.org/x/crypto v0.1.0
 	gopkg.in/yaml.v2 v2.4.0
 	sigs.k8s.io/yaml v1.2.0
 )
@@ -30,14 +30,15 @@ require (
 	github.com/matryer/is v1.2.0 // indirect
 	// workaround for https://github.com/manifoldco/promptui/issues/98
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.27.2 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/yudai/gojsondiff v1.0.0
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
+	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
-	rsc.io/quote/v3 v3.1.0 // indirect
 )
 
 // use this version for fixes to formatting of end header
