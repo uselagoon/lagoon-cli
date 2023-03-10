@@ -1,0 +1,39 @@
+mutation (
+  $id: Int!,
+  $patch: UpdateAdvancedTaskDefinitionPatchInput!,
+){
+  updateAdvancedTaskDefinition(
+    input: {
+      id: $id
+      patch: $patch
+    }
+  ){
+    ... on AdvancedTaskDefinitionCommand {
+      id
+      name
+      description
+      type
+      service
+      command
+      groupName
+      project
+      environment
+    }
+    ... on AdvancedTaskDefinitionImage {
+      id
+      name
+      description
+      type
+      service
+      image
+      groupName
+      project
+      environment
+      advancedTaskDefinitionArguments {
+        id
+        name
+        type
+      }
+    }
+  }
+}
