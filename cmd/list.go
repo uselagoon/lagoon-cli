@@ -394,6 +394,15 @@ var listInvokableTasks = &cobra.Command{
 	},
 }
 
+var listNotificationCmd = &cobra.Command{
+	Use:     "notification",
+	Aliases: []string{"n"},
+	Short:   "List all notifications or notifications on projects",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
@@ -401,8 +410,7 @@ func init() {
 	listCmd.AddCommand(listGroupProjectsCmd)
 	listCmd.AddCommand(listProjectCmd)
 	listCmd.AddCommand(listProjectsCmd)
-	listCmd.AddCommand(listRocketChatsCmd)
-	listCmd.AddCommand(listSlackCmd)
+	listCmd.AddCommand(listNotificationCmd)
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)

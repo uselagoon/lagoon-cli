@@ -1,0 +1,16 @@
+mutation (
+    $name: String!
+    $patch: UpdateNotificationRocketChatPatchInput!
+) {
+	updateNotificationRocketChat(
+        input:{
+            name: $name
+            patch: $patch
+        }
+	){
+		id
+        name
+        channel
+        webhook
+	}
+}

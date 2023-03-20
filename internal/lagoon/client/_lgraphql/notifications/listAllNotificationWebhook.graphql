@@ -1,0 +1,13 @@
+query {
+    allProjects {
+        name
+        id
+        notifications(type: WEBHOOK) {
+            ... on NotificationWebhook {
+                __typename
+                webhook
+                name
+            }
+        }
+    }
+}

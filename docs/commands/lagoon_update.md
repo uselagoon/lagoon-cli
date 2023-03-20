@@ -34,10 +34,9 @@ Update a resource
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
 * [lagoon update deploytarget](lagoon_update_deploytarget.md)	 - Update a DeployTarget in lagoon
 * [lagoon update deploytarget-config](lagoon_update_deploytarget-config.md)	 - Update a deploytarget config
+* [lagoon update notification](lagoon_update_notification.md)	 - List all notifications or notifications on projects
 * [lagoon update project](lagoon_update_project.md)	 - Update a project
 * [lagoon update project-metadata](lagoon_update_project-metadata.md)	 - Update a projects metadata with a given key or key:value
-* [lagoon update rocketchat](lagoon_update_rocketchat.md)	 - Update an existing Rocket.Chat notification
-* [lagoon update slack](lagoon_update_slack.md)	 - Update an existing Slack notification
 * [lagoon update user](lagoon_update_user.md)	 - Update a user in Lagoon
 * [lagoon update variable](lagoon_update_variable.md)	 - Add or update a variable to an environment or project
 

@@ -1,4 +1,4 @@
-//go:generate go-bindata -pkg lgraphql -o lgraphql/lgraphql.go -nometadata _lgraphql/ _lgraphql/variables/
+//go:generate go-bindata -pkg lgraphql -o lgraphql/lgraphql.go -nometadata _lgraphql/ _lgraphql/variables/ _lgraphql/notifications/
 
 // Package client implements the interfaces required by the parent lagoon
 // package.

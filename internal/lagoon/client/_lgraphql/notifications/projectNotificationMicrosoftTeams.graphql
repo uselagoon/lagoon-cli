@@ -1,0 +1,11 @@
+query ($name: String!) {
+    projectByName(name: $name) {
+        notifications(type: MICROSOFTTEAMS) {
+            ... on NotificationMicrosoftTeams {
+                __typename
+                webhook
+                name
+            }
+        }
+    }
+}

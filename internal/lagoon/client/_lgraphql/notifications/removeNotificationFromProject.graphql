@@ -1,0 +1,15 @@
+mutation (
+  $project: String!
+  $notificationType: NotificationType!
+  $notificationName: String!
+){
+  removeNotificationFromProject(
+    input:{
+      project: $project
+      notificationType: $notificationType
+      notificationName: $notificationName
+    }
+  ){
+    id
+  }
+}

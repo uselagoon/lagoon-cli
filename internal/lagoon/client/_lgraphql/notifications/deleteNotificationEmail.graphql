@@ -1,0 +1,3 @@
+mutation ($name: String!) {
+    deleteNotification: deleteNotificationEmail(input:{name: $name})
+}
