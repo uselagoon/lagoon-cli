@@ -14,10 +14,11 @@ import (
 // Fields for comprising structs are dictated by the add* Lagoon APIs.
 type Config struct {
 	// API objects
-	Projects      []ProjectConfig      `json:"projects,omitempty"`
-	Groups        []GroupConfig        `json:"groups,omitempty"`
-	Users         []User               `json:"users,omitempty"`
-	Notifications *NotificationsConfig `json:"notifications,omitempty"`
+	Projects            []ProjectConfig      `json:"projects,omitempty"`
+	Groups              []GroupConfig        `json:"groups,omitempty"`
+	Users               []User               `json:"users,omitempty"`
+	Notifications       *NotificationsConfig `json:"notifications,omitempty"`
+	DeployTargetConfigs []DeployTargetConfig `json:"deployTargetConfigs,omitempty"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface to control how lagoon
