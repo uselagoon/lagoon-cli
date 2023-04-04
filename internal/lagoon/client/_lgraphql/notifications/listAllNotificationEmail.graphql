@@ -1,0 +1,13 @@
+query {
+    allProjects {
+        name
+        id
+        notifications(type: EMAIL) {
+            ... on NotificationEmail {
+                __typename
+                emailAddress
+                name
+            }
+        }
+    }
+}

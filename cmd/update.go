@@ -13,10 +13,18 @@ var updateCmd = &cobra.Command{
 	},
 }
 
+var updateNotificationCmd = &cobra.Command{
+	Use:     "notification",
+	Aliases: []string{"n"},
+	Short:   "List all notifications or notifications on projects",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+}
+
 func init() {
 	updateCmd.AddCommand(updateProjectCmd)
-	updateCmd.AddCommand(updateRocketChatNotificationCmd)
-	updateCmd.AddCommand(updateSlackNotificationCmd)
+	updateCmd.AddCommand(updateNotificationCmd)
 	updateCmd.AddCommand(updateUserCmd)
 	updateCmd.AddCommand(updateDeployTargetConfigCmd)
 	updateCmd.AddCommand(updateDeployTargetCmd)

@@ -1,0 +1,11 @@
+query ($name: String!) {
+    projectByName(name: $name) {
+        notifications(type: EMAIL) {
+            ... on NotificationEmail {
+                __typename
+                emailAddress
+                name
+            }
+        }
+    }
+}

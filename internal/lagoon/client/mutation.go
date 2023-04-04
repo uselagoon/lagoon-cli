@@ -112,65 +112,6 @@ func (c *Client) AddUserToGroup(
 	})
 }
 
-// AddNotificationSlack defines a Slack notification.
-func (c *Client) AddNotificationSlack(ctx context.Context,
-	in *schema.AddNotificationSlackInput, out *schema.NotificationSlack) error {
-	req, err := c.newRequest("_lgraphql/addNotificationSlack.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationSlack `json:"addNotificationSlack"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationRocketChat defines a RocketChat notification.
-func (c *Client) AddNotificationRocketChat(ctx context.Context,
-	in *schema.AddNotificationRocketChatInput,
-	out *schema.NotificationRocketChat) error {
-	req, err := c.newRequest("_lgraphql/addNotificationRocketChat.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationRocketChat `json:"addNotificationRocketChat"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationEmail defines an Email notification.
-func (c *Client) AddNotificationEmail(ctx context.Context,
-	in *schema.AddNotificationEmailInput,
-	out *schema.NotificationEmail) error {
-	req, err := c.newRequest("_lgraphql/addNotificationEmail.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationEmail `json:"addNotificationEmail"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationMicrosoftTeams defines a MicrosoftTeams notification.
-func (c *Client) AddNotificationMicrosoftTeams(ctx context.Context,
-	in *schema.AddNotificationMicrosoftTeamsInput,
-	out *schema.NotificationMicrosoftTeams) error {
-	req, err := c.newRequest("_lgraphql/addNotificationMicrosoftTeams.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationMicrosoftTeams `json:"addNotificationMicrosoftTeams"`
-	}{
-		Response: out,
-	})
-}
-
 // AddProject adds a project.
 func (c *Client) AddProject(
 	ctx context.Context, in *schema.AddProjectInput, out *schema.Project) error {
@@ -222,20 +163,6 @@ func (c *Client) AddGroupsToProject(ctx context.Context,
 	}
 	return c.client.Run(ctx, req, &struct {
 		Response *schema.Project `json:"addGroupsToProject"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationToProject adds a Notification to a Project.
-func (c *Client) AddNotificationToProject(ctx context.Context,
-	in *schema.AddNotificationToProjectInput, out *schema.Project) error {
-	req, err := c.newRequest("_lgraphql/addNotificationToProject.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.Project `json:"addNotificationToProject"`
 	}{
 		Response: out,
 	})

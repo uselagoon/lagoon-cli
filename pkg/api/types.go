@@ -40,6 +40,7 @@ const (
 	RocketChatNotification     NotificationType = "ROCKETCHAT"
 	EmailNotification          NotificationType = "EMAIL"
 	MicrosoftTeamsNotification NotificationType = "MICROSOFTTEAMS"
+	WebhookNotification        NotificationType = "WEBHOOK"
 )
 
 // DeploymentStatusType .
