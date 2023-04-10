@@ -1,12 +1,16 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
@@ -55,6 +59,70 @@ var listProjectsCmd = &cobra.Command{
 		}
 		output.RenderOutput(dataMain, outputOptions)
 
+	},
+}
+
+var listDeployTargetsCmd = &cobra.Command{
+	Use:     "deploytargets",
+	Aliases: []string{"deploytarget", "dt"},
+	Short:   "List all DeployTargets in Lagoon",
+	Long:    "List all DeployTargets (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, deploytarget := range *deploytargets {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ConsoleURL)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.BuildImage)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Token)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHHost)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHPort)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudRegion)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"ConsoleUrl",
+				"BuildImage",
+				"Token",
+				"SshHost",
+				"SshPort",
+				"CloudRegion",
+				"CloudProvider",
+				"FriendlyName",
+				"RouterPattern",
+				"Created",
+				"MonitoringConfig",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
@@ -141,33 +209,78 @@ var listVariablesCmd = &cobra.Command{
 	Use:     "variables",
 	Aliases: []string{"v"},
 	Short:   "List variables for a project or environment (alias: v)",
-	Run: func(cmd *cobra.Command, args []string) {
-		getListFlags := parseListFlags(*cmd.Flags())
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		var returnedJSON []byte
-		var err error
-		if cmdProjectEnvironment != "" {
-			returnedJSON, err = eClient.ListEnvironmentVariables(cmdProjectName, cmdProjectEnvironment, getListFlags.Reveal)
-		} else {
-			returnedJSON, err = pClient.ListProjectVariables(cmdProjectName, getListFlags.Reveal)
+		reveal, err := cmd.Flags().GetBool("reveal")
+		if err != nil {
+			return err
 		}
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			if cmdProjectEnvironment != "" {
-				output.RenderInfo(fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
-			} else {
-				output.RenderInfo(fmt.Sprintf("There are no variables for project '%s'", cmdProjectName), outputOptions)
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		in := &schema.EnvVariableByProjectEnvironmentNameInput{
+			Project:     cmdProjectName,
+			Environment: cmdProjectEnvironment,
+		}
+		envvars, err := lagoon.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, envvar := range *envvars {
+			env := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", envvar.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", cmdProjectName)),
 			}
-			os.Exit(0)
+			if cmdProjectEnvironment != "" {
+				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", cmdProjectEnvironment)))
+			}
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
+			if reveal {
+				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+			}
+			data = append(data, env)
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		if len(data) == 0 {
+			if cmdProjectEnvironment != "" {
+				return fmt.Errorf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
+			} else {
+				return fmt.Errorf("There are no variables for project '%s'", cmdProjectName)
+			}
+		}
+		header := []string{
+			"ID",
+			"Project",
+		}
+		if cmdProjectEnvironment != "" {
+			header = append(header, "Environment")
+		}
+		header = append(header, "Scope")
+		header = append(header, "Name")
+		if reveal {
+			header = append(header, "Value")
+		}
+		output.RenderOutput(output.Table{
+			Header: header,
+			Data:   data,
+		}, outputOptions)
+		return nil
 	},
 }
 
@@ -281,14 +394,23 @@ var listInvokableTasks = &cobra.Command{
 	},
 }
 
+var listNotificationCmd = &cobra.Command{
+	Use:     "notification",
+	Aliases: []string{"n"},
+	Short:   "List all notifications or notifications on projects",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+}
+
 func init() {
+	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
 	listCmd.AddCommand(listProjectCmd)
 	listCmd.AddCommand(listProjectsCmd)
-	listCmd.AddCommand(listRocketChatsCmd)
-	listCmd.AddCommand(listSlackCmd)
+	listCmd.AddCommand(listNotificationCmd)
 	listCmd.AddCommand(listTasksCmd)
 	listCmd.AddCommand(listUsersCmd)
 	listCmd.AddCommand(listVariablesCmd)
@@ -298,5 +420,5 @@ func init() {
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
-	listVariablesCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
+	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 }

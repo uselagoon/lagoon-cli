@@ -1,0 +1,13 @@
+query {
+    allProjects {
+        name
+        id
+        notifications(type: MICROSOFTTEAMS) {
+            ... on NotificationMicrosoftTeams {
+                __typename
+                webhook
+                name
+            }
+        }
+    }
+}

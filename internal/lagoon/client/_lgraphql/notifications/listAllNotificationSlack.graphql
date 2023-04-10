@@ -1,0 +1,14 @@
+query {
+    allProjects {
+        name
+        id
+        notifications(type: SLACK) {
+            ... on NotificationSlack {
+                __typename
+                webhook
+                channel
+                name
+            }
+        }
+    }
+}

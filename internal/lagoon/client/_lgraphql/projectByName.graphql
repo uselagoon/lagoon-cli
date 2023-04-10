@@ -14,6 +14,26 @@ query (
         developmentEnvironmentsLimit
         gitUrl
         autoIdle
+        factsUi
+        problemsUi
+        deployTargetConfigs {
+          branches
+          deployTarget{
+            id
+            name
+            token
+          }
+          id
+          project{
+            autoIdle
+            gitUrl
+            name
+            productionEnvironment
+            storageCalc
+          }
+          pullrequests
+          weight
+        }
         groups{
           ... on Group {
             __typename

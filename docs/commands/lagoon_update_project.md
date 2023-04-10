@@ -15,7 +15,9 @@ lagoon update project [flags]
 ```
   -a, --autoIdle int                          Auto idle setting of the project
   -b, --branches string                       Which branches should be deployed
+      --deploymentsDisabled int               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
   -L, --developmentEnvironmentsLimit int      How many environments can be deployed at one time
+      --factsUi int                           Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable
   -g, --gitUrl string                         GitURL of the project
   -h, --help                                  help for project
   -j, --json string                           JSON string to patch
@@ -23,6 +25,7 @@ lagoon update project [flags]
   -S, --openshift int                         Reference to OpenShift Object this Project should be deployed to
   -o, --openshiftProjectPattern string        Pattern of OpenShift Project/Namespace that should be generated
   -I, --privateKey string                     Private key to use for the project
+      --problemsUi int                        Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable
   -E, --productionEnvironment string          Which environment(the name) should be marked as the production environment
   -m, --pullrequests string                   Which Pull Requests should be deployed
   -Z, --routerPattern string                  Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'

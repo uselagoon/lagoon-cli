@@ -40,6 +40,7 @@ const (
 	RocketChatNotification     NotificationType = "ROCKETCHAT"
 	EmailNotification          NotificationType = "EMAIL"
 	MicrosoftTeamsNotification NotificationType = "MICROSOFTTEAMS"
+	WebhookNotification        NotificationType = "WEBHOOK"
 )
 
 // DeploymentStatusType .
@@ -248,6 +249,7 @@ type Project struct {
 	Deployments                  []Deployment          `json:"deployments,omitempty"`
 	Notifications                []interface{}         `json:"notifications,omitempty"`
 	FactsUI                      *int                  `json:"factsUi,omitempty"`
+	ProblemsUI                   *int                  `json:"problemsUi,omitempty"`
 }
 
 // ProjectPatch struct.
@@ -268,6 +270,8 @@ type ProjectPatch struct {
 	DevelopmentEnvironmentsLimit *int   `json:"developmentEnvironmentsLimit,omitempty"`
 	Openshift                    *int   `json:"openshift,omitempty"`
 	FactsUI                      *int   `json:"factsUi,omitempty"`
+	ProblemsUI                   *int   `json:"problemsUi,omitempty"`
+	DeploymentsDisabled          *int   `json:"deploymentsDisabled,omitempty"`
 }
 
 // AddSSHKey .
@@ -647,7 +651,6 @@ type Environment struct {
 	Deleted              string                `json:"deleted,omitempty"`
 	Route                string                `json:"route,omitempty"`
 	Routes               string                `json:"routes,omitempty"`
-	MonitoringUrls       string                `json:"monitoringUrls,omitempty"`
 	EnvVariables         []EnvironmentVariable `json:"envVariables,omitempty"`
 	Backups              []Backup              `json:"backups,omitempty"`
 	Tasks                []Task                `json:"tasks,omitempty"`

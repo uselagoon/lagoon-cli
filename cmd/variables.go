@@ -1,92 +1,103 @@
 package cmd
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-// EnvironmentVariableFlags .
-type EnvironmentVariableFlags struct {
-	Name  string `json:"name,omitempty"`
-	Value string `json:"value"`
-	Scope string `json:"scope,omitempty"`
-}
-
-func parseEnvVars(flags pflag.FlagSet) api.EnvVariable {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.EnvVariable{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var addVariableCmd = &cobra.Command{
 	Use:     "variable",
 	Aliases: []string{"v"},
-	Short:   "Add a variable to an environment or project",
-	Run: func(cmd *cobra.Command, args []string) {
-		envVarFlags := parseEnvVars(*cmd.Flags())
+	Short:   "Add or update a variable to an environment or project",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		if jsonPatch != "" {
-			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
-			handleError(err)
+		varName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		if envVarFlags.Name == "" || envVarFlags.Scope == "" {
-			output.RenderError("Must define a variable name and scope", outputOptions)
+		if varName == "" {
+			fmt.Println("Missing arguments: variable name is not defined")
+			cmd.Help()
 			os.Exit(1)
 		}
-		if strings.EqualFold(string(envVarFlags.Scope), "global") {
-			envVarFlags.Scope = api.GlobalVar
-		} else if strings.EqualFold(string(envVarFlags.Scope), "build") {
-			envVarFlags.Scope = api.BuildVar
-		} else if strings.EqualFold(string(envVarFlags.Scope), "runtime") {
-			envVarFlags.Scope = api.RuntimeVar
-		} else if strings.EqualFold(string(envVarFlags.Scope), "container_registry") {
-			envVarFlags.Scope = api.ContainerRegistryVar
-		} else if strings.EqualFold(string(envVarFlags.Scope), "internal_container_registry") {
-			envVarFlags.Scope = api.InternalContainerRegistryVar
+		varValue, err := cmd.Flags().GetString("value")
+		if err != nil {
+			return err
+		}
+		varScope, err := cmd.Flags().GetString("scope")
+		if err != nil {
+			return err
+		}
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		in := &schema.EnvVariableByNameInput{
+			Project:     cmdProjectName,
+			Environment: cmdProjectEnvironment,
+			Scope:       schema.EnvVariableScope(strings.ToUpper(varScope)),
+			Name:        varName,
+			Value:       varValue,
+		}
+		envvar, err := lagoon.AddOrUpdateEnvVariableByName(context.TODO(), in, lc)
+		if err != nil {
+			return err
+		}
+
+		if envvar.ID != 0 {
+			data := []output.Data{}
+			env := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", envvar.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", cmdProjectName)),
+			}
+			if cmdProjectEnvironment != "" {
+				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", cmdProjectEnvironment)))
+			}
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+			data = append(data, env)
+			header := []string{
+				"ID",
+				"Project",
+			}
+			if cmdProjectEnvironment != "" {
+				header = append(header, "Environment")
+			}
+			header = append(header, "Scope")
+			header = append(header, "Name")
+			header = append(header, "Value")
+			output.RenderOutput(output.Table{
+				Header: header,
+				Data:   data,
+			}, outputOptions)
 		} else {
-			output.RenderError("Unknown scope: "+string(envVarFlags.Scope), outputOptions)
-			os.Exit(1)
+			output.RenderInfo(fmt.Sprintf("variable %s remained unchanged", varName), outputOptions)
 		}
-		var customReqResult []byte
-		var err error
-		returnResultData := map[string]interface{}{}
-		if cmdProjectEnvironment != "" {
-			customReqResult, err = eClient.AddEnvironmentVariableToEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
-			returnResultData["Project"] = cmdProjectName
-			returnResultData["Environment"] = cmdProjectEnvironment
-		} else {
-			customReqResult, err = pClient.AddEnvironmentVariableToProject(cmdProjectName, envVarFlags)
-			returnResultData["Project"] = cmdProjectName
-		}
-		handleError(err)
-		var updatedVariable api.EnvVariable
-		err = json.Unmarshal([]byte(customReqResult), &updatedVariable)
-		handleError(err)
-		returnResultData["ID"] = strconv.Itoa(updatedVariable.ID)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
-		}
-		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -95,46 +106,59 @@ var deleteVariableCmd = &cobra.Command{
 	Aliases: []string{"v"},
 	Short:   "Delete a variable from an environment",
 	Long:    `This allows you to delete an environment variable from a project.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		envVarFlags := parseEnvVars(*cmd.Flags())
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		if jsonPatch != "" {
-			err := json.Unmarshal([]byte(jsonPatch), &envVarFlags)
-			handleError(err)
+		varName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		if envVarFlags.Name == "" {
-			output.RenderError("Must define a variable name", outputOptions)
-			os.Exit(1)
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		deleteMsg := fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", envVarFlags.Name, cmdProjectName)
+		deleteMsg := fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
 		if cmdProjectEnvironment != "" {
-			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", envVarFlags.Name, cmdProjectEnvironment, cmdProjectName)
+			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
-			var deleteResult []byte
-			var err error
-			if cmdProjectEnvironment != "" {
-				deleteResult, err = eClient.DeleteEnvironmentVariableFromEnvironment(cmdProjectName, cmdProjectEnvironment, envVarFlags)
-			} else {
-				deleteResult, err = pClient.DeleteEnvironmentVariableFromProject(cmdProjectName, envVarFlags)
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			in := &schema.DeleteEnvVariableByNameInput{
+				Project:     cmdProjectName,
+				Environment: cmdProjectEnvironment,
+				Name:        varName,
 			}
-			handleError(err)
+			deleteResult, err := lagoon.DeleteEnvVariableByName(context.TODO(), in, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
-				Result: string(deleteResult),
+				Result: string(deleteResult.DeleteEnvVar),
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
+var updateVariableCmd = addVariableCmd
+
 func init() {
-	addVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to add")
-	addVariableCmd.Flags().StringVarP(&variableValue, "value", "V", "", "Value of the variable to add")
-	addVariableCmd.Flags().StringVarP(&variableScope, "scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
-	addVariableCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
-	deleteVariableCmd.Flags().StringVarP(&variableName, "name", "N", "", "Name of the variable to delete")
+	updateCmd.AddCommand(updateVariableCmd)
+	addVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
+	addVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
+	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	deleteVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to delete")
 }

@@ -20,6 +20,42 @@ func wrapErr(err error) error {
 	return err
 }
 
+// AddDeployTarget adds a deploytarget (kubernetes/openshift).
+func (c *Client) AddDeployTarget(ctx context.Context, in *schema.AddDeployTargetInput, out *schema.AddDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/addDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.AddDeployTargetResponse `json:"addDeployTarget"`
+	}{
+		Response: out,
+	})
+}
+
+// UpdateDeployTarget updates a deploytarget (kubernetes/openshift).
+func (c *Client) UpdateDeployTarget(ctx context.Context, in *schema.UpdateDeployTargetInput, out *schema.UpdateDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/updateDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.UpdateDeployTargetResponse `json:"updateDeployTarget"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteDeployTarget deletes a deploytarget (kubernetes/openshift).
+func (c *Client) DeleteDeployTarget(ctx context.Context, in *schema.DeleteDeployTargetInput, out *schema.DeleteDeployTargetResponse) error {
+	req, err := c.newRequest("_lgraphql/deleteDeployTarget.graphql", in)
+	if err != nil {
+		return err
+	}
+
+	return c.client.Run(ctx, req, &out)
+}
+
 // AddGroup adds a group.
 func (c *Client) AddGroup(
 	ctx context.Context, in *schema.AddGroupInput, out *schema.Group) error {
@@ -76,65 +112,6 @@ func (c *Client) AddUserToGroup(
 	})
 }
 
-// AddNotificationSlack defines a Slack notification.
-func (c *Client) AddNotificationSlack(ctx context.Context,
-	in *schema.AddNotificationSlackInput, out *schema.NotificationSlack) error {
-	req, err := c.newRequest("_lgraphql/addNotificationSlack.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationSlack `json:"addNotificationSlack"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationRocketChat defines a RocketChat notification.
-func (c *Client) AddNotificationRocketChat(ctx context.Context,
-	in *schema.AddNotificationRocketChatInput,
-	out *schema.NotificationRocketChat) error {
-	req, err := c.newRequest("_lgraphql/addNotificationRocketChat.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationRocketChat `json:"addNotificationRocketChat"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationEmail defines an Email notification.
-func (c *Client) AddNotificationEmail(ctx context.Context,
-	in *schema.AddNotificationEmailInput,
-	out *schema.NotificationEmail) error {
-	req, err := c.newRequest("_lgraphql/addNotificationEmail.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationEmail `json:"addNotificationEmail"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationMicrosoftTeams defines a MicrosoftTeams notification.
-func (c *Client) AddNotificationMicrosoftTeams(ctx context.Context,
-	in *schema.AddNotificationMicrosoftTeamsInput,
-	out *schema.NotificationMicrosoftTeams) error {
-	req, err := c.newRequest("_lgraphql/addNotificationMicrosoftTeams.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.NotificationMicrosoftTeams `json:"addNotificationMicrosoftTeams"`
-	}{
-		Response: out,
-	})
-}
-
 // AddProject adds a project.
 func (c *Client) AddProject(
 	ctx context.Context, in *schema.AddProjectInput, out *schema.Project) error {
@@ -186,20 +163,6 @@ func (c *Client) AddGroupsToProject(ctx context.Context,
 	}
 	return c.client.Run(ctx, req, &struct {
 		Response *schema.Project `json:"addGroupsToProject"`
-	}{
-		Response: out,
-	})
-}
-
-// AddNotificationToProject adds a Notification to a Project.
-func (c *Client) AddNotificationToProject(ctx context.Context,
-	in *schema.AddNotificationToProjectInput, out *schema.Project) error {
-	req, err := c.newRequest("_lgraphql/addNotificationToProject.graphql", in)
-	if err != nil {
-		return err
-	}
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.Project `json:"addNotificationToProject"`
 	}{
 		Response: out,
 	})
@@ -360,5 +323,34 @@ func (c *Client) DeleteDeployTargetConfiguration(ctx context.Context,
 	if err != nil {
 		return err
 	}
+	return c.client.Run(ctx, req, &out)
+}
+
+// AddOrUpdateEnvVariableByName adds or updates an environment variable in the api
+func (c *Client) AddOrUpdateEnvVariableByName(ctx context.Context, in *schema.EnvVariableByNameInput, out *schema.UpdateEnvVarResponse) error {
+	req, err := c.newRequest("_lgraphql/variables/addOrUpdateEnvVariableByName.graphql",
+		map[string]interface{}{
+			"input": in,
+		})
+	if err != nil {
+		return err
+	}
+	return c.client.Run(ctx, req, &struct {
+		Response *schema.UpdateEnvVarResponse `json:"addOrUpdateEnvVariableByName"`
+	}{
+		Response: out,
+	})
+}
+
+// DeleteEnvVariableByName deletes an environment variable from the api
+func (c *Client) DeleteEnvVariableByName(ctx context.Context, in *schema.DeleteEnvVariableByNameInput, out *schema.DeleteEnvVarResponse) error {
+	req, err := c.newRequest("_lgraphql/variables/deleteEnvVariableByName.graphql",
+		map[string]interface{}{
+			"input": in,
+		})
+	if err != nil {
+		return err
+	}
+
 	return c.client.Run(ctx, req, &out)
 }

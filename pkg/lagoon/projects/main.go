@@ -25,20 +25,6 @@ type Client interface {
 	ListProjectVariables(string, bool) ([]byte, error)
 	GetProjectKey(string, bool) ([]byte, error)
 	GetProjectInfo(string) ([]byte, error)
-	ListAllRocketChats() ([]byte, error)
-	ListProjectRocketChats(string) ([]byte, error)
-	ListAllSlacks() ([]byte, error)
-	ListProjectSlacks(string) ([]byte, error)
-	AddRocketChatNotification(string, string, string) ([]byte, error)
-	AddRocketChatNotificationToProject(string, string) ([]byte, error)
-	DeleteRocketChatNotificationFromProject(string, string) ([]byte, error)
-	UpdateRocketChatNotification(string, string) ([]byte, error)
-	DeleteRocketChatNotification(string) ([]byte, error)
-	AddSlackNotification(string, string, string) ([]byte, error)
-	AddSlackNotificationToProject(string, string) ([]byte, error)
-	DeleteSlackNotificationFromProject(string, string) ([]byte, error)
-	UpdateSlackNotification(string, string) ([]byte, error)
-	DeleteSlackNotification(string) ([]byte, error)
 	DeleteProject(string) ([]byte, error)
 	AddProject(string, string) ([]byte, error)
 	UpdateProject(string, string) ([]byte, error)
@@ -138,7 +124,7 @@ func processProjectInfo(projectByName []byte) ([]byte, error) {
 	var data []output.Data
 	data = append(data, projectData)
 	dataMain := output.Table{
-		Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle"},
+		Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle", "FactsUI", "ProblemsUI"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -168,6 +154,8 @@ func processProjectExtra(project api.Project) []string {
 		fmt.Sprintf("%v", project.ProductionEnvironment),
 		fmt.Sprintf("%s", project.RouterPattern),
 		fmt.Sprintf("%v", *project.AutoIdle),
+		fmt.Sprintf("%v", *project.FactsUI),
+		fmt.Sprintf("%v", *project.ProblemsUI),
 	}
 	return data
 }

@@ -21,18 +21,15 @@ var sshEnvCmd = &cobra.Command{
 	Use:     "ssh",
 	Aliases: []string{"s"},
 	Short:   "Display the SSH command to access a specific environment in a project",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+			return fmt.Errorf("Missing arguments: Project name or environment name are not defined")
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return err
 		}
 
 		// allow the use of the `feature/branch` and standard `feature-branch` type environment names to be used
@@ -115,7 +112,7 @@ var sshEnvCmd = &cobra.Command{
 				output.RenderError(err.Error(), outputOptions)
 			}
 		}
-
+		return nil
 	},
 }
 var (

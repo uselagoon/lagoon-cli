@@ -1,172 +1,183 @@
 {
-  "data": {
-    "projectByName": {
-      "name": "bananas",
-      "autoIdle": 1,
-      "branches": "^(master|develop|production)$",
-      "pullrequests": null,
-      "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACDyqifji2CwiyZVExfEllTsHVKwhXz1XDTBeEa/q312NwAAAJDLqG7Iy6hu\nyAAAAAtzc2gtZWQyNTUxOQAAACDyqifji2CwiyZVExfEllTsHVKwhXz1XDTBeEa/q312Nw\nAAAEC0EKQryGzT+PYQH1GsfmkP2SXBPvY9lvxD5sj4mcE4ivKqJ+OLYLCLJlUTF8SWVOwd\nUrCFfPVcNMF4Rr+rfXY3AAAADHNjb3R0QHRoaW5reQE=\n-----END OPENSSH PRIVATE KEY-----\n",
-      "productionEnvironment": "production",
-      "storageCalc": 1,
-      "openshiftProjectPattern": null,
-      "developmentEnvironmentsLimit": 10,
-      "gitUrl": "git@github.amazee.io:foo-bar/bananas-au.git",
-      "groups": [
-        {
-          "__typename": "Group",
-          "name": "abc",
-          "id": "d5e3f014-8110-43f8-b0d2-0b60ef917e63",
-          "members": [
-            {
-              "user": {
-                "email": "foo@example.com",
-                "sshKeys": [
-                  {
-                    "name": "foo-example",
-                    "created": "2020-02-11 09:00:42",
-                    "keyFingerprint": "",
-                    "keyType": "ssh-ed25519",
-                    "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
-                  }
-                ],
-                "firstName": "foofirst",
-                "lastName": "foolast"
-              },
-              "role": "OWNER"
-            },
-            {
-              "user": {
-                "email": "bar@example.com",
-                "sshKeys": [
-                  {
-                    "name": "bar-example",
-                    "created": "2020-02-11 09:00:42",
-                    "keyFingerprint": "",
-                    "keyType": "ssh-ed25519",
-                    "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
-                  }
-                ],
-                "firstName": "barfirst",
-                "lastName": "barlast"
-              },
-              "role": "OWNER"
-            }
-          ]
-        },
-        {
-          "__typename": "Group",
-          "name": "project-bananas",
-          "id": "324b5b77-975b-4243-b540-697e1aa475c5",
-          "members": [
-            {
-              "user": {
-                "email": "projectuser@example.com",
-                "sshKeys": [
-                  {
-                    "name": "projectuser",
-                    "created": "2020-02-11 09:00:42",
-                    "keyFingerprint": "",
-                    "keyType": "ssh-ed25519",
-                    "keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
-                  }
-                ],
-                "firstName": "projectuserfirst",
-                "lastName": "projectuserlast"
-              },
-              "role": "MAINTAINER"
-            }
-          ]
-        }
-      ],
-      "notifications": [
-        {
-          "__typename": "NotificationSlack",
-          "webhook": "https://hooks.slack.example.com/services/xxx/yyy",
-          "name": "example-slack",
-          "channel": "build-notifications"
-        }
-      ],
-      "openshift": {
-        "id": 1
-      },
-      "envVariables": [
-        {
-          "name": "ENABLE_REDIS",
-          "scope": "global",
-          "value": "1"
-        }
-      ],
-      "environments": [
-        {
-          "id": 6,
-          "name": "develop",
-          "openshiftProjectName": "bananas-develop",
-          "autoIdle": 1,
-          "envVariables": [
-            {
-              "name": "ENABLE_REDIS",
-              "scope": "build",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "id": 1708,
-          "name": "feature/persist-db",
-          "openshiftProjectName": "bananas-feature-persist-db",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 88,
-          "name": "master",
-          "openshiftProjectName": "bananas-master",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 15601,
-          "name": "pr-486",
-          "openshiftProjectName": "bananas-pr-486",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 16072,
-          "name": "pr-487",
-          "openshiftProjectName": "bananas-pr-487",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 24571,
-          "name": "pr-507",
-          "openshiftProjectName": "bananas-pr-507",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 31365,
-          "name": "pr-513",
-          "openshiftProjectName": "bananas-pr-513",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 512,
-          "name": "production",
-          "openshiftProjectName": "bananas-production",
-          "autoIdle": 1,
-          "envVariables": []
-        },
-        {
-          "id": 1007,
-          "name": "sandbox",
-          "openshiftProjectName": "bananas-sandbox",
-          "autoIdle": 1,
-          "envVariables": []
-        }
-      ]
-    }
-  }
+	"data": {
+		"projectByName": {
+			"name": "bananas",
+			"autoIdle": 1,
+			"branches": "^(master|develop|production)$",
+			"pullrequests": null,
+			"privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACDyqifji2CwiyZVExfEllTsHVKwhXz1XDTBeEa/q312NwAAAJDLqG7Iy6hu\nyAAAAAtzc2gtZWQyNTUxOQAAACDyqifji2CwiyZVExfEllTsHVKwhXz1XDTBeEa/q312Nw\nAAAEC0EKQryGzT+PYQH1GsfmkP2SXBPvY9lvxD5sj4mcE4ivKqJ+OLYLCLJlUTF8SWVOwd\nUrCFfPVcNMF4Rr+rfXY3AAAADHNjb3R0QHRoaW5reQE=\n-----END OPENSSH PRIVATE KEY-----\n",
+			"productionEnvironment": "production",
+			"storageCalc": 1,
+			"openshiftProjectPattern": null,
+			"developmentEnvironmentsLimit": 10,
+			"deployTargetConfigs": [],
+			"gitUrl": "git@github.amazee.io:foo-bar/bananas-au.git",
+			"groups": [{
+					"__typename": "Group",
+					"name": "abc",
+					"id": "d5e3f014-8110-43f8-b0d2-0b60ef917e63",
+					"members": [{
+							"user": {
+								"email": "foo@example.com",
+								"sshKeys": [{
+									"name": "foo-example",
+									"created": "2020-02-11 09:00:42",
+									"keyFingerprint": "",
+									"keyType": "ssh-ed25519",
+									"keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
+								}],
+								"firstName": "foofirst",
+								"lastName": "foolast"
+							},
+							"role": "OWNER"
+						},
+						{
+							"user": {
+								"email": "bar@example.com",
+								"sshKeys": [{
+									"name": "bar-example",
+									"created": "2020-02-11 09:00:42",
+									"keyFingerprint": "",
+									"keyType": "ssh-ed25519",
+									"keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
+								}],
+								"firstName": "barfirst",
+								"lastName": "barlast"
+							},
+							"role": "OWNER"
+						}
+					]
+				},
+				{
+					"__typename": "Group",
+					"name": "project-bananas",
+					"id": "324b5b77-975b-4243-b540-697e1aa475c5",
+					"members": [{
+						"user": {
+							"email": "projectuser@example.com",
+							"sshKeys": [{
+								"name": "projectuser",
+								"created": "2020-02-11 09:00:42",
+								"keyFingerprint": "",
+								"keyType": "ssh-ed25519",
+								"keyValue": "AAAAC3NzaC1lZDI1NTE5AAAAIPKqJ+OLYLCLJlUTF8SWVOwdUrCFfPVcNMF4Rr+rfXY3"
+							}],
+							"firstName": "projectuserfirst",
+							"lastName": "projectuserlast"
+						},
+						"role": "MAINTAINER"
+					}]
+				}
+			],
+			"notifications": [{
+				"__typename": "NotificationSlack",
+				"webhook": "https://hooks.slack.example.com/services/xxx/yyy",
+				"name": "example-slack",
+				"channel": "build-notifications"
+			}],
+			"openshift": {
+				"id": 1
+			},
+			"envVariables": [{
+				"name": "ENABLE_REDIS",
+				"scope": "global",
+				"value": "1"
+			}],
+			"environments": [{
+					"id": 6,
+					"name": "develop",
+					"openshiftProjectName": "bananas-develop",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": [{
+						"name": "ENABLE_REDIS",
+						"scope": "build",
+						"value": "1"
+					}]
+				},
+				{
+					"id": 1708,
+					"name": "feature/persist-db",
+					"openshiftProjectName": "bananas-feature-persist-db",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 88,
+					"name": "master",
+					"openshiftProjectName": "bananas-master",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 15601,
+					"name": "pr-486",
+					"openshiftProjectName": "bananas-pr-486",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 16072,
+					"name": "pr-487",
+					"openshiftProjectName": "bananas-pr-487",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 24571,
+					"name": "pr-507",
+					"openshiftProjectName": "bananas-pr-507",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 31365,
+					"name": "pr-513",
+					"openshiftProjectName": "bananas-pr-513",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 512,
+					"name": "production",
+					"openshiftProjectName": "bananas-production",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				},
+				{
+					"id": 1007,
+					"name": "sandbox",
+					"openshiftProjectName": "bananas-sandbox",
+					"openshift": {
+						"id": 1
+					},
+					"autoIdle": 1,
+					"envVariables": []
+				}
+			]
+		}
+	}
 }

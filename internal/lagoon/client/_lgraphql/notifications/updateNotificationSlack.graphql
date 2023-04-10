@@ -1,0 +1,16 @@
+mutation (
+    $name: String!
+    $patch: UpdateNotificationSlackPatchInput!
+) {
+	updateNotificationSlack(
+        input:{
+            name: $name
+            patch: $patch
+        }
+	){
+		id
+        name
+        channel
+        webhook
+	}
+}

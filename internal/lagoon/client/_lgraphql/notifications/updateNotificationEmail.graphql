@@ -1,0 +1,15 @@
+mutation (
+    $name: String!
+    $patch: UpdateNotificationEmailPatchInput!
+) {
+	updateNotificationEmail(
+        input:{
+            name: $name
+            patch: $patch
+        }
+	){
+		id
+        name
+        emailAddress
+	}
+}

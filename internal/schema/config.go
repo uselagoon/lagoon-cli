@@ -54,12 +54,12 @@ func (c *Config) UnmarshalJSON(data []byte) error {
 		"production":  api.ProductionEnv,
 		"development": api.DevelopmentEnv,
 	}
-	envVarScope := map[api.EnvVariableScope]api.EnvVariableScope{
-		"build":                       api.BuildVar,
-		"runtime":                     api.RuntimeVar,
-		"global":                      api.GlobalVar,
-		"internal_container_registry": api.InternalContainerRegistryVar,
-		"container_registry":          api.ContainerRegistryVar,
+	envVarScope := map[EnvVariableScope]EnvVariableScope{
+		"build":                       BuildVar,
+		"runtime":                     RuntimeVar,
+		"global":                      GlobalVar,
+		"internal_container_registry": InternalContainerRegistryVar,
+		"container_registry":          ContainerRegistryVar,
 	}
 	for _, project := range uc.Projects {
 		for j, ev := range project.EnvVariables {
@@ -102,6 +102,7 @@ func ProjectsToConfig(
 	for _, project := range projects {
 		projectConfig :=
 			ProjectConfig{Project: project, Notifications: &ProjectNotifications{}}
+
 		for _, group := range project.Groups.Groups {
 			// project group users are appended to the project directly because this
 			// group is automatically created in Lagoon.
@@ -197,6 +198,7 @@ func ProjectsToConfig(
 			config.Notifications.MicrosoftTeams =
 				append(config.Notifications.MicrosoftTeams, n)
 		}
+
 		minimiseProjectConfig(&projectConfig, exclude)
 		config.Projects = append(config.Projects, projectConfig)
 	}

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/guregu/null"
+	"github.com/spf13/pflag"
 )
 
 // makeSafe ensures that any string is dns safe
@@ -31,4 +34,22 @@ func hashString(s string) string {
 	h.Write([]byte(s))
 	bs := h.Sum(nil)
 	return fmt.Sprintf("%x", bs)
+}
+
+func flagStringNullValueOrNil(flags *pflag.FlagSet, flag string) (*null.String, error) {
+	flagValue, err := flags.GetString(flag)
+	if err != nil {
+		return nil, err
+	}
+	changed := flags.Changed(flag)
+	if changed && flagValue == "" {
+		// if the flag is defined, and is empty value, return a `null` string
+		return &null.String{}, nil
+	} else if changed {
+		// otherwise set the flag to be the value from the flag
+		value := null.StringFrom(flagValue)
+		return &value, nil
+	}
+	// if not defined, return nil
+	return nil, nil
 }

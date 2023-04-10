@@ -1,14 +1,10 @@
 // Code generated for package lgraphql by go-bindata DO NOT EDIT. (@generated)
 // sources:
+// _lgraphql/addDeployTarget.graphql
 // _lgraphql/addDeployTargetConfig.graphql
 // _lgraphql/addEnvVariable.graphql
 // _lgraphql/addGroup.graphql
 // _lgraphql/addGroupsToProject.graphql
-// _lgraphql/addNotificationEmail.graphql
-// _lgraphql/addNotificationMicrosoftTeams.graphql
-// _lgraphql/addNotificationRocketChat.graphql
-// _lgraphql/addNotificationSlack.graphql
-// _lgraphql/addNotificationToProject.graphql
 // _lgraphql/addOrUpdateEnvironment.graphql
 // _lgraphql/addProject.graphql
 // _lgraphql/addRestore.graphql
@@ -16,6 +12,7 @@
 // _lgraphql/addUser.graphql
 // _lgraphql/addUserToGroup.graphql
 // _lgraphql/backupsForEnvironmentByName.graphql
+// _lgraphql/deleteDeployTarget.graphql
 // _lgraphql/deleteDeployTargetConfig.graphql
 // _lgraphql/deployEnvironmentBranch.graphql
 // _lgraphql/deployEnvironmentLatest.graphql
@@ -25,6 +22,7 @@
 // _lgraphql/environmentByName.graphql
 // _lgraphql/lagoonSchema.graphql
 // _lgraphql/lagoonVersion.graphql
+// _lgraphql/listDeployTargets.graphql
 // _lgraphql/me.graphql
 // _lgraphql/minimalProjectByName.graphql
 // _lgraphql/projectByName.graphql
@@ -34,8 +32,39 @@
 // _lgraphql/sshEndpointsByProject.graphql
 // _lgraphql/switchActiveStandby.graphql
 // _lgraphql/taskByID.graphql
+// _lgraphql/updateDeployTarget.graphql
 // _lgraphql/updateDeployTargetConfig.graphql
 // _lgraphql/updateProjectMetadata.graphql
+// _lgraphql/variables/addOrUpdateEnvVariableByName.graphql
+// _lgraphql/variables/deleteEnvVariableByName.graphql
+// _lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql
+// _lgraphql/notifications/addNotificationEmail.graphql
+// _lgraphql/notifications/addNotificationMicrosoftTeams.graphql
+// _lgraphql/notifications/addNotificationRocketChat.graphql
+// _lgraphql/notifications/addNotificationSlack.graphql
+// _lgraphql/notifications/addNotificationToProject.graphql
+// _lgraphql/notifications/addNotificationWebhook.graphql
+// _lgraphql/notifications/deleteNotificationEmail.graphql
+// _lgraphql/notifications/deleteNotificationMicrosoftTeams.graphql
+// _lgraphql/notifications/deleteNotificationRocketChat.graphql
+// _lgraphql/notifications/deleteNotificationSlack.graphql
+// _lgraphql/notifications/deleteNotificationWebhook.graphql
+// _lgraphql/notifications/listAllNotificationEmail.graphql
+// _lgraphql/notifications/listAllNotificationMicrosoftTeams.graphql
+// _lgraphql/notifications/listAllNotificationRocketChat.graphql
+// _lgraphql/notifications/listAllNotificationSlack.graphql
+// _lgraphql/notifications/listAllNotificationWebhook.graphql
+// _lgraphql/notifications/projectNotificationEmail.graphql
+// _lgraphql/notifications/projectNotificationMicrosoftTeams.graphql
+// _lgraphql/notifications/projectNotificationRocketChat.graphql
+// _lgraphql/notifications/projectNotificationSlack.graphql
+// _lgraphql/notifications/projectNotificationWebhook.graphql
+// _lgraphql/notifications/removeNotificationFromProject.graphql
+// _lgraphql/notifications/updateNotificationEmail.graphql
+// _lgraphql/notifications/updateNotificationMicrosoftTeams.graphql
+// _lgraphql/notifications/updateNotificationRocketChat.graphql
+// _lgraphql/notifications/updateNotificationSlack.graphql
+// _lgraphql/notifications/updateNotificationWebhook.graphql
 package lgraphql
 
 import (
@@ -110,6 +139,26 @@ func (fi bindataFileInfo) IsDir() bool {
 // Sys return file is sys mode
 func (fi bindataFileInfo) Sys() interface{} {
 	return nil
+}
+
+var __lgraphqlAdddeploytargetGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\xd1\xcf\x4e\xc3\x30\x0c\x06\xf0\x7b\x9f\xc2\x48\x1c\x36\x69\x4f\xd0\x2b\x1c\x80\xc3\x56\x31\x78\x80\x40\xdc\x2e\x22\x8d\x2b\xd7\x45\x9a\x10\xef\x8e\xfa\x27\x55\xbc\x94\x43\x0f\xfd\xbe\x44\xb2\x7f\x69\x07\x31\xe2\x28\xc0\xae\x00\xb8\x0f\xa6\xc5\x12\xce\xc2\x2e\x34\x77\x87\x31\xf9\xa4\xd0\x93\xc7\x77\xf6\x3a\x17\xfa\xc2\x10\xa3\x29\x61\x1a\x04\xb9\x32\x22\xc8\xba\xe9\xfb\xcb\x13\xf5\x72\x9b\x55\xc4\x3a\x6b\x29\x38\xa1\xf1\xf7\x81\x42\xed\x9a\x12\x5e\xce\xa7\xe3\x54\x7d\x0c\xce\xdb\xe7\xd6\x34\xa8\x6e\xd4\xec\x30\x58\x7f\x3d\x26\x73\xcf\x63\x7b\x1a\x6c\xc5\xf4\xed\x2c\x72\xde\xbc\x62\xe3\x68\x1d\x72\x0f\x3f\x05\x00\x80\xb1\xf6\x11\x3b\x4f\xd7\x37\xc3\x0d\x4a\x39\x06\xa7\x0e\x43\x7f\x71\xb5\xec\x5c\xe8\x06\x29\x97\xa3\x00\x33\xd5\x24\x76\x58\xa2\xd4\x2a\x81\x8b\xf5\x42\x36\xd3\x2d\xd9\x0d\x9a\x46\x8c\x17\x57\xbf\x28\x99\x14\x33\x62\xe4\x8c\x45\xca\x95\xd8\xc5\x3a\x87\xce\xec\xe3\x51\x2d\xac\xc0\xd7\xb5\xb5\xb5\xb6\x57\x87\x22\x7b\xfa\x08\x53\xff\xbb\x5f\x5d\x9d\x4d\x80\xe3\x65\x46\x23\x68\x53\xc7\x8c\x5c\x5b\x69\xa0\xad\x41\xf3\xb9\x36\x36\xce\x38\xb7\x9e\xed\x1f\xd4\x79\xb1\x62\xfc\xfe\x02\x00\x00\xff\xff\x0e\x41\x38\x1f\x65\x03\x00\x00")
+
+func _lgraphqlAdddeploytargetGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlAdddeploytargetGraphql,
+		"_lgraphql/addDeployTarget.graphql",
+	)
+}
+
+func _lgraphqlAdddeploytargetGraphql() (*asset, error) {
+	bytes, err := _lgraphqlAdddeploytargetGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/addDeployTarget.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
 }
 
 var __lgraphqlAdddeploytargetconfigGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xec\x92\x31\x4f\xfb\x30\x10\xc5\xf7\x7c\x8a\xfb\x57\xff\xa1\x5d\xaa\xc2\x98\x15\x10\x62\x81\x08\x2a\x76\x13\x5f\x12\x23\xf7\x9c\x5e\x6c\x50\x15\xf9\xbb\xa3\xd6\x4d\x52\xa7\x29\x13\x63\x3d\xbe\x7b\xb9\xcb\xef\xe9\xb5\x2d\xa8\x02\x44\xad\xde\x91\x1f\x19\x85\x45\x5e\x57\x82\x5e\xf8\x61\xeb\x84\x86\x25\xcc\x6e\x97\x37\xab\xe5\x6a\x06\xde\x27\x1b\x67\x85\x55\x86\x60\x9e\x00\x00\xfc\xaf\xd9\x7c\x62\x6e\x53\x78\x22\xfb\x2f\x48\xdf\xa8\xca\x2a\x28\x41\xf8\x60\x41\x79\x85\x4d\x0a\x6f\x96\x15\x95\x47\x5f\xed\xb4\x66\xdc\x3a\x6c\xec\x78\x24\xb1\xd6\x66\xb7\x16\x5c\x62\xb4\xfa\x54\xcf\xc2\xe5\x4c\x58\x8b\x4c\xdd\x82\x64\xd1\x1e\xac\x42\xca\xfb\x13\xf3\x9d\xa1\x42\x95\x73\x45\xb5\xb3\x69\x70\xec\x5f\x7c\x27\x5a\xdf\x7b\x3a\x9c\x23\x57\xaf\x0f\x54\x3d\x60\x3f\x8b\xd1\x22\xd2\xc1\xd3\x25\xd7\x65\x38\xf9\x57\x63\xca\x5f\x22\x38\x7c\xef\x17\x03\x9d\x92\x93\x2b\x07\xc3\xc8\xb4\x7f\x24\x36\x18\x09\x05\x2b\x24\xa9\x77\xcf\xe3\x41\xae\x8d\x93\x19\x9b\x2f\x25\x91\xcf\x27\xaf\x58\x2a\x43\xbd\xee\xcf\x72\x9b\x0c\x6b\x94\x7a\x40\x4a\x7c\xd2\xb6\x80\xba\xc1\xbf\x6a\xe0\xe5\x02\x5e\xfb\x77\xed\xdf\x85\xfe\x91\x04\xef\x7f\x02\x00\x00\xff\xff\x06\x39\x95\x1a\x2d\x05\x00\x00")
@@ -188,106 +237,6 @@ func _lgraphqlAddgroupstoprojectGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/addGroupsToProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAddnotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x89\xa4\xe6\x26\x66\xe6\x38\xa6\xa4\x14\xa5\x16\x17\xc3\x65\x34\x15\xaa\xb9\x14\x14\x14\x14\x12\x53\x52\xfc\xf2\x4b\x32\xd3\x32\x93\xc1\x66\xb8\x82\xd4\x6a\x64\xe6\x15\x94\x96\x58\x41\x55\x28\x28\x40\x8c\x04\x9b\xac\x03\x15\x42\x35\x13\xc5\x0a\xb0\x8a\x5a\x4d\xb8\xee\xcc\x14\x24\x63\x20\x92\x5c\x20\x0c\x08\x00\x00\xff\xff\x7d\x3b\x64\xad\xb7\x00\x00\x00")
-
-func _lgraphqlAddnotificationemailGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAddnotificationemailGraphql,
-		"_lgraphql/addNotificationEmail.graphql",
-	)
-}
-
-func _lgraphqlAddnotificationemailGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAddnotificationemailGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAddnotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x89\x94\xa7\x26\x65\xe4\xe7\x67\xc3\x05\x35\x15\xaa\xb9\x14\x14\x14\x14\x12\x53\x52\xfc\xf2\x4b\x32\xd3\x32\x93\xc1\xda\x7d\x33\x93\x8b\xf2\x8b\xf3\xd3\x4a\x42\x52\x13\x73\x8b\x35\x32\xf3\x0a\x4a\x4b\xac\xa0\x4a\x15\x14\x20\xc6\x82\x4d\xd7\x81\x0a\xc1\xcd\x85\xd9\x00\x16\xaf\xd5\x84\xeb\xc9\x4c\x41\xd2\x0c\x91\xe4\x02\x61\x40\x00\x00\x00\xff\xff\x97\x56\x46\x93\xb1\x00\x00\x00")
-
-func _lgraphqlAddnotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAddnotificationmicrosoftteamsGraphql,
-		"_lgraphql/addNotificationMicrosoftTeams.graphql",
-	)
-}
-
-func _lgraphqlAddnotificationmicrosoftteamsGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAddnotificationmicrosoftteamsGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAddnotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x54\x8d\x31\x0e\xc2\x30\x0c\x45\xf7\x9c\xe2\x23\x31\xb4\x52\x4f\xd0\x95\x9d\x01\x4e\x60\x92\x40\xac\x52\x1b\x21\x57\x0c\x88\xbb\xa3\xa6\x49\x04\x83\x97\xf7\xad\xf7\xe6\xc5\xc8\x58\x05\x9d\x03\xf6\x42\x73\x1c\x71\xb6\x27\xcb\x6d\x37\xac\xc4\x27\x12\x89\xf7\x7f\xf8\x8a\x97\xa4\x3a\x35\xd8\xe3\xed\x00\x80\x42\x38\xaa\xf1\x95\x7d\x76\x9e\xd4\x4f\xd1\x0e\x89\xac\x63\x79\x2c\x36\x96\x37\x60\xeb\xe4\xdc\x50\x50\x0b\xd5\x64\x1d\x5a\xac\x66\x33\xff\xf4\x4d\xc6\xe1\xc7\xba\x8d\x6e\xbd\x6f\x00\x00\x00\xff\xff\x53\x0f\xa2\x30\xdb\x00\x00\x00")
-
-func _lgraphqlAddnotificationrocketchatGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAddnotificationrocketchatGraphql,
-		"_lgraphql/addNotificationRocketChat.graphql",
-	)
-}
-
-func _lgraphqlAddnotificationrocketchatGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAddnotificationrocketchatGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAddnotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x54\x8d\x41\x0e\x82\x40\x0c\x45\xf7\x73\x8a\x6f\xe2\x02\x12\x4e\xc0\x21\xdc\x70\x82\x3a\x33\x4a\x03\xb4\xc6\x94\xb8\x30\xde\xdd\x30\x30\x8d\x2e\xba\x79\xbf\x79\x6f\x59\x8d\x8c\x55\xd0\x04\xe0\x2c\xb4\xe4\x1e\x83\x3d\x59\xee\xa7\x6e\x23\x71\x24\x91\x3c\xff\xc3\x57\xbe\x8e\xaa\x93\xc3\x16\xef\x00\x00\x94\xd2\x45\x8d\x6f\x1c\x8b\x73\x98\x29\x4e\x0d\xcb\x63\xb5\xfe\xf8\x00\xf6\x44\x29\x75\x07\xf2\x46\xad\xd5\xc1\x3b\xb5\x58\xf8\xa7\x75\x19\xa7\x1f\xeb\x3e\x86\xed\xbe\x01\x00\x00\xff\xff\xd9\x6e\xb4\xda\xd6\x00\x00\x00")
-
-func _lgraphqlAddnotificationslackGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAddnotificationslackGraphql,
-		"_lgraphql/addNotificationSlack.graphql",
-	)
-}
-
-func _lgraphqlAddnotificationslackGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAddnotificationslackGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAddnotificationtoprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\x29\x28\xca\xcf\x4a\x4d\x2e\xb1\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x09\xe6\xe5\x97\x64\xa6\x65\x26\x83\x95\x85\x54\x16\xa4\x5a\x29\xf8\xa1\x89\x60\xaa\xf3\x4b\xcc\x4d\x85\x9b\xa2\xa9\x50\xcd\xa5\xa0\xa0\xa0\x90\x98\x92\x82\xa2\x33\x3f\x00\x62\x9d\x46\x66\x5e\x41\x69\x89\x15\x54\x95\x82\x02\xdc\x15\x30\xf7\x40\xc5\x31\x1d\x82\xe1\x36\x2c\x2a\x21\x4e\xc1\x70\x1d\x58\x65\xad\x26\xdc\xd2\xcc\x14\x98\x5e\xb8\x24\x17\x08\x03\x02\x00\x00\xff\xff\x5d\xba\xcd\xcd\x21\x01\x00\x00")
-
-func _lgraphqlAddnotificationtoprojectGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAddnotificationtoprojectGraphql,
-		"_lgraphql/addNotificationToProject.graphql",
-	)
-}
-
-func _lgraphqlAddnotificationtoprojectGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAddnotificationtoprojectGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addNotificationToProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -428,6 +377,26 @@ func _lgraphqlBackupsforenvironmentbynameGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/backupsForEnvironmentByName.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlDeletedeploytargetGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xe4\xd2\x54\xa8\xe6\x52\x50\x48\x49\xcd\x49\x2d\x49\x75\x49\x2d\xc8\xc9\xaf\x0c\x49\x2c\x4a\x4f\x2d\xb1\x82\x8a\xf9\x17\xa4\xe6\x15\x67\x64\xa6\x95\x68\x64\xe6\x15\x94\x96\x58\x81\x95\x2b\x28\x40\x0c\x01\x9b\xc5\xa5\xa0\x50\xab\xc9\x55\xcb\x05\x08\x00\x00\xff\xff\x8e\x88\xf8\xcc\x66\x00\x00\x00")
+
+func _lgraphqlDeletedeploytargetGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlDeletedeploytargetGraphql,
+		"_lgraphql/deleteDeployTarget.graphql",
+	)
+}
+
+func _lgraphqlDeletedeploytargetGraphql() (*asset, error) {
+	bytes, err := _lgraphqlDeletedeploytargetGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/deleteDeployTarget.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -612,6 +581,26 @@ func _lgraphqlLagoonversionGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlListdeploytargetsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x44\x8c\xd1\x4a\xc4\x40\x0c\x45\xdf\xfb\x15\xf9\x0e\x5f\xf5\x41\x11\xa4\x88\x7e\xc0\xb4\x73\x3b\x06\xd3\x44\x33\x99\x85\xb2\xf4\xdf\x97\xed\x50\xf6\x29\xe7\x5e\xee\xc9\x7f\x83\x6f\x74\x1d\x88\x84\x6b\xbc\xe0\x4f\x6c\xfb\x4a\x5e\x10\xf5\x89\x92\xc8\x7b\x9b\xe0\x8a\x40\xbd\x6f\x88\x38\x1f\x47\xd3\x8a\x03\x66\x47\x0a\xf4\x72\x36\xad\x26\xf8\x76\xe9\x51\xac\xe5\x4f\x14\x36\x7d\xe4\xd1\xed\xc2\x19\x7e\x34\x8b\x33\x34\xcb\xf6\x71\x7e\x0b\xfb\x45\x1f\xd7\xfa\xf3\x6a\x35\x4e\x1e\xcd\x3b\x4f\x8d\x25\xbf\xad\xa9\x74\xc1\xad\x05\x7c\x4c\x11\xf0\x2e\xae\xa6\x1c\xe6\xac\xe5\xd9\x74\xe1\x32\x10\xed\xc3\x7e\x0b\x00\x00\xff\xff\x3e\x5c\x37\x43\xe7\x00\x00\x00")
+
+func _lgraphqlListdeploytargetsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlListdeploytargetsGraphql,
+		"_lgraphql/listDeployTargets.graphql",
+	)
+}
+
+func _lgraphqlListdeploytargetsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlListdeploytargetsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/listDeployTargets.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var __lgraphqlMeGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\xc8\x4d\x85\x32\x40\x20\x33\x05\xce\x4c\xcd\x4d\xcc\xcc\x81\xf3\xd2\x32\x8b\x8a\x4b\xfc\x12\x73\x53\xe1\x22\x39\x89\x68\x02\xc5\xc5\x19\xde\xa9\x95\xc5\x48\xa6\xa1\x99\x08\x02\x79\xc8\x3a\x40\x20\x3b\xb5\x32\xa4\xb2\x00\x43\x2c\x2c\x31\xa7\x14\x43\xd0\x2d\x33\x2f\x3d\xb5\xa8\xa0\x28\x33\xaf\x04\x45\x2a\xb9\x28\x35\xb1\x24\x15\x61\x51\x2d\x17\x84\xac\x05\x04\x00\x00\xff\xff\x19\x81\x0c\x89\xe8\x00\x00\x00")
 
 func _lgraphqlMeGraphqlBytes() ([]byte, error) {
@@ -652,7 +641,7 @@ func _lgraphqlMinimalprojectbynameGraphql() (*asset, error) {
 	return a, nil
 }
 
-var __lgraphqlProjectbynameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xbc\x54\xc1\x6e\xdb\x30\x0c\xbd\xe7\x2b\xb8\x62\x87\xee\x62\x6c\x3b\xee\xb6\x16\x41\x37\x74\xcb\x8a\x36\xcb\xb5\x60\x64\x3a\xd6\x22\x4b\x0e\x45\x7b\x30\x82\xfc\xfb\xe0\x04\xb3\x65\xd9\x4d\x73\x18\xa6\x4b\x94\x47\xfa\xf1\xe9\x49\xe4\xae\x22\x6e\xe0\x7a\x06\xf0\xd6\x62\x41\x9f\xe0\x49\x58\xdb\xcd\x9b\x77\xb0\x9f\x01\x00\x94\xec\x7e\x91\x92\x9b\x66\x81\x05\x5d\x1f\x21\x80\x53\xe6\xf1\x83\xbf\x79\xed\xd2\x69\xb7\x6d\x43\xdd\x1f\xac\xc4\x7d\x4d\x4d\x0f\xac\x19\xad\xca\xc9\x77\x40\x59\x19\xc3\xb4\xab\xc8\x4b\x00\xb2\xae\x51\xe8\x9e\x9a\x00\x72\x69\xa5\x44\x3b\x3b\xb7\xb5\x66\x67\x0b\xb2\xd2\x45\xbd\x38\xc6\x0d\xdd\xa2\x51\x1d\xe6\x4a\xb2\x3e\xd7\x99\x3c\x9c\x0e\xf2\x80\x22\xc4\xb6\x8b\xa7\x54\x93\x71\x65\xcb\x13\x50\xfa\x6f\xba\xd0\x3d\xf1\x46\xcb\x4f\x36\x2f\x9f\x67\xc3\xae\x2a\x7d\x6f\x04\x40\x92\x24\xe0\x2c\xdc\xb5\x01\x08\x03\x00\xcf\xcf\xd2\x94\x34\x30\x68\xe4\x58\xbb\x0a\x2a\xd6\xc4\x7e\xf8\x31\x40\xe5\x89\x63\x0c\x80\x0a\xd4\x66\x84\x7a\x9f\xdf\x53\x33\xa2\x98\x2c\x77\x5a\x5b\x6a\x96\x4d\xf9\x42\x64\x85\xa6\x1a\x87\x0e\x23\x24\xd3\xec\x65\x31\x55\xc0\xe0\x64\x20\xa6\x60\x67\x86\x29\x61\x42\xbf\xef\x77\xd6\x89\xce\xb4\xc2\xf6\x65\x78\x98\xb8\x88\x45\x90\xf0\x64\x50\x6d\x2f\xbb\x94\xdf\xb4\xce\x9d\xdb\x9e\xbf\x28\x95\xa3\xb5\x64\x26\x25\x4e\x0a\x78\x74\x6a\x4b\x72\x9b\xa3\xfc\x37\x15\xfb\x3d\xe8\x0c\xb0\xd4\x2b\xe2\x3b\x26\x14\xe2\x65\x8e\xf6\x07\xcf\x77\x15\x1a\x48\xe0\xea\x43\xf2\x31\x79\x7f\x05\x87\x57\xb4\xcf\xdb\x87\x76\x99\xec\xe3\x9b\xfc\x9c\xa6\x4c\xde\x9f\xd3\xfe\x4a\xc5\xef\x5a\xb1\xf3\x2e\x93\x25\x61\xe1\xff\x99\x63\x91\x3b\x64\xd3\xf0\xec\x87\xf1\x00\x09\x0b\x07\x93\xae\xcf\x24\x5b\xaf\x90\x35\xae\x0d\x0d\x65\x46\x95\xbd\x72\x83\x0e\xab\x07\x6d\x35\xe0\xeb\xe6\xd1\x39\xbe\x94\x4a\xe3\xe2\xb6\x3d\x81\x37\xe8\xe9\x91\xb2\x11\xfe\x85\x30\x9d\xc2\x97\x5a\x06\x9d\x17\x48\x88\xf8\xe3\xb9\x1a\x75\xf5\x68\x44\x9e\xb1\x67\xe2\x31\xc7\x16\xc5\x26\x4d\x4d\x81\xf6\xf7\x30\xfb\x13\x00\x00\xff\xff\x9c\x62\xa4\x1d\xd0\x06\x00\x00")
+var __lgraphqlProjectbynameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xbc\x55\xc1\x6e\xdb\x30\x0c\xbd\xe7\x2b\xb8\x62\x87\xee\x62\x6c\x3b\xee\xb6\x06\x41\x37\x74\xcb\x8a\x36\xcd\xb5\x60\x6c\xda\xd6\x22\x4b\x8e\x44\xa7\x30\x02\xff\xfb\xe0\x24\xb3\x25\x5b\x4e\x7b\x18\xe6\x4b\x9c\x47\xe9\xe9\xf1\x91\xa2\x77\x15\x99\x1a\xae\x67\x00\xef\x15\x16\xf4\x05\x1e\xd9\x08\x95\xbd\xfb\x00\x87\x19\x00\x40\x69\xf4\x6f\x8a\xf9\xa6\x5e\x62\x41\xd7\x47\x08\xe0\xb4\xf2\xb8\xe1\xef\xba\xf6\x11\x49\xf7\xda\x86\xba\x3f\x58\xb1\xfe\x9e\xc8\x1e\xd8\x18\x54\x71\x4e\xb6\x03\xca\x4a\x4a\x43\xbb\x8a\x2c\x3b\xa0\x11\x7b\x64\xba\xa3\xda\x81\x74\x52\xc5\x2c\xb4\x5a\xa8\xbd\x30\x5a\x15\xa4\xb8\x8b\x5a\xd6\x06\x33\x9a\xa3\x8c\x3b\x4c\x97\xa4\x6c\x2e\x52\xbe\x3f\x25\x72\x8f\xcc\x64\x54\x17\x4f\x68\x4f\x52\x97\x2d\x8f\x43\x69\x7f\x88\x42\xf4\xc4\x99\xe0\x27\x23\xa7\xf3\x49\x31\x66\xfb\x24\x5c\x99\x1b\x49\x85\x0b\x25\x54\x4a\x5d\xaf\xd0\x64\xc4\x73\xad\x52\x91\x59\xc7\xb9\x80\x25\xfe\x16\x77\xa9\x67\xf4\xc8\xec\xf6\x61\xbd\x25\xe5\x20\xcd\x6c\x62\xef\xb9\xba\x3e\xfb\x28\xbd\x80\x05\xc1\x63\x2f\x57\x07\x26\x2a\xe4\xcb\x0b\x76\x02\xc0\x0b\x89\x2c\xef\xb9\xfa\x1d\x99\xd1\x55\x69\xdd\x04\xa2\x28\x02\xad\xe0\xb6\x0d\x80\x9f\xd9\xf3\x33\xd7\x25\x8d\x74\x8f\x80\x82\x8a\x0d\x19\xeb\x6f\x06\xa8\x2c\x99\x21\x06\x40\x05\x0a\x39\x42\xad\xcd\xef\xa8\x1e\x51\x04\x8f\x3b\x3d\x5b\xaa\x57\x75\x39\x11\x59\xa3\xac\xc6\xa1\x66\x84\xa4\xc2\x58\x5e\x86\x0e\x90\x18\x0c\x0c\x29\x8c\x1e\x14\xbe\x09\x16\xaa\x7f\x53\x9a\x45\x2a\x62\x6c\xcb\xee\xb7\xf4\xb9\x10\x4b\x67\xc1\xa3\xc4\x78\xfb\xb6\xa2\xbc\xd0\x26\xd7\x7a\x7b\xb9\x50\x71\x8e\x4a\x91\x9c\xe8\xa5\x80\x80\x07\x1d\x6f\x89\xe7\x39\xf2\x7f\x53\x71\x38\x80\x48\x01\x4b\xb1\x26\x73\x6b\x08\x99\xcc\x2a\x47\xf5\xcb\x2c\x76\x15\x4a\x88\xe0\xea\x53\xf4\x39\xfa\x78\x05\xcd\x2b\xda\x17\x6d\xa3\xbd\x4d\xf6\xb1\x27\xbf\x26\x89\x21\x6b\x2f\x69\x7f\xe5\xc4\x9f\x22\x36\xda\xea\x94\x57\x84\x85\xfd\x67\x8e\x0d\xdc\x21\x95\xb8\xb9\x37\xe3\xd9\x7d\x08\xcf\xaf\x7e\x25\xa9\xfd\x1a\x8d\xc0\x8d\x24\x5f\xe6\xe0\x64\x1b\x6b\xef\x86\xed\xbd\x6b\xe5\xf1\x75\x9f\x82\x4b\x7c\xe7\x11\xed\x5f\xdb\x13\x78\x83\x96\x1e\x28\x1d\xe1\xdf\x08\x93\x10\xbe\x12\xec\xdd\x3c\x47\xc2\x80\x7f\xf8\x49\x1b\xdc\xea\xc0\xf8\x9e\xb4\x27\xd0\xcc\x43\x8b\x86\x26\x85\xa6\x40\xfb\xdb\xcc\xfe\x04\x00\x00\xff\xff\x87\x73\x32\xb1\x4b\x08\x00\x00")
 
 func _lgraphqlProjectbynameGraphqlBytes() ([]byte, error) {
 	return bindataRead(
@@ -792,6 +781,26 @@ func _lgraphqlTaskbyidGraphql() (*asset, error) {
 	return a, nil
 }
 
+var __lgraphqlUpdatedeploytargetGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x91\x41\x6e\xea\x30\x10\x86\xf7\x73\x8a\x79\x12\x0b\x90\x38\x41\xb6\xaf\x8b\xd2\x05\xa0\xd2\x1e\xc0\xc5\x43\xb0\x9a\x78\x22\x67\x52\x09\x55\xdc\xbd\x0a\x24\xb1\x27\xce\x2a\xf1\xff\x8f\xa5\xf1\xf7\xd5\x9d\x18\x71\xec\x71\x0d\x88\x2b\x67\x0b\xdc\x79\xf9\xd7\xff\x7b\x53\x53\x81\x27\x09\xce\x97\xdb\x3e\x38\xb3\x6f\xb9\xa2\xcf\x50\xa9\x58\xf8\x9b\xbc\x4a\x02\x77\x42\xe1\x68\x44\x28\xe8\xa6\x6d\xaf\xaf\xdc\xca\x3c\x3b\x72\xd0\x59\xcd\xde\x09\xf7\xc7\xff\xec\x2f\xae\x2c\xf0\xed\x74\xd8\x3f\xaa\xaf\xce\x55\x76\x57\x9b\x52\x2f\x77\x09\x8e\xbc\xad\x6e\xfb\x6c\xeb\x8a\x3b\x7b\x0c\xfc\xe3\x2c\x85\xbc\x79\xa7\xd2\xf1\xb4\xe4\x06\x7f\x01\x11\xb1\x6b\xac\x11\x7a\xa1\xa6\xe2\xdb\x87\x09\x25\x49\x31\x64\x87\x86\x7c\x7b\x75\x17\x59\x3b\xdf\x74\x52\x0c\x17\x10\x7b\x74\x2b\x67\x87\x53\x63\xe4\x7c\x8d\x25\xe2\x93\xe6\x03\xea\x76\x0a\x53\xa2\x09\xde\x38\x30\xb0\x7d\x32\x9e\xd2\x19\x5f\xcd\x3b\x5e\x9e\x60\x8f\xd8\x55\xf5\x64\x3e\xd2\x8f\x55\xca\x37\x81\x1d\x07\x72\x37\x99\xae\x38\xac\xb5\x28\x4b\x09\x06\xad\x48\x2b\x9b\x8d\x8d\xbe\x52\x7b\xc3\xc4\xfd\xf1\xbd\x6f\x12\x25\x10\xe1\x0f\xbf\xe7\x40\x46\x68\x2c\x52\xae\x91\x3f\x28\x7e\xa0\x90\xc1\x9c\x12\x2c\xbc\x01\xb2\x85\x21\xc7\x01\x0b\x32\x61\x19\x31\x8c\xcf\xbb\xc3\x5f\x00\x00\x00\xff\xff\x7f\xe0\xea\x58\xb0\x03\x00\x00")
+
+func _lgraphqlUpdatedeploytargetGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlUpdatedeploytargetGraphql,
+		"_lgraphql/updateDeployTarget.graphql",
+	)
+}
+
+func _lgraphqlUpdatedeploytargetGraphql() (*asset, error) {
+	bytes, err := _lgraphqlUpdatedeploytargetGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/updateDeployTarget.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var __lgraphqlUpdatedeploytargetconfigGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x7c\x90\x41\x4e\xf4\x30\x0c\x85\xf7\x39\x45\x7e\x69\x16\x33\x57\xe8\xf6\x67\xc3\x06\x55\xc0\x05\x42\xe3\x49\x8d\x32\x4e\xf0\x38\xa0\x11\xea\xdd\x51\x1b\x28\x71\x19\xf0\xaa\x79\xef\xd5\x7a\xfe\x4e\x45\x9c\x60\x22\xbb\x37\xd6\x5a\xbb\x43\xdf\xd9\x5b\x92\x7f\xf5\xf5\x06\x18\x46\x59\x94\x2a\x3c\xb1\xa3\x61\x84\x73\x67\x1f\x84\x91\x42\x55\x73\x89\x91\xe1\xa5\xc0\x59\x36\x8e\x87\x1c\xd3\xe5\xd1\x71\x80\x76\x4d\x2b\xf7\x9c\x9e\x61\x90\xde\x89\x00\xd3\xfa\xfb\xe1\x7d\x89\x96\xec\x9d\xc0\x4d\x93\xff\x9f\xe8\x88\x61\x8f\x94\x8b\x74\x35\x34\xcf\x5c\x7c\x87\x7e\x7d\x67\x27\xc3\xd8\xf8\xf3\xe8\x36\xaa\x85\xca\x7d\x9d\xfd\x79\xbf\xf2\xbe\x09\xac\x30\x94\xaf\x59\x28\x34\xbf\x76\xd9\x22\xf8\x83\xcf\xba\x63\x5a\xbe\xa6\x43\x4b\xc0\x5c\x5b\xae\x11\x34\xa1\x79\xc8\x9d\x40\x09\x47\x46\x20\x1f\x2f\x77\x5b\x63\x88\xa9\xf8\x9e\xd3\x2b\x7a\xe0\x9f\xce\x3d\x04\x4c\xdb\x76\x2d\x2f\x73\x0d\x90\xd1\xc4\xeb\x49\x66\xfa\x08\x00\x00\xff\xff\x82\xe7\x64\x80\x95\x02\x00\x00")
 
 func _lgraphqlUpdatedeploytargetconfigGraphqlBytes() ([]byte, error) {
@@ -828,6 +837,606 @@ func _lgraphqlUpdateprojectmetadataGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/updateProjectMetadata.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlVariablesAddorupdateenvvariablebynameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\xcc\x2b\x28\x2d\xb1\x52\x70\xcd\x2b\x0b\x4b\x2c\xca\x4c\x4c\xca\x49\x75\xaa\xf4\x4b\xcc\x4d\xf5\x04\x89\x2b\x72\x69\x2a\x54\x73\x29\x28\x28\x28\x24\xa6\xa4\xf8\x17\x85\x16\xa4\x24\x96\xa4\x62\x28\xd5\x80\x9a\x01\x31\x0b\xa6\x03\x04\x32\x53\xe0\xcc\xbc\xc4\xdc\x54\x38\xa7\x2c\x31\xa7\x14\xc1\x2b\x4e\xce\x2f\x80\xf0\x6a\xb9\x6a\xb9\x00\x01\x00\x00\xff\xff\x2e\x2c\x3b\xed\x9f\x00\x00\x00")
+
+func _lgraphqlVariablesAddorupdateenvvariablebynameGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlVariablesAddorupdateenvvariablebynameGraphql,
+		"_lgraphql/variables/addOrUpdateEnvVariableByName.graphql",
+	)
+}
+
+func _lgraphqlVariablesAddorupdateenvvariablebynameGraphql() (*asset, error) {
+	bytes, err := _lgraphqlVariablesAddorupdateenvvariablebynameGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/variables/addOrUpdateEnvVariableByName.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlVariablesDeleteenvvariablebynameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\xcc\x2b\x28\x2d\xb1\x52\x70\x49\xcd\x49\x2d\x49\x75\xcd\x2b\x0b\x4b\x2c\xca\x4c\x4c\xca\x49\x75\xaa\xf4\x4b\xcc\x4d\xf5\x04\xc9\x2a\x72\x69\x2a\x54\x73\x29\x28\x28\x28\xa4\x60\x57\xa5\x01\x35\x04\x62\x98\x26\x57\x2d\x17\x20\x00\x00\xff\xff\x39\x99\x9e\x59\x64\x00\x00\x00")
+
+func _lgraphqlVariablesDeleteenvvariablebynameGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlVariablesDeleteenvvariablebynameGraphql,
+		"_lgraphql/variables/deleteEnvVariableByName.graphql",
+	)
+}
+
+func _lgraphqlVariablesDeleteenvvariablebynameGraphql() (*asset, error) {
+	bytes, err := _lgraphqlVariablesDeleteenvvariablebynameGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/variables/deleteEnvVariableByName.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\xe0\x52\x50\x50\xc9\xcc\x2b\x28\x2d\xb1\x52\x70\xcd\x2b\x0b\x4b\x2c\xca\x4c\x4c\xca\x49\x75\xaa\x0c\x28\xca\xcf\x4a\x4d\x2e\x71\xcd\x2b\xcb\x2c\xca\xcf\xcb\x4d\xcd\x2b\xf1\x4b\xcc\x4d\xf5\x04\xa9\x54\xe4\xd2\xac\xe6\x52\x50\x50\x50\x48\x4f\x2d\x41\xd2\x53\x8c\x4b\x93\x06\xd4\x7c\x88\x3d\x9a\x0a\x10\xcd\x20\x90\x99\x02\x67\xe6\x25\xe6\xa6\xc2\x39\x65\x89\x39\xa5\x08\x5e\x71\x72\x7e\x01\x84\x57\xcb\x55\xcb\x05\x08\x00\x00\xff\xff\x72\x77\xad\xf4\xb8\x00\x00\x00")
+
+func _lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql,
+		"_lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql",
+	)
+}
+
+func _lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql() (*asset, error) {
+	bytes, err := _lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x89\xa4\xe6\x26\x66\xe6\x38\xa6\xa4\x14\xa5\x16\x17\xc3\x65\x34\x15\xaa\xb9\x14\x14\x14\x14\x12\x53\x52\xfc\xf2\x4b\x32\xd3\x32\x93\xc1\x66\xb8\x82\xd4\x6a\x64\xe6\x15\x94\x96\x58\x41\x55\x28\x28\x40\x8c\x04\x9b\xac\x03\x15\x42\x35\x13\xc5\x0a\xb0\x8a\x5a\x4d\xb8\xee\xcc\x14\x24\x63\xb0\x68\x87\xa8\xe7\x02\x61\x40\x00\x00\x00\xff\xff\x7d\x85\xc8\xa0\xca\x00\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationemailGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationemailGraphql,
+		"_lgraphql/notifications/addNotificationEmail.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationemailGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationemailGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x89\x94\xa7\x26\x65\xe4\xe7\x67\xc3\x05\x35\x15\xaa\xb9\x14\x14\x14\x14\x12\x53\x52\xfc\xf2\x4b\x32\xd3\x32\x93\xc1\xda\x7d\x33\x93\x8b\xf2\x8b\xf3\xd3\x4a\x42\x52\x13\x73\x8b\x35\x32\xf3\x0a\x4a\x4b\xac\xa0\x4a\x15\x14\x20\xc6\x82\x4d\xd7\x81\x0a\xc1\xcd\x85\xd9\x00\x16\xaf\xd5\x84\xeb\xc9\x4c\x41\xd2\x8c\xaa\x09\xa2\x94\x0b\x84\x01\x01\x00\x00\xff\xff\x66\x70\xe5\xad\xbf\x00\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationmicrosoftteamsGraphql,
+		"_lgraphql/notifications/addNotificationMicrosoftTeams.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationmicrosoftteamsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationmicrosoftteamsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x54\x8d\x31\xce\xc2\x30\x0c\x46\xf7\x9c\xe2\xfb\xa5\x7f\x68\xa5\x9e\xa0\x2b\x3b\x03\x9c\xc0\x24\x81\x58\xa5\x36\x42\xae\x18\x10\x77\x47\x4d\x9b\x88\x0c\x5e\x9e\xed\xf7\xe6\xc5\xc8\x58\x05\x9d\x03\xfe\x85\xe6\x38\xe2\x6c\x4f\x96\xdb\xdf\xb0\x12\x9f\x48\x24\xde\x5b\xf8\x8a\x97\xa4\x3a\x55\xd8\xe3\xed\x00\x80\x42\x38\xaa\xf1\x95\x7d\x76\x9e\xd4\x4f\xd1\x0e\x89\xac\x63\x79\x2c\x36\xee\x67\xc0\xd6\xc9\xb9\x61\x47\x35\x54\x92\x65\x51\x63\x25\x9b\xf9\xa7\xaf\x32\x0e\x3f\xd6\xd6\xd6\x2a\xb6\x47\xb7\xce\x37\x00\x00\xff\xff\x49\x05\x99\xf8\xf7\x00\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationrocketchatGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationrocketchatGraphql,
+		"_lgraphql/notifications/addNotificationRocketChat.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationrocketchatGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationrocketchatGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x54\x8d\x31\x0e\x83\x30\x0c\x45\xf7\x9c\xe2\x57\xea\x00\x12\x27\xe0\x10\x5d\x38\x81\x9b\xa4\xc5\x02\x9c\xaa\x32\xea\x50\xf5\xee\x15\x81\x58\x64\xf0\xf2\x6c\xbf\xb7\xac\x4a\xca\x49\xd0\x38\xe0\x2a\xb4\xc4\x1e\x83\xbe\x59\x9e\x97\x6e\x23\x7e\x24\x91\x38\xd7\xf0\x13\xef\x63\x4a\x93\xc1\x16\x5f\x07\x00\x14\xc2\x2d\x29\x3f\xd8\x67\xe7\x30\x93\x9f\x1a\x96\xd7\xaa\xfd\x71\x01\xec\x89\x5c\xea\x0e\x64\x8d\x52\x2b\x0b\xeb\x94\x62\xe6\xbf\xd6\x64\x1c\x4e\xd6\xda\x56\x2b\xf6\x47\xb7\xcd\x3f\x00\x00\xff\xff\x50\xa8\xad\xd3\xf2\x00\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationslackGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationslackGraphql,
+		"_lgraphql/notifications/addNotificationSlack.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationslackGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationslackGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationtoprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x8e\x4d\x0a\x02\x31\x0c\x85\xf7\x39\xc5\x13\x5c\x38\x57\xe8\x21\x06\x41\x2f\x50\xa6\x55\x22\x4c\x5a\x86\xcc\x42\x86\xde\x5d\xda\xfa\x83\xc6\x55\xcb\xcb\x97\xbc\x6f\x5e\xd5\x2b\x27\xc1\x81\x80\x7d\x5e\xd2\x2d\x4e\xea\x70\xd2\x85\xe5\xba\xab\x99\x24\xe5\x0b\x4f\x8d\x3a\xdf\x73\x74\x18\x7f\x12\x83\x8d\x7e\x8e\x9f\x1b\xc3\x46\x80\x0f\xe1\x6b\x2d\x1d\x7b\x55\xad\x05\x58\xf2\xaa\x6e\x6b\x7f\xe0\x6d\xf1\xf2\x79\xe6\xd6\xc4\xc8\xfd\x21\xbb\x8c\xf1\x6b\x64\x21\x60\xe8\xb5\x1c\xda\x23\x7d\x54\xa8\xd0\x23\x00\x00\xff\xff\x6a\x63\xe5\x98\x1b\x01\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationtoprojectGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationtoprojectGraphql,
+		"_lgraphql/notifications/addNotificationToProject.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationtoprojectGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationtoprojectGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationToProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsAddnotificationwebhookGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x01\x89\x94\xa7\x26\x65\xe4\xe7\x67\xc3\x05\x35\x15\xaa\xb9\x14\x14\x14\x14\x12\x53\x52\xfc\xf2\x4b\x32\xd3\x32\x93\xc1\xda\xc3\x21\xca\x34\x32\xf3\x0a\x4a\x4b\xac\xa0\x6a\x14\x14\x20\xe6\x81\x8d\xd5\x81\x0a\xc1\x0d\x84\x19\x0d\x16\xaf\xd5\x84\xeb\xc9\x4c\x41\xd2\x8c\xaa\x09\xa2\x94\x0b\x84\x01\x01\x00\x00\xff\xff\x49\x84\xcd\x6a\xb8\x00\x00\x00")
+
+func _lgraphqlNotificationsAddnotificationwebhookGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsAddnotificationwebhookGraphql,
+		"_lgraphql/notifications/addNotificationWebhook.graphql",
+	)
+}
+
+func _lgraphqlNotificationsAddnotificationwebhookGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsAddnotificationwebhookGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/addNotificationWebhook.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsDeletenotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x49\xcd\x49\x2d\x49\xf5\xcb\x2f\xc9\x4c\xcb\x4c\x06\xab\xb4\xc2\x22\xe6\x9a\x9b\x98\x99\xa3\x91\x99\x57\x50\x5a\x62\x55\x0d\x31\x07\x6c\x5c\xad\x26\x57\x2d\x20\x00\x00\xff\xff\xac\x83\xb7\xaa\x62\x00\x00\x00")
+
+func _lgraphqlNotificationsDeletenotificationemailGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsDeletenotificationemailGraphql,
+		"_lgraphql/notifications/deleteNotificationEmail.graphql",
+	)
+}
+
+func _lgraphqlNotificationsDeletenotificationemailGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsDeletenotificationemailGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/deleteNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x49\xcd\x49\x2d\x49\xf5\xcb\x2f\xc9\x4c\xcb\x4c\x06\xab\xb4\xc2\x22\xe6\x9b\x99\x5c\x94\x5f\x9c\x9f\x56\x12\x92\x9a\x98\x5b\xac\x91\x99\x57\x50\x5a\x62\x55\x0d\x31\x10\x6c\x6e\xad\x26\x57\x2d\x20\x00\x00\xff\xff\x54\xf6\x18\xff\x6b\x00\x00\x00")
+
+func _lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphql,
+		"_lgraphql/notifications/deleteNotificationMicrosoftTeams.graphql",
+	)
+}
+
+func _lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/deleteNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsDeletenotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x49\xcd\x49\x2d\x49\xf5\xcb\x2f\xc9\x4c\xcb\x4c\x06\xab\xb4\xc2\x22\x16\x94\x9f\x9c\x9d\x5a\xe2\x9c\x91\x58\xa2\x91\x99\x57\x50\x5a\x62\x55\x0d\x31\x0c\x6c\x66\xad\x26\x57\x2d\x20\x00\x00\xff\xff\x36\x65\x00\x24\x67\x00\x00\x00")
+
+func _lgraphqlNotificationsDeletenotificationrocketchatGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsDeletenotificationrocketchatGraphql,
+		"_lgraphql/notifications/deleteNotificationRocketChat.graphql",
+	)
+}
+
+func _lgraphqlNotificationsDeletenotificationrocketchatGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsDeletenotificationrocketchatGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/deleteNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsDeletenotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x49\xcd\x49\x2d\x49\xf5\xcb\x2f\xc9\x4c\xcb\x4c\x06\xab\xb4\xc2\x22\x16\x9c\x93\x98\x9c\xad\x91\x99\x57\x50\x5a\x62\x55\x0d\x31\x07\x6c\x5c\xad\x26\x57\x2d\x20\x00\x00\xff\xff\xee\xc5\xad\x57\x62\x00\x00\x00")
+
+func _lgraphqlNotificationsDeletenotificationslackGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsDeletenotificationslackGraphql,
+		"_lgraphql/notifications/deleteNotificationSlack.graphql",
+	)
+}
+
+func _lgraphqlNotificationsDeletenotificationslackGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsDeletenotificationslackGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/deleteNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsDeletenotificationwebhookGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x48\x49\xcd\x49\x2d\x49\xf5\xcb\x2f\xc9\x4c\xcb\x4c\x06\xab\xb4\xc2\x22\x16\x9e\x9a\x94\x91\x9f\x9f\xad\x91\x99\x57\x50\x5a\x62\x55\x0d\x31\x09\x6c\x60\xad\x26\x57\x2d\x20\x00\x00\xff\xff\x8a\x89\x7f\x55\x64\x00\x00\x00")
+
+func _lgraphqlNotificationsDeletenotificationwebhookGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsDeletenotificationwebhookGraphql,
+		"_lgraphql/notifications/deleteNotificationWebhook.graphql",
+	)
+}
+
+func _lgraphqlNotificationsDeletenotificationwebhookGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsDeletenotificationwebhookGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/deleteNotificationWebhook.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsListallnotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x48\xcc\xc9\x09\x28\xca\xcf\x4a\x4d\x2e\x29\x86\x8a\x80\x40\x5e\x62\x6e\x2a\x9c\x93\x99\x82\x10\xcf\x2f\xc9\x4c\xcb\x4c\x4e\x2c\xc9\xcc\xcf\x2b\xd6\x28\xa9\x2c\x48\xb5\x52\x70\xf5\x75\xf4\xf4\xd1\x44\xd2\x0c\x02\x7a\x7a\x7a\x0a\xf9\x79\x0a\x7e\x48\xea\x5d\x73\x13\x33\x73\xd0\x94\x81\x40\x7c\x3c\xc8\x1c\x14\x1b\x61\x20\x15\xa4\xc5\x31\x25\xa5\x28\xb5\xb8\x18\x43\x12\x43\x47\x2d\x17\x2a\xab\x96\xab\x16\x10\x00\x00\xff\xff\x24\xd5\x22\x2e\xea\x00\x00\x00")
+
+func _lgraphqlNotificationsListallnotificationemailGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsListallnotificationemailGraphql,
+		"_lgraphql/notifications/listAllNotificationEmail.graphql",
+	)
+}
+
+func _lgraphqlNotificationsListallnotificationemailGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsListallnotificationemailGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/listAllNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsListallnotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x48\xcc\xc9\x09\x28\xca\xcf\x4a\x4d\x2e\x29\x86\x8a\x80\x40\x5e\x62\x6e\x2a\x9c\x93\x99\x82\x10\xcf\x2f\xc9\x4c\xcb\x4c\x4e\x2c\xc9\xcc\xcf\x2b\xd6\x28\xa9\x2c\x48\xb5\x52\xf0\xf5\x74\x0e\xf2\x0f\xf6\x77\x0b\x09\x71\x75\xf4\x0d\xd6\x44\x32\x05\x04\xf4\xf4\xf4\x14\xf2\xf3\x14\xfc\x90\x34\xfa\x66\x26\x17\xe5\x17\xe7\xa7\x95\x84\xa4\x26\xe6\x16\xa3\xa9\x07\x81\xf8\x78\x90\xc9\x28\x6e\x80\x81\xf2\xd4\xa4\x8c\xfc\xfc\x6c\x0c\x71\x0c\xc5\xb5\x5c\xa8\xac\x5a\xae\x5a\x40\x00\x00\x00\xff\xff\x3c\x1a\x87\x3b\xf7\x00\x00\x00")
+
+func _lgraphqlNotificationsListallnotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsListallnotificationmicrosoftteamsGraphql,
+		"_lgraphql/notifications/listAllNotificationMicrosoftTeams.graphql",
+	)
+}
+
+func _lgraphqlNotificationsListallnotificationmicrosoftteamsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsListallnotificationmicrosoftteamsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/listAllNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsListallnotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x48\xcc\xc9\x09\x28\xca\xcf\x4a\x4d\x2e\x29\x86\x8a\x80\x40\x5e\x62\x6e\x2a\x9c\x93\x99\x82\x10\xcf\x2f\xc9\x4c\xcb\x4c\x4e\x2c\xc9\xcc\xcf\x2b\xd6\x28\xa9\x2c\x48\xb5\x52\x08\xf2\x77\xf6\x76\x0d\x71\xf6\x70\x0c\xd1\x44\x32\x01\x04\xf4\xf4\xf4\x14\xf2\xf3\x14\xfc\x90\x34\x05\xe5\x27\x67\xa7\x96\x38\x67\x24\x96\xa0\xa9\x05\x81\xf8\x78\x90\x89\x28\x76\xc3\x40\x79\x6a\x52\x46\x7e\x7e\x36\x86\x78\x72\x46\x62\x5e\x5e\x6a\x0e\x86\x38\x86\x21\xb5\x5c\xa8\xac\x5a\xae\x5a\x40\x00\x00\x00\xff\xff\x4a\x62\x23\x28\x07\x01\x00\x00")
+
+func _lgraphqlNotificationsListallnotificationrocketchatGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsListallnotificationrocketchatGraphql,
+		"_lgraphql/notifications/listAllNotificationRocketChat.graphql",
+	)
+}
+
+func _lgraphqlNotificationsListallnotificationrocketchatGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsListallnotificationrocketchatGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/listAllNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsListallnotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x48\xcc\xc9\x09\x28\xca\xcf\x4a\x4d\x2e\x29\x86\x8a\x80\x40\x5e\x62\x6e\x2a\x9c\x93\x99\x82\x10\xcf\x2f\xc9\x4c\xcb\x4c\x4e\x2c\xc9\xcc\xcf\x2b\xd6\x28\xa9\x2c\x48\xb5\x52\x08\xf6\x71\x74\xf6\xd6\x44\xd2\x0c\x02\x7a\x7a\x7a\x0a\xf9\x79\x0a\x7e\x48\xea\x83\x73\x12\x93\xb3\xd1\x94\x81\x40\x7c\x3c\xc8\x1c\x14\x1b\x61\xa0\x3c\x35\x29\x23\x3f\x3f\x1b\x43\x3c\x39\x23\x31\x2f\x2f\x35\x07\x43\x1c\xc3\x90\x5a\x2e\x54\x56\x2d\x57\x2d\x20\x00\x00\xff\xff\xff\x6b\xa2\xcc\xfd\x00\x00\x00")
+
+func _lgraphqlNotificationsListallnotificationslackGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsListallnotificationslackGraphql,
+		"_lgraphql/notifications/listAllNotificationSlack.graphql",
+	)
+}
+
+func _lgraphqlNotificationsListallnotificationslackGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsListallnotificationslackGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/listAllNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsListallnotificationwebhookGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x48\xcc\xc9\x09\x28\xca\xcf\x4a\x4d\x2e\x29\x86\x8a\x80\x40\x5e\x62\x6e\x2a\x9c\x93\x99\x82\x10\xcf\x2f\xc9\x4c\xcb\x4c\x4e\x2c\xc9\xcc\xcf\x2b\xd6\x28\xa9\x2c\x48\xb5\x52\x08\x77\x75\xf2\xf0\xf7\xf7\xd6\x44\xd2\x0e\x02\x7a\x7a\x7a\x0a\xf9\x79\x0a\x7e\x48\x3a\xc2\x53\x93\x32\xf2\xf3\xb3\xd1\x14\x82\x40\x7c\x3c\xc8\x2c\x14\x5b\x61\xa0\x1c\xa2\x09\x43\x1c\x43\x71\x2d\x17\x2a\xab\x96\xab\x16\x10\x00\x00\xff\xff\x92\xfc\x32\xab\xe9\x00\x00\x00")
+
+func _lgraphqlNotificationsListallnotificationwebhookGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsListallnotificationwebhookGraphql,
+		"_lgraphql/notifications/listAllNotificationWebhook.graphql",
+	)
+}
+
+func _lgraphqlNotificationsListallnotificationwebhookGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsListallnotificationwebhookGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/listAllNotificationWebhook.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsProjectnotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x01\xab\x84\x29\x00\x81\xbc\xfc\x92\xcc\xb4\xcc\xe4\xc4\x92\xcc\xfc\xbc\x62\x8d\x92\xca\x82\x54\x2b\x05\x57\x5f\x47\x4f\x1f\x64\x45\x20\xa0\xa7\xa7\xa7\x90\x9f\xa7\xe0\x87\xa4\xde\x35\x37\x31\x33\x07\x4d\x19\x08\xc4\xc7\x83\xcc\x01\xd9\x84\x21\x95\x0a\xd2\xe2\x98\x92\x52\x94\x5a\x5c\x8c\x21\x89\xa1\xa3\x96\x0b\x95\x55\xcb\x55\x0b\x08\x00\x00\xff\xff\x65\xff\x3e\x1e\xf2\x00\x00\x00")
+
+func _lgraphqlNotificationsProjectnotificationemailGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsProjectnotificationemailGraphql,
+		"_lgraphql/notifications/projectNotificationEmail.graphql",
+	)
+}
+
+func _lgraphqlNotificationsProjectnotificationemailGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsProjectnotificationemailGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/projectNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x01\xab\x84\x29\x00\x81\xbc\xfc\x92\xcc\xb4\xcc\xe4\xc4\x92\xcc\xfc\xbc\x62\x8d\x92\xca\x82\x54\x2b\x05\x5f\x4f\xe7\x20\xff\x60\x7f\xb7\x90\x10\x57\x47\xdf\x60\x64\xd5\x20\xa0\xa7\xa7\xa7\x90\x9f\xa7\xe0\x87\xa4\xd1\x37\x33\xb9\x28\xbf\x38\x3f\xad\x24\x24\x35\x31\xb7\x18\x4d\x3d\x08\xc4\xc7\x83\x4c\x06\xd9\x8d\x21\x55\x9e\x9a\x94\x91\x9f\x9f\x8d\x21\x8e\xa1\xb8\x96\x0b\x95\x55\xcb\x55\x0b\x08\x00\x00\xff\xff\xbf\xb5\x85\x65\xff\x00\x00\x00")
+
+func _lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphql,
+		"_lgraphql/notifications/projectNotificationMicrosoftTeams.graphql",
+	)
+}
+
+func _lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/projectNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsProjectnotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x64\x8d\xc1\x0a\xc2\x30\x0c\x86\xef\x7b\x8a\x08\x1e\xe6\x65\x0f\xb0\x9b\x0e\x41\x10\x26\xcc\xdd\x47\x2d\xd1\xd6\xb9\x64\xd6\x88\x14\xe9\xbb\x4b\x15\x61\xda\xef\x14\xfe\x7c\xf9\x73\xbd\xa3\xf3\x90\xcf\x49\x0d\x58\xc2\x5e\x9c\xa5\xd3\x6c\x01\xcf\x0c\x00\x60\x74\x7c\x46\x2d\x2b\x5f\xab\x01\xf3\x8f\xf2\x36\xbf\x42\x84\x58\xec\xd1\x6a\x25\x96\xe9\x96\x8b\x1f\xb1\x84\x66\x57\x6d\xd7\x6d\xb5\x59\xb6\x53\x33\x52\x14\x05\x30\x41\x3d\x39\x6a\x58\xf7\x28\x95\x51\xf2\xe7\x46\xba\x2e\x36\xc6\x9f\xc9\xea\x81\x07\xc3\xdc\x27\xb9\x36\x8a\x08\x2f\x49\x9e\x94\x84\xec\x77\x0a\x59\x78\x05\x00\x00\xff\xff\x98\xc9\xde\xdd\x0f\x01\x00\x00")
+
+func _lgraphqlNotificationsProjectnotificationrocketchatGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsProjectnotificationrocketchatGraphql,
+		"_lgraphql/notifications/projectNotificationRocketChat.graphql",
+	)
+}
+
+func _lgraphqlNotificationsProjectnotificationrocketchatGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsProjectnotificationrocketchatGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/projectNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsProjectnotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x01\xab\x84\x29\x00\x81\xbc\xfc\x92\xcc\xb4\xcc\xe4\xc4\x92\xcc\xfc\xbc\x62\x8d\x92\xca\x02\x90\x39\x3e\x8e\xce\xde\xc8\x8a\x40\x40\x4f\x4f\x4f\x21\x3f\x4f\xc1\x0f\x49\x7d\x70\x4e\x62\x72\x36\x9a\x32\x10\x88\x8f\x07\x99\x03\xb2\x09\x43\xaa\x3c\x35\x29\x23\x3f\x3f\x1b\x43\x3c\x39\x23\x31\x2f\x2f\x35\x07\x43\x1c\xc3\x90\x5a\x2e\x54\x56\x2d\x57\x2d\x20\x00\x00\xff\xff\xff\xce\xda\x6a\x05\x01\x00\x00")
+
+func _lgraphqlNotificationsProjectnotificationslackGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsProjectnotificationslackGraphql,
+		"_lgraphql/notifications/projectNotificationSlack.graphql",
+	)
+}
+
+func _lgraphqlNotificationsProjectnotificationslackGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsProjectnotificationslackGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/projectNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsProjectnotificationwebhookGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x50\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x01\xab\x84\x29\x00\x81\xbc\xfc\x92\xcc\xb4\xcc\xe4\xc4\x92\xcc\xfc\xbc\x62\x8d\x92\xca\x82\x54\x2b\x85\x70\x57\x27\x0f\x7f\x7f\x6f\x64\x65\x20\xa0\xa7\xa7\xa7\x90\x9f\xa7\xe0\x87\xa4\x23\x3c\x35\x29\x23\x3f\x3f\x1b\x4d\x21\x08\xc4\xc7\x83\xcc\x02\xd9\x86\x21\x55\x0e\xd1\x84\x21\x8e\xa1\xb8\x96\x0b\x95\x55\xcb\x55\x0b\x08\x00\x00\xff\xff\x7d\x54\xe7\x02\xf1\x00\x00\x00")
+
+func _lgraphqlNotificationsProjectnotificationwebhookGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsProjectnotificationwebhookGraphql,
+		"_lgraphql/notifications/projectNotificationWebhook.graphql",
+	)
+}
+
+func _lgraphqlNotificationsProjectnotificationwebhookGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsProjectnotificationwebhookGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/projectNotificationWebhook.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsRemovenotificationfromprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x8e\x4d\x0a\x02\x31\x0c\x85\xf7\x39\xc5\x13\x5c\x38\x57\xe8\x01\x5c\x0e\x82\x5e\x60\x18\xa3\x44\x68\x53\x4a\x46\x90\x61\xee\x2e\x6d\xfd\xc3\xce\x2e\x79\x7c\xc9\xfb\xfc\x64\x83\x89\x06\xec\x08\xd8\xc6\xa4\x37\x1e\xcd\xe1\x68\x49\xc2\x75\x93\xb3\xa0\x26\x17\x19\x0b\x75\x7a\x44\x76\xe8\xff\x92\x06\xeb\x07\xcf\xdf\x1f\xdd\x4c\x40\x62\xaf\x77\xfe\xbd\xdc\x27\xf5\x87\xda\x97\xbb\x01\x09\x71\x32\x37\x97\x19\xf8\xa8\xbc\xa5\x5e\x79\xab\xd3\x18\xae\x90\xd5\xa8\x91\x2c\xe4\x42\x40\x57\x6b\xe5\x4c\x79\x5f\xe8\x19\x00\x00\xff\xff\x17\x0d\x7b\xbb\x17\x01\x00\x00")
+
+func _lgraphqlNotificationsRemovenotificationfromprojectGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsRemovenotificationfromprojectGraphql,
+		"_lgraphql/notifications/removeNotificationFromProject.graphql",
+	)
+}
+
+func _lgraphqlNotificationsRemovenotificationfromprojectGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsRemovenotificationfromprojectGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/removeNotificationFromProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsUpdatenotificationemailGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x8e\x3d\x0a\x02\x31\x10\x85\xeb\xcc\x29\x66\xc1\xc2\xbd\x42\x3a\x0b\x0b\x1b\x11\xc4\x03\x0c\x9b\xa8\x03\x26\x1b\x76\x27\x55\xc8\xdd\x65\x36\x12\x14\x9c\xee\xfd\xe4\x7d\x09\x59\x48\x78\x8e\xb8\x07\x44\xc4\x5d\xa4\xe0\x2d\x5e\x65\xe1\xf8\x18\x9a\x95\x48\xa6\xa7\xc5\x5b\x72\x24\xfe\x3c\x0b\xdf\x79\xda\xde\x1c\x03\xf1\xeb\xa2\xe9\x29\xa6\x2c\x03\x8c\x58\xc0\xe4\xff\xbd\xb6\xaf\xc7\x5a\xb6\xa5\x6b\xbd\x86\xdd\xe8\x3f\xfe\x87\xdd\xfe\xd0\x93\x0a\x66\x2c\x60\x0c\x3b\xf8\x1e\xe8\xc2\x2b\xf0\xe0\xdc\xe2\xd7\x15\x4c\x85\xfa\x0e\x00\x00\xff\xff\x53\xd5\xfd\x0c\xe6\x00\x00\x00")
+
+func _lgraphqlNotificationsUpdatenotificationemailGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsUpdatenotificationemailGraphql,
+		"_lgraphql/notifications/updateNotificationEmail.graphql",
+	)
+}
+
+func _lgraphqlNotificationsUpdatenotificationemailGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsUpdatenotificationemailGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/updateNotificationEmail.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x84\x8e\x31\x0e\xc2\x30\x0c\x45\xe7\xf8\x14\xae\xc4\x40\xaf\xd0\x1b\x30\x80\x90\x80\x03\x84\x34\xa5\x16\x4a\x1c\xb5\x8e\x18\xa2\xdc\x1d\xa5\x41\x11\x4c\xfc\xed\x7f\xfb\xdb\xcf\x45\xd1\x42\xec\x71\x0f\x88\x88\x3b\xaf\x9d\x1d\xf0\x22\x0b\xf9\x47\x57\xa3\xa0\xc5\xcc\x03\xde\xc2\xa8\xc5\x9e\x58\x68\x22\xb3\x75\x8e\x64\x16\x5e\x79\x92\xab\xd5\x6e\x3d\x97\xb5\x83\x0f\x51\x3a\xe8\x31\x81\x8a\x7f\x0a\xf5\x63\x11\x95\xd6\x90\x9a\x2f\xaa\x20\x1b\xcf\x4f\xfe\xa1\xa9\x54\x6d\x92\x41\xf5\x09\x94\xa2\x11\xbe\x0f\x34\xf3\xb2\xf7\x99\xf9\x09\x2a\x43\x7e\x07\x00\x00\xff\xff\x71\xce\xd3\xe8\xf3\x00\x00\x00")
+
+func _lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphql,
+		"_lgraphql/notifications/updateNotificationMicrosoftTeams.graphql",
+	)
+}
+
+func _lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/updateNotificationMicrosoftTeams.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsUpdatenotificationrocketchatGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x7c\x8e\xb1\x0e\xc2\x30\x0c\x44\xe7\xf8\x2b\x5c\x89\x81\xfe\x42\x57\x26\x16\x84\x40\x7c\x80\x49\x03\xb1\x4a\x9d\x0a\x39\x62\x88\xf2\xef\x28\x0d\x8a\x60\xe1\xb6\xbb\xdc\xc5\x6f\x8e\x4a\xca\x41\x70\x0b\x88\x88\x1b\xa1\xd9\x0d\x78\xd6\x27\xcb\xbd\xab\xd1\x42\x6a\xfd\x80\x97\x65\x24\x75\x87\xa0\x7c\x63\xbb\x6e\x4e\xc1\x4e\x4e\x77\x9e\xf4\x58\x2a\x7b\x59\xa2\x76\xd0\x63\x02\x13\xff\x94\xeb\xa5\x22\x2e\x8b\x21\x35\x5f\x54\x01\x56\x8e\x9f\xfc\x43\x51\x69\xda\x4b\x06\xd3\x27\x30\x86\x47\xf8\xfe\xa0\x19\xeb\x49\xc4\x3d\x9a\x7f\xb9\xab\x0f\x61\x02\x93\x21\xbf\x03\x00\x00\xff\xff\x5d\x2a\x5a\x5e\xfb\x00\x00\x00")
+
+func _lgraphqlNotificationsUpdatenotificationrocketchatGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsUpdatenotificationrocketchatGraphql,
+		"_lgraphql/notifications/updateNotificationRocketChat.graphql",
+	)
+}
+
+func _lgraphqlNotificationsUpdatenotificationrocketchatGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsUpdatenotificationrocketchatGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/updateNotificationRocketChat.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsUpdatenotificationslackGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x6c\x4e\x4b\x0a\xc2\x30\x10\x5d\x67\x4e\x31\x05\x17\xf6\x0a\xbd\x81\x1b\x11\x8a\x07\x18\xd3\x68\x87\xb6\x93\x20\x13\x5c\x84\xdc\x5d\xd2\x48\x50\xf0\xed\xde\x67\xde\x9b\x2d\x2a\x29\x7b\xc1\x23\x20\x22\x1e\x84\x36\x37\xe0\xa8\x4f\x96\x47\x57\xa5\x40\x6a\xe7\x01\xaf\x61\x22\x75\x67\xaf\x7c\x67\xbb\xdf\x8c\x2b\xd9\xe5\x52\xdc\x93\x84\xa8\x1d\xf4\x98\xc0\xc4\xff\xb9\xda\x5f\xc0\x25\x3c\xa4\xc6\x0b\xea\xec\xbe\xfe\xa3\x7f\xb6\xeb\x0f\xcd\xc9\x60\xfa\x04\xc6\xf0\x04\xdf\x05\x8d\xd8\x99\x44\xdc\xda\xf8\xcb\xdd\x66\xef\x17\x30\x19\xf2\x3b\x00\x00\xff\xff\xd4\x02\x8b\x34\xf1\x00\x00\x00")
+
+func _lgraphqlNotificationsUpdatenotificationslackGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsUpdatenotificationslackGraphql,
+		"_lgraphql/notifications/updateNotificationSlack.graphql",
+	)
+}
+
+func _lgraphqlNotificationsUpdatenotificationslackGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsUpdatenotificationslackGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/updateNotificationSlack.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __lgraphqlNotificationsUpdatenotificationwebhookGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xca\x2d\x2d\x49\x2c\xc9\xcc\xcf\x53\xd0\xe0\x52\x50\x50\x50\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\x84\x08\x15\x24\x96\x24\x67\x58\x29\x84\x16\xa4\x24\x96\xa4\xfa\xe5\x97\x64\xa6\x65\x26\x83\xf5\x84\xa7\x26\x65\xe4\xe7\x67\x07\x80\xe4\x3d\xf3\x0a\x4a\x4b\x14\xb9\x34\x15\xaa\xb9\x38\x4b\x71\xa9\x84\xd8\x01\x02\x99\x20\xe5\x56\xd5\x70\x3e\x08\x40\xac\x06\xbb\x00\x45\x1c\x6a\x3f\xc4\x1d\x70\x99\x5a\x2e\x4e\xcd\x6a\x2e\x4e\xce\xcc\x14\x2e\x64\x03\xe0\x9c\x72\x88\x95\x5c\x9c\xb5\x5c\xb5\x80\x00\x00\x00\xff\xff\x93\xb3\xe1\xf1\xe5\x00\x00\x00")
+
+func _lgraphqlNotificationsUpdatenotificationwebhookGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		__lgraphqlNotificationsUpdatenotificationwebhookGraphql,
+		"_lgraphql/notifications/updateNotificationWebhook.graphql",
+	)
+}
+
+func _lgraphqlNotificationsUpdatenotificationwebhookGraphql() (*asset, error) {
+	bytes, err := _lgraphqlNotificationsUpdatenotificationwebhookGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "_lgraphql/notifications/updateNotificationWebhook.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -884,42 +1493,71 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"_lgraphql/addDeployTargetConfig.graphql":          _lgraphqlAdddeploytargetconfigGraphql,
-	"_lgraphql/addEnvVariable.graphql":                 _lgraphqlAddenvvariableGraphql,
-	"_lgraphql/addGroup.graphql":                       _lgraphqlAddgroupGraphql,
-	"_lgraphql/addGroupsToProject.graphql":             _lgraphqlAddgroupstoprojectGraphql,
-	"_lgraphql/addNotificationEmail.graphql":           _lgraphqlAddnotificationemailGraphql,
-	"_lgraphql/addNotificationMicrosoftTeams.graphql":  _lgraphqlAddnotificationmicrosoftteamsGraphql,
-	"_lgraphql/addNotificationRocketChat.graphql":      _lgraphqlAddnotificationrocketchatGraphql,
-	"_lgraphql/addNotificationSlack.graphql":           _lgraphqlAddnotificationslackGraphql,
-	"_lgraphql/addNotificationToProject.graphql":       _lgraphqlAddnotificationtoprojectGraphql,
-	"_lgraphql/addOrUpdateEnvironment.graphql":         _lgraphqlAddorupdateenvironmentGraphql,
-	"_lgraphql/addProject.graphql":                     _lgraphqlAddprojectGraphql,
-	"_lgraphql/addRestore.graphql":                     _lgraphqlAddrestoreGraphql,
-	"_lgraphql/addSshKey.graphql":                      _lgraphqlAddsshkeyGraphql,
-	"_lgraphql/addUser.graphql":                        _lgraphqlAdduserGraphql,
-	"_lgraphql/addUserToGroup.graphql":                 _lgraphqlAddusertogroupGraphql,
-	"_lgraphql/backupsForEnvironmentByName.graphql":    _lgraphqlBackupsforenvironmentbynameGraphql,
-	"_lgraphql/deleteDeployTargetConfig.graphql":       _lgraphqlDeletedeploytargetconfigGraphql,
-	"_lgraphql/deployEnvironmentBranch.graphql":        _lgraphqlDeployenvironmentbranchGraphql,
-	"_lgraphql/deployEnvironmentLatest.graphql":        _lgraphqlDeployenvironmentlatestGraphql,
-	"_lgraphql/deployEnvironmentPromote.graphql":       _lgraphqlDeployenvironmentpromoteGraphql,
-	"_lgraphql/deployEnvironmentPullrequest.graphql":   _lgraphqlDeployenvironmentpullrequestGraphql,
-	"_lgraphql/deployTargetConfigsByProjectId.graphql": _lgraphqlDeploytargetconfigsbyprojectidGraphql,
-	"_lgraphql/environmentByName.graphql":              _lgraphqlEnvironmentbynameGraphql,
-	"_lgraphql/lagoonSchema.graphql":                   _lgraphqlLagoonschemaGraphql,
-	"_lgraphql/lagoonVersion.graphql":                  _lgraphqlLagoonversionGraphql,
-	"_lgraphql/me.graphql":                             _lgraphqlMeGraphql,
-	"_lgraphql/minimalProjectByName.graphql":           _lgraphqlMinimalprojectbynameGraphql,
-	"_lgraphql/projectByName.graphql":                  _lgraphqlProjectbynameGraphql,
-	"_lgraphql/projectByNameMetadata.graphql":          _lgraphqlProjectbynamemetadataGraphql,
-	"_lgraphql/projectsByMetadata.graphql":             _lgraphqlProjectsbymetadataGraphql,
-	"_lgraphql/removeProjectMetadataByKey.graphql":     _lgraphqlRemoveprojectmetadatabykeyGraphql,
-	"_lgraphql/sshEndpointsByProject.graphql":          _lgraphqlSshendpointsbyprojectGraphql,
-	"_lgraphql/switchActiveStandby.graphql":            _lgraphqlSwitchactivestandbyGraphql,
-	"_lgraphql/taskByID.graphql":                       _lgraphqlTaskbyidGraphql,
-	"_lgraphql/updateDeployTargetConfig.graphql":       _lgraphqlUpdatedeploytargetconfigGraphql,
-	"_lgraphql/updateProjectMetadata.graphql":          _lgraphqlUpdateprojectmetadataGraphql,
+	"_lgraphql/addDeployTarget.graphql":                                   _lgraphqlAdddeploytargetGraphql,
+	"_lgraphql/addDeployTargetConfig.graphql":                             _lgraphqlAdddeploytargetconfigGraphql,
+	"_lgraphql/addEnvVariable.graphql":                                    _lgraphqlAddenvvariableGraphql,
+	"_lgraphql/addGroup.graphql":                                          _lgraphqlAddgroupGraphql,
+	"_lgraphql/addGroupsToProject.graphql":                                _lgraphqlAddgroupstoprojectGraphql,
+	"_lgraphql/addOrUpdateEnvironment.graphql":                            _lgraphqlAddorupdateenvironmentGraphql,
+	"_lgraphql/addProject.graphql":                                        _lgraphqlAddprojectGraphql,
+	"_lgraphql/addRestore.graphql":                                        _lgraphqlAddrestoreGraphql,
+	"_lgraphql/addSshKey.graphql":                                         _lgraphqlAddsshkeyGraphql,
+	"_lgraphql/addUser.graphql":                                           _lgraphqlAdduserGraphql,
+	"_lgraphql/addUserToGroup.graphql":                                    _lgraphqlAddusertogroupGraphql,
+	"_lgraphql/backupsForEnvironmentByName.graphql":                       _lgraphqlBackupsforenvironmentbynameGraphql,
+	"_lgraphql/deleteDeployTarget.graphql":                                _lgraphqlDeletedeploytargetGraphql,
+	"_lgraphql/deleteDeployTargetConfig.graphql":                          _lgraphqlDeletedeploytargetconfigGraphql,
+	"_lgraphql/deployEnvironmentBranch.graphql":                           _lgraphqlDeployenvironmentbranchGraphql,
+	"_lgraphql/deployEnvironmentLatest.graphql":                           _lgraphqlDeployenvironmentlatestGraphql,
+	"_lgraphql/deployEnvironmentPromote.graphql":                          _lgraphqlDeployenvironmentpromoteGraphql,
+	"_lgraphql/deployEnvironmentPullrequest.graphql":                      _lgraphqlDeployenvironmentpullrequestGraphql,
+	"_lgraphql/deployTargetConfigsByProjectId.graphql":                    _lgraphqlDeploytargetconfigsbyprojectidGraphql,
+	"_lgraphql/environmentByName.graphql":                                 _lgraphqlEnvironmentbynameGraphql,
+	"_lgraphql/lagoonSchema.graphql":                                      _lgraphqlLagoonschemaGraphql,
+	"_lgraphql/lagoonVersion.graphql":                                     _lgraphqlLagoonversionGraphql,
+	"_lgraphql/listDeployTargets.graphql":                                 _lgraphqlListdeploytargetsGraphql,
+	"_lgraphql/me.graphql":                                                _lgraphqlMeGraphql,
+	"_lgraphql/minimalProjectByName.graphql":                              _lgraphqlMinimalprojectbynameGraphql,
+	"_lgraphql/projectByName.graphql":                                     _lgraphqlProjectbynameGraphql,
+	"_lgraphql/projectByNameMetadata.graphql":                             _lgraphqlProjectbynamemetadataGraphql,
+	"_lgraphql/projectsByMetadata.graphql":                                _lgraphqlProjectsbymetadataGraphql,
+	"_lgraphql/removeProjectMetadataByKey.graphql":                        _lgraphqlRemoveprojectmetadatabykeyGraphql,
+	"_lgraphql/sshEndpointsByProject.graphql":                             _lgraphqlSshendpointsbyprojectGraphql,
+	"_lgraphql/switchActiveStandby.graphql":                               _lgraphqlSwitchactivestandbyGraphql,
+	"_lgraphql/taskByID.graphql":                                          _lgraphqlTaskbyidGraphql,
+	"_lgraphql/updateDeployTarget.graphql":                                _lgraphqlUpdatedeploytargetGraphql,
+	"_lgraphql/updateDeployTargetConfig.graphql":                          _lgraphqlUpdatedeploytargetconfigGraphql,
+	"_lgraphql/updateProjectMetadata.graphql":                             _lgraphqlUpdateprojectmetadataGraphql,
+	"_lgraphql/variables/addOrUpdateEnvVariableByName.graphql":            _lgraphqlVariablesAddorupdateenvvariablebynameGraphql,
+	"_lgraphql/variables/deleteEnvVariableByName.graphql":                 _lgraphqlVariablesDeleteenvvariablebynameGraphql,
+	"_lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql": _lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql,
+	"_lgraphql/notifications/addNotificationEmail.graphql":                _lgraphqlNotificationsAddnotificationemailGraphql,
+	"_lgraphql/notifications/addNotificationMicrosoftTeams.graphql":       _lgraphqlNotificationsAddnotificationmicrosoftteamsGraphql,
+	"_lgraphql/notifications/addNotificationRocketChat.graphql":           _lgraphqlNotificationsAddnotificationrocketchatGraphql,
+	"_lgraphql/notifications/addNotificationSlack.graphql":                _lgraphqlNotificationsAddnotificationslackGraphql,
+	"_lgraphql/notifications/addNotificationToProject.graphql":            _lgraphqlNotificationsAddnotificationtoprojectGraphql,
+	"_lgraphql/notifications/addNotificationWebhook.graphql":              _lgraphqlNotificationsAddnotificationwebhookGraphql,
+	"_lgraphql/notifications/deleteNotificationEmail.graphql":             _lgraphqlNotificationsDeletenotificationemailGraphql,
+	"_lgraphql/notifications/deleteNotificationMicrosoftTeams.graphql":    _lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphql,
+	"_lgraphql/notifications/deleteNotificationRocketChat.graphql":        _lgraphqlNotificationsDeletenotificationrocketchatGraphql,
+	"_lgraphql/notifications/deleteNotificationSlack.graphql":             _lgraphqlNotificationsDeletenotificationslackGraphql,
+	"_lgraphql/notifications/deleteNotificationWebhook.graphql":           _lgraphqlNotificationsDeletenotificationwebhookGraphql,
+	"_lgraphql/notifications/listAllNotificationEmail.graphql":            _lgraphqlNotificationsListallnotificationemailGraphql,
+	"_lgraphql/notifications/listAllNotificationMicrosoftTeams.graphql":   _lgraphqlNotificationsListallnotificationmicrosoftteamsGraphql,
+	"_lgraphql/notifications/listAllNotificationRocketChat.graphql":       _lgraphqlNotificationsListallnotificationrocketchatGraphql,
+	"_lgraphql/notifications/listAllNotificationSlack.graphql":            _lgraphqlNotificationsListallnotificationslackGraphql,
+	"_lgraphql/notifications/listAllNotificationWebhook.graphql":          _lgraphqlNotificationsListallnotificationwebhookGraphql,
+	"_lgraphql/notifications/projectNotificationEmail.graphql":            _lgraphqlNotificationsProjectnotificationemailGraphql,
+	"_lgraphql/notifications/projectNotificationMicrosoftTeams.graphql":   _lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphql,
+	"_lgraphql/notifications/projectNotificationRocketChat.graphql":       _lgraphqlNotificationsProjectnotificationrocketchatGraphql,
+	"_lgraphql/notifications/projectNotificationSlack.graphql":            _lgraphqlNotificationsProjectnotificationslackGraphql,
+	"_lgraphql/notifications/projectNotificationWebhook.graphql":          _lgraphqlNotificationsProjectnotificationwebhookGraphql,
+	"_lgraphql/notifications/removeNotificationFromProject.graphql":       _lgraphqlNotificationsRemovenotificationfromprojectGraphql,
+	"_lgraphql/notifications/updateNotificationEmail.graphql":             _lgraphqlNotificationsUpdatenotificationemailGraphql,
+	"_lgraphql/notifications/updateNotificationMicrosoftTeams.graphql":    _lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphql,
+	"_lgraphql/notifications/updateNotificationRocketChat.graphql":        _lgraphqlNotificationsUpdatenotificationrocketchatGraphql,
+	"_lgraphql/notifications/updateNotificationSlack.graphql":             _lgraphqlNotificationsUpdatenotificationslackGraphql,
+	"_lgraphql/notifications/updateNotificationWebhook.graphql":           _lgraphqlNotificationsUpdatenotificationwebhookGraphql,
 }
 
 // AssetDir returns the file names below a certain
@@ -964,15 +1602,11 @@ type bintree struct {
 
 var _bintree = &bintree{nil, map[string]*bintree{
 	"_lgraphql": &bintree{nil, map[string]*bintree{
+		"addDeployTarget.graphql":                &bintree{_lgraphqlAdddeploytargetGraphql, map[string]*bintree{}},
 		"addDeployTargetConfig.graphql":          &bintree{_lgraphqlAdddeploytargetconfigGraphql, map[string]*bintree{}},
 		"addEnvVariable.graphql":                 &bintree{_lgraphqlAddenvvariableGraphql, map[string]*bintree{}},
 		"addGroup.graphql":                       &bintree{_lgraphqlAddgroupGraphql, map[string]*bintree{}},
 		"addGroupsToProject.graphql":             &bintree{_lgraphqlAddgroupstoprojectGraphql, map[string]*bintree{}},
-		"addNotificationEmail.graphql":           &bintree{_lgraphqlAddnotificationemailGraphql, map[string]*bintree{}},
-		"addNotificationMicrosoftTeams.graphql":  &bintree{_lgraphqlAddnotificationmicrosoftteamsGraphql, map[string]*bintree{}},
-		"addNotificationRocketChat.graphql":      &bintree{_lgraphqlAddnotificationrocketchatGraphql, map[string]*bintree{}},
-		"addNotificationSlack.graphql":           &bintree{_lgraphqlAddnotificationslackGraphql, map[string]*bintree{}},
-		"addNotificationToProject.graphql":       &bintree{_lgraphqlAddnotificationtoprojectGraphql, map[string]*bintree{}},
 		"addOrUpdateEnvironment.graphql":         &bintree{_lgraphqlAddorupdateenvironmentGraphql, map[string]*bintree{}},
 		"addProject.graphql":                     &bintree{_lgraphqlAddprojectGraphql, map[string]*bintree{}},
 		"addRestore.graphql":                     &bintree{_lgraphqlAddrestoreGraphql, map[string]*bintree{}},
@@ -980,6 +1614,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"addUser.graphql":                        &bintree{_lgraphqlAdduserGraphql, map[string]*bintree{}},
 		"addUserToGroup.graphql":                 &bintree{_lgraphqlAddusertogroupGraphql, map[string]*bintree{}},
 		"backupsForEnvironmentByName.graphql":    &bintree{_lgraphqlBackupsforenvironmentbynameGraphql, map[string]*bintree{}},
+		"deleteDeployTarget.graphql":             &bintree{_lgraphqlDeletedeploytargetGraphql, map[string]*bintree{}},
 		"deleteDeployTargetConfig.graphql":       &bintree{_lgraphqlDeletedeploytargetconfigGraphql, map[string]*bintree{}},
 		"deployEnvironmentBranch.graphql":        &bintree{_lgraphqlDeployenvironmentbranchGraphql, map[string]*bintree{}},
 		"deployEnvironmentLatest.graphql":        &bintree{_lgraphqlDeployenvironmentlatestGraphql, map[string]*bintree{}},
@@ -989,17 +1624,53 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"environmentByName.graphql":              &bintree{_lgraphqlEnvironmentbynameGraphql, map[string]*bintree{}},
 		"lagoonSchema.graphql":                   &bintree{_lgraphqlLagoonschemaGraphql, map[string]*bintree{}},
 		"lagoonVersion.graphql":                  &bintree{_lgraphqlLagoonversionGraphql, map[string]*bintree{}},
+		"listDeployTargets.graphql":              &bintree{_lgraphqlListdeploytargetsGraphql, map[string]*bintree{}},
 		"me.graphql":                             &bintree{_lgraphqlMeGraphql, map[string]*bintree{}},
 		"minimalProjectByName.graphql":           &bintree{_lgraphqlMinimalprojectbynameGraphql, map[string]*bintree{}},
-		"projectByName.graphql":                  &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
-		"projectByNameMetadata.graphql":          &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
-		"projectsByMetadata.graphql":             &bintree{_lgraphqlProjectsbymetadataGraphql, map[string]*bintree{}},
-		"removeProjectMetadataByKey.graphql":     &bintree{_lgraphqlRemoveprojectmetadatabykeyGraphql, map[string]*bintree{}},
-		"sshEndpointsByProject.graphql":          &bintree{_lgraphqlSshendpointsbyprojectGraphql, map[string]*bintree{}},
-		"switchActiveStandby.graphql":            &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},
-		"taskByID.graphql":                       &bintree{_lgraphqlTaskbyidGraphql, map[string]*bintree{}},
-		"updateDeployTargetConfig.graphql":       &bintree{_lgraphqlUpdatedeploytargetconfigGraphql, map[string]*bintree{}},
-		"updateProjectMetadata.graphql":          &bintree{_lgraphqlUpdateprojectmetadataGraphql, map[string]*bintree{}},
+		"notifications": &bintree{nil, map[string]*bintree{
+			"addNotificationEmail.graphql":              &bintree{_lgraphqlNotificationsAddnotificationemailGraphql, map[string]*bintree{}},
+			"addNotificationMicrosoftTeams.graphql":     &bintree{_lgraphqlNotificationsAddnotificationmicrosoftteamsGraphql, map[string]*bintree{}},
+			"addNotificationRocketChat.graphql":         &bintree{_lgraphqlNotificationsAddnotificationrocketchatGraphql, map[string]*bintree{}},
+			"addNotificationSlack.graphql":              &bintree{_lgraphqlNotificationsAddnotificationslackGraphql, map[string]*bintree{}},
+			"addNotificationToProject.graphql":          &bintree{_lgraphqlNotificationsAddnotificationtoprojectGraphql, map[string]*bintree{}},
+			"addNotificationWebhook.graphql":            &bintree{_lgraphqlNotificationsAddnotificationwebhookGraphql, map[string]*bintree{}},
+			"deleteNotificationEmail.graphql":           &bintree{_lgraphqlNotificationsDeletenotificationemailGraphql, map[string]*bintree{}},
+			"deleteNotificationMicrosoftTeams.graphql":  &bintree{_lgraphqlNotificationsDeletenotificationmicrosoftteamsGraphql, map[string]*bintree{}},
+			"deleteNotificationRocketChat.graphql":      &bintree{_lgraphqlNotificationsDeletenotificationrocketchatGraphql, map[string]*bintree{}},
+			"deleteNotificationSlack.graphql":           &bintree{_lgraphqlNotificationsDeletenotificationslackGraphql, map[string]*bintree{}},
+			"deleteNotificationWebhook.graphql":         &bintree{_lgraphqlNotificationsDeletenotificationwebhookGraphql, map[string]*bintree{}},
+			"listAllNotificationEmail.graphql":          &bintree{_lgraphqlNotificationsListallnotificationemailGraphql, map[string]*bintree{}},
+			"listAllNotificationMicrosoftTeams.graphql": &bintree{_lgraphqlNotificationsListallnotificationmicrosoftteamsGraphql, map[string]*bintree{}},
+			"listAllNotificationRocketChat.graphql":     &bintree{_lgraphqlNotificationsListallnotificationrocketchatGraphql, map[string]*bintree{}},
+			"listAllNotificationSlack.graphql":          &bintree{_lgraphqlNotificationsListallnotificationslackGraphql, map[string]*bintree{}},
+			"listAllNotificationWebhook.graphql":        &bintree{_lgraphqlNotificationsListallnotificationwebhookGraphql, map[string]*bintree{}},
+			"projectNotificationEmail.graphql":          &bintree{_lgraphqlNotificationsProjectnotificationemailGraphql, map[string]*bintree{}},
+			"projectNotificationMicrosoftTeams.graphql": &bintree{_lgraphqlNotificationsProjectnotificationmicrosoftteamsGraphql, map[string]*bintree{}},
+			"projectNotificationRocketChat.graphql":     &bintree{_lgraphqlNotificationsProjectnotificationrocketchatGraphql, map[string]*bintree{}},
+			"projectNotificationSlack.graphql":          &bintree{_lgraphqlNotificationsProjectnotificationslackGraphql, map[string]*bintree{}},
+			"projectNotificationWebhook.graphql":        &bintree{_lgraphqlNotificationsProjectnotificationwebhookGraphql, map[string]*bintree{}},
+			"removeNotificationFromProject.graphql":     &bintree{_lgraphqlNotificationsRemovenotificationfromprojectGraphql, map[string]*bintree{}},
+			"updateNotificationEmail.graphql":           &bintree{_lgraphqlNotificationsUpdatenotificationemailGraphql, map[string]*bintree{}},
+			"updateNotificationMicrosoftTeams.graphql":  &bintree{_lgraphqlNotificationsUpdatenotificationmicrosoftteamsGraphql, map[string]*bintree{}},
+			"updateNotificationRocketChat.graphql":      &bintree{_lgraphqlNotificationsUpdatenotificationrocketchatGraphql, map[string]*bintree{}},
+			"updateNotificationSlack.graphql":           &bintree{_lgraphqlNotificationsUpdatenotificationslackGraphql, map[string]*bintree{}},
+			"updateNotificationWebhook.graphql":         &bintree{_lgraphqlNotificationsUpdatenotificationwebhookGraphql, map[string]*bintree{}},
+		}},
+		"projectByName.graphql":              &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
+		"projectByNameMetadata.graphql":      &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
+		"projectsByMetadata.graphql":         &bintree{_lgraphqlProjectsbymetadataGraphql, map[string]*bintree{}},
+		"removeProjectMetadataByKey.graphql": &bintree{_lgraphqlRemoveprojectmetadatabykeyGraphql, map[string]*bintree{}},
+		"sshEndpointsByProject.graphql":      &bintree{_lgraphqlSshendpointsbyprojectGraphql, map[string]*bintree{}},
+		"switchActiveStandby.graphql":        &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},
+		"taskByID.graphql":                   &bintree{_lgraphqlTaskbyidGraphql, map[string]*bintree{}},
+		"updateDeployTarget.graphql":         &bintree{_lgraphqlUpdatedeploytargetGraphql, map[string]*bintree{}},
+		"updateDeployTargetConfig.graphql":   &bintree{_lgraphqlUpdatedeploytargetconfigGraphql, map[string]*bintree{}},
+		"updateProjectMetadata.graphql":      &bintree{_lgraphqlUpdateprojectmetadataGraphql, map[string]*bintree{}},
+		"variables": &bintree{nil, map[string]*bintree{
+			"addOrUpdateEnvVariableByName.graphql":            &bintree{_lgraphqlVariablesAddorupdateenvvariablebynameGraphql, map[string]*bintree{}},
+			"deleteEnvVariableByName.graphql":                 &bintree{_lgraphqlVariablesDeleteenvvariablebynameGraphql, map[string]*bintree{}},
+			"getEnvVariablesByProjectEnvironmentName.graphql": &bintree{_lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql, map[string]*bintree{}},
+		}},
 	}},
 }}
 

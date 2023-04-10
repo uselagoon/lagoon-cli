@@ -7,9 +7,15 @@ import (
 
 // AddNotificationRocketChatInput is based on the Lagoon API type.
 type AddNotificationRocketChatInput struct {
-	Name    string `json:"name"`
-	Webhook string `json:"webhook"`
-	Channel string `json:"channel"`
+	Name    string `json:"name,omitempty"`
+	Webhook string `json:"webhook,omitempty"`
+	Channel string `json:"channel,omitempty"`
+}
+
+// UpdateNotificationRocketChatPatchInput is based on the Lagoon API type.
+type UpdateNotificationRocketChatInput struct {
+	Name  string                         `json:"name"`
+	Patch AddNotificationRocketChatInput `json:"patch"`
 }
 
 // NotificationRocketChat is based on the Lagoon API type.
@@ -20,9 +26,15 @@ type NotificationRocketChat struct {
 
 // AddNotificationSlackInput is based on the Lagoon API type.
 type AddNotificationSlackInput struct {
-	Name    string `json:"name"`
-	Webhook string `json:"webhook"`
-	Channel string `json:"channel"`
+	Name    string `json:"name,omitempty"`
+	Webhook string `json:"webhook,omitempty"`
+	Channel string `json:"channel,omitempty"`
+}
+
+// UpdateNotificationSlackPatchInput is based on the Lagoon API type.
+type UpdateNotificationSlackInput struct {
+	Name  string                    `json:"name"`
+	Patch AddNotificationSlackInput `json:"patch"`
 }
 
 // NotificationSlack is based on the Lagoon API type.
@@ -33,8 +45,14 @@ type NotificationSlack struct {
 
 // AddNotificationEmailInput is based on the Lagoon API type.
 type AddNotificationEmailInput struct {
-	Name         string `json:"name"`
-	EmailAddress string `json:"emailAddress"`
+	Name         string `json:"name,omitempty"`
+	EmailAddress string `json:"emailAddress,omitempty"`
+}
+
+// UpdateNotificationEmailPatchInput is based on the Lagoon API type.
+type UpdateNotificationEmailInput struct {
+	Name  string                    `json:"name"`
+	Patch AddNotificationEmailInput `json:"patch"`
 }
 
 // NotificationEmail is based on the Lagoon API type.
@@ -45,8 +63,14 @@ type NotificationEmail struct {
 
 // AddNotificationMicrosoftTeamsInput is based on the Lagoon API type.
 type AddNotificationMicrosoftTeamsInput struct {
-	Name    string `json:"name"`
-	Webhook string `json:"webhook"`
+	Name    string `json:"name,omitempty"`
+	Webhook string `json:"webhook,omitempty"`
+}
+
+// UpdateNotificationMicrosoftTeamsPatchInput is based on the Lagoon API type.
+type UpdateNotificationMicrosoftTeamsInput struct {
+	Name  string                             `json:"name"`
+	Patch AddNotificationMicrosoftTeamsInput `json:"patch"`
 }
 
 // NotificationMicrosoftTeams is based on the Lagoon API type.
@@ -55,13 +79,37 @@ type NotificationMicrosoftTeams struct {
 	ID uint `json:"id,omitempty"`
 }
 
+// AddNotificationWebhookInput is based on the Lagoon API type.
+type AddNotificationWebhookInput struct {
+	Name    string `json:"name,omitempty"`
+	Webhook string `json:"webhook,omitempty"`
+}
+
+// UpdateNotificationWebhookPatchInput is based on the Lagoon API type.
+type UpdateNotificationWebhookInput struct {
+	Name  string                      `json:"name"`
+	Patch AddNotificationWebhookInput `json:"patch"`
+}
+
+// NotificationWebhook is based on the Lagoon API type.
+type NotificationWebhook struct {
+	AddNotificationWebhookInput
+	ID uint `json:"id,omitempty"`
+}
+
+// DeleteNotification is the response.
+type DeleteNotification struct {
+	DeleteNotification string `json:"deleteNotification"`
+}
+
 // Notifications represents possible Lagoon notification types.
 // These are unmarshalled from a projectByName query response.
 type Notifications struct {
-	Slack          []AddNotificationSlackInput
-	RocketChat     []AddNotificationRocketChatInput
-	Email          []AddNotificationEmailInput
-	MicrosoftTeams []AddNotificationMicrosoftTeamsInput
+	Slack          []AddNotificationSlackInput          `json:"slack,omitempty"`
+	RocketChat     []AddNotificationRocketChatInput     `json:"rocketchat,omitempty"`
+	Email          []AddNotificationEmailInput          `json:"email,omitempty"`
+	MicrosoftTeams []AddNotificationMicrosoftTeamsInput `json:"microsoftteams,omitempty"`
+	Webhook        []AddNotificationWebhookInput        `json:"webhook,omitempty"`
 }
 
 // NotificationsConfig represents possible Lagoon notification types and
@@ -112,6 +160,12 @@ func (n *Notifications) UnmarshalJSON(b []byte) error {
 					Name:    nMap["name"],
 					Webhook: nMap["webhook"],
 				})
+		case "NotificationWebhook":
+			n.Webhook = append(n.Webhook,
+				AddNotificationWebhookInput{
+					Name:    nMap["name"],
+					Webhook: nMap["webhook"],
+				})
 		default:
 			return fmt.Errorf("unknown notification type: %v", nMap["__typename"])
 		}
@@ -146,6 +200,12 @@ func (n *NotificationsConfig) MarshalJSON() ([]byte, error) {
 		nMap["microsoftTeams"] = append(nMap["microsoftTeams"], map[string]string{
 			"name":    microsoftTeams.Name,
 			"webhook": microsoftTeams.Webhook,
+		})
+	}
+	for _, webhook := range n.Webhook {
+		nMap["webhook"] = append(nMap["webhook"], map[string]string{
+			"name":    webhook.Name,
+			"webhook": webhook.Webhook,
 		})
 	}
 	return json.Marshal(nMap)
@@ -192,6 +252,14 @@ func (n *NotificationsConfig) UnmarshalJSON(b []byte) error {
 					AddNotificationMicrosoftTeamsInput{
 						Name:    microsoftTeamsMap["name"],
 						Webhook: microsoftTeamsMap["webhook"],
+					})
+			}
+		case "webhook":
+			for _, webhookMap := range nValues {
+				n.Webhook = append(n.Webhook,
+					AddNotificationWebhookInput{
+						Name:    webhookMap["name"],
+						Webhook: webhookMap["webhook"],
 					})
 			}
 		default:

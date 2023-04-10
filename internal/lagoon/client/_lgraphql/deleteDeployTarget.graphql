@@ -1,0 +1,7 @@
+mutation (
+  $name: String!
+) {
+  deleteDeployTarget: deleteOpenshift(input: {
+    name: $name
+  })
+}

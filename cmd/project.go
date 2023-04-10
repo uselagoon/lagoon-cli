@@ -20,6 +20,9 @@ var projectAutoIdle int
 var projectStorageCalc int
 var projectDevelopmentEnvironmentsLimit int
 var projectOpenshift int
+var projectDeploymentsDisabled int
+var factsUi int
+var problemsUi int
 
 func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
 	configMap := make(map[string]interface{})
@@ -175,7 +178,8 @@ var listProjectByMetadata = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
 			}
 			if showMetadata {
-				projectData = append(projectData, returnNonEmptyString(fmt.Sprintf("%v", project.Metadata)))
+				metaData, _ := json.Marshal(project.Metadata)
+				projectData = append(projectData, returnNonEmptyString(fmt.Sprintf("%v", string(metaData))))
 			}
 			data = append(data, projectData)
 		}
@@ -222,14 +226,12 @@ var getProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if project.Metadata == "{}" {
+		if len(project.Metadata) == 0 {
 			output.RenderInfo(fmt.Sprintf("There is no metadata for project '%s'", cmdProjectName), outputOptions)
 			return nil
 		}
-		metadataResponse := map[string]string{}
-		json.Unmarshal([]byte(project.Metadata), &metadataResponse)
 		data := []output.Data{}
-		for metaKey, metaVal := range metadataResponse {
+		for metaKey, metaVal := range project.Metadata {
 			metadataData := []string{
 				returnNonEmptyString(fmt.Sprintf("%v", metaKey)),
 				returnNonEmptyString(fmt.Sprintf("%v", metaVal)),
@@ -288,10 +290,11 @@ var updateProjectMetadata = &cobra.Command{
 				return err
 			}
 			data := []output.Data{}
+			metaData, _ := json.Marshal(projectResult.Metadata)
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
 			output.RenderOutput(output.Table{
 				Header: []string{
@@ -342,10 +345,11 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				return err
 			}
 			data := []output.Data{}
+			metaData, _ := json.Marshal(projectResult.Metadata)
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Metadata)),
+				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
 			output.RenderOutput(output.Table{
 				Header: []string{
@@ -379,6 +383,10 @@ func init() {
 	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "C", 0, "Should storage for this environment be calculated")
 	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	updateProjectCmd.Flags().IntVarP(&projectDeploymentsDisabled, "deploymentsDisabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+
+	updateProjectCmd.Flags().IntVarP(&factsUi, "factsUi", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().IntVarP(&problemsUi, "problemsUi", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
 
 	addProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 

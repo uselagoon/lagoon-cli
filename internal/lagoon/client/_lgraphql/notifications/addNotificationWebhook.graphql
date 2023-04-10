@@ -1,13 +1,12 @@
 mutation (
   $name: String!,
-  $channel: String!,
   $webhook: String!) {
-    addNotificationRocketChat(input: {
+    addNotificationWebhook(input: {
       name: $name,
-      channel: $channel,
       webhook: $webhook
     }) {
       id
       name
+      webhook
     }
   }

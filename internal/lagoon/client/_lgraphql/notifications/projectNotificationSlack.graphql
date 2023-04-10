@@ -1,0 +1,12 @@
+query ($name: String!) {
+    projectByName(name: $name) {
+        notifications(type: SLACK) {
+            ... on NotificationSlack {
+                __typename
+                webhook
+                channel
+                name
+            }
+        }
+    }
+}

@@ -50,7 +50,18 @@ var ProjectByNameFragment = `fragment Project on Project {
 	routerPattern
 	branches
 	pullrequests
+	problemsUi
+	factsUi
 	productionEnvironment
+	deployTargetConfigs{
+		id
+		deployTarget{
+		  id
+		  name
+		  token
+		}
+		
+	  }
 	environments {
 		id
 		name
@@ -248,7 +259,6 @@ var EnvironmentByNameFragment = `fragment Environment on Environment {
 	updated
 	created
 	deleted
-	monitoringUrls
 	deployTitle
 	deployBaseRef
 	deployHeadRef

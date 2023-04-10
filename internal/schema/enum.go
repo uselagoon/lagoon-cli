@@ -22,3 +22,24 @@ const (
 	CHF Currency = "CHF"
 	ZAR Currency = "ZAR"
 )
+
+// EnvVariableScope .
+type EnvVariableScope string
+
+// . .
+const (
+	BuildVar                     EnvVariableScope = "BUILD"
+	RuntimeVar                   EnvVariableScope = "RUNTIME"
+	GlobalVar                    EnvVariableScope = "GLOBAL"
+	InternalContainerRegistryVar EnvVariableScope = "INTERNAL_CONTAINER_REGISTRY"
+	ContainerRegistryVar         EnvVariableScope = "CONTAINER_REGISTRY"
+)
+
+// EnvVariableType .
+type EnvVariableType string
+
+// . .
+const (
+	ProjectVar     EnvVariableType = "PROJECT"
+	EnvironmentVar EnvVariableType = "ENVIRONMENT"
+)
