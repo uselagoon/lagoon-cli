@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -52,8 +51,7 @@ var sshEnvCmd = &cobra.Command{
 				debug)
 			project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				return err
 			}
 			// check all the environments for this project
 			for _, env := range project.Environments {
