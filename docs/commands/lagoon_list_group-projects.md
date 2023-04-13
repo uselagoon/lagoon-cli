@@ -14,7 +14,7 @@ lagoon list group-projects [flags]
 
 ```
   -h, --help          help for group-projects
-  -N, --name string   Name of the group to list users in (if not specified, will default to all groups)
+  -N, --name string   Name of the group to list projects in
 ```
 
 ### Options inherited from parent commands
