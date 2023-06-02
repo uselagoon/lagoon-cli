@@ -1,0 +1,16 @@
+query ($name: String!) {
+  projectByName(name: $name) {
+    id
+    name
+    environments {
+      id
+      name
+      openshiftProjectName
+      openshift{
+        id
+        sshHost
+        sshPort
+      }
+    }
+  }
+}

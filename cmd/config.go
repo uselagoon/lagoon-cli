@@ -22,14 +22,15 @@ import (
 
 // LagoonConfigFlags .
 type LagoonConfigFlags struct {
-	Lagoon   string `json:"lagoon,omitempty"`
-	Hostname string `json:"hostname,omitempty"`
-	Port     string `json:"port,omitempty"`
-	GraphQL  string `json:"graphql,omitempty"`
-	Token    string `json:"token,omitempty"`
-	UI       string `json:"ui,omitempty"`
-	Kibana   string `json:"kibana,omitempty"`
-	SSHKey   string `json:"sshkey,omitempty"`
+	Lagoon    string `json:"lagoon,omitempty"`
+	Hostname  string `json:"hostname,omitempty"`
+	Port      string `json:"port,omitempty"`
+	GraphQL   string `json:"graphql,omitempty"`
+	Token     string `json:"token,omitempty"`
+	UI        string `json:"ui,omitempty"`
+	Kibana    string `json:"kibana,omitempty"`
+	SSHKey    string `json:"sshkey,omitempty"`
+	SSHPortal bool   `json:"sshportal,omitempty"`
 }
 
 func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {

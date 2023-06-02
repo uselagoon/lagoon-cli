@@ -11,12 +11,13 @@ type Config struct {
 
 // Context is used for each lagoon context in the config file.
 type Context struct {
-	GraphQL  string `json:"graphql"`
-	HostName string `json:"hostname"`
-	UI       string `json:"ui,omitempty"`
-	Kibana   string `json:"kibana,omitempty"`
-	Port     string `json:"port"`
-	Token    string `json:"token,omitempty"`
-	Version  string `json:"version,omitempty"`
-	SSHKey   string `json:"sshkey,omitempty"`
+	GraphQL   string `json:"graphql"`
+	HostName  string `json:"hostname"`
+	UI        string `json:"ui,omitempty"`
+	Kibana    string `json:"kibana,omitempty"`
+	Port      string `json:"port"`
+	Token     string `json:"token,omitempty"`
+	Version   string `json:"version,omitempty"`
+	SSHKey    string `json:"sshkey,omitempty"`
+	SSHPortal bool   `json:"sshPortal,omitempty"`
 }

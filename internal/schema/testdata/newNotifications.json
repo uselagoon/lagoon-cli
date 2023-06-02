@@ -122,6 +122,9 @@
 				"deployTitle": null,
 				"environmentType": "production",
 				"openshiftProjectName": "ci-local",
+				"openshift": {
+					"id": 1
+				},
 				"autoIdle": 1,
 				"envVariables": []
 			}]
