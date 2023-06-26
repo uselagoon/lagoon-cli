@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -108,6 +109,7 @@ var sshEnvCmd = &cobra.Command{
 			}
 			if err != nil {
 				output.RenderError(err.Error(), outputOptions)
+				os.Exit(1)
 			}
 		}
 		return nil
