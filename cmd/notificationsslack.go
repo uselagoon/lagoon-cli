@@ -55,6 +55,7 @@ It does not configure a project to send notifications to Slack though, you need 
 			notification := &schema.AddNotificationSlackInput{
 				Name:    name,
 				Webhook: webhook,
+				Channel: channel,
 			}
 			result, err := lagoon.AddNotificationSlack(context.TODO(), notification, lc)
 			if err != nil {

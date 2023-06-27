@@ -55,6 +55,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 			notification := &schema.AddNotificationRocketChatInput{
 				Name:    name,
 				Webhook: webhook,
+				Channel: channel,
 			}
 			result, err := lagoon.AddNotificationRocketChat(context.TODO(), notification, lc)
 			if err != nil {
