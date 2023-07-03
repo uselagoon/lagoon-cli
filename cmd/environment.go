@@ -5,47 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	l "github.com/uselagoon/machinery/api/lagoon"
+	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
 )
 
 // @TODO re-enable this at some point if more environment based commands are made available
-
-var deployType string
-var environmentType string
-var deployBaseRef string
-var deployHeadRef string
-var deployTitle string
-var openshiftProjectName string
-var route string
-var routes string
-var autoIdle int
-var openshift int
-var created string
-
-//type EnvironmentFlags struct {
-//	Name string `json:"name,omitempty"`
-//}
-
-func parseEnvironmentFlags(flags pflag.FlagSet) s.UpdateEnvironmentPatchInput {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := s.UpdateEnvironmentPatchInput{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var deleteEnvCmd = &cobra.Command{
 	Use:     "environment",
@@ -81,8 +51,51 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		//name, err := cmd.Flags().GetString("name")
+		//if err != nil {
+		//	return err
+		//}
+		deployBaseRef, err := cmd.Flags().GetString("deploy-base-ref")
+		if err != nil {
+			return err
+		}
+		deployHeadRef, err := cmd.Flags().GetString("deploy-head-ref")
+		if err != nil {
+			return err
+		}
+		namespace, err := cmd.Flags().GetString("namespace")
+		if err != nil {
+			return err
+		}
+		route, err := cmd.Flags().GetString("route")
+		if err != nil {
+			return err
+		}
+		routes, err := cmd.Flags().GetString("routes")
+		if err != nil {
+			return err
+		}
+		//environmentType, err := cmd.Flags().GetString("environment-type")
+		//if err != nil {
+		//	return err
+		//}
+		//deployT, err := cmd.Flags().GetString("deploy-type")
+		//if err != nil {
+		//	return err
+		//}
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
+		if err != nil {
+			return err
+		}
+		openShift, err := cmd.Flags().GetUint("deploy-target")
+		if err != nil {
+			return err
+		}
+		deployTitle, err := cmd.Flags().GetString("deploy-title")
+		if err != nil {
+			return err
+		}
 
-		environmentFlags := parseEnvironmentFlags(*cmd.Flags())
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
@@ -100,12 +113,32 @@ var updateEnvironmentCmd = &cobra.Command{
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		handleError(err)
 
+		//envType := s.EnvType(environmentType)
+		//deployType := s.DeployType(deployT)
+		environmentFlags := s.UpdateEnvironmentPatchInput{
+			//Name:                 &name,
+			ProjectID:            &project.ID,
+			DeployBaseRef:        &deployBaseRef,
+			DeployHeadRef:        &deployHeadRef,
+			OpenshiftProjectName: &namespace,
+			Route:                &route,
+			Routes:               &routes,
+			//EnvironmentType:      &envType,
+			//DeployType:           &deployType,
+			AutoIdle:    &autoIdle,
+			DeployTitle: &deployTitle,
+			Openshift:   &openShift,
+		}
+
+		jsonStr, _ := json.Marshal(environmentFlags)
+		var parsedFlags map[string]string
+		json.Unmarshal(jsonStr, &parsedFlags)
+		fmt.Println(parsedFlags)
+
 		result, err := l.UpdateEnvironment(context.TODO(), environment.ID, environmentFlags, lc)
 		handleError(err)
-		fmt.Println("res", result)
-		//var updatedEnvironment s.Environment
-		//err = json.Unmarshal([]byte(result), &updatedEnvironment)
-		//handleError(err)
+		fmt.Println(result)
+
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
@@ -237,15 +270,20 @@ This returns a direct URL to the backup, this is a signed download link with a l
 func init() {
 	getCmd.AddCommand(getBackupCmd)
 	getBackupCmd.Flags().StringP("backup-id", "B", "", "The backup ID you want to restore")
-	updateEnvironmentCmd.Flags().StringVarP(&deployBaseRef, "deployBaseRef", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&deployHeadRef, "deployHeadRef", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&deployTitle, "deployTitle", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&openshiftProjectName, "openshiftProjectName", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&route, "route", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&routes, "routes", "", "", "TODO")
-	updateEnvironmentCmd.Flags().IntVarP(&autoIdle, "autoIdle", "a", 0, "TODO")
-	updateEnvironmentCmd.Flags().IntVarP(&openshift, "openshift", "", 0, "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&created, "created", "", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&environmentType, "environmentType", "t", "", "TODO")
-	updateEnvironmentCmd.Flags().StringVarP(&deployType, "deployType", "d", "", "TODO")
+	updateEnvironmentCmd.Flags().String("name", "", "TODO")
+	updateEnvironmentCmd.Flags().String("deploy-base-ref", "", "TODO")
+	updateEnvironmentCmd.Flags().String("deploy-head-ref", "", "TODO")
+	updateEnvironmentCmd.Flags().String("deploy-title", "", "TODO")
+	updateEnvironmentCmd.Flags().String("namespace", "", "TODO")
+	updateEnvironmentCmd.Flags().String("route", "", "TODO")
+	updateEnvironmentCmd.Flags().String("routes", "", "TODO")
+	updateEnvironmentCmd.Flags().UintP("auto-idle", "a", 0, "TODO")
+	updateEnvironmentCmd.Flags().UintP("deploy-target", "d", 0, "TODO")
+	updateEnvironmentCmd.Flags().String("created", "", "TODO")
+	updateEnvironmentCmd.Flags().String("environment-type", "", "TODO")
+	updateEnvironmentCmd.Flags().String("deploy-type", "", "TODO")
+	//updateEnvironmentCmd.Flags().StringVarP(&environmentType, "environmentType", "t", "", "TODO")
+	//updateEnvironmentCmd.Flags().Var(&dt, "deployType", "TODO")
+	//updateEnvironmentCmd.Flags().StringSlice(environmentType, []string{}, "TODO")
+	//updateEnvironmentCmd.Flags().StringSlice(deployType, []string{}, "")
 }
