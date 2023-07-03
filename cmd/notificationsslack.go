@@ -1,103 +1,228 @@
 package cmd
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon"
+	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
-var listSlackCmd = &cobra.Command{
-	Use:     "slack",
-	Aliases: []string{"s"},
-	Short:   "List Slack details about a project (alias: s)",
-	Run: func(cmd *cobra.Command, args []string) {
-		var returnedJSON []byte
-		var err error
-		var notificationFlags NotificationFlags
-		if listAllProjects {
-			returnedJSON, err = pClient.ListAllSlacks()
-			handleError(err)
-		} else {
-			notificationFlags = parseNotificationFlags(*cmd.Flags())
-			if notificationFlags.Project == "" {
-				fmt.Println("Missing arguments: Project name is not defined")
-				cmd.Help()
-				os.Exit(1)
-			}
-
-			returnedJSON, err = pClient.ListProjectSlacks(notificationFlags.Project)
-			handleError(err)
-		}
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			if listAllProjects {
-				output.RenderInfo("No notifications for Slack", outputOptions)
-			} else {
-				output.RenderInfo(fmt.Sprintf("No notifications for Slack in project '%s'", notificationFlags.Project), outputOptions)
-			}
-			os.Exit(0)
-		}
-		output.RenderOutput(dataMain, outputOptions)
-
-	},
-}
-
-var addSlackNotificationCmd = &cobra.Command{
+var addNotificationSlackCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
 	Short:   "Add a new Slack notification",
 	Long: `Add a new Slack notification
 This command is used to set up a new Slack notification in Lagoon. This requires information to talk to Slack like the webhook URL and the name of the channel.
 It does not configure a project to send notifications to Slack though, you need to use project-slack for that.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		notificationFlags := parseNotificationFlags(*cmd.Flags())
-		if notificationFlags.NotificationName == "" || notificationFlags.NotificationChannel == "" || notificationFlags.NotificationWebhook == "" {
-			fmt.Println("Missing arguments: Notification name, channel, or webhook url are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		addResult, err := pClient.AddSlackNotification(notificationFlags.NotificationName, notificationFlags.NotificationChannel, notificationFlags.NotificationWebhook)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(addResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		channel, err := cmd.Flags().GetString("channel")
+		if err != nil {
+			return err
+		}
+		webhook, err := cmd.Flags().GetString("webhook")
+		if err != nil {
+			return err
+		}
+		if name == "" || channel == "" || webhook == "" {
+			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to create an Slack notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			notification := &schema.AddNotificationSlackInput{
+				Name:    name,
+				Webhook: webhook,
+				Channel: channel,
+			}
+			result, err := lagoon.AddNotificationSlack(context.TODO(), notification, lc)
+			if err != nil {
+				return err
+			}
+			data := []output.Data{
+				[]string{
+					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
+				},
+			}
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"ID",
+					"Name",
+					"Webhook",
+					"Channel",
+				},
+				Data: data,
+			}, outputOptions)
+		}
+		return nil
 	},
 }
 
-var addProjectSlackNotificationCmd = &cobra.Command{
+var addProjectNotificationSlackCmd = &cobra.Command{
 	Use:     "project-slack",
 	Aliases: []string{"ps"},
 	Short:   "Add a Slack notification to a project",
 	Long: `Add a Slack notification to a project
 This command is used to add an existing Slack notification in Lagoon to a project.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		notificationFlags := parseNotificationFlags(*cmd.Flags())
-		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notification name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		addResult, err := pClient.AddSlackNotificationToProject(notificationFlags.Project, notificationFlags.NotificationName)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(addResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		if name == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to add Slack notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			notification := &schema.AddNotificationToProjectInput{
+				NotificationType: api.SlackNotification,
+				NotificationName: name,
+				Project:          cmdProjectName,
+			}
+			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
+			if err != nil {
+				return err
+			}
+			resultData := output.Result{
+				Result: "success",
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+		return nil
+	},
+}
+
+var listProjectSlacksCmd = &cobra.Command{
+	Use:     "project-slack",
+	Aliases: []string{"ps"},
+	Short:   "List Slacks details about a project (alias: ps)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: project name is not defined")
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		result, err := lagoon.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, notification := range result.Notifications.Slack {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", notification.Webhook)),
+				returnNonEmptyString(fmt.Sprintf("%v", notification.Channel)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"Name",
+				"Webhook",
+				"Channel",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
+	},
+}
+
+var listAllSlacksCmd = &cobra.Command{
+	Use:     "slack",
+	Aliases: []string{"s"},
+	Short:   "List all Slacks notification details (alias: s)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		result, err := lagoon.GetAllNotificationSlack(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, res := range *result {
+			b, _ := json.Marshal(res.Notifications.Slack)
+			if string(b) != "null" {
+				for _, notif := range res.Notifications.Slack {
+					data = append(data, []string{
+						returnNonEmptyString(fmt.Sprintf("%v", res.Name)),
+						returnNonEmptyString(fmt.Sprintf("%v", notif.Name)),
+						returnNonEmptyString(fmt.Sprintf("%v", notif.Webhook)),
+						returnNonEmptyString(fmt.Sprintf("%v", notif.Channel)),
+					})
+				}
+			}
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"Project",
+				"Name",
+				"Webhook",
+				"Channel",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
@@ -105,24 +230,44 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 	Use:     "project-slack",
 	Aliases: []string{"ps"},
 	Short:   "Delete a Slack notification from a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		notificationFlags := parseNotificationFlags(*cmd.Flags())
-		if notificationFlags.Project == "" || notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Project name or notification name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from project '%s', are you sure?", notificationFlags.NotificationName, notificationFlags.Project)) {
-			deleteResult, err := pClient.DeleteSlackNotificationFromProject(notificationFlags.Project, notificationFlags.NotificationName)
-			handleError(err)
-			var addedProject api.NotificationSlack
-			err = json.Unmarshal([]byte(deleteResult), &addedProject)
-			handleError(err)
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if name == "" || cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to delete Slack notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			notification := &schema.RemoveNotificationFromProjectInput{
+				NotificationType: api.SlackNotification,
+				NotificationName: name,
+				Project:          cmdProjectName,
+			}
+			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
 				Result: "success",
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -130,23 +275,39 @@ var deleteSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
 	Short:   "Delete a Slack notification from Lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		notificationFlags := parseNotificationFlags(*cmd.Flags())
-		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Notification name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		fmt.Println(fmt.Sprintf("Deleting notification %s", notificationFlags.NotificationName))
-
-		if yesNo(fmt.Sprintf("You are attempting to delete notification '%s' from Lagoon, are you sure?", notificationFlags.NotificationName)) {
-			deleteResult, err := pClient.DeleteSlackNotification(notificationFlags.NotificationName)
-			handleError(err)
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if name == "" {
+			return fmt.Errorf("Missing arguments: notification name is not defined")
+		}
+		if yesNo(fmt.Sprintf("You are attempting to delete Slack notification '%s', are you sure?", name)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+			result, err := lagoon.DeleteNotificationSlack(context.TODO(), name, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
-				Result: string(deleteResult),
+				Result: result.DeleteNotification,
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -154,52 +315,92 @@ var updateSlackNotificationCmd = &cobra.Command{
 	Use:     "slack",
 	Aliases: []string{"s"},
 	Short:   "Update an existing Slack notification",
-	Run: func(cmd *cobra.Command, args []string) {
-		notificationFlags := parseNotificationFlags(*cmd.Flags())
-		if notificationFlags.NotificationName == "" {
-			fmt.Println("Missing arguments: Current notification name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		oldName := notificationFlags.NotificationName
-		// if we have a new name, shuffle around the name
-		if notificationFlags.NotificationNewName != "" {
-			newName := notificationFlags.NotificationNewName
-			notificationFlags.NotificationName = newName
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		notificationFlags.NotificationOldName = oldName
-		if jsonPatch == "" {
-			jsonPatchBytes, err := json.Marshal(notificationFlags)
-			handleError(err)
-			jsonPatch = string(jsonPatchBytes)
+		newname, err := cmd.Flags().GetString("newname")
+		if err != nil {
+			return err
 		}
-		updateResult, err := pClient.UpdateSlackNotification(notificationFlags.NotificationOldName, jsonPatch)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(updateResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		webhook, err := cmd.Flags().GetString("webhook")
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		channel, err := cmd.Flags().GetString("channel")
+		if err != nil {
+			return err
+		}
+		if name == "" {
+			return fmt.Errorf("Missing arguments: notification name is not defined")
+		}
+		patch := schema.AddNotificationSlackInput{
+			Name:    newname,
+			Webhook: webhook,
+			Channel: channel,
+		}
+		b1, _ := json.Marshal(patch)
+		if bytes.Equal(b1, []byte("{}")) {
+			return fmt.Errorf("Missing arguments: either channel, webhook, or newname must be defined")
+		}
+
+		if yesNo(fmt.Sprintf("You are attempting to update Slack notification '%s', are you sure?", name)) {
+			current := lagoonCLIConfig.Current
+			lc := client.New(
+				lagoonCLIConfig.Lagoons[current].GraphQL,
+				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Version,
+				lagoonCLIVersion,
+				debug)
+
+			notification := &schema.UpdateNotificationSlackInput{
+				Name:  name,
+				Patch: patch,
+			}
+			result, err := lagoon.UpdateNotificationSlack(context.TODO(), notification, lc)
+			if err != nil {
+				return err
+			}
+			data := []output.Data{
+				[]string{
+					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
+					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
+				},
+			}
+			output.RenderOutput(output.Table{
+				Header: []string{
+					"ID",
+					"Name",
+					"Webhook",
+					"Channel",
+				},
+				Data: data,
+			}, outputOptions)
+		}
+		return nil
 	},
 }
 
 func init() {
-	addSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
-	addSlackNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
-	addSlackNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
+	addNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
+	addNotificationSlackCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
+	addNotificationSlackCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
+	addProjectNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
+	deleteProjectSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
+	deleteSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
+	updateSlackNotificationCmd.Flags().StringP("name", "n", "", "The current name of the notification")
+	updateSlackNotificationCmd.Flags().StringP("newname", "N", "", "The name of the notification")
+	updateSlackNotificationCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
+	updateSlackNotificationCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
 
-	addProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
-
-	deleteProjectSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
-	deleteSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The name of the notification")
-
-	updateSlackNotificationCmd.Flags().StringVarP(&notificationName, "name", "n", "", "The current name of the notification")
-	updateSlackNotificationCmd.Flags().StringVarP(&notificationNewName, "newname", "N", "", "The name of the notification")
-	updateSlackNotificationCmd.Flags().StringVarP(&notificationWebhook, "webhook", "w", "", "The webhook URL of the notification")
-	updateSlackNotificationCmd.Flags().StringVarP(&notificationChannel, "channel", "c", "", "The channel for the notification")
-
-	updateSlackNotificationCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 }

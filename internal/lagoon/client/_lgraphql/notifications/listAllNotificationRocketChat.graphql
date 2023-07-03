@@ -1,0 +1,14 @@
+query {
+    allProjects {
+        name
+        id
+        notifications(type: ROCKETCHAT) {
+            ... on NotificationRocketChat {
+                __typename
+                webhook
+                channel
+                name
+            }
+        }
+    }
+}
