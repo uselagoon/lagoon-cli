@@ -2,17 +2,15 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	s "github.com/uselagoon/machinery/api/schema"
-	"os"
-
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
+	"os"
 )
 
 // @TODO re-enable this at some point if more environment based commands are made available
@@ -51,10 +49,6 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		//name, err := cmd.Flags().GetString("name")
-		//if err != nil {
-		//	return err
-		//}
 		deployBaseRef, err := cmd.Flags().GetString("deploy-base-ref")
 		if err != nil {
 			return err
@@ -75,14 +69,14 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		//environmentType, err := cmd.Flags().GetString("environment-type")
-		//if err != nil {
-		//	return err
-		//}
-		//deployT, err := cmd.Flags().GetString("deploy-type")
-		//if err != nil {
-		//	return err
-		//}
+		environmentType, err := cmd.Flags().GetString("environment-type")
+		if err != nil {
+			return err
+		}
+		deployT, err := cmd.Flags().GetString("deploy-type")
+		if err != nil {
+			return err
+		}
 		autoIdle, err := cmd.Flags().GetUint("auto-idle")
 		if err != nil {
 			return err
@@ -113,31 +107,28 @@ var updateEnvironmentCmd = &cobra.Command{
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		handleError(err)
 
-		//envType := s.EnvType(environmentType)
-		//deployType := s.DeployType(deployT)
 		environmentFlags := s.UpdateEnvironmentPatchInput{
-			//Name:                 &name,
 			ProjectID:            &project.ID,
 			DeployBaseRef:        &deployBaseRef,
 			DeployHeadRef:        &deployHeadRef,
 			OpenshiftProjectName: &namespace,
 			Route:                &route,
 			Routes:               &routes,
-			//EnvironmentType:      &envType,
-			//DeployType:           &deployType,
-			AutoIdle:    &autoIdle,
-			DeployTitle: &deployTitle,
-			Openshift:   &openShift,
+			AutoIdle:             &autoIdle,
+			DeployTitle:          &deployTitle,
+			Openshift:            &openShift,
 		}
-
-		jsonStr, _ := json.Marshal(environmentFlags)
-		var parsedFlags map[string]string
-		json.Unmarshal(jsonStr, &parsedFlags)
-		fmt.Println(parsedFlags)
+		if environmentType != "" {
+			envType := s.EnvType(environmentType)
+			environmentFlags.EnvironmentType = &envType
+		}
+		if deployT != "" {
+			deployType := s.DeployType(deployT)
+			environmentFlags.DeployType = &deployType
+		}
 
 		result, err := l.UpdateEnvironment(context.TODO(), environment.ID, environmentFlags, lc)
 		handleError(err)
-		fmt.Println(result)
 
 		resultData := output.Result{
 			Result: "success",
@@ -264,26 +255,17 @@ This returns a direct URL to the backup, this is a signed download link with a l
 	},
 }
 
-//var deployType s.DeployType
-//var environmentType s.EnvType
-
 func init() {
 	getCmd.AddCommand(getBackupCmd)
 	getBackupCmd.Flags().StringP("backup-id", "B", "", "The backup ID you want to restore")
-	updateEnvironmentCmd.Flags().String("name", "", "TODO")
-	updateEnvironmentCmd.Flags().String("deploy-base-ref", "", "TODO")
-	updateEnvironmentCmd.Flags().String("deploy-head-ref", "", "TODO")
-	updateEnvironmentCmd.Flags().String("deploy-title", "", "TODO")
-	updateEnvironmentCmd.Flags().String("namespace", "", "TODO")
-	updateEnvironmentCmd.Flags().String("route", "", "TODO")
-	updateEnvironmentCmd.Flags().String("routes", "", "TODO")
-	updateEnvironmentCmd.Flags().UintP("auto-idle", "a", 0, "TODO")
-	updateEnvironmentCmd.Flags().UintP("deploy-target", "d", 0, "TODO")
-	updateEnvironmentCmd.Flags().String("created", "", "TODO")
-	updateEnvironmentCmd.Flags().String("environment-type", "", "TODO")
-	updateEnvironmentCmd.Flags().String("deploy-type", "", "TODO")
-	//updateEnvironmentCmd.Flags().StringVarP(&environmentType, "environmentType", "t", "", "TODO")
-	//updateEnvironmentCmd.Flags().Var(&dt, "deployType", "TODO")
-	//updateEnvironmentCmd.Flags().StringSlice(environmentType, []string{}, "TODO")
-	//updateEnvironmentCmd.Flags().StringSlice(deployType, []string{}, "")
+	updateEnvironmentCmd.Flags().String("deploy-base-ref", "", "Updates the deploy base ref")
+	updateEnvironmentCmd.Flags().String("deploy-head-ref", "", "Updates the deploy head ref")
+	updateEnvironmentCmd.Flags().String("deploy-title", "", "Updates the deploy title")
+	updateEnvironmentCmd.Flags().String("namespace", "", "Update the namespace for this environment")
+	updateEnvironmentCmd.Flags().String("route", "", "Update the route")
+	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes")
+	updateEnvironmentCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the environment")
+	updateEnvironmentCmd.Flags().UintP("deploy-target", "d", 0, "Reference to OpenShift Object this Environment should be deployed to")
+	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - PRODUCTION | DEVELOPMENT")
+	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - BRANCH | PULLREQUEST | PROMOTE")
 }
