@@ -16,7 +16,7 @@ import (
 )
 
 // @TODO re-enable this at some point if more environment based commands are made available
-
+var environmentAutoIdle uint
 var deleteEnvCmd = &cobra.Command{
 	Use:     "environment",
 	Aliases: []string{"e"},
@@ -79,10 +79,6 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("auto-idle")
-		if err != nil {
-			return err
-		}
 		openShift, err := cmd.Flags().GetUint("deploy-target")
 		if err != nil {
 			return err
@@ -118,14 +114,14 @@ var updateEnvironmentCmd = &cobra.Command{
 
 		environmentFlags := s.UpdateEnvironmentPatchInput{
 			ProjectID:            &project.ID,
-			DeployBaseRef:        &deployBaseRef,
-			DeployHeadRef:        &deployHeadRef,
-			OpenshiftProjectName: &namespace,
-			Route:                &route,
-			Routes:               &routes,
-			AutoIdle:             &autoIdle,
-			DeployTitle:          &deployTitle,
-			Openshift:            &openShift,
+			DeployBaseRef:        nullStrCheck(deployBaseRef),
+			DeployHeadRef:        nullStrCheck(deployHeadRef),
+			OpenshiftProjectName: nullStrCheck(namespace),
+			Route:                nullStrCheck(route),
+			Routes:               nullStrCheck(routes),
+			DeployTitle:          nullStrCheck(deployTitle),
+			AutoIdle:             &environmentAutoIdle,
+			Openshift:            nullIntCheck(openShift),
 		}
 		if environmentType != "" {
 			envType := s.EnvType(strings.ToUpper(environmentType))
@@ -148,6 +144,20 @@ var updateEnvironmentCmd = &cobra.Command{
 		output.RenderResult(resultData, outputOptions)
 		return nil
 	},
+}
+
+func nullStrCheck(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
+func nullIntCheck(i uint) *uint {
+	if i == 0 {
+		return nil
+	}
+	return &i
 }
 
 var listBackupsCmd = &cobra.Command{
@@ -273,7 +283,7 @@ func init() {
 	updateEnvironmentCmd.Flags().String("namespace", "", "Update the namespace for this environment")
 	updateEnvironmentCmd.Flags().String("route", "", "Update the route")
 	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes")
-	updateEnvironmentCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the environment")
+	updateEnvironmentCmd.Flags().UintVarP(&environmentAutoIdle, "auto-idle", "a", 1, "Auto idle setting of the environment")
 	updateEnvironmentCmd.Flags().UintP("deploy-target", "d", 0, "Reference to OpenShift Object this Environment should be deployed to")
 	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - PRODUCTION | DEVELOPMENT")
 	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - BRANCH | PULLREQUEST | PROMOTE")
