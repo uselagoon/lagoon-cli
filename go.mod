@@ -25,15 +25,15 @@ require (
 
 require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/guregu/null v4.0.0+incompatible
 	// workaround for https://github.com/manifoldco/promptui/issues/98
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
-	github.com/uselagoon/machinery v0.0.8 // indirect
+	github.com/uselagoon/machinery v0.0.8
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
-	rsc.io/quote/v3 v3.1.0 // indirect
 )
 
 // use this version for fixes to formatting of end header

@@ -3,6 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -10,7 +13,6 @@ import (
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
 )
 
 // @TODO re-enable this at some point if more environment based commands are made available
@@ -104,7 +106,14 @@ var updateEnvironmentCmd = &cobra.Command{
 			&token,
 			debug)
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if project.Name == "" {
+			err = fmt.Errorf("project not found")
+		}
+		handleError(err)
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if environment.Name == "" {
+			err = fmt.Errorf("environment not found")
+		}
 		handleError(err)
 
 		environmentFlags := s.UpdateEnvironmentPatchInput{
@@ -119,11 +128,11 @@ var updateEnvironmentCmd = &cobra.Command{
 			Openshift:            &openShift,
 		}
 		if environmentType != "" {
-			envType := s.EnvType(environmentType)
+			envType := s.EnvType(strings.ToUpper(environmentType))
 			environmentFlags.EnvironmentType = &envType
 		}
 		if deployT != "" {
-			deployType := s.DeployType(deployT)
+			deployType := s.DeployType(strings.ToUpper(deployT))
 			environmentFlags.DeployType = &deployType
 		}
 
