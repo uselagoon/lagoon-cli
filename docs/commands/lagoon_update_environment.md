@@ -13,17 +13,17 @@ lagoon update environment [flags]
 ### Options
 
 ```
-  -a, --auto-idle uint            Auto idle setting of the environment
-      --deploy-base-ref string    Updates the deploy base ref
-      --deploy-head-ref string    Updates the deploy head ref
+  -a, --auto-idle uint            Auto idle setting of the environment (default 1)
+      --deploy-base-ref string    Updates the deploy base ref for the selected environment
+      --deploy-head-ref string    Updates the deploy head ref for the selected environment
   -d, --deploy-target uint        Reference to OpenShift Object this Environment should be deployed to
-      --deploy-title string       Updates the deploy title
+      --deploy-title string       Updates the deploy title for the selected environment
       --deploy-type string        Update the deploy type - BRANCH | PULLREQUEST | PROMOTE
       --environment-type string   Update the environment type - PRODUCTION | DEVELOPMENT
   -h, --help                      help for environment
-      --namespace string          Update the namespace for this environment
-      --route string              Update the route
-      --routes string             Update the routes
+      --namespace string          Update the namespace for the selected environment
+      --route string              Update the route for the selected environment
+      --routes string             Update the routes for the selected environment
 ```
 
 ### Options inherited from parent commands
