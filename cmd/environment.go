@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -17,6 +18,8 @@ import (
 
 // @TODO re-enable this at some point if more environment based commands are made available
 var environmentAutoIdle uint
+var environmentAutoIdleProvided bool
+
 var deleteEnvCmd = &cobra.Command{
 	Use:     "environment",
 	Aliases: []string{"e"},
@@ -88,6 +91,8 @@ var updateEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
+		cmd.Flags().Visit(checkFlags)
+
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			fmt.Println("Missing arguments: Project name or environment name is not defined")
 			cmd.Help()
@@ -113,15 +118,16 @@ var updateEnvironmentCmd = &cobra.Command{
 		handleError(err)
 
 		environmentFlags := s.UpdateEnvironmentPatchInput{
-			ProjectID:            &project.ID,
 			DeployBaseRef:        nullStrCheck(deployBaseRef),
 			DeployHeadRef:        nullStrCheck(deployHeadRef),
 			OpenshiftProjectName: nullStrCheck(namespace),
 			Route:                nullStrCheck(route),
 			Routes:               nullStrCheck(routes),
 			DeployTitle:          nullStrCheck(deployTitle),
-			AutoIdle:             &environmentAutoIdle,
 			Openshift:            nullIntCheck(openShift),
+		}
+		if environmentAutoIdleProvided {
+			environmentFlags.AutoIdle = &environmentAutoIdle
 		}
 		if environmentType != "" {
 			envType := s.EnvType(strings.ToUpper(environmentType))
@@ -158,6 +164,12 @@ func nullIntCheck(i uint) *uint {
 		return nil
 	}
 	return &i
+}
+
+func checkFlags(f *pflag.Flag) {
+	if f.Name == "auto-idle" {
+		environmentAutoIdleProvided = true
+	}
 }
 
 var listBackupsCmd = &cobra.Command{
@@ -285,6 +297,6 @@ func init() {
 	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes for the selected environment")
 	updateEnvironmentCmd.Flags().UintVarP(&environmentAutoIdle, "auto-idle", "a", 1, "Auto idle setting of the environment")
 	updateEnvironmentCmd.Flags().UintP("deploy-target", "d", 0, "Reference to OpenShift Object this Environment should be deployed to")
-	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - PRODUCTION | DEVELOPMENT")
-	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - BRANCH | PULLREQUEST | PROMOTE")
+	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - production | development")
+	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - branch | pullrequest | promote")
 }
