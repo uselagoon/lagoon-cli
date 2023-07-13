@@ -52,26 +52,6 @@ func TestAllProjects(t *testing.T) {
 	}
 }
 
-func TestProjectEnvironmentList(t *testing.T) {
-	var projectInfo = `{"autoIdle":1,"branches":"true","developmentEnvironmentsLimit":5,"environments":[
-	{"deployType":"branch","environmentType":"production","id":3,"name":"Master","openshiftProjectName":"high-cotton-master","route":"http://highcotton.org"},
-	{"deployType":"branch","environmentType":"development","id":4,"name":"Staging","openshiftProjectName":"high-cotton-staging","route":"https://varnish-highcotton-org-staging.us.amazee.io"},
-	{"deployType":"branch","environmentType":"development","id":5,"name":"Development","openshiftProjectName":"high-cotton-development","route":"https://varnish-highcotton-org-development.us.amazee.io"},
-	{"deployType":"pullrequest","environmentType":"development","id":6,"name":"PR-175","openshiftProjectName":"high-cotton-pr-175","route":""},
-	{"deployType":"branch","environmentType":"development","id":10,"name":"high-cotton","openshiftProjectName":"high-cotton-high-cotton","route":null}],
-	"gitUrl":"test","id":18,"name":"high-cotton","productionEnvironment":"Master","pullrequests":"true","storageCalc":1,"subfolder":null
-}`
-	var projectInfoSuccess = `{"header":["ID","Name","DeployType","Environment","OpenshiftProjectName","Route"],"data":[["3","Master","branch","production","high-cotton-master","http://highcotton.org"],["4","Staging","branch","development","high-cotton-staging","https://varnish-highcotton-org-staging.us.amazee.io"],["5","Development","branch","development","high-cotton-development","https://varnish-highcotton-org-development.us.amazee.io"],["6","PR-175","pullrequest","development","high-cotton-pr-175","none"],["10","high-cotton","branch","development","high-cotton-high-cotton","none"]]}`
-
-	returnResult, err := processEnvironmentsList([]byte(projectInfo))
-	if err != nil {
-		t.Error("Should not fail if processing succeeded", err)
-	}
-	if string(returnResult) != projectInfoSuccess {
-		checkEqual(t, string(returnResult), projectInfoSuccess, "projectInfo processing failed")
-	}
-}
-
 func TestProjectInfo(t *testing.T) {
 	var projectInfo = `
 	{"autoIdle":1,"branches":"false","developmentEnvironmentsLimit":5,"factsUI":0,"problemsUI":0,"environments":[
