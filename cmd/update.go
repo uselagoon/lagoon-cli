@@ -24,6 +24,7 @@ var updateNotificationCmd = &cobra.Command{
 
 func init() {
 	updateCmd.AddCommand(updateProjectCmd)
+	updateCmd.AddCommand(updateEnvironmentCmd)
 	updateCmd.AddCommand(updateNotificationCmd)
 	updateCmd.AddCommand(updateUserCmd)
 	updateCmd.AddCommand(updateDeployTargetConfigCmd)

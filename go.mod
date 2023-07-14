@@ -25,6 +25,7 @@ require (
 
 require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/guregu/null v4.0.0+incompatible
 	// workaround for https://github.com/manifoldco/promptui/issues/98
