@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strings"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
 )
 
 // @TODO re-enable this at some point if more environment based commands are made available
@@ -131,10 +131,16 @@ var updateEnvironmentCmd = &cobra.Command{
 		}
 		if environmentType != "" {
 			envType := s.EnvType(strings.ToUpper(environmentType))
+			if validationErr := s.ValidateType(envType); validationErr != nil {
+				handleError(validationErr)
+			}
 			environmentFlags.EnvironmentType = &envType
 		}
 		if deployT != "" {
 			deployType := s.DeployType(strings.ToUpper(deployT))
+			if validationErr := s.ValidateType(deployType); validationErr != nil {
+				handleError(validationErr)
+			}
 			environmentFlags.DeployType = &deployType
 		}
 
