@@ -13,6 +13,8 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 // ListFlags .
@@ -37,7 +39,7 @@ func parseListFlags(flags pflag.FlagSet) ListFlags {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List projects, deployments, variables or notifications",
+	Short: "List projects, environments, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
@@ -181,27 +183,58 @@ var listGroupProjectsCmd = &cobra.Command{
 	},
 }
 
-var listProjectCmd = &cobra.Command{
+var listEnvironmentsCmd = &cobra.Command{
 	Use:     "environments",
 	Aliases: []string{"e"},
 	Short:   "List environments for a project (alias: e)",
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := pClient.ListEnvironmentsForProject(cmdProjectName)
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("There are no environments for project '%s'", cmdProjectName), outputOptions)
-			os.Exit(0)
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		environments, err := l.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, environment := range *environments {
+			var envRoute = "none"
+			if environment.Route != "" {
+				envRoute = environment.Route
+			}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.DeployType)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.OpenshiftProjectName)),
+				returnNonEmptyString(fmt.Sprintf("%v", envRoute)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTarget.Name)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Name", "DeployType", "Environment", "Namespace", "Route", "DeployTarget"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
@@ -408,7 +441,7 @@ func init() {
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
-	listCmd.AddCommand(listProjectCmd)
+	listCmd.AddCommand(listEnvironmentsCmd)
 	listCmd.AddCommand(listProjectsCmd)
 	listCmd.AddCommand(listNotificationCmd)
 	listCmd.AddCommand(listTasksCmd)

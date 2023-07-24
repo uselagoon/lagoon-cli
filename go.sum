@@ -105,8 +105,6 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/tsenart/deadcode v0.0.0-20160724212837-210d2dc333e9 h1:vY5WqiEon0ZSTGM3ayVVi+twaHKHDFUVloaQ/wug9/c=
 github.com/tsenart/deadcode v0.0.0-20160724212837-210d2dc333e9/go.mod h1:q+QjxYvZ+fpjMXqs+XEriussHjSYqeXVnAdSV1tkMYk=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
-github.com/uselagoon/machinery v0.0.11-0.20230718051014-4e6022e3a5e7 h1:4oP4+t3DpJ56G5H/1IHv9MFkV6Ww3MR/V43eg3KqJZU=
-github.com/uselagoon/machinery v0.0.11-0.20230718051014-4e6022e3a5e7/go.mod h1:IXLxlkahEAEgpCmu9Xa/Wmjo6ja4Aoq7tf8G7VrileE=
 github.com/uselagoon/machinery v0.0.11 h1:s6EhyU/pj1+C4FdS0EqmR6C0dLsoeCd9n+5xHL1YDag=
 github.com/uselagoon/machinery v0.0.11/go.mod h1:IXLxlkahEAEgpCmu9Xa/Wmjo6ja4Aoq7tf8G7VrileE=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
