@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -66,7 +67,11 @@ use 'lagoon deploy latest' instead`,
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeployEnvironmentBranch)
+			response := result.DeployEnvironmentBranch
+			if strings.HasPrefix(response, "Error: ") {
+				return fmt.Errorf(strings.Trim(response, "Error: "))
+			}
+			fmt.Println(response)
 		}
 		return nil
 	},
@@ -117,7 +122,11 @@ var deployPromoteCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeployEnvironmentPromote)
+			response := result.DeployEnvironmentPromote
+			if strings.HasPrefix(response, "Error: ") {
+				return fmt.Errorf(strings.Trim(response, "Error: "))
+			}
+			fmt.Println(response)
 		}
 		return nil
 	},
@@ -166,7 +175,11 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeployEnvironmentLatest)
+			response := result.DeployEnvironmentLatest
+			if strings.HasPrefix(response, "Error: ") {
+				return fmt.Errorf(strings.Trim(response, "Error: "))
+			}
+			fmt.Println(response)
 		}
 		return nil
 	},
@@ -238,7 +251,11 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeployEnvironmentPullrequest)
+			response := result.DeployEnvironmentPullrequest
+			if strings.HasPrefix(response, "Error: ") {
+				return fmt.Errorf(strings.Trim(response, "Error: "))
+			}
+			fmt.Println(response)
 		}
 		return nil
 	},
