@@ -1,13 +1,39 @@
+// Package ssh implements an SSH client for Lagoon.
 package ssh
 
 import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/term"
 )
+
+// LogStream connects to host:port using the given config, and executes the
+// argv command. It does not request a PTY, and instead just streams the
+// response to the attached terminal. argv should contain a logs=... argument.
+func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error {
+	// https://stackoverflow.com/a/37088088
+	client, err := ssh.Dial("tcp", host+":"+port, config)
+	if err != nil {
+		return fmt.Errorf("couldn't dial SSH: %v", err)
+	}
+	session, err := client.NewSession()
+	if err != nil {
+		return fmt.Errorf("couldn't create SSH session: %v", err)
+	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	session.Stdin = os.Stdin
+	err = session.Start(strings.Join(argv, " "))
+	if err != nil {
+		return fmt.Errorf("couldn't start SSH session: %v", err)
+	}
+	return session.Wait()
+}
 
 // InteractiveSSH .
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
