@@ -1,3 +1,4 @@
+// Package cmd implements the lagoon-cli command line interface.
 package cmd
 
 import (
@@ -195,6 +196,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(logsCmd)
 }
 
 // version/build information command
