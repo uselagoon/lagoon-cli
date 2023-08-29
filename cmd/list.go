@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -436,11 +437,66 @@ var listNotificationCmd = &cobra.Command{
 	},
 }
 
+var listProjectGroupsCmd = &cobra.Command{
+	Use:     "project-groups",
+	Aliases: []string{"pg"},
+	Short:   "List groups in a project (alias: pg)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			fmt.Println("Missing arguments: Project is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
+		handleError(err)
+
+		if len(projectGroups.Groups) == 0 {
+			output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
+			os.Exit(0)
+		}
+
+		data := []output.Data{}
+		for _, group := range projectGroups.Groups {
+			var organization = "null"
+			if group.Organization != 0 {
+				organization = strconv.Itoa(group.Organization)
+			}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", group.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", group.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", organization)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"Group ID", "Group Name", "Organization"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
+	listCmd.AddCommand(listProjectGroupsCmd)
 	listCmd.AddCommand(listEnvironmentsCmd)
 	listCmd.AddCommand(listProjectsCmd)
 	listCmd.AddCommand(listNotificationCmd)
