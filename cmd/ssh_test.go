@@ -11,6 +11,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 		lagoon      map[string]string
 		service     string
 		container   string
+		isPortal    bool
 	}
 	tests := []struct {
 		name string
@@ -65,7 +66,36 @@ func Test_generateSSHConnectionString(t *testing.T) {
 				service:   "cli",
 				container: "cli",
 			},
-			want: `ssh -t /home/user/.ssh/my-key-o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+			want: `ssh -t -i /home/user/.ssh/my-key -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+		},
+		{
+			name: "test5 - sshportal",
+			args: args{
+				lagoon: map[string]string{
+					"hostname": "lagoon.example.com",
+					"port":     "22",
+					"username": "example-com-main",
+					"sshKey":   "/home/user/.ssh/my-key",
+				},
+				isPortal:  true,
+				service:   "cli",
+				container: "cli",
+			},
+			want: `ssh -t -i /home/user/.ssh/my-key -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+		},
+		{
+			name: "test6 - sshportal",
+			args: args{
+				lagoon: map[string]string{
+					"hostname": "lagoon.example.com",
+					"port":     "22",
+					"username": "example-com-main",
+				},
+				isPortal:  true,
+				service:   "cli",
+				container: "cli",
+			},
+			want: `ssh -t -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
 		},
 	}
 	for _, tt := range tests {
@@ -73,7 +103,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 			cmdProjectName = tt.args.project
 			cmdProjectEnvironment = tt.args.environment
 
-			if got := generateSSHConnectionString(tt.args.lagoon, tt.args.service, tt.args.container); got != tt.want {
+			if got := generateSSHConnectionString(tt.args.lagoon, tt.args.service, tt.args.container, tt.args.isPortal); got != tt.want {
 				t.Errorf("generateSSHConnectionString() = %v, want %v", got, tt.want)
 			}
 		})
