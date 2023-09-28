@@ -34,4 +34,5 @@ func init() {
 	deleteCmd.AddCommand(deleteUserFromGroupCmd)
 	deleteCmd.AddCommand(deleteVariableCmd)
 	deleteCmd.AddCommand(deleteDeployTargetConfigCmd)
+	deleteCmd.AddCommand(deleteOrganizationCmd)
 }
