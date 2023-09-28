@@ -169,6 +169,7 @@ var getToken = &cobra.Command{
 	},
 }
 
+// TODO - update once the API is updated
 var getOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
@@ -181,7 +182,7 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetInt("org")
+		organizationID, err := cmd.Flags().GetUint("id")
 		if err != nil {
 			return err
 		}
@@ -199,14 +200,14 @@ var getOrganizationCmd = &cobra.Command{
 		organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
 		handleError(err)
 
-		if organization == nil {
+		if organization.Name == "" {
 			output.RenderInfo(fmt.Sprintf("No organization found for ID '%d'", organizationID), outputOptions)
 			os.Exit(0)
 		}
 
 		data := []output.Data{}
 		data = append(data, []string{
-			strconv.Itoa(organizationID),
+			strconv.Itoa(int(organizationID)),
 			organization.Name,
 			organization.Description,
 			strconv.Itoa(int(organization.QuotaProject)),
@@ -238,5 +239,5 @@ func init() {
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
-	getOrganizationCmd.Flags().Int("org", 0, "ID of the organization")
+	getOrganizationCmd.Flags().Uint("id", 0, "ID of the organization")
 }

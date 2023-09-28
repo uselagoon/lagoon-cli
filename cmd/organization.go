@@ -69,7 +69,7 @@ var deleteOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		organizationId, err := cmd.Flags().GetInt("id")
+		organizationId, err := cmd.Flags().GetUint("id")
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,62 @@ var deleteOrganizationCmd = &cobra.Command{
 	},
 }
 
+// TODO - update once the API is updated
+var updateOrganizationCmd = &cobra.Command{
+	Use:     "organization",
+	Aliases: []string{"o"},
+	Short:   "Update an organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		organizationId, err := cmd.Flags().GetUint("id")
+		if err != nil {
+			return err
+		}
+		description, err := cmd.Flags().GetString("description")
+		if err != nil {
+			return err
+		}
+
+		if organizationId == 0 {
+			fmt.Println("Missing arguments: Organization ID is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organizationFlags := s.UpdateOrganizationPatchInput{
+			Description: description,
+		}
+		result, err := l.UpdateOrganization(context.TODO(), organizationId, organizationFlags, lc)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"Organization Name": result.Name,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
 func init() {
+	updateOrganizationCmd.Flags().Uint("id", 0, "ID of the organization to update")
+	updateOrganizationCmd.Flags().StringP("description", "d", "", "Description of the organization")
 	addOrganizationCmd.Flags().String("name", "", "Name of the organization")
-	deleteOrganizationCmd.Flags().Int("id", 0, "ID of the organization")
+	deleteOrganizationCmd.Flags().Uint("id", 0, "ID of the organization")
 }
