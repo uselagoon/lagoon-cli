@@ -91,3 +91,17 @@ func fileExists(filename string) bool {
 func stripNewLines(stripString string) string {
 	return strings.TrimSuffix(stripString, "\n")
 }
+
+func nullStrCheck(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
+func nullUintCheck(i uint) *uint {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
