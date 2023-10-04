@@ -436,6 +436,95 @@ var listNotificationCmd = &cobra.Command{
 	},
 }
 
+var listOrganizationProjectsCmd = &cobra.Command{
+	Use:     "organization-projects",
+	Aliases: []string{"op"},
+	Short:   "Print a list of projects in an organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		organizationID, err := cmd.Flags().GetUint("id")
+		if organizationID == 0 {
+			return fmt.Errorf("missing arguments: Organization ID is not defined")
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		orgProjects, err := l.GetProjectsByOrganizationID(context.TODO(), organizationID, lc)
+		handleError(err)
+
+		data := []output.Data{}
+		for _, project := range *orgProjects {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
+				returnNonEmptyString(fmt.Sprintf("%s", project.Name)),
+				returnNonEmptyString(fmt.Sprintf("%d", project.GroupCount)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Name", "GroupCount"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
+var listOrganizationGroupsCmd = &cobra.Command{
+	Use:     "organization-groups",
+	Aliases: []string{"og"},
+	Short:   "Print a list of groups in an organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		organizationID, err := cmd.Flags().GetUint("id")
+		if organizationID == 0 {
+			return fmt.Errorf("missing arguments: Organization ID is not defined")
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		orgGroups, err := l.GetGroupsByOrganizationID(context.TODO(), organizationID, lc)
+		handleError(err)
+
+		data := []output.Data{}
+		for _, group := range *orgGroups {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%s", group.ID.String())),
+				returnNonEmptyString(fmt.Sprintf("%s", group.Name)),
+				returnNonEmptyString(fmt.Sprintf("%s", group.Type)),
+				returnNonEmptyString(fmt.Sprintf("%d", group.MemberCount)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Name", "Type", "MemberCount"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
@@ -450,8 +539,12 @@ func init() {
 	listCmd.AddCommand(listInvokableTasks)
 	listCmd.AddCommand(listBackupsCmd)
 	listCmd.AddCommand(listDeployTargetConfigsCmd)
+	listCmd.AddCommand(listOrganizationProjectsCmd)
+	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
+	listOrganizationProjectsCmd.Flags().Uint("id", 0, "ID of the organization to list associated projects for")
+	listOrganizationGroupsCmd.Flags().Uint("id", 0, "ID of the organization to list associated groups for")
 }
