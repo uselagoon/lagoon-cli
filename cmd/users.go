@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,8 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 func parseUser(flags pflag.FlagSet) api.User {
@@ -226,23 +229,46 @@ var getUserKeysCmd = &cobra.Command{
 	Aliases: []string{"us"},
 	Short:   "Get a user's SSH keys",
 	Long:    `Get a user's SSH keys. This will only work for users that are part of a group`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if userEmail == "" {
 			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
-		returnedJSON, err := uClient.ListUserSSHKeys(groupName, strings.ToLower(userEmail), false)
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
-			os.Exit(0)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		user, err := l.GetUserByEmail(context.TODO(), userEmail, lc)
+		if err != nil {
+			return err
 		}
-		output.RenderOutput(dataMain, outputOptions)
-
+		data := []output.Data{}
+		for _, sshkey := range user.SSHKeys {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", user.Email)),
+				returnNonEmptyString(fmt.Sprintf("%v", sshkey.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", sshkey.KeyType)),
+				returnNonEmptyString(fmt.Sprintf("%v", sshkey.KeyValue)),
+			})
+		}
+		output.RenderOutput(output.Table{
+			Header: []string{
+				"Email",
+				"Name",
+				"Type",
+				"Value",
+			},
+			Data: data,
+		}, outputOptions)
+		return nil
 	},
 }
 
