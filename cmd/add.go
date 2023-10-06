@@ -29,6 +29,7 @@ func init() {
 	addCmd.AddCommand(addProjectToGroupCmd)
 	addCmd.AddCommand(addNotificationCmd)
 	addCmd.AddCommand(addUserCmd)
+	addCmd.AddCommand(addProjectToOrganizationCmd)
 	addCmd.AddCommand(addOrganizationCmd)
 	addCmd.AddCommand(addUserToGroupCmd)
 	addCmd.AddCommand(addUserSSHKeyCmd)

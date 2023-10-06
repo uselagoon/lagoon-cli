@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -364,6 +367,67 @@ var deleteProjectMetadataByKey = &cobra.Command{
 	},
 }
 
+var addProjectToOrganizationCmd = &cobra.Command{
+	Use:     "organization-project",
+	Aliases: []string{"op", "orgproject"},
+	Short:   "Add a new project to Lagoon",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		organizationName, err := cmd.Flags().GetString("organization")
+		if organizationName == "" {
+			fmt.Println("Missing arguments: Organization name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		if cmdProjectName == "" {
+			fmt.Println("Missing arguments: Project name is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		handleError(err)
+
+		if project.Organization == organization.ID {
+			fmt.Printf("Project %s is already assigned to organization %s\n\n", project.Name, organization.Name)
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		projectInput := s.AddProjectToOrganizationInput{
+			Project:      project.ID,
+			Organization: organization.ID,
+		}
+		prj := s.Project{}
+		err = lc.AddProjectToOrganization(context.TODO(), &projectInput, &prj)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"Project Name":      prj.Name,
+				"Organization Name": organizationName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
@@ -404,6 +468,8 @@ func init() {
 	addProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "C", 0, "Should storage for this environment be calculated")
 	addProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+
+	addProjectToOrganizationCmd.Flags().StringP("organization", "O", "", "The Organization to add the project to")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")

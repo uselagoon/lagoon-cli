@@ -228,6 +228,45 @@ var deleteGroupCmd = &cobra.Command{
 	},
 }
 
+// TODO
+//var addGroupToOrganizationCmd = &cobra.Command{
+//	Use:     "organization-group",
+//	Aliases: []string{"og", "orggroup"},
+//	Short:   "Add a new project to Lagoon",
+//	PreRunE: func(_ *cobra.Command, _ []string) error {
+//		return validateTokenE(lagoonCLIConfig.Current)
+//	},
+//	RunE: func(cmd *cobra.Command, args []string) error {
+//		debug, err := cmd.Flags().GetBool("debug")
+//		handleError(err)
+//		organizationName, err := cmd.Flags().GetString("organization")
+//		if organizationName == "" {
+//			fmt.Println("Missing arguments: Organization name is not defined")
+//			cmd.Help()
+//			os.Exit(1)
+//		}
+//		groupName, err := cmd.Flags().GetString("group")
+//		if groupName == "" {
+//			fmt.Println("Missing arguments: Group name is not defined")
+//			cmd.Help()
+//			os.Exit(1)
+//		}
+//
+//		current := lagoonCLIConfig.Current
+//		token := lagoonCLIConfig.Lagoons[current].Token
+//		lc := lclient.New(
+//			lagoonCLIConfig.Lagoons[current].GraphQL,
+//			lagoonCLIVersion,
+//			&token,
+//			debug)
+//
+//		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+//
+//		output.RenderResult(resultData, outputOptions)
+//		return nil
+//	},
+//}
+
 func init() {
 	addGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
@@ -238,4 +277,6 @@ func init() {
 	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	//addGroupToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	//addGroupToOrganizationCmd.Flags().StringP("group", "g", "", "Name of the group")
 }
