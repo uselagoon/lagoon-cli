@@ -1,10 +1,11 @@
 ## lagoon get deployment
 
-Get a build log by remote id
+Get a deployment by name
 
 ### Synopsis
 
-Get a build log by remote id
+Get a deployment by name
+This returns information about a deployment, the logs of this build can also be retrieved
 
 ```
 lagoon get deployment [flags]
@@ -13,8 +14,9 @@ lagoon get deployment [flags]
 ### Options
 
 ```
-  -h, --help              help for deployment
-  -R, --remoteid string   The remote ID of the deployment
+  -h, --help          help for deployment
+  -L, --logs          Show the build logs if available
+  -N, --name string   The name of the deployment (eg, lagoon-build-abcdef)
 ```
 
 ### Options inherited from parent commands
