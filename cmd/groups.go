@@ -232,7 +232,6 @@ var deleteGroupCmd = &cobra.Command{
 	},
 }
 
-// TODO
 var addGroupToOrganizationCmd = &cobra.Command{
 	Use:     "organization-group",
 	Aliases: []string{"og", "orggroup"},
@@ -300,6 +299,6 @@ func init() {
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addGroupToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
-	addGroupToOrganizationCmd.Flags().StringP("group", "g", "", "Name of the group")
+	addGroupToOrganizationCmd.Flags().StringP("group", "G", "", "Name of the group")
 	addGroupToOrganizationCmd.Flags().Bool("orgOwner", false, "Flag to add the user to the group as an owner")
 }

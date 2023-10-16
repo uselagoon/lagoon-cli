@@ -11,7 +11,6 @@ import (
 	"os"
 )
 
-// TODO
 var addOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
@@ -105,12 +104,12 @@ var deleteOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		organizationId, err := cmd.Flags().GetUint("id")
+		organizationName, err := cmd.Flags().GetString("organization")
 		if err != nil {
 			return err
 		}
-		if organizationId == 0 {
-			fmt.Println("Missing arguments: Organization ID is not defined")
+		if organizationName == "" {
+			fmt.Println("Missing arguments: Organization is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -123,10 +122,10 @@ var deleteOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByID(context.TODO(), organizationId, lc)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		handleError(err)
 		if yesNo(fmt.Sprintf("You are attempting to delete organization '%s', are you sure?", organization.Name)) {
-			_, err := l.DeleteOrganization(context.TODO(), organizationId, lc)
+			_, err := l.DeleteOrganization(context.TODO(), organization.ID, lc)
 			handleError(err)
 			resultData := output.Result{
 				Result: organization.Name,
@@ -137,7 +136,6 @@ var deleteOrganizationCmd = &cobra.Command{
 	},
 }
 
-// TODO - update once the API is updated
 var updateOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
@@ -150,7 +148,7 @@ var updateOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationId, err := cmd.Flags().GetUint("id")
+		organizationName, err := cmd.Flags().GetString("organization")
 		if err != nil {
 			return err
 		}
@@ -183,8 +181,8 @@ var updateOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		if organizationId == 0 {
-			fmt.Println("Missing arguments: Organization ID is not defined")
+		if organizationName == "" {
+			fmt.Println("Missing arguments: Organization is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
@@ -197,6 +195,7 @@ var updateOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		organizationInput := s.UpdateOrganizationPatchInput{
 			Description:       nullStrCheck(organizationDescription),
 			FriendlyName:      nullStrCheck(organizationFriendlyName),
@@ -206,7 +205,7 @@ var updateOrganizationCmd = &cobra.Command{
 			QuotaEnvironment:  nullUintCheck(organizationQuotaEnvironment),
 			QuotaRoute:        nullUintCheck(organizationQuotaRoute),
 		}
-		result, err := l.UpdateOrganization(context.TODO(), organizationId, organizationInput, lc)
+		result, err := l.UpdateOrganization(context.TODO(), organization.ID, organizationInput, lc)
 		handleError(err)
 
 		resultData := output.Result{
@@ -230,7 +229,7 @@ func init() {
 	addOrganizationCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
 	addOrganizationCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
 
-	updateOrganizationCmd.Flags().Uint("id", 0, "ID of the organization to update")
+	updateOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to update")
 	updateOrganizationCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
 	updateOrganizationCmd.Flags().String("description", "", "Description of the organization")
 	updateOrganizationCmd.Flags().Uint("quotaProject", 0, "Project quota for the organization")
@@ -239,5 +238,5 @@ func init() {
 	updateOrganizationCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
 	updateOrganizationCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
 
-	deleteOrganizationCmd.Flags().Uint("id", 0, "ID of the organization")
+	deleteOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to delete")
 }

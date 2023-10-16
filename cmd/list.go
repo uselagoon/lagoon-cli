@@ -448,9 +448,9 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("id")
-		if organizationID == 0 {
-			return fmt.Errorf("missing arguments: Organization ID is not defined")
+		organizationName, err := cmd.Flags().GetString("organization")
+		if organizationName == "" {
+			return fmt.Errorf("missing arguments: Organization is not defined")
 		}
 
 		current := lagoonCLIConfig.Current
@@ -460,7 +460,9 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
-		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), organizationID, lc)
+
+		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), org.ID, lc)
 		handleError(err)
 
 		data := []output.Data{}
@@ -492,9 +494,9 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("id")
-		if organizationID == 0 {
-			return fmt.Errorf("missing arguments: Organization ID is not defined")
+		organizationName, err := cmd.Flags().GetString("organization")
+		if organizationName == "" {
+			return fmt.Errorf("missing arguments: Organization is not defined")
 		}
 
 		current := lagoonCLIConfig.Current
@@ -504,7 +506,9 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
-		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), organizationID, lc)
+
+		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), org.ID, lc)
 		handleError(err)
 
 		data := []output.Data{}
@@ -525,10 +529,10 @@ var listOrganizationGroupsCmd = &cobra.Command{
 	},
 }
 
-var listDeployTargetsByOrganizationCmd = &cobra.Command{
-	Use:     "organization-deploytargets",
+var listOrganizationDeployTargetsCmd = &cobra.Command{
+	Use:     "organization-deploy-targets",
 	Aliases: []string{"odt"},
-	Short:   "Print a list of deploytargets in an organization",
+	Short:   "Print a list of deploy targets in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -639,14 +643,14 @@ func init() {
 	listCmd.AddCommand(listDeployTargetConfigsCmd)
 	listCmd.AddCommand(listOrganizationProjectsCmd)
 	listCmd.AddCommand(listOrganizationGroupsCmd)
-	listCmd.AddCommand(listDeployTargetsByOrganizationCmd)
+	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(ListOrganizationUsersCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
-	listOrganizationProjectsCmd.Flags().Uint("id", 0, "ID of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().String("organization", "", "Name of the organization to list associated users for")
-	listOrganizationGroupsCmd.Flags().Uint("id", 0, "ID of the organization to list associated groups for")
-	listDeployTargetsByOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationProjectsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated projects for")
+	ListOrganizationUsersCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated users for")
+	listOrganizationGroupsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated groups for")
+	listOrganizationDeployTargetsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated deploy targets for")
 }

@@ -169,7 +169,6 @@ var getToken = &cobra.Command{
 	},
 }
 
-// TODO - update once the API is updated
 var getOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
@@ -182,12 +181,12 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("id")
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		if organizationID == 0 {
-			return fmt.Errorf("missing arguments: Organization ID is not defined")
+		if organizationName == "" {
+			return fmt.Errorf("missing arguments: Organization is not defined")
 		}
 
 		current := lagoonCLIConfig.Current
@@ -197,17 +196,17 @@ var getOrganizationCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
-		organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		handleError(err)
 
 		if organization.Name == "" {
-			output.RenderInfo(fmt.Sprintf("No organization found for ID '%d'", organizationID), outputOptions)
+			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)
 			os.Exit(0)
 		}
 
 		data := []output.Data{}
 		data = append(data, []string{
-			strconv.Itoa(int(organizationID)),
+			strconv.Itoa(int(organization.ID)),
 			organization.Name,
 			organization.Description,
 			strconv.Itoa(int(organization.QuotaProject)),
@@ -239,5 +238,5 @@ func init() {
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
-	getOrganizationCmd.Flags().Uint("id", 0, "ID of the organization")
+	getOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
 }
