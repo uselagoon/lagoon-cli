@@ -436,10 +436,19 @@ var listNotificationCmd = &cobra.Command{
 	},
 }
 
+var listOrganizationCmd = &cobra.Command{
+	Use:     "organization",
+	Aliases: []string{"o"},
+	Short:   "List all organizations projects, groups, deploy targets or users",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current)
+	},
+}
+
 var listOrganizationProjectsCmd = &cobra.Command{
-	Use:     "organization-projects",
-	Aliases: []string{"op"},
-	Short:   "Print a list of projects in an organization",
+	Use:     "projects",
+	Aliases: []string{"p"},
+	Short:   "List projects in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -483,9 +492,9 @@ var listOrganizationProjectsCmd = &cobra.Command{
 }
 
 var listOrganizationGroupsCmd = &cobra.Command{
-	Use:     "organization-groups",
-	Aliases: []string{"og"},
-	Short:   "Print a list of groups in an organization",
+	Use:     "groups",
+	Aliases: []string{"g"},
+	Short:   "List groups in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -530,9 +539,9 @@ var listOrganizationGroupsCmd = &cobra.Command{
 }
 
 var listOrganizationDeployTargetsCmd = &cobra.Command{
-	Use:     "organization-deploy-targets",
-	Aliases: []string{"odt"},
-	Short:   "Print a list of deploy targets in an organization",
+	Use:     "deploytargets",
+	Aliases: []string{"d"},
+	Short:   "List deploy targets in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -579,9 +588,9 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 }
 
 var ListOrganizationUsersCmd = &cobra.Command{
-	Use:     "organization-users",
-	Aliases: []string{"ou"},
-	Short:   "Print a list of users in an organization",
+	Use:     "users",
+	Aliases: []string{"u"},
+	Short:   "List users in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -641,10 +650,11 @@ func init() {
 	listCmd.AddCommand(listInvokableTasks)
 	listCmd.AddCommand(listBackupsCmd)
 	listCmd.AddCommand(listDeployTargetConfigsCmd)
-	listCmd.AddCommand(listOrganizationProjectsCmd)
-	listCmd.AddCommand(listOrganizationGroupsCmd)
-	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
-	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(listOrganizationCmd)
+	listOrganizationCmd.AddCommand(listOrganizationProjectsCmd)
+	listOrganizationCmd.AddCommand(ListOrganizationUsersCmd)
+	listOrganizationCmd.AddCommand(listOrganizationGroupsCmd)
+	listOrganizationCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
