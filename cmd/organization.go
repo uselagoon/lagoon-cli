@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-var addOrganizationCmd = &cobra.Command{
+var addOrgCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
 	Short:   "Add a new organization to Lagoon",
@@ -23,7 +23,7 @@ var addOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization")
 		if err != nil {
 			return err
 		}
@@ -220,14 +220,18 @@ var updateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	addOrganizationCmd.Flags().String("name", "", "Name of the organization")
-	addOrganizationCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
-	addOrganizationCmd.Flags().String("description", "", "Description of the organization")
-	addOrganizationCmd.Flags().Uint("quotaProject", 0, "Project quota for the organization")
-	addOrganizationCmd.Flags().Uint("quotaGroup", 0, "Group quota for the organization")
-	addOrganizationCmd.Flags().Uint("quotaNotification", 0, "Notification quota for the organization")
-	addOrganizationCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
-	addOrganizationCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
+	addOrganizationCmd.AddCommand(addOrgCmd)
+	addOrganizationCmd.AddCommand(addGroupToOrganizationCmd)
+	addOrganizationCmd.AddCommand(addProjectToOrganizationCmd)
+
+	addOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	addOrgCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
+	addOrgCmd.Flags().String("description", "", "Description of the organization")
+	addOrgCmd.Flags().Uint("quotaProject", 0, "Project quota for the organization")
+	addOrgCmd.Flags().Uint("quotaGroup", 0, "Group quota for the organization")
+	addOrgCmd.Flags().Uint("quotaNotification", 0, "Notification quota for the organization")
+	addOrgCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
+	addOrgCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
 
 	updateOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to update")
 	updateOrganizationCmd.Flags().String("friendlyName", "", "Friendly name of the organization")

@@ -4,7 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -364,6 +368,148 @@ var deleteProjectMetadataByKey = &cobra.Command{
 	},
 }
 
+// TODO - refactor once machinery is updated
+var addProjectToOrganizationCmd = &cobra.Command{
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Add a project to an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+
+		requiredInputCheck("Project name", cmdProjectName)
+		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
+		gitUrl, err := cmd.Flags().GetString("gitUrl")
+		requiredInputCheck("gitUrl", gitUrl)
+		if err != nil {
+			return err
+		}
+		productionEnvironment, err := cmd.Flags().GetString("productionEnvironment")
+		requiredInputCheck("Production Environment", productionEnvironment)
+		if err != nil {
+			return err
+		}
+		openshift, err := cmd.Flags().GetUint("openshift")
+		requiredInputCheck("openshift", strconv.Itoa(int(openshift)))
+		if err != nil {
+			return err
+		}
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standbyProductionEnvironment")
+		if err != nil {
+			return err
+		}
+		branches, err := cmd.Flags().GetString("branches")
+		if err != nil {
+			return err
+		}
+		pullrequests, err := cmd.Flags().GetString("pullrequests")
+		if err != nil {
+			return err
+		}
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshiftProjectPattern")
+		if err != nil {
+			return err
+		}
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("developmentEnvironmentsLimit")
+		if err != nil {
+			return err
+		}
+		storageCalc, err := cmd.Flags().GetUint("storageCalc")
+		if err != nil {
+			return err
+		}
+		autoIdle, err := cmd.Flags().GetUint("autoIdle")
+		if err != nil {
+			return err
+		}
+		subfolder, err := cmd.Flags().GetString("subfolder")
+		if err != nil {
+			return err
+		}
+		privateKey, err := cmd.Flags().GetString("privateKey")
+		if err != nil {
+			return err
+		}
+		orgOwner, err := cmd.Flags().GetBool("orgOwner")
+		if err != nil {
+			return err
+		}
+		buildImage, err := cmd.Flags().GetString("buildImage")
+		if err != nil {
+			return err
+		}
+		availability, err := cmd.Flags().GetString("availability")
+		if err != nil {
+			return err
+		}
+
+		//factsUi, err := cmd.Flags().GetUint("factsUi")
+		//if err != nil {
+		//	return err
+		//}
+		//problemsUi, err := cmd.Flags().GetUint("problemsUi")
+		//if err != nil {
+		//	return err
+		//}
+		//routerPattern, err := cmd.Flags().GetString("routerPattern")
+		//if err != nil {
+		//	return err
+		//}
+		//deploymentsDisabled, err := cmd.Flags().GetUint("deploymentsDisabled")
+		//if err != nil {
+		//	return err
+		//}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		projectInput := s.AddProjectInput{
+			Name:                         cmdProjectName,
+			Organization:                 organization.ID,
+			AddOrgOwner:                  orgOwner,
+			BuildImage:                   buildImage,
+			Availability:                 s.ProjectAvailability(availability),
+			GitURL:                       gitUrl,
+			ProductionEnvironment:        productionEnvironment,
+			StandbyProductionEnvironment: standbyProductionEnvironment,
+			Branches:                     branches,
+			PullRequests:                 pullrequests,
+			OpenshiftProjectPattern:      openshiftProjectPattern,
+			Openshift:                    openshift,
+			DevelopmentEnvironmentsLimit: developmentEnvironmentsLimit,
+			StorageCalc:                  storageCalc,
+			AutoIdle:                     autoIdle,
+			Subfolder:                    subfolder,
+			PrivateKey:                   privateKey,
+		}
+		project := s.Project{}
+		err = lc.AddProject(context.TODO(), &projectInput, &project)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"Project Name":      project.Name,
+				"Organization Name": organizationName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
@@ -418,4 +564,23 @@ func init() {
 	deleteProjectMetadataByKey.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
 
 	getCmd.AddCommand(getProjectMetadata)
+
+	addProjectToOrganizationCmd.Flags().String("buildImage", "", "Build Image for the project")
+	addProjectToOrganizationCmd.Flags().String("availability", "", "Availability of the project")
+	addProjectToOrganizationCmd.Flags().String("gitUrl", "", "GitURL of the project")
+	addProjectToOrganizationCmd.Flags().String("productionEnvironment", "", "Production Environment for the project")
+	addProjectToOrganizationCmd.Flags().String("standbyProductionEnvironment", "", "Standby Production Environment for the project")
+	addProjectToOrganizationCmd.Flags().String("subfolder", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
+	addProjectToOrganizationCmd.Flags().String("privateKey", "", "Private key to use for the project")
+	addProjectToOrganizationCmd.Flags().String("branches", "", "branches")
+	addProjectToOrganizationCmd.Flags().String("pullrequests", "", "Which Pull Requests should be deployed")
+	addProjectToOrganizationCmd.Flags().StringP("organization", "O", "", "Organization to add the project to")
+	addProjectToOrganizationCmd.Flags().String("openshiftProjectPattern", "", "Pattern of OpenShift Project/Namespace that should be generated")
+
+	addProjectToOrganizationCmd.Flags().Uint("openshift", 0, "Reference to OpenShift Object this Project should be deployed to")
+	addProjectToOrganizationCmd.Flags().Uint("autoIdle", 0, "Auto idle setting of the project")
+	addProjectToOrganizationCmd.Flags().Uint("storageCalc", 0, "Should storage for this environment be calculated")
+	addProjectToOrganizationCmd.Flags().Uint("developmentEnvironmentsLimit", 0, "How many environments can be deployed at one time")
+
+	addProjectToOrganizationCmd.Flags().Bool("orgOwner", false, "Add the user as an owner of the project")
 }

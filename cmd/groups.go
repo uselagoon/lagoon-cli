@@ -233,8 +233,8 @@ var deleteGroupCmd = &cobra.Command{
 }
 
 var addGroupToOrganizationCmd = &cobra.Command{
-	Use:     "organization-group",
-	Aliases: []string{"og", "orggroup"},
+	Use:     "group",
+	Aliases: []string{"g"},
 	Short:   "Add a group to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)

@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"os"
 	"strings"
-
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // config vars
@@ -104,4 +104,11 @@ func nullUintCheck(i uint) *uint {
 		return nil
 	}
 	return &i
+}
+
+func requiredInputCheck(field string, value string) {
+	if value == "" || value == "0" {
+		fmt.Println(fmt.Sprintf("Missing argument: %s is not defined", field))
+		os.Exit(1)
+	}
 }
