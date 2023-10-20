@@ -8,7 +8,6 @@ import (
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
 )
 
 var addOrgCmd = &cobra.Command{
@@ -24,6 +23,7 @@ var addOrgCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
 		if err != nil {
 			return err
 		}
@@ -54,12 +54,6 @@ var addOrgCmd = &cobra.Command{
 		organizationQuotaRoute, err := cmd.Flags().GetUint("quotaRoute")
 		if err != nil {
 			return err
-		}
-
-		if organizationName == "" {
-			fmt.Println("Missing arguments: Organization name is not defined")
-			cmd.Help()
-			os.Exit(1)
 		}
 
 		current := lagoonCLIConfig.Current
@@ -105,13 +99,9 @@ var deleteOrgCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
 		if err != nil {
 			return err
-		}
-		if organizationName == "" {
-			fmt.Println("Missing arguments: Organization is not defined")
-			cmd.Help()
-			os.Exit(1)
 		}
 
 		current := lagoonCLIConfig.Current
@@ -149,6 +139,7 @@ var updateOrganizationCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
 		if err != nil {
 			return err
 		}
@@ -179,12 +170,6 @@ var updateOrganizationCmd = &cobra.Command{
 		organizationQuotaRoute, err := cmd.Flags().GetUint("quotaRoute")
 		if err != nil {
 			return err
-		}
-
-		if organizationName == "" {
-			fmt.Println("Missing arguments: Organization is not defined")
-			cmd.Help()
-			os.Exit(1)
 		}
 
 		current := lagoonCLIConfig.Current
@@ -229,6 +214,7 @@ func init() {
 	deleteOrganizationCmd.AddCommand(deleteOrgCmd)
 	deleteOrganizationCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
 	deleteOrganizationCmd.AddCommand(RemoveProjectFromOrganizationCmd)
+	deleteOrganizationCmd.AddCommand(RemoveUserFromOrganization)
 
 	addOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization")
 	addOrgCmd.Flags().String("friendlyName", "", "Friendly name of the organization")

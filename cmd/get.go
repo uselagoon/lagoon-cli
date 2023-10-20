@@ -181,12 +181,10 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
 		if err != nil {
 			return err
-		}
-		if organizationName == "" {
-			return fmt.Errorf("missing arguments: Organization is not defined")
 		}
 
 		current := lagoonCLIConfig.Current

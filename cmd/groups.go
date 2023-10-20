@@ -244,16 +244,14 @@ var addGroupToOrganizationCmd = &cobra.Command{
 		handleError(err)
 		orgOwner, err := cmd.Flags().GetBool("orgOwner")
 		organizationName, err := cmd.Flags().GetString("organization")
-		if organizationName == "" {
-			fmt.Println("Missing arguments: Organization name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		requiredInputCheck("Organization name", organizationName)
+		if err != nil {
+			return err
 		}
 		groupName, err := cmd.Flags().GetString("group")
-		if groupName == "" {
-			fmt.Println("Missing arguments: Group name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		requiredInputCheck("Group name", groupName)
+		if err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current

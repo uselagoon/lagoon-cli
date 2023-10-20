@@ -458,9 +458,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
-		if organizationName == "" {
-			return fmt.Errorf("missing arguments: Organization is not defined")
-		}
+		requiredInputCheck("Organization name", organizationName)
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -504,9 +502,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
-		if organizationName == "" {
-			return fmt.Errorf("missing arguments: Organization is not defined")
-		}
+		requiredInputCheck("Organization name", organizationName)
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -551,9 +547,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
-		if organizationName == "" {
-			return fmt.Errorf("missing arguments: Organization is not defined")
-		}
+		requiredInputCheck("Organization name", organizationName)
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -600,9 +594,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			return err
 		}
 		organizationName, err := cmd.Flags().GetString("organization")
-		if organizationName == "" {
-			return fmt.Errorf("missing arguments: Organization is not defined")
-		}
+		requiredInputCheck("Organization name", organizationName)
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
