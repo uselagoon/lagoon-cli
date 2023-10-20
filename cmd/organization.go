@@ -95,7 +95,7 @@ var addOrgCmd = &cobra.Command{
 	},
 }
 
-var deleteOrganizationCmd = &cobra.Command{
+var deleteOrgCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
 	Short:   "Delete an organization",
@@ -223,6 +223,12 @@ func init() {
 	addOrganizationCmd.AddCommand(addOrgCmd)
 	addOrganizationCmd.AddCommand(addGroupToOrganizationCmd)
 	addOrganizationCmd.AddCommand(addProjectToOrganizationCmd)
+	addOrganizationCmd.AddCommand(addDeployTargetToOrganizationCmd)
+	addOrganizationCmd.AddCommand(addUserToOrganizationCmd)
+
+	deleteOrganizationCmd.AddCommand(deleteOrgCmd)
+	deleteOrganizationCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
+	deleteOrganizationCmd.AddCommand(RemoveProjectFromOrganizationCmd)
 
 	addOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization")
 	addOrgCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
@@ -242,5 +248,5 @@ func init() {
 	updateOrganizationCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
 	updateOrganizationCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
 
-	deleteOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to delete")
+	deleteOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization to delete")
 }

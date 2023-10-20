@@ -30,7 +30,7 @@ require (
 	github.com/guregu/null v4.0.0+incompatible
 	// workaround for https://github.com/manifoldco/promptui/issues/98
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
-	github.com/uselagoon/machinery v0.0.12-0.20231015225416-9e8151292e0c
+	github.com/uselagoon/machinery v0.0.12-0.20231020030557-4ea384607fc3
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect

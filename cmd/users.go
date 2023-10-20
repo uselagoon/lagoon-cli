@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -267,6 +271,65 @@ var getAllUserKeysCmd = &cobra.Command{
 	},
 }
 
+var addUserToOrganizationCmd = &cobra.Command{
+	Use:     "user",
+	Aliases: []string{"u"},
+	Short:   "Add a user to an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+
+		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
+		if err != nil {
+			return err
+		}
+		userEmail, err := cmd.Flags().GetString("email")
+		requiredInputCheck("User email", userEmail)
+		if err != nil {
+			return err
+		}
+		owner, err := cmd.Flags().GetBool("owner")
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		userInput := s.AddUserToOrganizationInput{
+			User:         s.UserInput{Email: userEmail},
+			Organization: organization.ID,
+			Owner:        owner,
+		}
+
+		orgUser := s.Organization{}
+		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"User":              userEmail,
+				"Organization Name": organizationName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
 var (
 	currentUserEmail string
 	pubKeyValue      string
@@ -289,4 +352,8 @@ func init() {
 	getUserKeysCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
 	getUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to check users in (if not specified, will default to all groups)")
 	getAllUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
+
+	addUserToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	addUserToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addUserToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
 }

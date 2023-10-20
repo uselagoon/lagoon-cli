@@ -510,6 +510,58 @@ var addProjectToOrganizationCmd = &cobra.Command{
 	},
 }
 
+var RemoveProjectFromOrganizationCmd = &cobra.Command{
+	Use:     "project",
+	Aliases: []string{"p"},
+	Short:   "Remove a project from an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+
+		organizationName, err := cmd.Flags().GetString("organization")
+		requiredInputCheck("Organization name", organizationName)
+		requiredInputCheck("Project", cmdProjectName)
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		handleError(err)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		projectInput := s.RemoveProjectFromOrganizationInput{
+			Project:      project.ID,
+			Organization: organization.ID,
+		}
+
+		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
+			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
+			handleError(err)
+			resultData := output.Result{
+				Result: "success",
+				ResultData: map[string]interface{}{
+					"Project Name":      cmdProjectName,
+					"Organization Name": organizationName,
+				},
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+		return nil
+	},
+}
+
 func init() {
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
@@ -583,4 +635,6 @@ func init() {
 	addProjectToOrganizationCmd.Flags().Uint("developmentEnvironmentsLimit", 0, "How many environments can be deployed at one time")
 
 	addProjectToOrganizationCmd.Flags().Bool("orgOwner", false, "Add the user as an owner of the project")
+
+	RemoveProjectFromOrganizationCmd.Flags().StringP("organization", "O", "", "Organization to remove the project from")
 }
