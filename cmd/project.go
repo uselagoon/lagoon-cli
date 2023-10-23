@@ -368,7 +368,6 @@ var deleteProjectMetadataByKey = &cobra.Command{
 	},
 }
 
-// TODO - refactor once machinery is updated
 var addProjectToOrganizationCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
@@ -380,25 +379,38 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		requiredInputCheck("Project name", cmdProjectName)
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
-		gitUrl, err := cmd.Flags().GetString("gitUrl")
-		requiredInputCheck("gitUrl", gitUrl)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		productionEnvironment, err := cmd.Flags().GetString("productionEnvironment")
-		requiredInputCheck("Production Environment", productionEnvironment)
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		gitUrl, err := cmd.Flags().GetString("git-url")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("gitUrl", gitUrl); err != nil {
+			return err
+		}
+		productionEnvironment, err := cmd.Flags().GetString("production-environment")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Production Environment", productionEnvironment); err != nil {
 			return err
 		}
 		openshift, err := cmd.Flags().GetUint("openshift")
-		requiredInputCheck("openshift", strconv.Itoa(int(openshift)))
 		if err != nil {
 			return err
 		}
-		standbyProductionEnvironment, err := cmd.Flags().GetString("standbyProductionEnvironment")
+		if err := requiredInputCheck("openshift", strconv.Itoa(int(openshift))); err != nil {
+			return err
+		}
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
 		if err != nil {
 			return err
 		}
@@ -410,19 +422,19 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshiftProjectPattern")
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
 		if err != nil {
 			return err
 		}
-		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("developmentEnvironmentsLimit")
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storageCalc")
+		storageCalc, err := cmd.Flags().GetUint("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("autoIdle")
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
 		if err != nil {
 			return err
 		}
@@ -430,15 +442,15 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		privateKey, err := cmd.Flags().GetString("privateKey")
+		privateKey, err := cmd.Flags().GetString("private-key")
 		if err != nil {
 			return err
 		}
-		orgOwner, err := cmd.Flags().GetBool("orgOwner")
+		orgOwner, err := cmd.Flags().GetBool("org-owner")
 		if err != nil {
 			return err
 		}
-		buildImage, err := cmd.Flags().GetString("buildImage")
+		buildImage, err := cmd.Flags().GetString("build-image")
 		if err != nil {
 			return err
 		}
@@ -446,23 +458,30 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
-		//factsUi, err := cmd.Flags().GetUint("factsUi")
-		//if err != nil {
-		//	return err
-		//}
-		//problemsUi, err := cmd.Flags().GetUint("problemsUi")
-		//if err != nil {
-		//	return err
-		//}
-		//routerPattern, err := cmd.Flags().GetString("routerPattern")
-		//if err != nil {
-		//	return err
-		//}
-		//deploymentsDisabled, err := cmd.Flags().GetUint("deploymentsDisabled")
-		//if err != nil {
-		//	return err
-		//}
+		factsUi, err := cmd.Flags().GetUint("facts-ui")
+		if err != nil {
+			return err
+		}
+		problemsUi, err := cmd.Flags().GetUint("problems-ui")
+		if err != nil {
+			return err
+		}
+		routerPattern, err := cmd.Flags().GetString("router-pattern")
+		if err != nil {
+			return err
+		}
+		deploymentsDisabled, err := cmd.Flags().GetUint("deployments-disabled")
+		if err != nil {
+			return err
+		}
+		ProductionBuildPriority, err := cmd.Flags().GetUint("production-build-priority")
+		if err != nil {
+			return err
+		}
+		DevelopmentBuildPriority, err := cmd.Flags().GetUint("development-build-priority")
+		if err != nil {
+			return err
+		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -493,6 +512,12 @@ var addProjectToOrganizationCmd = &cobra.Command{
 			AutoIdle:                     autoIdle,
 			Subfolder:                    subfolder,
 			PrivateKey:                   privateKey,
+			RouterPattern:                routerPattern,
+			ProblemsUI:                   problemsUi,
+			FactsUI:                      factsUi,
+			ProductionBuildPriority:      ProductionBuildPriority,
+			DevelopmentBuildPriority:     DevelopmentBuildPriority,
+			DeploymentsDisabled:          deploymentsDisabled,
 		}
 		project := s.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
@@ -521,10 +546,14 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
-		requiredInputCheck("Project", cmdProjectName)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 
@@ -617,24 +646,30 @@ func init() {
 
 	getCmd.AddCommand(getProjectMetadata)
 
-	addProjectToOrganizationCmd.Flags().String("buildImage", "", "Build Image for the project")
+	addProjectToOrganizationCmd.Flags().String("build-image", "", "Build Image for the project")
 	addProjectToOrganizationCmd.Flags().String("availability", "", "Availability of the project")
-	addProjectToOrganizationCmd.Flags().String("gitUrl", "", "GitURL of the project")
-	addProjectToOrganizationCmd.Flags().String("productionEnvironment", "", "Production Environment for the project")
-	addProjectToOrganizationCmd.Flags().String("standbyProductionEnvironment", "", "Standby Production Environment for the project")
+	addProjectToOrganizationCmd.Flags().String("git-url", "", "GitURL of the project")
+	addProjectToOrganizationCmd.Flags().String("production-environment", "", "Production Environment for the project")
+	addProjectToOrganizationCmd.Flags().String("standby-production-environment", "", "Standby Production Environment for the project")
 	addProjectToOrganizationCmd.Flags().String("subfolder", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	addProjectToOrganizationCmd.Flags().String("privateKey", "", "Private key to use for the project")
+	addProjectToOrganizationCmd.Flags().String("private-key", "", "Private key to use for the project")
 	addProjectToOrganizationCmd.Flags().String("branches", "", "branches")
 	addProjectToOrganizationCmd.Flags().String("pullrequests", "", "Which Pull Requests should be deployed")
-	addProjectToOrganizationCmd.Flags().StringP("organization", "O", "", "Organization to add the project to")
-	addProjectToOrganizationCmd.Flags().String("openshiftProjectPattern", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the Organization to add the project to")
+	addProjectToOrganizationCmd.Flags().String("openshift-project-pattern", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectToOrganizationCmd.Flags().String("router-pattern", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
 
 	addProjectToOrganizationCmd.Flags().Uint("openshift", 0, "Reference to OpenShift Object this Project should be deployed to")
-	addProjectToOrganizationCmd.Flags().Uint("autoIdle", 0, "Auto idle setting of the project")
-	addProjectToOrganizationCmd.Flags().Uint("storageCalc", 0, "Should storage for this environment be calculated")
-	addProjectToOrganizationCmd.Flags().Uint("developmentEnvironmentsLimit", 0, "How many environments can be deployed at one time")
+	addProjectToOrganizationCmd.Flags().Uint("auto-idle", 0, "Auto idle setting of the project")
+	addProjectToOrganizationCmd.Flags().Uint("storage-calc", 0, "Should storage for this environment be calculated")
+	addProjectToOrganizationCmd.Flags().Uint("development-environments-limit", 0, "How many environments can be deployed at one time")
+	addProjectToOrganizationCmd.Flags().Uint("facts-ui", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
+	addProjectToOrganizationCmd.Flags().Uint("problems-ui", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
+	addProjectToOrganizationCmd.Flags().Uint("deployments-disabled", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+	addProjectToOrganizationCmd.Flags().Uint("production-build-priority", 0, "Set the priority of the production build")
+	addProjectToOrganizationCmd.Flags().Uint("development-build-priority", 0, "Set the priority of the development build")
 
-	addProjectToOrganizationCmd.Flags().Bool("orgOwner", false, "Add the user as an owner of the project")
+	addProjectToOrganizationCmd.Flags().Bool("org-owner", false, "Add the user as an owner of the project")
 
-	RemoveProjectFromOrganizationCmd.Flags().StringP("organization", "O", "", "Organization to remove the project from")
+	RemoveProjectFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of the Organization to remove the project from")
 }

@@ -333,11 +333,18 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
-		deployTarget, err := cmd.Flags().GetUint("deployTarget")
-		requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget)))
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
 			return err
 		}
 
@@ -383,11 +390,18 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
-		deployTarget, err := cmd.Flags().GetUint("deployTarget")
-		requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget)))
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
 			return err
 		}
 
@@ -436,14 +450,14 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
-	addDeployTargetToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of Organization")
-	addDeployTargetToOrganizationCmd.Flags().UintP("deployTarget", "D", 0, "ID of DeployTarget")
+	addDeployTargetToOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
+	addDeployTargetToOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	RemoveDeployTargetFromOrganizationCmd.Flags().StringP("organization", "O", "", "Name of Organization")
-	RemoveDeployTargetFromOrganizationCmd.Flags().UintP("deployTarget", "D", 0, "ID of DeployTarget")
+	RemoveDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
+	RemoveDeployTargetFromOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
 
 	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")

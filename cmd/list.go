@@ -457,8 +457,13 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -481,7 +486,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "GroupCount"},
+			Header: []string{"ID", "Name", "Group Count"},
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -501,8 +506,13 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -526,7 +536,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "Type", "MemberCount"},
+			Header: []string{"ID", "Name", "Type", "Member Count"},
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -546,8 +556,13 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -573,7 +588,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "Router Pattern", "ConsoleURL", "Cloud Region", "Cloud Provider", "SSH Host", "SSH Port"},
+			Header: []string{"ID", "Name", "Router Pattern", "Console URL", "Cloud Region", "Cloud Provider", "SSH Host", "SSH Port"},
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -593,8 +608,13 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -651,8 +671,8 @@ func init() {
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
-	listOrganizationProjectsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated users for")
-	listOrganizationGroupsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated groups for")
-	listOrganizationDeployTargetsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationProjectsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated projects for")
+	ListOrganizationUsersCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationGroupsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated groups for")
+	listOrganizationDeployTargetsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated deploy targets for")
 }

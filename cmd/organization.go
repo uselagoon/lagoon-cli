@@ -22,12 +22,14 @@ var addOrgCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		organizationFriendlyName, err := cmd.Flags().GetString("friendlyName")
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		organizationFriendlyName, err := cmd.Flags().GetString("friendly-name")
 		if err != nil {
 			return err
 		}
@@ -35,23 +37,23 @@ var addOrgCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationQuotaProject, err := cmd.Flags().GetUint("quotaProject")
+		organizationQuotaProject, err := cmd.Flags().GetUint("project-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaGroup, err := cmd.Flags().GetUint("quotaGroup")
+		organizationQuotaGroup, err := cmd.Flags().GetUint("group-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaNotification, err := cmd.Flags().GetUint("quotaNotification")
+		organizationQuotaNotification, err := cmd.Flags().GetUint("notification-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaEnvironment, err := cmd.Flags().GetUint("quotaEnvironment")
+		organizationQuotaEnvironment, err := cmd.Flags().GetUint("environment-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaRoute, err := cmd.Flags().GetUint("quotaRoute")
+		organizationQuotaRoute, err := cmd.Flags().GetUint("route-quota")
 		if err != nil {
 			return err
 		}
@@ -98,9 +100,14 @@ var deleteOrgCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
 		if err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 
@@ -138,12 +145,17 @@ var updateOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		organizationFriendlyName, err := cmd.Flags().GetString("friendlyName")
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		if err != nil {
+			return err
+		}
+		organizationFriendlyName, err := cmd.Flags().GetString("friendly-name")
 		if err != nil {
 			return err
 		}
@@ -151,23 +163,23 @@ var updateOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationQuotaProject, err := cmd.Flags().GetUint("quotaProject")
+		organizationQuotaProject, err := cmd.Flags().GetUint("project-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaGroup, err := cmd.Flags().GetUint("quotaGroup")
+		organizationQuotaGroup, err := cmd.Flags().GetUint("group-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaNotification, err := cmd.Flags().GetUint("quotaNotification")
+		organizationQuotaNotification, err := cmd.Flags().GetUint("notification-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaEnvironment, err := cmd.Flags().GetUint("quotaEnvironment")
+		organizationQuotaEnvironment, err := cmd.Flags().GetUint("environment-quota")
 		if err != nil {
 			return err
 		}
-		organizationQuotaRoute, err := cmd.Flags().GetUint("quotaRoute")
+		organizationQuotaRoute, err := cmd.Flags().GetUint("route-quota")
 		if err != nil {
 			return err
 		}
@@ -216,23 +228,23 @@ func init() {
 	deleteOrganizationCmd.AddCommand(RemoveProjectFromOrganizationCmd)
 	deleteOrganizationCmd.AddCommand(RemoveUserFromOrganization)
 
-	addOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization")
-	addOrgCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
+	addOrgCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	addOrgCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	addOrgCmd.Flags().String("description", "", "Description of the organization")
-	addOrgCmd.Flags().Uint("quotaProject", 0, "Project quota for the organization")
-	addOrgCmd.Flags().Uint("quotaGroup", 0, "Group quota for the organization")
-	addOrgCmd.Flags().Uint("quotaNotification", 0, "Notification quota for the organization")
-	addOrgCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
-	addOrgCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
+	addOrgCmd.Flags().Uint("project-quota", 0, "Project quota for the organization")
+	addOrgCmd.Flags().Uint("group-quota", 0, "Group quota for the organization")
+	addOrgCmd.Flags().Uint("notification-quota", 0, "Notification quota for the organization")
+	addOrgCmd.Flags().Uint("environment-quota", 0, "Environment quota for the organization")
+	addOrgCmd.Flags().Uint("route-quota", 0, "Route quota for the organization")
 
-	updateOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization to update")
-	updateOrganizationCmd.Flags().String("friendlyName", "", "Friendly name of the organization")
+	updateOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization to update")
+	updateOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	updateOrganizationCmd.Flags().String("description", "", "Description of the organization")
-	updateOrganizationCmd.Flags().Uint("quotaProject", 0, "Project quota for the organization")
-	updateOrganizationCmd.Flags().Uint("quotaGroup", 0, "Group quota for the organization")
-	updateOrganizationCmd.Flags().Uint("quotaNotification", 0, "Notification quota for the organization")
-	updateOrganizationCmd.Flags().Uint("quotaEnvironment", 0, "Environment quota for the organization")
-	updateOrganizationCmd.Flags().Uint("quotaRoute", 0, "Route quota for the organization")
+	updateOrganizationCmd.Flags().Uint("project-quota", 0, "Project quota for the organization")
+	updateOrganizationCmd.Flags().Uint("group-quota", 0, "Group quota for the organization")
+	updateOrganizationCmd.Flags().Uint("notification-quota", 0, "Notification quota for the organization")
+	updateOrganizationCmd.Flags().Uint("environment-quota", 0, "Environment quota for the organization")
+	updateOrganizationCmd.Flags().Uint("route-quota", 0, "Route quota for the organization")
 
-	deleteOrgCmd.Flags().StringP("organization", "O", "", "Name of the organization to delete")
+	deleteOrgCmd.Flags().StringP("name", "O", "", "Name of the organization to delete")
 }

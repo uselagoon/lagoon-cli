@@ -242,15 +242,22 @@ var addGroupToOrganizationCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
-		orgOwner, err := cmd.Flags().GetBool("orgOwner")
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		orgOwner, err := cmd.Flags().GetBool("org-owner")
 		if err != nil {
 			return err
 		}
-		groupName, err := cmd.Flags().GetString("group")
-		requiredInputCheck("Group name", groupName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		groupName, err := cmd.Flags().GetString("group")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName); err != nil {
 			return err
 		}
 
@@ -296,7 +303,7 @@ func init() {
 	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	addGroupToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	addGroupToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 	addGroupToOrganizationCmd.Flags().StringP("group", "G", "", "Name of the group")
-	addGroupToOrganizationCmd.Flags().Bool("orgOwner", false, "Flag to add the user to the group as an owner")
+	addGroupToOrganizationCmd.Flags().Bool("org-owner", false, "Flag to add the user to the group as an owner")
 }

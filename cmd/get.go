@@ -181,9 +181,11 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 
@@ -199,7 +201,7 @@ var getOrganizationCmd = &cobra.Command{
 
 		if organization.Name == "" {
 			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)
-			os.Exit(0)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -213,7 +215,7 @@ var getOrganizationCmd = &cobra.Command{
 		})
 
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "Description", "quotaProject", "quotaGroup", "quotaNotification"},
+			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota"},
 			Data:   data,
 		}
 
@@ -236,5 +238,5 @@ func init() {
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
-	getOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	getOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 }

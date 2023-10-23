@@ -282,14 +282,18 @@ var addUserToOrganizationCmd = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 		userEmail, err := cmd.Flags().GetString("email")
-		requiredInputCheck("User email", userEmail)
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("User email", userEmail); err != nil {
 			return err
 		}
 		owner, err := cmd.Flags().GetBool("owner")
@@ -341,14 +345,18 @@ var RemoveUserFromOrganization = &cobra.Command{
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
 
-		organizationName, err := cmd.Flags().GetString("organization")
-		requiredInputCheck("Organization name", organizationName)
+		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
 		userEmail, err := cmd.Flags().GetString("email")
-		requiredInputCheck("User email", userEmail)
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("User email", userEmail); err != nil {
 			return err
 		}
 		owner, err := cmd.Flags().GetBool("owner")
@@ -414,11 +422,11 @@ func init() {
 	getUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to check users in (if not specified, will default to all groups)")
 	getAllUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 
-	addUserToOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	addUserToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 	addUserToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	addUserToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
 
-	RemoveUserFromOrganization.Flags().StringP("organization", "O", "", "Name of the organization")
+	RemoveUserFromOrganization.Flags().StringP("name", "O", "", "Name of the organization")
 	RemoveUserFromOrganization.Flags().StringP("email", "E", "", "Email address of the user")
 	RemoveUserFromOrganization.Flags().Bool("owner", false, "Set the user as an owner of the organization")
 }
