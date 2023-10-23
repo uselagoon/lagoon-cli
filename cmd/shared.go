@@ -106,6 +106,13 @@ func nullUintCheck(i uint) *uint {
 	return &i
 }
 
+func nullIntCheck(i int) *int {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
+
 func requiredInputCheck(field string, value string) error {
 	if value == "" || value == "0" {
 		return fmt.Errorf(fmt.Sprintf("Missing argument: %s is not defined", field))
