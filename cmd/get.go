@@ -1,14 +1,18 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"os"
+	"strconv"
+
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 // GetFlags .
@@ -44,30 +48,78 @@ var getProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Get details about a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		getProjectFlags := parseGetFlags(*cmd.Flags())
-		if getProjectFlags.Project == "" {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+			return nil
 		}
-		returnedJSON, err := pClient.GetProjectInfo(getProjectFlags.Project)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
+			return err
 		}
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
+
+		if project == nil {
+			output.RenderInfo(fmt.Sprintf("No details for project '%s'", cmdProjectName), outputOptions)
+			return nil
 		}
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No details for project '%s'", getProjectFlags.Project), outputOptions)
-			os.Exit(0)
+
+		DevEnvironments := 0
+		productionRoute := "none"
+		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(project.DeploymentsDisabled)))
+		handleError(err)
+		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(project.AutoIdle)))
+		handleError(err)
+		factsUI, err := strconv.ParseBool(strconv.Itoa(int(project.FactsUI)))
+		handleError(err)
+		problemsUI, err := strconv.ParseBool(strconv.Itoa(int(project.ProblemsUI)))
+		handleError(err)
+		for _, environment := range project.Environments {
+			if environment.EnvironmentType == "development" {
+				DevEnvironments++
+			}
+			if environment.EnvironmentType == "production" {
+				productionRoute = environment.Route
+			}
+		}
+
+		data := []output.Data{}
+		data = append(data, []string{
+			returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.Branches)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)),
+			returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
+			returnNonEmptyString(fmt.Sprintf("%v/%v", DevEnvironments, project.DevelopmentEnvironmentsLimit)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.DevelopmentEnvironmentsLimit)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)),
+			returnNonEmptyString(fmt.Sprintf("%v", autoIdle)),
+			returnNonEmptyString(fmt.Sprintf("%v", factsUI)),
+			returnNonEmptyString(fmt.Sprintf("%v", problemsUI)),
+			returnNonEmptyString(fmt.Sprintf("%v", deploymentsDisabled)),
+		})
+		dataMain := output.Table{
+			Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle", "FactsUI", "ProblemsUI", "DeploymentsDisabled"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
