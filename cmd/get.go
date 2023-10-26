@@ -49,7 +49,7 @@ var getProjectCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Get details about a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(cmdLagoon)
+		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
