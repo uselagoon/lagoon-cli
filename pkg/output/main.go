@@ -127,7 +127,7 @@ func RenderOutput(data Table, opts Options) {
 	} else {
 		// otherwise render a table
 		if opts.Error != "" {
-			os.Stdout.WriteString(opts.Error)
+			os.Stderr.WriteString(opts.Error)
 		}
 		table := tablewriter.NewWriter(os.Stdout)
 		opts.Header = !opts.Header
