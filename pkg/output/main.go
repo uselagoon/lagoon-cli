@@ -26,6 +26,7 @@ type Options struct {
 	JSON   bool
 	Pretty bool
 	Debug  bool
+	Error  string
 }
 
 // Result .
@@ -125,6 +126,9 @@ func RenderOutput(data Table, opts Options) {
 		RenderJSON(returnedData, opts)
 	} else {
 		// otherwise render a table
+		if opts.Error != "" {
+			os.Stdout.WriteString(opts.Error)
+		}
 		table := tablewriter.NewWriter(os.Stdout)
 		opts.Header = !opts.Header
 		if opts.Header {
