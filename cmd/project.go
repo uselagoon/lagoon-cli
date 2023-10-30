@@ -277,17 +277,17 @@ var updateProjectMetadata = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := lagoon.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
+			projectResult, err := l.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
 			if err != nil {
 				return err
 			}
@@ -332,17 +332,17 @@ var deleteProjectMetadataByKey = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := lagoon.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
+			projectResult, err := l.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
 			if err != nil {
 				return err
 			}
