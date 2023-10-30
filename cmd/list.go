@@ -286,7 +286,7 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
-				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+				env = append(env, fmt.Sprintf("%v", envvar.Value))
 			}
 			data = append(data, env)
 		}
