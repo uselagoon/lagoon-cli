@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -155,13 +157,13 @@ var listProjectByMetadata = &cobra.Command{
 			return fmt.Errorf("Missing arguments: key is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
+		projects, err := l.GetProjectsByMetadata(context.TODO(), key, value, lc)
 		if err != nil {
 			return err
 		}
