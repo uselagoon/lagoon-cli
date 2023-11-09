@@ -1,15 +1,23 @@
-## Lagoon CLI
+# Lagoon CLI
 
 <img src="./docs/lagoon-cli-logo.png" width=100>
-
-[![CircleCI](https://circleci.com/gh/uselagoon/lagoon-cli.svg?style=svg)](https://circleci.com/gh/uselagoon/lagoon-cli) 
 
 This is a CLI for interacting with a [Lagoon](https://github.com/uselagoon/lagoon) instance. By default, it is configured
 to work against [Amazee.io](https://www.amazee.io/) instances.
 
+
+## Table of Contents
+1. Project Description
+2. Usage
+3. Contribution
+4. Acknowledgements
+
+## Project Description
 If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-compose.yml` that references your project in lagoon, then you don't need to specify your project name on the command line as the CLI can read these files to determine the project. You can still define a project name though if you want to target a different project.
 
-## Install
+## Usage
+### Installation
+
 The preferred method is installation via [Homebrew](https://brew.sh/).
 ```
 brew tap uselagoon/lagoon-cli
@@ -78,9 +86,9 @@ Versions can also be defined, and the binaries will be version tagged
 ```
 make VERSION=v0.0.1 ...
 ```
+## Contribution
+If you'd like to contribute to the Lagoon CLI project, 
 
-
-
-### Acknowledgements
+## Acknowledgements
 
 [Matt Glaman](https://github.com/mglaman) - Initial conception and development - Thanks Matt!
