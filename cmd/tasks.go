@@ -187,14 +187,14 @@ var runDrushCacheClear = &cobra.Command{
 	},
 }
 
-var invokeDefinedTask = &cobra.Command{
-	Use:     "invoke",
+var runDefinedTask = &cobra.Command{
+	Use:     "task",
 	Aliases: []string{"i"},
-	Short:   "",
-	Long: `Invoke a task registered against an environment
+	Short:   "Run a custom task registered against an environment",
+	Long: `Run a custom task registered against an environment
 The following are supported methods to use
 Direct:
- lagoon run invoke -p example -e main -N "advanced task name"
+ lagoon run task -p example -e main -N "advanced task name" [--argument=NAME=VALUE|..]
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
@@ -203,7 +203,13 @@ Direct:
 			os.Exit(1)
 		}
 
-		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
+		taskArguments, err := splitInvokeTaskArguments(invokedTaskArguments)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+
+		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName, taskArguments)
 		handleError(err)
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
@@ -277,15 +283,17 @@ Path:
 }
 
 var (
-	taskName        string
-	invokedTaskName string
-	taskService     string
-	taskCommand     string
-	taskCommandFile string
+	taskName             string
+	invokedTaskName      string
+	invokedTaskArguments []string
+	taskService          string
+	taskCommand          string
+	taskCommandFile      string
 )
 
 func init() {
-	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
+	runDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be run")
+	runDefinedTask.Flags().StringSliceVar(&invokedTaskArguments, "argument", []string{}, "Arguments to be passed to custom task, of the form NAME=VALUE")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
