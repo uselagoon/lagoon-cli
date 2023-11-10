@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -155,21 +157,21 @@ var listProjectByMetadata = &cobra.Command{
 			return fmt.Errorf("Missing arguments: key is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
+		projects, err := l.GetProjectsByMetadata(context.TODO(), key, value, lc)
 		if err != nil {
 			return err
 		}
 		if len(*projects) == 0 {
 			if value != "" {
-				return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s and value %s", key, value))
+				outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s' and value '%s'\n", key, value)
 			}
-			return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s", key))
+			outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s'\n", key)
 		}
 		data := []output.Data{}
 		for _, project := range *projects {
@@ -227,8 +229,7 @@ var getProjectMetadata = &cobra.Command{
 			return err
 		}
 		if len(project.Metadata) == 0 {
-			output.RenderInfo(fmt.Sprintf("There is no metadata for project '%s'", cmdProjectName), outputOptions)
-			return nil
+			outputOptions.Error = fmt.Sprintf("There is no metadata for project '%s'\n", cmdProjectName)
 		}
 		data := []output.Data{}
 		for metaKey, metaVal := range project.Metadata {
