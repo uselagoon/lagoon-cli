@@ -61,24 +61,6 @@ func (u *Users) AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error
 	return returnResult, nil
 }
 
-// DeleteSSHKey function
-func (u *Users) DeleteSSHKey(keyName string) ([]byte, error) {
-	customReq := api.CustomRequest{
-		Query: `mutation deleteSshKey ($keyname: String!) {
-				deleteSshKey(input:{name: $keyname})
-		  	}`,
-		Variables: map[string]interface{}{
-			"keyname": keyName,
-		},
-		MappedResult: "deleteSshKey",
-	}
-	returnResult, err := u.api.Request(customReq)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
 // DeleteUser function
 func (u *Users) DeleteUser(user api.User) ([]byte, error) {
 	customReq := api.CustomRequest{
@@ -218,7 +200,7 @@ func (u *Users) ListUserSSHKeys(groupName string, email string, allUsers bool) (
 	customReq := api.CustomRequest{
 		Query: `query allGroups ($name: String) {
 				allGroups (name: $name) {
-			  		name
+			  		nameListUserSSHKeys
 			  		id
 			  		members{
 						user{
