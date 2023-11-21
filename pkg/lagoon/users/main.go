@@ -25,7 +25,6 @@ type Client interface {
 	AddSSHKeyToUser(api.User, api.SSHKey) ([]byte, error)
 	DeleteUser(api.User) ([]byte, error)
 	ModifyUser(api.User, api.User) ([]byte, error)
-	ListUserSSHKeys(string, string, bool) ([]byte, error)
 	ListGroups(string) ([]byte, error)
 	ListGroupProjects(string, bool) ([]byte, error)
 }

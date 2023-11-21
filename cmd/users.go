@@ -7,6 +7,7 @@ import (
 	"fmt"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -302,18 +303,61 @@ var getAllUserKeysCmd = &cobra.Command{
 	Aliases: []string{"aus"},
 	Short:   "Get all user SSH keys",
 	Long:    `Get all user SSH keys. This will only work for users that are part of a group`,
-	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := uClient.ListUserSSHKeys(groupName, strings.ToLower(userEmail), true)
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo("No SSH keys for any users", outputOptions)
-			os.Exit(0)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
 
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
+		handleError(err)
+
+		var userGroups []s.AddSSHKeyInput
+		for _, group := range *groupMembers {
+			for _, member := range group.Members {
+				for _, key := range member.User.SSHKeys {
+					userGroups = append(userGroups, s.AddSSHKeyInput{SSHKey: key, UserEmail: member.User.Email})
+				}
+			}
+		}
+
+		var data []output.Data
+		for _, userData := range userGroups {
+			keyID := strconv.Itoa(int(userData.SSHKey.ID))
+			userEmail := returnNonEmptyString(strings.Replace(userData.UserEmail, " ", "_", -1))
+			keyName := returnNonEmptyString(strings.Replace(userData.SSHKey.Name, " ", "_", -1))
+			keyValue := returnNonEmptyString(strings.Replace(userData.SSHKey.KeyValue, " ", "_", -1))
+			keyType := returnNonEmptyString(strings.Replace(string(userData.SSHKey.KeyType), " ", "_", -1))
+			data = append(data, []string{
+				keyID,
+				userEmail,
+				keyName,
+				keyType,
+				keyValue,
+			})
+		}
+
+		dataMain := output.Table{
+			Header: []string{"ID", "Email", "Name", "Type", "Value"},
+			Data:   data,
+		}
+
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -337,5 +381,5 @@ func init() {
 	updateUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
 	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringP("email", "E", "", "New email address of the user")
-	getAllUserKeysCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
+	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 }
