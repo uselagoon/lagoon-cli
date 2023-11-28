@@ -41,28 +41,28 @@ var sshEnvCmd = &cobra.Command{
 		// set the default ssh host and port to the core ssh endpoint
 		sshHost := lagoonCLIConfig.Lagoons[current].HostName
 		sshPort := lagoonCLIConfig.Lagoons[current].Port
+		isPortal := false
 
 		// if the config for this lagoon is set to use ssh portal support, handle that here
-		if lagoonCLIConfig.Lagoons[current].SSHPortal {
-			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
-				lagoonCLIVersion,
-				debug)
-			project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
-			if err != nil {
-				return err
-			}
-			// check all the environments for this project
-			for _, env := range project.Environments {
-				// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
-				if env.Name == environmentName {
-					// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
-					if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
-						sshHost = env.DeployTarget.SSHHost
-						sshPort = env.DeployTarget.SSHPort
-					}
+		lc := client.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Version,
+			lagoonCLIVersion,
+			debug)
+		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		// check all the environments for this project
+		for _, env := range project.Environments {
+			// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
+			if env.Name == environmentName {
+				// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
+				if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
+					sshHost = env.DeployTarget.SSHHost
+					sshPort = env.DeployTarget.SSHPort
+					isPortal = true
 				}
 			}
 		}
@@ -88,7 +88,7 @@ var sshEnvCmd = &cobra.Command{
 			"sshkey":   privateKey,
 		}
 		if sshConnString {
-			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer))
+			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer, isPortal))
 		} else {
 
 			// start an interactive ssh session
@@ -127,8 +127,15 @@ func init() {
 }
 
 // generateSSHConnectionString .
-func generateSSHConnectionString(lagoon map[string]string, service string, container string) string {
-	connString := fmt.Sprintf("ssh -t %s-o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" -p %v %s@%s", lagoon["sshKey"], lagoon["port"], lagoon["username"], lagoon["hostname"])
+func generateSSHConnectionString(lagoon map[string]string, service string, container string, isPortal bool) string {
+	connString := fmt.Sprintf("ssh -t")
+	if lagoon["sshKey"] != "" {
+		connString = fmt.Sprintf("%s -i %s", connString, lagoon["sshKey"])
+	}
+	if !isPortal {
+		connString = fmt.Sprintf("%s -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\"", connString)
+	}
+	connString = fmt.Sprintf("%s -p %v %s@%s", connString, lagoon["port"], lagoon["username"], lagoon["hostname"])
 	if service != "" {
 		connString = fmt.Sprintf("%s service=%s", connString, service)
 	}
