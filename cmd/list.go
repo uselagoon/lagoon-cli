@@ -286,16 +286,9 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
-				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+				env = append(env, fmt.Sprintf("%v", envvar.Value))
 			}
 			data = append(data, env)
-		}
-		if len(data) == 0 {
-			if cmdProjectEnvironment != "" {
-				return fmt.Errorf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
-			} else {
-				return fmt.Errorf("There are no variables for project '%s'", cmdProjectName)
-			}
 		}
 		header := []string{
 			"ID",
@@ -308,6 +301,13 @@ var listVariablesCmd = &cobra.Command{
 		header = append(header, "Name")
 		if reveal {
 			header = append(header, "Value")
+		}
+		if len(data) == 0 {
+			if cmdProjectEnvironment != "" {
+				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
+			} else {
+				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
+			}
 		}
 		output.RenderOutput(output.Table{
 			Header: header,
