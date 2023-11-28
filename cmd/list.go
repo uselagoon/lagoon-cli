@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -560,8 +561,14 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+		organizationID, err := cmd.Flags().GetUint("id")
+		if err != nil {
 			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			if err := requiredInputCheck("Organization ID", strconv.Itoa(int(organizationID))); err != nil {
+				return err
+			}
 		}
 
 		current := lagoonCLIConfig.Current
@@ -571,7 +578,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
-		deployTargets, err := l.ListDeployTargetsByOrganizationName(context.TODO(), organizationName, lc)
+		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
 		handleError(err)
 
 		data := []output.Data{}
@@ -580,7 +587,6 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%d", dt.ID)),
 				returnNonEmptyString(fmt.Sprintf("%s", dt.Name)),
 				returnNonEmptyString(fmt.Sprintf("%s", dt.RouterPattern)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.ConsoleURL)),
 				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudRegion)),
 				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%s", dt.SSHHost)),
@@ -588,7 +594,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "Router Pattern", "Console URL", "Cloud Region", "Cloud Provider", "SSH Host", "SSH Port"},
+			Header: []string{"ID", "Name", "Router Pattern", "Cloud Region", "Cloud Provider", "SSH Host", "SSH Port"},
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -648,6 +654,51 @@ var ListOrganizationUsersCmd = &cobra.Command{
 	},
 }
 
+var listOrganizationsCmd = &cobra.Command{
+	Use:     "organizations",
+	Aliases: []string{"o"},
+	Short:   "List all organizations",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organizations, err := l.AllOrganizations(context.TODO(), lc)
+
+		data := []output.Data{}
+		for _, organization := range *organizations {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", organization.ID)),
+				returnNonEmptyString(fmt.Sprintf("%s", organization.Name)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.Description)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaProject)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaGroup)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaNotification)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaEnvironment)),
+				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaRoute)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota", "Environment Quota", "Route Quota"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
@@ -667,6 +718,7 @@ func init() {
 	listOrganizationCmd.AddCommand(ListOrganizationUsersCmd)
 	listOrganizationCmd.AddCommand(listOrganizationGroupsCmd)
 	listOrganizationCmd.AddCommand(listOrganizationDeployTargetsCmd)
+	listOrganizationCmd.AddCommand(listOrganizationsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
@@ -675,4 +727,5 @@ func init() {
 	ListOrganizationUsersCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationGroupsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
 }
