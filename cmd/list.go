@@ -682,7 +682,7 @@ var listOrganizationsCmd = &cobra.Command{
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", organization.ID)),
 				returnNonEmptyString(fmt.Sprintf("%s", organization.Name)),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.Description)),
+				returnNonEmptyString(fmt.Sprintf("%s", organization.Description)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaProject)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaGroup)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaNotification)),
