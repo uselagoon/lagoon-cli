@@ -44,6 +44,12 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: project is a required flag")
+		}
+		if deploytarget == 0 {
+			return fmt.Errorf("Missing arguments: deploytarget id is a required flag")
+		}
 		if pullrequests == "" {
 			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
 		}
