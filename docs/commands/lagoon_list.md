@@ -1,10 +1,10 @@
 ## lagoon list
 
-List projects, deployments, variables or notifications
+List projects, environments, deployments, variables or notifications
 
 ### Synopsis
 
-List projects, deployments, variables or notifications
+List projects, environments, deployments, variables or notifications
 
 ### Options
 
@@ -42,6 +42,7 @@ List projects, deployments, variables or notifications
 * [lagoon list groups](lagoon_list_groups.md)	 - List groups you have access to (alias: g)
 * [lagoon list invokable-tasks](lagoon_list_invokable-tasks.md)	 - Print a list of invokable tasks
 * [lagoon list notification](lagoon_list_notification.md)	 - List all notifications or notifications on projects
+* [lagoon list project-groups](lagoon_list_project-groups.md)	 - List groups in a project (alias: pg)
 * [lagoon list projects](lagoon_list_projects.md)	 - List all projects you have access to (alias: p)
 * [lagoon list projects-by-metadata](lagoon_list_projects-by-metadata.md)	 - List projects by a given metadata key or key:value
 * [lagoon list tasks](lagoon_list_tasks.md)	 - List tasks for an environment (alias: t)

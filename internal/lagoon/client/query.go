@@ -118,26 +118,6 @@ func (c *Client) LagoonSchema(
 	})
 }
 
-// GetTaskByID queries the Lagoon API for a task by its ID, and
-// unmarshals the response.
-func (c *Client) GetTaskByID(
-	ctx context.Context, id int, task *schema.Task) error {
-
-	req, err := c.newVersionedRequest("_lgraphql/taskByID.graphql",
-		map[string]interface{}{
-			"id": id,
-		})
-	if err != nil {
-		return err
-	}
-
-	return c.client.Run(ctx, req, &struct {
-		Response *schema.Task `json:"taskById"`
-	}{
-		Response: task,
-	})
-}
-
 // MinimalProjectByName queries the Lagoon API for a project by its name, and
 // unmarshals the response into project.
 func (c *Client) MinimalProjectByName(
@@ -175,27 +155,6 @@ func (c *Client) ProjectByNameMetadata(
 		Response *schema.ProjectMetadata `json:"projectByName"`
 	}{
 		Response: project,
-	})
-}
-
-// ProjectsByMetadata queries the Lagoon API for a project by its name, and
-// unmarshals the response into project.
-func (c *Client) ProjectsByMetadata(
-	ctx context.Context, key string, value string, projects *[]schema.ProjectMetadata) error {
-
-	req, err := c.newVersionedRequest("_lgraphql/projectsByMetadata.graphql",
-		map[string]interface{}{
-			"key":   key,
-			"value": value,
-		})
-	if err != nil {
-		return err
-	}
-
-	return c.client.Run(ctx, req, &struct {
-		Response *[]schema.ProjectMetadata `json:"projectsByMetadata"`
-	}{
-		Response: projects,
 	})
 }
 
