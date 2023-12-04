@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"io/ioutil"
 	"os"
 )
@@ -41,13 +41,13 @@ var getTaskByID = &cobra.Command{
 			return fmt.Errorf("Missing arguments: ID is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
+		result, err := l.TaskByID(context.TODO(), taskID, lc)
 		if err != nil {
 			return err
 		}
@@ -100,13 +100,13 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
+			result, err := l.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
