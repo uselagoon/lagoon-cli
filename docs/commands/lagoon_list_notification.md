@@ -31,7 +31,7 @@ List all notifications or notifications on projects
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 * [lagoon list notification email](lagoon_list_notification_email.md)	 - List all email notification details (alias: e)
 * [lagoon list notification microsoftteams](lagoon_list_notification_microsoftteams.md)	 - List all Microsoft Teams notification details (alias: m)
 * [lagoon list notification project-email](lagoon_list_notification_project-email.md)	 - List email details about a project (alias: pe)

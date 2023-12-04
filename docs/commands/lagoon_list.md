@@ -1,10 +1,10 @@
 ## lagoon list
 
-List projects, deployments, variables or notifications
+List projects, environments, deployments, variables or notifications
 
 ### Synopsis
 
-List projects, deployments, variables or notifications
+List projects, environments, deployments, variables or notifications
 
 ### Options
 
