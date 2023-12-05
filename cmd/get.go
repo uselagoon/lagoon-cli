@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
@@ -123,41 +123,77 @@ var getProjectCmd = &cobra.Command{
 	},
 }
 
-var getDeploymentCmd = &cobra.Command{
+var getDeploymentByNameCmd = &cobra.Command{
 	Use:     "deployment",
 	Aliases: []string{"d"},
-	Short:   "Get a build log by remote id",
-	Run: func(cmd *cobra.Command, args []string) {
-		getProjectFlags := parseGetFlags(*cmd.Flags())
-		if getProjectFlags.RemoteID == "" {
-			fmt.Println("Missing arguments: Remote ID is not defined")
-			cmd.Help()
-			os.Exit(1)
-		}
-		returnedJSON, err := eClient.GetDeploymentLog(getProjectFlags.RemoteID)
+	Short:   "Get a deployment by name",
+	Long: `Get a deployment by name
+This returns information about a deployment, the logs of this build can also be retrieved`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		if string(returnedJSON) == "null" {
-			output.RenderInfo(fmt.Sprintf("No deployment for remoteId '%s'", getProjectFlags.RemoteID), outputOptions)
-			os.Exit(0)
-		}
-		var deployment api.Deployment
-		err = json.Unmarshal([]byte(returnedJSON), &deployment)
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		if deployment.BuildLog != "" {
-			fmt.Println(deployment.BuildLog)
-		} else {
-			fmt.Println("Log data is not available")
+			return err
 		}
 
+		buildName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		showLogs, err := cmd.Flags().GetBool("logs")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		deployment, err := l.GetDeploymentByName(context.TODO(), cmdProjectName, cmdProjectEnvironment, buildName, showLogs, lc)
+		if err != nil {
+			return err
+		}
+		if showLogs {
+			dataMain := output.Table{
+				Header: []string{
+					"Logs",
+				},
+				Data: []output.Data{
+					{
+						returnNonEmptyString(deployment.BuildLog),
+					},
+				},
+			}
+			output.RenderOutput(dataMain, outputOptions)
+			return nil
+		}
+		dataMain := output.Table{
+			Header: []string{
+				"ID",
+				"RemoteID",
+				"Name",
+				"Status",
+				"Created",
+				"Started",
+				"Completed",
+			},
+			Data: []output.Data{
+				{
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.ID)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
+					returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
+				},
+			},
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
-
 var getEnvironmentCmd = &cobra.Command{
 	Use:     "environment",
 	Aliases: []string{"e"},
@@ -275,7 +311,6 @@ var getOrganizationCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getAllUserKeysCmd)
-	getCmd.AddCommand(getDeploymentCmd)
 	getCmd.AddCommand(getEnvironmentCmd)
 	getCmd.AddCommand(getOrganizationCmd)
 	getCmd.AddCommand(getProjectCmd)
@@ -283,9 +318,11 @@ func init() {
 	getCmd.AddCommand(getUserKeysCmd)
 	getCmd.AddCommand(getTaskByID)
 	getCmd.AddCommand(getToken)
+	getCmd.AddCommand(getDeploymentByNameCmd)
 	getTaskByID.Flags().IntP("id", "I", 0, "ID of the task")
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
-	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
+	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
+	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
 	getOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 }
