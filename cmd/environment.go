@@ -124,7 +124,7 @@ var updateEnvironmentCmd = &cobra.Command{
 			Route:                nullStrCheck(route),
 			Routes:               nullStrCheck(routes),
 			DeployTitle:          nullStrCheck(deployTitle),
-			Openshift:            nullIntCheck(openShift),
+			Openshift:            nullUintCheck(openShift),
 		}
 		if environmentAutoIdleProvided {
 			environmentFlags.AutoIdle = &environmentAutoIdle
@@ -156,20 +156,6 @@ var updateEnvironmentCmd = &cobra.Command{
 		output.RenderResult(resultData, outputOptions)
 		return nil
 	},
-}
-
-func nullStrCheck(s string) *string {
-	if s == "" {
-		return nil
-	}
-	return &s
-}
-
-func nullIntCheck(i uint) *uint {
-	if i == 0 {
-		return nil
-	}
-	return &i
 }
 
 func checkFlags(f *pflag.Flag) {
