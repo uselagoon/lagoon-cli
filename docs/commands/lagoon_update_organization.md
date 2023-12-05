@@ -1,20 +1,27 @@
-## lagoon delete user-sshkey
+## lagoon update organization
 
-Delete an SSH key from Lagoon
+Update an organization
 
 ### Synopsis
 
-Delete an SSH key from Lagoon
+Update an organization
 
 ```
-lagoon delete user-sshkey [flags]
+lagoon update organization [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help      help for user-sshkey
-      --id uint   ID of the SSH key
+      --description string       Description of the organization
+      --environment-quota int    Environment quota for the organization
+      --friendly-name string     Friendly name of the organization
+      --group-quota int          Group quota for the organization
+  -h, --help                     help for organization
+  -O, --name string              Name of the organization to update
+      --notification-quota int   Notification quota for the organization
+      --project-quota int        Project quota for the organization
+      --route-quota int          Route quota for the organization
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +43,5 @@ lagoon delete user-sshkey [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon update](lagoon_update.md)	 - Update a resource
 

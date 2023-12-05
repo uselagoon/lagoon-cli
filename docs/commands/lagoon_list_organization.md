@@ -1,20 +1,15 @@
-## lagoon delete user-sshkey
+## lagoon list organization
 
-Delete an SSH key from Lagoon
+List all organizations projects, groups, deploy targets or users
 
 ### Synopsis
 
-Delete an SSH key from Lagoon
-
-```
-lagoon delete user-sshkey [flags]
-```
+List all organizations projects, groups, deploy targets or users
 
 ### Options
 
 ```
-  -h, --help      help for user-sshkey
-      --id uint   ID of the SSH key
+  -h, --help   help for organization
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +31,10 @@ lagoon delete user-sshkey [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon list organization deploytargets](lagoon_list_organization_deploytargets.md)	 - List deploy targets in an organization
+* [lagoon list organization groups](lagoon_list_organization_groups.md)	 - List groups in an organization
+* [lagoon list organization organizations](lagoon_list_organization_organizations.md)	 - List all organizations
+* [lagoon list organization projects](lagoon_list_organization_projects.md)	 - List projects in an organization
+* [lagoon list organization users](lagoon_list_organization_users.md)	 - List users in an organization
 

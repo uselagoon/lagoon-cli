@@ -1,20 +1,21 @@
-## lagoon delete user-sshkey
+## lagoon upload task-files
 
-Delete an SSH key from Lagoon
+Upload files to a task by its ID
 
 ### Synopsis
 
-Delete an SSH key from Lagoon
+Upload files to a task by its ID
 
 ```
-lagoon delete user-sshkey [flags]
+lagoon upload task-files [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help      help for user-sshkey
-      --id uint   ID of the SSH key
+  -F, --file strings   File to upload (add multiple flags to upload multiple files)
+  -h, --help           help for task-files
+  -I, --id int         ID of the task
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +37,5 @@ lagoon delete user-sshkey [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon upload](lagoon_upload.md)	 - Upload files to tasks
 

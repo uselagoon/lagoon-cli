@@ -1,20 +1,15 @@
-## lagoon delete user-sshkey
+## lagoon add organization
 
-Delete an SSH key from Lagoon
+Add an organization, or add a group/project to an organization
 
 ### Synopsis
 
-Delete an SSH key from Lagoon
-
-```
-lagoon delete user-sshkey [flags]
-```
+Add an organization, or add a group/project to an organization
 
 ### Options
 
 ```
-  -h, --help      help for user-sshkey
-      --id uint   ID of the SSH key
+  -h, --help   help for organization
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +31,10 @@ lagoon delete user-sshkey [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon add organization deploytarget](lagoon_add_organization_deploytarget.md)	 - Add a deploy target to an Organization
+* [lagoon add organization group](lagoon_add_organization_group.md)	 - Add a group to an Organization
+* [lagoon add organization organization](lagoon_add_organization_organization.md)	 - Add a new organization to Lagoon
+* [lagoon add organization project](lagoon_add_organization_project.md)	 - Add a project to an Organization
+* [lagoon add organization user](lagoon_add_organization_user.md)	 - Add a user to an Organization
 
