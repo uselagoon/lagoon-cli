@@ -17,7 +17,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.8.2
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	gopkg.in/yaml.v2 v2.2.8
 	sigs.k8s.io/yaml v1.2.0
@@ -25,7 +25,6 @@ require (
 
 require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
-	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/guregu/null v4.0.0+incompatible
 	// workaround for https://github.com/manifoldco/promptui/issues/98
@@ -42,3 +41,6 @@ replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewrite
 //replace github.com/uselagoon/machinery => ../machinery
 
 // replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter
+
+// replace github.com/uselagoon/machinery v0.0.8 => ../machinery
+replace github.com/uselagoon/machinery v0.0.8 => github.com/uselagoon/machinery v0.0.0-20230518215531-41f1b4bb9b26
