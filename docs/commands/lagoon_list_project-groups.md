@@ -1,19 +1,19 @@
-## lagoon list tasks
+## lagoon list project-groups
 
-List tasks for an environment (alias: t)
+List groups in a project (alias: pg)
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List groups in a project (alias: pg)
 
 ```
-lagoon list tasks [flags]
+lagoon list project-groups [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help   help for project-groups
 ```
 
 ### Options inherited from parent commands

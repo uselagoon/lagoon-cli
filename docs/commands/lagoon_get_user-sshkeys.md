@@ -15,7 +15,6 @@ lagoon get user-sshkeys [flags]
 ```
   -E, --email string   New email address of the user
   -h, --help           help for user-sshkeys
-  -N, --name string    Name of the group to check users in (if not specified, will default to all groups)
 ```
 
 ### Options inherited from parent commands

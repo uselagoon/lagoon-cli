@@ -28,54 +28,72 @@ projects:
       value: "1"
     environmentType: ""
     name: develop
+    openshift:
+      id: 1
     openshiftProjectName: bananas-develop
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: feature/persist-db
+    openshift:
+      id: 1
     openshiftProjectName: bananas-feature-persist-db
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: master
+    openshift:
+      id: 1
     openshiftProjectName: bananas-master
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: pr-486
+    openshift:
+      id: 1
     openshiftProjectName: bananas-pr-486
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: pr-487
+    openshift:
+      id: 1
     openshiftProjectName: bananas-pr-487
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: pr-507
+    openshift:
+      id: 1
     openshiftProjectName: bananas-pr-507
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: pr-513
+    openshift:
+      id: 1
     openshiftProjectName: bananas-pr-513
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: production
+    openshift:
+      id: 1
     openshiftProjectName: bananas-production
   - autoIdle: 1
     deployBaseRef: ""
     deployType: ""
     environmentType: ""
     name: sandbox
+    openshift:
+      id: 1
     openshiftProjectName: bananas-sandbox
   gitUrl: git@github.amazee.io:foo-bar/bananas-au.git
   groups:

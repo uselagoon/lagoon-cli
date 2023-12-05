@@ -21,7 +21,6 @@ type Projects struct {
 // Client .
 type Client interface {
 	ListAllProjects() ([]byte, error)
-	ListEnvironmentsForProject(string) ([]byte, error)
 	ListProjectVariables(string, bool) ([]byte, error)
 	GetProjectKey(string, bool) ([]byte, error)
 	GetProjectInfo(string) ([]byte, error)
@@ -158,59 +157,6 @@ func processProjectExtra(project api.Project) []string {
 		fmt.Sprintf("%v", *project.ProblemsUI),
 	}
 	return data
-}
-
-// ListEnvironmentsForProject will list all environments for a project
-func (p *Projects) ListEnvironmentsForProject(projectName string) ([]byte, error) {
-	// get project info from lagoon
-	project := api.Project{
-		Name: projectName,
-	}
-	projectByName, err := p.api.GetProjectByName(project, graphql.ProjectByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processEnvironmentsList(projectByName)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
-func processEnvironmentsList(projectByName []byte) ([]byte, error) {
-	var projects api.Project
-	err := json.Unmarshal([]byte(projectByName), &projects)
-	if err != nil {
-		return []byte(""), err
-	}
-	// count the current dev environments in a project
-	var currentDevEnvironments = 0
-	for _, environment := range projects.Environments {
-		if environment.EnvironmentType == "development" {
-			currentDevEnvironments++
-		}
-	}
-	// process the data for output
-	data := []output.Data{}
-	for _, environment := range projects.Environments {
-		var envRoute = "none"
-		if environment.Route != "" {
-			envRoute = environment.Route
-		}
-		data = append(data, []string{
-			fmt.Sprintf("%d", environment.ID),
-			environment.Name,
-			string(environment.DeployType),
-			string(environment.EnvironmentType),
-			string(environment.OpenshiftProjectName),
-			envRoute,
-		})
-	}
-	dataMain := output.Table{
-		Header: []string{"ID", "Name", "DeployType", "Environment", "OpenshiftProjectName", "Route"}, //, "SSH"},
-		Data:   data,
-	}
-	return json.Marshal(dataMain)
 }
 
 // AddProject .

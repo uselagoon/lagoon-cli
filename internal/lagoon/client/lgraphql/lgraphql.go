@@ -1,7 +1,6 @@
 // Code generated for package lgraphql by go-bindata DO NOT EDIT. (@generated)
 // sources:
 // _lgraphql/addDeployTarget.graphql
-// _lgraphql/addDeployTargetConfig.graphql
 // _lgraphql/addEnvVariable.graphql
 // _lgraphql/addGroup.graphql
 // _lgraphql/addGroupsToProject.graphql
@@ -27,13 +26,9 @@
 // _lgraphql/minimalProjectByName.graphql
 // _lgraphql/projectByName.graphql
 // _lgraphql/projectByNameMetadata.graphql
-// _lgraphql/projectsByMetadata.graphql
-// _lgraphql/removeProjectMetadataByKey.graphql
-// _lgraphql/switchActiveStandby.graphql
-// _lgraphql/taskByID.graphql
+// _lgraphql/sshEndpointsByProject.graphql
 // _lgraphql/updateDeployTarget.graphql
 // _lgraphql/updateDeployTargetConfig.graphql
-// _lgraphql/updateProjectMetadata.graphql
 // _lgraphql/variables/addOrUpdateEnvVariableByName.graphql
 // _lgraphql/variables/deleteEnvVariableByName.graphql
 // _lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql
@@ -156,26 +151,6 @@ func _lgraphqlAdddeploytargetGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/addDeployTarget.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlAdddeploytargetconfigGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xec\x92\x31\x4f\xfb\x30\x10\xc5\xf7\x7c\x8a\xfb\x57\xff\xa1\x5d\xaa\xc2\x98\x15\x10\x62\x81\x08\x2a\x76\x13\x5f\x12\x23\xf7\x9c\x5e\x6c\x50\x15\xf9\xbb\xa3\xd6\x4d\x52\xa7\x29\x13\x63\x3d\xbe\x7b\xb9\xcb\xef\xe9\xb5\x2d\xa8\x02\x44\xad\xde\x91\x1f\x19\x85\x45\x5e\x57\x82\x5e\xf8\x61\xeb\x84\x86\x25\xcc\x6e\x97\x37\xab\xe5\x6a\x06\xde\x27\x1b\x67\x85\x55\x86\x60\x9e\x00\x00\xfc\xaf\xd9\x7c\x62\x6e\x53\x78\x22\xfb\x2f\x48\xdf\xa8\xca\x2a\x28\x41\xf8\x60\x41\x79\x85\x4d\x0a\x6f\x96\x15\x95\x47\x5f\xed\xb4\x66\xdc\x3a\x6c\xec\x78\x24\xb1\xd6\x66\xb7\x16\x5c\x62\xb4\xfa\x54\xcf\xc2\xe5\x4c\x58\x8b\x4c\xdd\x82\x64\xd1\x1e\xac\x42\xca\xfb\x13\xf3\x9d\xa1\x42\x95\x73\x45\xb5\xb3\x69\x70\xec\x5f\x7c\x27\x5a\xdf\x7b\x3a\x9c\x23\x57\xaf\x0f\x54\x3d\x60\x3f\x8b\xd1\x22\xd2\xc1\xd3\x25\xd7\x65\x38\xf9\x57\x63\xca\x5f\x22\x38\x7c\xef\x17\x03\x9d\x92\x93\x2b\x07\xc3\xc8\xb4\x7f\x24\x36\x18\x09\x05\x2b\x24\xa9\x77\xcf\xe3\x41\xae\x8d\x93\x19\x9b\x2f\x25\x91\xcf\x27\xaf\x58\x2a\x43\xbd\xee\xcf\x72\x9b\x0c\x6b\x94\x7a\x40\x4a\x7c\xd2\xb6\x80\xba\xc1\xbf\x6a\xe0\xe5\x02\x5e\xfb\x77\xed\xdf\x85\xfe\x91\x04\xef\x7f\x02\x00\x00\xff\xff\x06\x39\x95\x1a\x2d\x05\x00\x00")
-
-func _lgraphqlAdddeploytargetconfigGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlAdddeploytargetconfigGraphql,
-		"_lgraphql/addDeployTargetConfig.graphql",
-	)
-}
-
-func _lgraphqlAdddeploytargetconfigGraphql() (*asset, error) {
-	bytes, err := _lgraphqlAdddeploytargetconfigGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/addDeployTargetConfig.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -680,82 +655,22 @@ func _lgraphqlProjectbynamemetadataGraphql() (*asset, error) {
 	return a, nil
 }
 
-var __lgraphqlProjectsbymetadataGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x90\x4d\x4b\xc4\x30\x10\x86\xef\xfd\x15\xe3\xe2\xc1\xbd\x14\xbd\x78\xd8\xa3\xb0\x88\xa0\xb8\xe0\xc7\x7d\x6c\x66\xb7\xd1\x34\x69\x27\x93\x42\x09\xf9\xef\xd2\x76\x4d\x2b\xe2\x9c\x86\x67\xe6\x7d\xe7\x23\x46\xd0\x47\xc0\x56\xbf\x13\xdf\x33\xa1\x10\xbf\xd6\x68\x9f\x79\xdf\x05\x34\x50\xc2\xe6\xa6\xbc\x2d\xaf\x37\x90\x52\xd1\x05\xe2\x01\xae\x0a\x00\x80\xcb\x2f\x1a\x76\xf0\x22\xac\xed\xe9\x62\x26\x3d\x9a\x40\x3f\x6c\x1b\x27\xd8\xb2\xfb\xa4\x4a\xfc\xdd\xf0\x44\x82\x0a\x05\x67\xf9\x18\xcd\x99\xec\x20\x66\x36\xc6\xe4\x3c\xfa\xff\xa2\x67\xf7\x79\x4a\xae\xa4\x29\xdb\x2e\x06\x5a\xe5\xd4\x62\xb3\x34\x62\x10\xf7\xa0\xcc\x02\x3e\x18\x6d\x55\x93\xcf\xa0\x0d\xc6\x30\x75\x81\xbc\xf8\x3f\x3b\x2e\x5d\xec\x54\xa8\x44\x3b\xbb\xb7\xbd\x66\x67\x1b\xb2\x92\xab\xae\x25\xeb\x6b\x7d\x94\xc3\x7c\xf7\x01\x45\x88\x6d\xae\x2b\xea\xc9\xb8\x76\xd4\xac\xe4\xfe\x51\x37\x7a\x31\x39\x69\x79\x63\xf3\xff\xe6\x79\xc8\xfa\x6d\xab\xbb\xe7\x9f\xa4\x22\x15\x31\x02\x59\x05\x29\x7d\x07\x00\x00\xff\xff\x88\xf4\xc3\xb2\xe6\x01\x00\x00")
+var __lgraphqlSshendpointsbyprojectGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\x2c\x4d\x2d\xaa\x54\xd0\x50\xc9\x4b\xcc\x4d\xb5\x52\x08\x2e\x29\xca\xcc\x4b\x57\xd4\x54\xa8\xe6\x52\x50\x28\x28\xca\xcf\x4a\x4d\x2e\x71\xaa\xf4\x4b\xcc\x4d\xd5\x80\x28\x00\xab\x83\x48\x2b\x28\x64\xa6\x80\x29\x90\x10\x98\x91\x9a\x57\x96\x59\x94\x9f\x97\x9b\x9a\x57\x52\x0c\x55\x02\x57\x84\xa4\x4c\x41\x21\xbf\x20\x35\xaf\x38\x23\x33\xad\x24\x00\x62\x85\x1f\x16\x29\x98\x7e\x24\x13\x14\x14\x8a\x8b\x33\x3c\xf2\x8b\x4b\x90\xf9\x01\xf9\x45\x30\x7e\x2d\x17\x8c\xac\xe5\xaa\xe5\x02\x04\x00\x00\xff\xff\x54\x7c\x7d\xf6\xda\x00\x00\x00")
 
-func _lgraphqlProjectsbymetadataGraphqlBytes() ([]byte, error) {
+func _lgraphqlSshendpointsbyprojectGraphqlBytes() ([]byte, error) {
 	return bindataRead(
-		__lgraphqlProjectsbymetadataGraphql,
-		"_lgraphql/projectsByMetadata.graphql",
+		__lgraphqlSshendpointsbyprojectGraphql,
+		"_lgraphql/sshEndpointsByProject.graphql",
 	)
 }
 
-func _lgraphqlProjectsbymetadataGraphql() (*asset, error) {
-	bytes, err := _lgraphqlProjectsbymetadataGraphqlBytes()
+func _lgraphqlSshendpointsbyprojectGraphql() (*asset, error) {
+	bytes, err := _lgraphqlSshendpointsbyprojectGraphqlBytes()
 	if err != nil {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "_lgraphql/projectsByMetadata.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlRemoveprojectmetadatabykeyGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x54\x8d\x31\x0b\xc2\x30\x10\x85\xf7\xfc\x8a\x6b\x71\xb0\x4b\xd1\xc5\x21\xa3\x20\x22\x22\x0a\x8a\xfb\x61\x4e\x8d\x9a\xb4\x1e\x57\xa1\x84\xfc\x77\x69\x2a\x55\x6f\xba\xf7\xc1\xfb\x5e\x08\x60\xcf\x80\xb5\x3d\x12\x2f\x99\x50\x88\x0f\x57\xf4\x5b\x5e\x3c\x1b\x7c\x40\x09\xf9\xb4\x9c\x95\x93\x1c\x62\x54\xae\x11\x14\x5b\x79\x18\x2b\x00\x80\x91\x35\x1a\x56\x5e\xb2\x3e\xdd\xa9\xd5\xb0\x17\xb6\xfe\x92\x15\x21\x31\x26\x57\xbd\x68\xc7\xd5\x8d\x4e\xb2\x21\x41\x83\x82\xf3\x76\x4d\x6d\x6f\xe8\xce\xfa\xba\x11\x1d\x86\x9c\x98\xd1\x9d\xfd\x8f\x25\x7d\x37\x32\xd0\x98\xbe\xe2\x5b\xfd\x69\x78\x74\x34\x04\xf7\x59\x56\x7d\x2b\xaa\x10\x80\xbc\x81\x18\xdf\x01\x00\x00\xff\xff\x82\x2b\x13\x86\xfe\x00\x00\x00")
-
-func _lgraphqlRemoveprojectmetadatabykeyGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlRemoveprojectmetadatabykeyGraphql,
-		"_lgraphql/removeProjectMetadataByKey.graphql",
-	)
-}
-
-func _lgraphqlRemoveprojectmetadatabykeyGraphql() (*asset, error) {
-	bytes, err := _lgraphqlRemoveprojectmetadatabykeyGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/removeProjectMetadataByKey.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlSwitchactivestandbyGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\x8c\xb1\x8f\x82\x50\x0c\x87\xf7\xfe\x15\xbf\x23\x37\x1c\x0b\xb9\x1b\x8f\xcd\xc1\x38\x3a\x60\xdc\x2b\x54\xa9\x91\x82\xcf\xa2\x31\x2f\xef\x7f\x37\x18\xb0\x43\x93\x7e\xe9\xf7\xc5\x08\x3d\x82\x07\xdd\x4b\xd8\x04\x61\x97\xb0\x6b\xd9\xb6\x61\x7d\x1d\xf9\x82\x02\xd9\x5f\xf1\x5f\xfc\x66\x48\x89\xba\xd1\xd9\xb5\x37\xfc\x10\xf0\x3d\x84\xfe\x2c\xb5\x97\xa8\x3c\xa8\x9d\xbe\x08\xc8\x11\x09\xb8\x3d\xd4\xeb\x76\x55\xbb\xde\xa5\x72\xb6\xe6\xf0\x9c\x04\x40\x6d\x18\xbd\x7c\xff\x4c\xb3\x04\x96\x1b\x30\xee\xa4\xfc\x94\x67\x9c\x68\xd9\xf9\xac\x6a\x43\x13\x48\x14\x23\xc4\x1a\xa4\xf4\x0a\x00\x00\xff\xff\xf9\xe3\xea\x42\xc6\x00\x00\x00")
-
-func _lgraphqlSwitchactivestandbyGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlSwitchactivestandbyGraphql,
-		"_lgraphql/switchActiveStandby.graphql",
-	)
-}
-
-func _lgraphqlSwitchactivestandbyGraphql() (*asset, error) {
-	bytes, err := _lgraphqlSwitchactivestandbyGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/switchActiveStandby.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlTaskbyidGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\x8e\x31\x0f\x82\x30\x10\x85\xf7\xfe\x8a\x27\x61\xc0\x85\xe8\xa8\xa3\x89\x31\x4c\x2e\xc6\xfd\x42\x4f\x6d\xa4\x05\x8e\x62\x42\x9a\xfe\x77\x43\x11\xa7\xfb\xee\xdd\xcb\x97\x0b\x01\xe6\x01\xea\xcc\x9d\xe5\x22\x4c\x9e\xe5\xf6\x22\x77\x95\x73\x3f\x52\x83\x12\xd9\xbe\x3c\x94\xbb\x0c\x31\xaa\x7e\x64\x99\x50\x28\x20\x37\xfa\x88\xca\xf9\x8d\x02\xb6\x41\x01\x9e\x86\xf7\x69\xaa\x74\x31\x1f\x72\xa3\x53\x08\x18\x9d\x86\x23\xcb\x09\xea\xd6\x5a\x72\x4b\x38\x78\xf2\xe3\xb0\xa2\x78\xd6\x6b\xa5\x6b\xf8\xbf\xa5\x97\x16\x6e\xda\xe7\x52\x17\xb6\xad\xe7\xea\xa7\x61\xf9\x98\x7a\xd6\x47\x15\x55\x08\x60\xa7\x11\xe3\x37\x00\x00\xff\xff\xb1\xdc\x9e\x8c\xd8\x00\x00\x00")
-
-func _lgraphqlTaskbyidGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlTaskbyidGraphql,
-		"_lgraphql/taskByID.graphql",
-	)
-}
-
-func _lgraphqlTaskbyidGraphql() (*asset, error) {
-	bytes, err := _lgraphqlTaskbyidGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/taskByID.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	info := bindataFileInfo{name: "_lgraphql/sshEndpointsByProject.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -796,26 +711,6 @@ func _lgraphqlUpdatedeploytargetconfigGraphql() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "_lgraphql/updateDeployTargetConfig.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var __lgraphqlUpdateprojectmetadataGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x64\x8e\xb1\x6e\xc2\x30\x10\x86\x77\x3f\xc5\x35\xea\xd0\x2c\x51\xbb\x74\xf0\x5e\x55\x1d\x2a\x90\x40\xec\xa7\xf8\x20\x86\xc4\x31\xd6\x19\x09\x59\x7e\x77\xe4\x38\x10\x2c\x6e\xf2\x7d\xe7\xbb\xff\x0b\x01\xf4\x1e\xd0\xea\x1d\xb9\x5f\x47\xc8\xe4\xb6\x1d\x9a\x95\xfb\x39\x7b\xec\xa1\x81\xea\xab\xf9\x6e\x3e\x2b\x88\x51\x0c\x9e\x91\xf5\x68\xe0\x43\x00\x00\xbc\x6b\x25\xe1\xcf\xf0\x5b\xee\x4e\x74\x95\xb0\x61\xa7\xcd\x61\x26\x17\xec\x3d\xdd\x59\x1d\x26\xe8\xad\x42\xa6\xb5\x1b\x8f\xd4\xf2\x3f\x31\x2a\x64\xcc\xf7\x52\x69\x63\x3d\xcb\xf0\xe8\x27\xa6\x64\xca\x2a\x98\x45\x6e\x3b\x09\xe5\xc7\x54\x93\x45\x72\x79\x99\xcc\x36\xd9\xaa\x98\x46\x51\xbe\xea\xe5\xec\x53\xac\xc1\x61\x59\x1b\x66\x73\x91\xb7\xa2\x08\x01\xc8\x28\x88\xf1\x16\x00\x00\xff\xff\xa5\x4e\x06\xe0\x51\x01\x00\x00")
-
-func _lgraphqlUpdateprojectmetadataGraphqlBytes() ([]byte, error) {
-	return bindataRead(
-		__lgraphqlUpdateprojectmetadataGraphql,
-		"_lgraphql/updateProjectMetadata.graphql",
-	)
-}
-
-func _lgraphqlUpdateprojectmetadataGraphql() (*asset, error) {
-	bytes, err := _lgraphqlUpdateprojectmetadataGraphqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "_lgraphql/updateProjectMetadata.graphql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1473,7 +1368,6 @@ func AssetNames() []string {
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/addDeployTarget.graphql":                                   _lgraphqlAdddeploytargetGraphql,
-	"_lgraphql/addDeployTargetConfig.graphql":                             _lgraphqlAdddeploytargetconfigGraphql,
 	"_lgraphql/addEnvVariable.graphql":                                    _lgraphqlAddenvvariableGraphql,
 	"_lgraphql/addGroup.graphql":                                          _lgraphqlAddgroupGraphql,
 	"_lgraphql/addGroupsToProject.graphql":                                _lgraphqlAddgroupstoprojectGraphql,
@@ -1499,13 +1393,9 @@ var _bindata = map[string]func() (*asset, error){
 	"_lgraphql/minimalProjectByName.graphql":                              _lgraphqlMinimalprojectbynameGraphql,
 	"_lgraphql/projectByName.graphql":                                     _lgraphqlProjectbynameGraphql,
 	"_lgraphql/projectByNameMetadata.graphql":                             _lgraphqlProjectbynamemetadataGraphql,
-	"_lgraphql/projectsByMetadata.graphql":                                _lgraphqlProjectsbymetadataGraphql,
-	"_lgraphql/removeProjectMetadataByKey.graphql":                        _lgraphqlRemoveprojectmetadatabykeyGraphql,
-	"_lgraphql/switchActiveStandby.graphql":                               _lgraphqlSwitchactivestandbyGraphql,
-	"_lgraphql/taskByID.graphql":                                          _lgraphqlTaskbyidGraphql,
+	"_lgraphql/sshEndpointsByProject.graphql":                             _lgraphqlSshendpointsbyprojectGraphql,
 	"_lgraphql/updateDeployTarget.graphql":                                _lgraphqlUpdatedeploytargetGraphql,
 	"_lgraphql/updateDeployTargetConfig.graphql":                          _lgraphqlUpdatedeploytargetconfigGraphql,
-	"_lgraphql/updateProjectMetadata.graphql":                             _lgraphqlUpdateprojectmetadataGraphql,
 	"_lgraphql/variables/addOrUpdateEnvVariableByName.graphql":            _lgraphqlVariablesAddorupdateenvvariablebynameGraphql,
 	"_lgraphql/variables/deleteEnvVariableByName.graphql":                 _lgraphqlVariablesDeleteenvvariablebynameGraphql,
 	"_lgraphql/variables/getEnvVariablesByProjectEnvironmentName.graphql": _lgraphqlVariablesGetenvvariablesbyprojectenvironmentnameGraphql,
@@ -1542,11 +1432,13 @@ var _bindata = map[string]func() (*asset, error){
 // directory embedded in the file by go-bindata.
 // For example if you run go-bindata on data/... and data contains the
 // following hierarchy:
-//     data/
-//       foo.txt
-//       img/
-//         a.png
-//         b.png
+//
+//	data/
+//	  foo.txt
+//	  img/
+//	    a.png
+//	    b.png
+//
 // then AssetDir("data") would return []string{"foo.txt", "img"}
 // AssetDir("data/img") would return []string{"a.png", "b.png"}
 // AssetDir("foo.txt") and AssetDir("notexist") would return an error
@@ -1581,7 +1473,6 @@ type bintree struct {
 var _bintree = &bintree{nil, map[string]*bintree{
 	"_lgraphql": &bintree{nil, map[string]*bintree{
 		"addDeployTarget.graphql":                &bintree{_lgraphqlAdddeploytargetGraphql, map[string]*bintree{}},
-		"addDeployTargetConfig.graphql":          &bintree{_lgraphqlAdddeploytargetconfigGraphql, map[string]*bintree{}},
 		"addEnvVariable.graphql":                 &bintree{_lgraphqlAddenvvariableGraphql, map[string]*bintree{}},
 		"addGroup.graphql":                       &bintree{_lgraphqlAddgroupGraphql, map[string]*bintree{}},
 		"addGroupsToProject.graphql":             &bintree{_lgraphqlAddgroupstoprojectGraphql, map[string]*bintree{}},
@@ -1634,15 +1525,11 @@ var _bintree = &bintree{nil, map[string]*bintree{
 			"updateNotificationSlack.graphql":           &bintree{_lgraphqlNotificationsUpdatenotificationslackGraphql, map[string]*bintree{}},
 			"updateNotificationWebhook.graphql":         &bintree{_lgraphqlNotificationsUpdatenotificationwebhookGraphql, map[string]*bintree{}},
 		}},
-		"projectByName.graphql":              &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
-		"projectByNameMetadata.graphql":      &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
-		"projectsByMetadata.graphql":         &bintree{_lgraphqlProjectsbymetadataGraphql, map[string]*bintree{}},
-		"removeProjectMetadataByKey.graphql": &bintree{_lgraphqlRemoveprojectmetadatabykeyGraphql, map[string]*bintree{}},
-		"switchActiveStandby.graphql":        &bintree{_lgraphqlSwitchactivestandbyGraphql, map[string]*bintree{}},
-		"taskByID.graphql":                   &bintree{_lgraphqlTaskbyidGraphql, map[string]*bintree{}},
-		"updateDeployTarget.graphql":         &bintree{_lgraphqlUpdatedeploytargetGraphql, map[string]*bintree{}},
-		"updateDeployTargetConfig.graphql":   &bintree{_lgraphqlUpdatedeploytargetconfigGraphql, map[string]*bintree{}},
-		"updateProjectMetadata.graphql":      &bintree{_lgraphqlUpdateprojectmetadataGraphql, map[string]*bintree{}},
+		"projectByName.graphql":            &bintree{_lgraphqlProjectbynameGraphql, map[string]*bintree{}},
+		"projectByNameMetadata.graphql":    &bintree{_lgraphqlProjectbynamemetadataGraphql, map[string]*bintree{}},
+		"sshEndpointsByProject.graphql":    &bintree{_lgraphqlSshendpointsbyprojectGraphql, map[string]*bintree{}},
+		"updateDeployTarget.graphql":       &bintree{_lgraphqlUpdatedeploytargetGraphql, map[string]*bintree{}},
+		"updateDeployTargetConfig.graphql": &bintree{_lgraphqlUpdatedeploytargetconfigGraphql, map[string]*bintree{}},
 		"variables": &bintree{nil, map[string]*bintree{
 			"addOrUpdateEnvVariableByName.graphql":            &bintree{_lgraphqlVariablesAddorupdateenvvariablebynameGraphql, map[string]*bintree{}},
 			"deleteEnvVariableByName.graphql":                 &bintree{_lgraphqlVariablesDeleteenvvariablebynameGraphql, map[string]*bintree{}},
