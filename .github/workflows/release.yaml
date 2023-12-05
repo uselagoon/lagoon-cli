@@ -16,11 +16,11 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: 1.21
     - name: Build CLI
       run: |
-        go get github.com/golang/mock/mockgen@v1.4.3
-        go get -u github.com/go-bindata/go-bindata/...
+        go install github.com/golang/mock/mockgen@v1.4.3
+        go install github.com/go-bindata/go-bindata/...@latest
         make deps
         make test
     - name: Compile CLI
