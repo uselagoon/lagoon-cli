@@ -29,4 +29,5 @@ func init() {
 	updateCmd.AddCommand(updateUserCmd)
 	updateCmd.AddCommand(updateDeployTargetConfigCmd)
 	updateCmd.AddCommand(updateDeployTargetCmd)
+	updateCmd.AddCommand(updateOrganizationCmd)
 }

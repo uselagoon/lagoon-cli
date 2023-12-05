@@ -36,6 +36,7 @@ Get info on a resource
 * [lagoon get backup](lagoon_get_backup.md)	 - Get a backup download link
 * [lagoon get deployment](lagoon_get_deployment.md)	 - Get a build log by remote id
 * [lagoon get environment](lagoon_get_environment.md)	 - Get details about an environment
+* [lagoon get organization](lagoon_get_organization.md)	 - Get details about an organization
 * [lagoon get project](lagoon_get_project.md)	 - Get details about a project
 * [lagoon get project-key](lagoon_get_project-key.md)	 - Get a projects public key
 * [lagoon get project-metadata](lagoon_get_project-metadata.md)	 - Get all metadata for a project

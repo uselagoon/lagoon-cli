@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	"os"
-	"strconv"
-
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
@@ -218,10 +218,66 @@ var getToken = &cobra.Command{
 	},
 }
 
+var getOrganizationCmd = &cobra.Command{
+	Use:     "organization",
+	Aliases: []string{"o"},
+	Short:   "Get details about an organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		if organization.Name == "" {
+			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)
+			return nil
+		}
+
+		data := []output.Data{}
+		data = append(data, []string{
+			strconv.Itoa(int(organization.ID)),
+			organization.Name,
+			organization.Description,
+			strconv.Itoa(int(organization.QuotaProject)),
+			strconv.Itoa(int(organization.QuotaGroup)),
+			strconv.Itoa(int(organization.QuotaNotification)),
+		})
+
+		dataMain := output.Table{
+			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota"},
+			Data:   data,
+		}
+
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	getCmd.AddCommand(getAllUserKeysCmd)
 	getCmd.AddCommand(getDeploymentCmd)
 	getCmd.AddCommand(getEnvironmentCmd)
+	getCmd.AddCommand(getOrganizationCmd)
 	getCmd.AddCommand(getProjectCmd)
 	getCmd.AddCommand(getProjectKeyCmd)
 	getCmd.AddCommand(getUserKeysCmd)
@@ -231,4 +287,5 @@ func init() {
 	getTaskByID.Flags().BoolP("logs", "L", false, "Show the task logs if available")
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentCmd.Flags().StringVarP(&remoteID, "remoteid", "R", "", "The remote ID of the deployment")
+	getOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 }
