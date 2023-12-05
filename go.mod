@@ -39,6 +39,6 @@ require (
 // use this version for fixes to formatting of end header
 replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20200114082015-d810c4a558bf
 
-// replace github.com/machinebox/graphql => ../../shreddedbacon/graphql
+//replace github.com/uselagoon/machinery => ../machinery
 
 // replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter
