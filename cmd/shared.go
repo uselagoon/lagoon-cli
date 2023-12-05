@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"os"
 	"strings"
-
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // config vars
@@ -90,4 +90,32 @@ func fileExists(filename string) bool {
 
 func stripNewLines(stripString string) string {
 	return strings.TrimSuffix(stripString, "\n")
+}
+
+func nullStrCheck(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
+func nullUintCheck(i uint) *uint {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
+
+func nullIntCheck(i int) *int {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
+
+func requiredInputCheck(field string, value string) error {
+	if value == "" || value == "0" {
+		return fmt.Errorf(fmt.Sprintf("Missing argument: %s is not defined", field))
+	}
+	return nil
 }

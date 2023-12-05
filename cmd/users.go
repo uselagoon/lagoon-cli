@@ -361,6 +361,134 @@ var getAllUserKeysCmd = &cobra.Command{
 	},
 }
 
+var addUserToOrganizationCmd = &cobra.Command{
+	Use:     "user",
+	Aliases: []string{"u"},
+	Short:   "Add a user to an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("User email", userEmail); err != nil {
+			return err
+		}
+		owner, err := cmd.Flags().GetBool("owner")
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		userInput := s.AddUserToOrganizationInput{
+			User:         s.UserInput{Email: userEmail},
+			Organization: organization.ID,
+			Owner:        owner,
+		}
+
+		orgUser := s.Organization{}
+		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"User":              userEmail,
+				"Organization Name": organizationName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
+var RemoveUserFromOrganization = &cobra.Command{
+	Use:     "user",
+	Aliases: []string{"u"},
+	Short:   "Remove a user to an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("User email", userEmail); err != nil {
+			return err
+		}
+		owner, err := cmd.Flags().GetBool("owner")
+		if err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		userInput := s.AddUserToOrganizationInput{
+			User:         s.UserInput{Email: userEmail},
+			Organization: organization.ID,
+			Owner:        owner,
+		}
+
+		orgUser := s.Organization{}
+
+		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
+			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
+			handleError(err)
+			resultData := output.Result{
+				Result: "success",
+				ResultData: map[string]interface{}{
+					"User":              userEmail,
+					"Organization Name": organizationName,
+				},
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+		return nil
+	},
+}
+
 var (
 	currentUserEmail string
 	pubKeyValue      string
@@ -382,4 +510,10 @@ func init() {
 	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringP("email", "E", "", "New email address of the user")
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
+	addUserToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	addUserToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addUserToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	RemoveUserFromOrganization.Flags().StringP("name", "O", "", "Name of the organization")
+	RemoveUserFromOrganization.Flags().StringP("email", "E", "", "Email address of the user")
+	RemoveUserFromOrganization.Flags().Bool("owner", false, "Set the user as an owner of the organization")
 }
