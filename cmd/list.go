@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -286,16 +287,9 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
-				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+				env = append(env, fmt.Sprintf("%v", envvar.Value))
 			}
 			data = append(data, env)
-		}
-		if len(data) == 0 {
-			if cmdProjectEnvironment != "" {
-				return fmt.Errorf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
-			} else {
-				return fmt.Errorf("There are no variables for project '%s'", cmdProjectName)
-			}
 		}
 		header := []string{
 			"ID",
@@ -308,6 +302,13 @@ var listVariablesCmd = &cobra.Command{
 		header = append(header, "Name")
 		if reveal {
 			header = append(header, "Value")
+		}
+		if len(data) == 0 {
+			if cmdProjectEnvironment != "" {
+				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
+			} else {
+				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
+			}
 		}
 		output.RenderOutput(output.Table{
 			Header: header,
@@ -436,11 +437,66 @@ var listNotificationCmd = &cobra.Command{
 	},
 }
 
+var listProjectGroupsCmd = &cobra.Command{
+	Use:     "project-groups",
+	Aliases: []string{"pg"},
+	Short:   "List groups in a project (alias: pg)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if cmdProjectName == "" {
+			fmt.Println("Missing arguments: Project is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
+		handleError(err)
+
+		if len(projectGroups.Groups) == 0 {
+			output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
+			os.Exit(0)
+		}
+
+		data := []output.Data{}
+		for _, group := range projectGroups.Groups {
+			var organization = "null"
+			if group.Organization != 0 {
+				organization = strconv.Itoa(group.Organization)
+			}
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", group.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", group.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", organization)),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"Group ID", "Group Name", "Organization"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
+	listCmd.AddCommand(listProjectGroupsCmd)
 	listCmd.AddCommand(listEnvironmentsCmd)
 	listCmd.AddCommand(listProjectsCmd)
 	listCmd.AddCommand(listNotificationCmd)

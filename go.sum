@@ -104,8 +104,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/tsenart/deadcode v0.0.0-20160724212837-210d2dc333e9 h1:vY5WqiEon0ZSTGM3ayVVi+twaHKHDFUVloaQ/wug9/c=
 github.com/tsenart/deadcode v0.0.0-20160724212837-210d2dc333e9/go.mod h1:q+QjxYvZ+fpjMXqs+XEriussHjSYqeXVnAdSV1tkMYk=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
-github.com/uselagoon/machinery v0.0.12 h1:TJnA+FrL1uEhRTjJ6dExiL4G7SOQ+hUfGuWDmbW2HBA=
-github.com/uselagoon/machinery v0.0.12/go.mod h1:h/qeMWQR4Qqu33x+8AulNDeolEwvb/G+aIsn/jyUtwk=
+github.com/uselagoon/machinery v0.0.13 h1:ZCLBNWJmDr3wikaHs3pWhQ1j8MprhIqRuChgSqmLyZc=
+github.com/uselagoon/machinery v0.0.13/go.mod h1:h/qeMWQR4Qqu33x+8AulNDeolEwvb/G+aIsn/jyUtwk=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
