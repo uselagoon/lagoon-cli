@@ -1,19 +1,20 @@
-## lagoon list tasks
+## lagoon list user-groups
 
-List tasks for an environment (alias: t)
+List a single users groups and roles
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List a single users groups and roles
 
 ```
-lagoon list tasks [flags]
+lagoon list user-groups [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -E, --email-address string   The email address of a user
+  -h, --help                   help for user-groups
 ```
 
 ### Options inherited from parent commands

@@ -1,19 +1,21 @@
-## lagoon list tasks
+## lagoon list all-users
 
-List tasks for an environment (alias: t)
+List all users
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List all users.
+This query can take a long time to run if there are a lot of users.
 
 ```
-lagoon list tasks [flags]
+lagoon list all-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -E, --email-address string   The email address of a user
+  -h, --help                   help for all-users
 ```
 
 ### Options inherited from parent commands

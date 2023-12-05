@@ -25,7 +25,6 @@ require (
 
 require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
-	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/guregu/null v4.0.0+incompatible
 	// workaround for https://github.com/manifoldco/promptui/issues/98
@@ -42,3 +41,6 @@ replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewrite
 // replace github.com/machinebox/graphql => ../../shreddedbacon/graphql
 
 // replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter
+
+// replace github.com/uselagoon/machinery => ../machinery
+replace github.com/uselagoon/machinery v0.0.13 => github.com/uselagoon/machinery v0.0.0-20231205012931-58a4ccde55f9

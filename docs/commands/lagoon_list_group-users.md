@@ -1,19 +1,22 @@
-## lagoon list tasks
+## lagoon list group-users
 
-List tasks for an environment (alias: t)
+List all users in groups
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List all users in groups in lagoon, this only shows users that are in groups.
+If no group name is provided, all groups are queried.
+Without a group name, this query may time out in large Lagoon installs.
 
 ```
-lagoon list tasks [flags]
+lagoon list group-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help          help for group-users
+  -N, --name string   Name of the group to list users in
 ```
 
 ### Options inherited from parent commands

@@ -39,7 +39,7 @@ lagoon [flags]
 * [lagoon get](lagoon_get.md)	 - Get info on a resource
 * [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
 * [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
 * [lagoon retrieve](lagoon_retrieve.md)	 - Trigger a retrieval operation on backups
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
