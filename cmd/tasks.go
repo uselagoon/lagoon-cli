@@ -6,13 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	"io/ioutil"
-	"os"
 )
 
 var getTaskByID = &cobra.Command{
@@ -276,6 +279,65 @@ Path:
 	},
 }
 
+var uploadFilesToTask = &cobra.Command{
+	Use:     "task-files",
+	Short:   "Upload files to a task by its ID",
+	Long:    `Upload files to a task by its ID`,
+	Aliases: []string{"tf"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		taskID, err := cmd.Flags().GetInt("id")
+		if err != nil {
+			return err
+		}
+		if taskID == 0 {
+			return fmt.Errorf("Missing arguments: ID is not defined")
+		}
+		files, err := cmd.Flags().GetStringSlice("file")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+		result, err := l.UploadFilesForTask(context.TODO(), taskID, files, lc)
+		if err != nil {
+			return err
+		}
+		taskFiles := []string{}
+		for _, f := range result.Files {
+			taskFiles = append(taskFiles, f.Filename)
+		}
+		dataMain := output.Table{
+			Header: []string{
+				"ID",
+				"Name",
+				"Files",
+			},
+			Data: []output.Data{
+				{
+					fmt.Sprintf("%d", result.ID),
+					returnNonEmptyString(result.Name),
+					returnNonEmptyString(strings.Join(taskFiles, ",")),
+				},
+			},
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
 var (
 	taskName        string
 	invokedTaskName string
@@ -285,6 +347,8 @@ var (
 )
 
 func init() {
+	uploadFilesToTask.Flags().IntP("id", "I", 0, "ID of the task")
+	uploadFilesToTask.Flags().StringSliceP("file", "F", []string{}, "File to upload (add multiple flags to upload multiple files)")
 	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
 	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
 	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")

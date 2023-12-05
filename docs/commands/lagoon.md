@@ -45,6 +45,7 @@ lagoon [flags]
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
 * [lagoon ssh](lagoon_ssh.md)	 - Display the SSH command to access a specific environment in a project
 * [lagoon update](lagoon_update.md)	 - Update a resource
+* [lagoon upload](lagoon_upload.md)	 - Upload files to tasks
 * [lagoon version](lagoon_version.md)	 - Version information
 * [lagoon web](lagoon_web.md)	 - Launch the web user interface
 * [lagoon whoami](lagoon_whoami.md)	 - Whoami will return your user information for lagoon
