@@ -1,19 +1,19 @@
-## lagoon list tasks
+## lagoon list organization organizations
 
-List tasks for an environment (alias: t)
+List all organizations
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List all organizations
 
 ```
-lagoon list tasks [flags]
+lagoon list organization organizations [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help   help for organizations
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +35,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
 

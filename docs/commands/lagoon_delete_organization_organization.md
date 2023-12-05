@@ -1,19 +1,20 @@
-## lagoon list tasks
+## lagoon delete organization organization
 
-List tasks for an environment (alias: t)
+Delete an organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Delete an organization
 
 ```
-lagoon list tasks [flags]
+lagoon delete organization organization [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help          help for organization
+  -O, --name string   Name of the organization to delete
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +36,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
 

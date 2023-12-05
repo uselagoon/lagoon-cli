@@ -1,19 +1,27 @@
-## lagoon list tasks
+## lagoon update organization
 
-List tasks for an environment (alias: t)
+Update an organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Update an organization
 
 ```
-lagoon list tasks [flags]
+lagoon update organization [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+      --description string       Description of the organization
+      --environment-quota int    Environment quota for the organization
+      --friendly-name string     Friendly name of the organization
+      --group-quota int          Group quota for the organization
+  -h, --help                     help for organization
+  -O, --name string              Name of the organization to update
+      --notification-quota int   Notification quota for the organization
+      --project-quota int        Project quota for the organization
+      --route-quota int          Route quota for the organization
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +43,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon update](lagoon_update.md)	 - Update a resource
 

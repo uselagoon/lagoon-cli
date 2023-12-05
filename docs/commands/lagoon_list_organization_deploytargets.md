@@ -1,19 +1,21 @@
-## lagoon list tasks
+## lagoon list organization deploytargets
 
-List tasks for an environment (alias: t)
+List deploy targets in an organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+List deploy targets in an organization
 
 ```
-lagoon list tasks [flags]
+lagoon list organization deploytargets [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help          help for deploytargets
+      --id uint       ID of the organization to list associated deploy targets for
+  -O, --name string   Name of the organization to list associated deploy targets for
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +37,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
 

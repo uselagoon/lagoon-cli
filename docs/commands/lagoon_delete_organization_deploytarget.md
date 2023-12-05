@@ -1,19 +1,21 @@
-## lagoon list tasks
+## lagoon delete organization deploytarget
 
-List tasks for an environment (alias: t)
+Remove a deploy target from an Organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Remove a deploy target from an Organization
 
 ```
-lagoon list tasks [flags]
+lagoon delete organization deploytarget [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -D, --deploy-target uint   ID of DeployTarget
+  -h, --help                 help for deploytarget
+  -O, --name string          Name of Organization
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +37,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
 

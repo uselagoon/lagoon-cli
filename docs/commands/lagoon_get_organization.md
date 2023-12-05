@@ -1,19 +1,20 @@
-## lagoon list tasks
+## lagoon get organization
 
-List tasks for an environment (alias: t)
+Get details about an organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Get details about an organization
 
 ```
-lagoon list tasks [flags]
+lagoon get organization [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -h, --help          help for organization
+  -O, --name string   Name of the organization
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +36,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon get](lagoon_get.md)	 - Get info on a resource
 

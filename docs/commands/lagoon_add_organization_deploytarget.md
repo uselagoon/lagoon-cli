@@ -1,19 +1,21 @@
-## lagoon list tasks
+## lagoon add organization deploytarget
 
-List tasks for an environment (alias: t)
+Add a deploy target to an Organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Add a deploy target to an Organization
 
 ```
-lagoon list tasks [flags]
+lagoon add organization deploytarget [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -D, --deploy-target uint   ID of DeployTarget
+  -h, --help                 help for deploytarget
+  -O, --name string          Name of Organization
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +37,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a group/project to an organization
 

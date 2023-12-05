@@ -1,19 +1,22 @@
-## lagoon list tasks
+## lagoon add organization user
 
-List tasks for an environment (alias: t)
+Add a user to an Organization
 
 ### Synopsis
 
-List tasks for an environment (alias: t)
+Add a user to an Organization
 
 ```
-lagoon list tasks [flags]
+lagoon add organization user [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tasks
+  -E, --email string   Email address of the user
+  -h, --help           help for user
+  -O, --name string    Name of the organization
+      --owner          Set the user as an owner of the organization
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +38,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
+* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a group/project to an organization
 
