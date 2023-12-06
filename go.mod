@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.8.2
-	github.com/uselagoon/machinery v0.0.13
+	github.com/uselagoon/machinery v0.0.14
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	gopkg.in/yaml.v2 v2.2.8
 	sigs.k8s.io/yaml v1.2.0
@@ -39,8 +39,3 @@ require (
 replace github.com/olekukonko/tablewriter => github.com/shreddedbacon/tablewriter v0.0.2-0.20200114082015-d810c4a558bf
 
 //replace github.com/uselagoon/machinery => ../machinery
-
-// replace github.com/olekukonko/tablewriter => ../../shreddedbacon/tablewriter
-
-// replace github.com/uselagoon/machinery v0.0.8 => ../machinery
-replace github.com/uselagoon/machinery v0.0.8 => github.com/uselagoon/machinery v0.0.0-20230518215531-41f1b4bb9b26
