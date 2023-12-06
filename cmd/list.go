@@ -594,10 +594,8 @@ var listProjectGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -611,8 +609,7 @@ var listProjectGroupsCmd = &cobra.Command{
 		handleError(err)
 
 		if len(projectGroups.Groups) == 0 {
-			output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
-			os.Exit(0)
+			outputOptions.Error = fmt.Sprintf("There are no groups for project '%s'\n", cmdProjectName)
 		}
 
 		data := []output.Data{}
