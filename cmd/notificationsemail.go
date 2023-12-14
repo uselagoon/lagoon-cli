@@ -5,13 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 )
 
 var addNotificationEmailCmd = &cobra.Command{
@@ -37,37 +39,50 @@ It does not configure a project to send notifications to email though, you need 
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organizationID")
+		if err != nil {
+			return err
+		}
 		if name == "" || email == "" {
 			return fmt.Errorf("Missing arguments: name or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an email notification '%s' with email address '%s', are you sure?", name, email)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationEmailInput{
+
+			notification := s.AddNotificationEmailInput{
 				Name:         name,
 				EmailAddress: email,
+				Organization: &organizationID,
 			}
-			result, err := lagoon.AddNotificationEmail(context.TODO(), notification, lc)
+
+			result, err := l.AddNotificationEmail(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
-			data := []output.Data{
-				[]string{
-					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.EmailAddress)),
-				},
+			var data []output.Data
+			notificationData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.EmailAddress)),
 			}
+			if result.Organization != nil {
+				notificationData = append(notificationData, fmt.Sprintf("%v", *result.Organization))
+			} else {
+				notificationData = append(notificationData, "-")
+			}
+			data = append(data, notificationData)
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"EmailAddress",
+					"Organization",
 				},
 				Data: data,
 			}, outputOptions)
@@ -376,6 +391,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationEmailCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationEmailCmd.Flags().StringP("email", "E", "", "The email address of the notification")
+	addNotificationEmailCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
 	addProjectNotificationEmailCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectEmailNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteEmailNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -37,37 +40,50 @@ It does not configure a project to send notifications to webhook though, you nee
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organizationID")
+		if err != nil {
+			return err
+		}
 		if name == "" || webhook == "" {
 			return fmt.Errorf("Missing arguments: name or webhook is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a webhook notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationWebhookInput{
-				Name:    name,
-				Webhook: webhook,
+
+			notification := s.AddNotificationWebhookInput{
+				Name:         name,
+				Webhook:      webhook,
+				Organization: &organizationID,
 			}
-			result, err := lagoon.AddNotificationWebhook(context.TODO(), notification, lc)
+
+			result, err := l.AddNotificationWebhook(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
-			data := []output.Data{
-				[]string{
-					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
-				},
+			var data []output.Data
+			notificationData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
 			}
+			if result.Organization != nil {
+				notificationData = append(notificationData, fmt.Sprintf("%v", *result.Organization))
+			} else {
+				notificationData = append(notificationData, "-")
+			}
+			data = append(data, notificationData)
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Webhook",
+					"Organization",
 				},
 				Data: data,
 			}, outputOptions)
@@ -376,6 +392,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationWebhookCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationWebhookCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
+	addNotificationWebhookCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
 	addProjectNotificationWebhookCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectWebhookNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteWebhookNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

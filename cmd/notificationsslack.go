@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -41,40 +44,53 @@ It does not configure a project to send notifications to Slack though, you need 
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organizationID")
+		if err != nil {
+			return err
+		}
 		if name == "" || channel == "" || webhook == "" {
 			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an Slack notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationSlackInput{
-				Name:    name,
-				Webhook: webhook,
-				Channel: channel,
+
+			notification := s.AddNotificationSlackInput{
+				Name:         name,
+				Webhook:      webhook,
+				Channel:      channel,
+				Organization: &organizationID,
 			}
-			result, err := lagoon.AddNotificationSlack(context.TODO(), notification, lc)
+
+			result, err := l.AddNotificationSlack(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
-			data := []output.Data{
-				[]string{
-					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
-				},
+			var data []output.Data
+			notificationData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 			}
+			if result.Organization != nil {
+				notificationData = append(notificationData, fmt.Sprintf("%v", *result.Organization))
+			} else {
+				notificationData = append(notificationData, "-")
+			}
+			data = append(data, notificationData)
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Webhook",
 					"Channel",
+					"Organization",
 				},
 				Data: data,
 			}, outputOptions)
@@ -395,6 +411,7 @@ func init() {
 	addNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationSlackCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
 	addNotificationSlackCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
+	addNotificationSlackCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
 	addProjectNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
