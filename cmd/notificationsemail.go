@@ -261,9 +261,9 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 }
 
 var deleteEmailNotificationCmd = &cobra.Command{
-	Use:     "webhook",
-	Aliases: []string{"w"},
-	Short:   "Delete a email notification from Lagoon",
+	Use:     "email",
+	Aliases: []string{"e"},
+	Short:   "Delete an email notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},

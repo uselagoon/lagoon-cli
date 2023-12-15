@@ -32,6 +32,7 @@ Delete notifications or delete notifications from projects
 ### SEE ALSO
 
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon delete notification email](lagoon_delete_notification_email.md)	 - Delete an email notification from Lagoon
 * [lagoon delete notification microsoftteams](lagoon_delete_notification_microsoftteams.md)	 - Delete a Microsoft Teams notification from Lagoon
 * [lagoon delete notification project-email](lagoon_delete_notification_project-email.md)	 - Delete a email notification from a project
 * [lagoon delete notification project-microsoftteams](lagoon_delete_notification_project-microsoftteams.md)	 - Delete a Microsoft Teams notification from a project
@@ -40,6 +41,5 @@ Delete notifications or delete notifications from projects
 * [lagoon delete notification project-webhook](lagoon_delete_notification_project-webhook.md)	 - Delete a webhook notification from a project
 * [lagoon delete notification rocketchat](lagoon_delete_notification_rocketchat.md)	 - Delete a RocketChat notification from Lagoon
 * [lagoon delete notification slack](lagoon_delete_notification_slack.md)	 - Delete a Slack notification from Lagoon
-* [lagoon delete notification webhook](lagoon_delete_notification_webhook.md)	 - Delete a email notification from Lagoon
 * [lagoon delete notification webhook](lagoon_delete_notification_webhook.md)	 - Delete a webhook notification from Lagoon
 
