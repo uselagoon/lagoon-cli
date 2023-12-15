@@ -73,7 +73,11 @@ It does not configure a project to send notifications to webhook though, you nee
 				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
 			}
 			if result.Organization != nil {
-				notificationData = append(notificationData, fmt.Sprintf("%v", *result.Organization))
+				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				if err != nil {
+					return err
+				}
+				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
 			} else {
 				notificationData = append(notificationData, "-")
 			}
