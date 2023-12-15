@@ -44,7 +44,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("organizationID")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
@@ -415,7 +415,7 @@ func init() {
 	addNotificationRocketchatCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationRocketchatCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
 	addNotificationRocketchatCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
-	addNotificationRocketchatCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
+	addNotificationRocketchatCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationRocketChatCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectRocketChatNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteRocketChatNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

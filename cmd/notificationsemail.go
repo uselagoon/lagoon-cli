@@ -39,7 +39,7 @@ It does not configure a project to send notifications to email though, you need 
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("organizationID")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
@@ -395,7 +395,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationEmailCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationEmailCmd.Flags().StringP("email", "E", "", "The email address of the notification")
-	addNotificationEmailCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
+	addNotificationEmailCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationEmailCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectEmailNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteEmailNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

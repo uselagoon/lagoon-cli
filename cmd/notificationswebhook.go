@@ -40,7 +40,7 @@ It does not configure a project to send notifications to webhook though, you nee
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("organizationID")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
@@ -396,7 +396,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationWebhookCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationWebhookCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
-	addNotificationWebhookCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
+	addNotificationWebhookCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationWebhookCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectWebhookNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteWebhookNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

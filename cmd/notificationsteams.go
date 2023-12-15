@@ -40,7 +40,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("organizationID")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
@@ -396,7 +396,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationMicrosoftTeamsCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationMicrosoftTeamsCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
-	addNotificationMicrosoftTeamsCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
+	addNotificationMicrosoftTeamsCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationMicrosoftTeamsCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectMicrosoftTeamsNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteMicrosoftTeamsNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

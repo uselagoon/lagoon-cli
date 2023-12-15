@@ -44,7 +44,7 @@ It does not configure a project to send notifications to Slack though, you need 
 		if err != nil {
 			return err
 		}
-		organizationID, err := cmd.Flags().GetUint("organizationID")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
@@ -415,7 +415,7 @@ func init() {
 	addNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationSlackCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
 	addNotificationSlackCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
-	addNotificationSlackCmd.Flags().Uint("organizationID", 0, "ID of the Organization")
+	addNotificationSlackCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationSlackCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteSlackNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
