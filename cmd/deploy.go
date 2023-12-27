@@ -50,7 +50,7 @@ use 'lagoon deploy latest' instead`,
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -104,7 +104,7 @@ var deployPromoteCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -150,7 +150,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -219,7 +219,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)

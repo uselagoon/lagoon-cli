@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -159,7 +160,7 @@ var listProjectByMetadata = &cobra.Command{
 			return fmt.Errorf("Missing arguments: key is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -222,7 +223,7 @@ var getProjectMetadata = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -279,7 +280,7 @@ var updateProjectMetadata = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -334,7 +335,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -484,7 +485,7 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -558,7 +559,7 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,

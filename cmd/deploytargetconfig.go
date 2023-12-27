@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -57,7 +58,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: branches is a required flag")
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -153,7 +154,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -229,7 +230,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -265,7 +266,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)

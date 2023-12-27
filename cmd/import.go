@@ -52,7 +52,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 		}
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -115,7 +115,7 @@ You must specify to export a specific project by using the '-p <project-name>' f
 		}
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)

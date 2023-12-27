@@ -82,7 +82,7 @@ var listDeployTargetsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -204,7 +204,7 @@ var listEnvironmentsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -264,7 +264,7 @@ var listVariablesCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -387,7 +387,7 @@ Without a group name, this query may time out in large Lagoon installs.`,
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -453,7 +453,7 @@ This query can take a long time to run if there are a lot of users.`,
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -505,7 +505,7 @@ var listUsersGroupsCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: email address is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -599,7 +599,7 @@ var listProjectGroupsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -663,7 +663,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -712,7 +712,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -768,7 +768,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -819,7 +819,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -864,7 +864,7 @@ var listOrganizationsCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,

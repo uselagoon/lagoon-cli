@@ -43,7 +43,7 @@ var getTaskByID = &cobra.Command{
 			return fmt.Errorf("Missing arguments: ID is not defined")
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -102,7 +102,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -304,7 +304,7 @@ var uploadFilesToTask = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,

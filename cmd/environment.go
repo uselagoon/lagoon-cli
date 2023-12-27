@@ -3,9 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strings"
+
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -100,7 +101,7 @@ var updateEnvironmentCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
@@ -182,7 +183,7 @@ var listBackupsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -249,7 +250,7 @@ This returns a direct URL to the backup, this is a signed download link with a l
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)

@@ -16,20 +16,21 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v3"
 )
 
 // LagoonConfigFlags .
 type LagoonConfigFlags struct {
-	Lagoon    string `json:"lagoon,omitempty"`
-	Hostname  string `json:"hostname,omitempty"`
-	Port      string `json:"port,omitempty"`
-	GraphQL   string `json:"graphql,omitempty"`
-	Token     string `json:"token,omitempty"`
-	UI        string `json:"ui,omitempty"`
-	Kibana    string `json:"kibana,omitempty"`
-	SSHKey    string `json:"sshkey,omitempty"`
-	SSHPortal bool   `json:"sshportal,omitempty"`
+	Lagoon   string        `json:"lagoon,omitempty"`
+	Hostname string        `json:"hostname,omitempty"`
+	Port     string        `json:"port,omitempty"`
+	GraphQL  string        `json:"graphql,omitempty"`
+	Token    string        `json:"token,omitempty"`
+	Grant    *oauth2.Token `json:"grant,omitempty"`
+	UI       string        `json:"ui,omitempty"`
+	Kibana   string        `json:"kibana,omitempty"`
+	SSHKey   string        `json:"sshkey,omitempty"`
 }
 
 func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
@@ -112,6 +113,7 @@ var configLagoonsCmd = &cobra.Command{
 			if fullConfigList {
 				mapData = append(mapData, returnNonEmptyString(lc.UI))
 				mapData = append(mapData, returnNonEmptyString(lc.Kibana))
+				mapData = append(mapData, returnNonEmptyString(lc.KeycloakURL))
 			}
 			mapData = append(mapData, returnNonEmptyString(lc.SSHKey))
 			data = append(data, mapData)
@@ -129,6 +131,7 @@ var configLagoonsCmd = &cobra.Command{
 		if fullConfigList {
 			tableHeader = append(tableHeader, "UI-URL")
 			tableHeader = append(tableHeader, "Kibana-URL")
+			tableHeader = append(tableHeader, "Auth-URL")
 		}
 		tableHeader = append(tableHeader, "SSH-Key")
 		output.RenderOutput(output.Table{
@@ -148,6 +151,18 @@ var configAddCmd = &cobra.Command{
 		if lagoonConfig.Lagoon == "" {
 			return fmt.Errorf("Missing arguments: Lagoon name is not defined")
 		}
+		sshToken, err := cmd.Flags().GetBool("ssh-token")
+		if err != nil {
+			return err
+		}
+		keycloakURL, err := cmd.Flags().GetString("keycloak-url")
+		if err != nil {
+			return err
+		}
+		keycloakIDP, err := cmd.Flags().GetString("keycloak-idp")
+		if err != nil {
+			return err
+		}
 
 		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
 			lc := lagoonCLIConfig.Lagoons[lagoonConfig.Lagoon]
@@ -160,8 +175,19 @@ var configAddCmd = &cobra.Command{
 			if lagoonConfig.Kibana != "" {
 				lc.Kibana = lagoonConfig.Kibana
 			}
+			lc.Grant = &oauth2.Token{} //set up an empty grant
 			if lagoonConfig.Token != "" {
-				lc.Token = lagoonConfig.Token
+				// set the token into the grant, this is mainly for legacy based token backwards compatability
+				// tokens added this way will be changed by the ssh or keycloak token generation process if they are not a legacy token
+				lc.Grant.AccessToken = lagoonConfig.Token
+			}
+			lc.SSHToken = sshToken
+			if keycloakURL != "" {
+				// trim any trailing slashes from the keycloak url
+				lc.KeycloakURL = strings.TrimRight(keycloakURL, "/")
+			}
+			if keycloakIDP != "" {
+				lc.KeycloakIDP = keycloakIDP
 			}
 			if lagoonConfig.SSHKey != "" {
 				lc.SSHKey = lagoonConfig.SSHKey
@@ -178,6 +204,7 @@ var configAddCmd = &cobra.Command{
 					"SSH-Port",
 					"UI-URL",
 					"Kibana-URL",
+					"Keycloak-URL",
 					"SSH-Key",
 				},
 				Data: []output.Data{
@@ -188,6 +215,7 @@ var configAddCmd = &cobra.Command{
 						lagoonConfig.Port,
 						lagoonConfig.UI,
 						lagoonConfig.Kibana,
+						keycloakURL,
 						lagoonConfig.SSHKey,
 					},
 				},
@@ -269,7 +297,7 @@ var configLagoonVersionCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -301,21 +329,32 @@ func init() {
 	configCmd.AddCommand(configLagoonsCmd)
 	configCmd.AddCommand(configLagoonVersionCmd)
 	configAddCmd.Flags().StringVarP(&lagoonHostname, "hostname", "H", "",
-		"Lagoon SSH hostname")
+		"Lagoon token endpoint hostname (eg, token.amazeeio.cloud)")
 	configAddCmd.Flags().StringVarP(&lagoonPort, "port", "P", "",
-		"Lagoon SSH port")
+		"Lagoon token endpoint port (22)")
 	configAddCmd.Flags().StringVarP(&lagoonGraphQL, "graphql", "g", "",
-		"Lagoon GraphQL endpoint")
+		"Lagoon GraphQL endpoint (eg, https://api.amazeeio.cloud/graphql)")
 	configAddCmd.Flags().StringVarP(&lagoonToken, "token", "t", "",
 		"Lagoon GraphQL token")
 	configAddCmd.Flags().StringVarP(&lagoonUI, "ui", "u", "",
-		"Lagoon UI location (https://dashboard.amazeeio.cloud)")
+		"Optional: Lagoon UI location (eg, https://dashboard.amazeeio.cloud)")
 	configAddCmd.PersistentFlags().BoolVarP(&createConfig, "create-config", "", false,
 		"Create the config file if it is non existent (to be used with --config-file)")
 	configAddCmd.Flags().StringVarP(&lagoonKibana, "kibana", "k", "",
-		"Lagoon Kibana URL (https://logs.amazeeio.cloud)")
+		"Optional: Lagoon Kibana URL (eg, https://logs.amazeeio.cloud)")
+	configAddCmd.Flags().StringP("keycloak-url", "K", "", `Lagoon Keycloak URL (eg, https://keycloak.amazeeio.cloud).
+	Setting this will use keycloak for authentication instead of SSH based tokens. 
+	Set 'ssh-token=true' to override.
+	Note: SSH keys are still required for SSH access.`)
+	configAddCmd.Flags().String("keycloak-idp", "", `Optional: Lagoon Keycloak Identity Provider name.
+	Set this to the name of the separate Identity Provider within keycloak if you use one.
+	You may need to check with your Lagoon administrator if you use another SSO provider`)
 	configAddCmd.Flags().StringVarP(&lagoonSSHKey, "ssh-key", "", "",
 		"SSH Key to use for this cluster for generating tokens")
+	configAddCmd.Flags().Bool("ssh-token", true, `Set this context to only use ssh based tokens
+	Set this to only use SSH based tokens if you're using the CLI in CI jobs or other automated processes
+	where logging in via keycloak is not possible.
+	This is enabled by default, it will be disabled by default in a future release.`)
 	configLagoonsCmd.Flags().BoolVarP(&fullConfigList, "show-full", "", false,
 		"Show full config output when listing Lagoon configurations")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "",
@@ -332,12 +371,14 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 		// configuration to point to the amazeeio lagoon instance
 		if yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
 			l := lagoon.Context{
-				GraphQL:  "https://api.lagoon.amazeeio.cloud/graphql",
-				HostName: "ssh.lagoon.amazeeio.cloud",
-				Token:    "",
-				Port:     "32222",
-				UI:       "https://dashboard.amazeeio.cloud",
-				Kibana:   "https://logs.amazeeio.cloud/",
+				GraphQL:     "https://api.amazeeio.cloud/graphql",
+				HostName:    "token.amazeeio.cloud",
+				Grant:       &oauth2.Token{}, // set an empty oauth token
+				Port:        "22",
+				UI:          "https://dashboard.amazeeio.cloud",
+				Kibana:      "https://logs.amazeeio.cloud/",
+				KeycloakURL: "https://keycloak.amazeeio.cloud/",
+				SSHToken:    true, //@TODO: retain ssh token generation by default, eventually change this to false so that token generation is opt-in
 			}
 			lc.Lagoons = map[string]lagoon.Context{}
 			lc.Lagoons["amazeeio"] = l
@@ -353,6 +394,20 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 	for ln, l := range lc.Lagoons {
 		if l.GraphQL == "" || l.HostName == "" || l.Port == "" {
 			return fmt.Errorf("configured lagoon %s is missing required configuration for graphql, hostname, or port", ln)
+		}
+		if l.Token != "" {
+			// if there isn't already a grant in the config
+			if lc.Lagoons[ln].Grant == nil {
+				// create one by just setting the token to be the grants accesstoken. This allows legacy tokens still still function
+				grant := &oauth2.Token{
+					AccessToken: l.Token,
+				}
+				d := lc.Lagoons[ln]
+				d.Grant = grant
+				// retain the `token` field for now for backwards compatability with older cli versions
+				// d.Token = ""
+				lc.Lagoons[ln] = d
+			}
 		}
 	}
 	return nil

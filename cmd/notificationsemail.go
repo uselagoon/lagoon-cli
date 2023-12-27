@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -48,7 +49,7 @@ It does not configure a project to send notifications to email though, you need 
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an email notification '%s' with email address '%s', are you sure?", name, email)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -120,7 +121,7 @@ This command is used to add an existing email notification in Lagoon to a projec
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -160,7 +161,7 @@ var listProjectEmailsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -201,7 +202,7 @@ var listAllEmailsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -257,7 +258,7 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -302,7 +303,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -359,7 +360,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)

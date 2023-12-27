@@ -397,7 +397,7 @@ func versionCheck(lagoon string) error {
 	if lagoonCLIConfig.Lagoons[lagoon].Version == "" {
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[lagoon].GraphQL,
-			lagoonCLIConfig.Lagoons[lagoon].Token,
+			lagoonCLIConfig.Lagoons[lagoon].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[lagoon].Version,
 			lagoonCLIVersion,
 			debugEnable)

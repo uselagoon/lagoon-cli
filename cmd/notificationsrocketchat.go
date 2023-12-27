@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -53,7 +54,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an RocketChat notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -128,7 +129,7 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -168,7 +169,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -211,7 +212,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -269,7 +270,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -314,7 +315,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -376,7 +377,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)

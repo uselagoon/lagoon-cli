@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -49,7 +50,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a Microsoft Teams notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
 			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lagoonCLIConfig.Lagoons[current].Grant.AccessToken
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
@@ -121,7 +122,7 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -161,7 +162,7 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -202,7 +203,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 		current := lagoonCLIConfig.Current
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)
@@ -258,7 +259,7 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -303,7 +304,7 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)
@@ -360,7 +361,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 			current := lagoonCLIConfig.Current
 			lc := client.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
+				lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
 				debug)

@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"os"
 	"strings"
+
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // config vars

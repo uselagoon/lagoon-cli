@@ -46,7 +46,7 @@ var sshEnvCmd = &cobra.Command{
 		// if the config for this lagoon is set to use ssh portal support, handle that here
 		lc := client.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
+			lagoonCLIConfig.Lagoons[current].Grant.AccessToken,
 			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
 			debug)

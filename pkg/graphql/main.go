@@ -10,7 +10,7 @@ import (
 func LagoonAPI(lc *lagoon.Config, debug bool) (api.Client, error) {
 	lagoon := lc.Current
 	lagoonAPI, err := api.NewWithToken(
-		lc.Lagoons[lagoon].Token,
+		lc.Lagoons[lagoon].Grant.AccessToken,
 		lc.Lagoons[lagoon].GraphQL,
 	)
 	lagoonAPI.Debug(debug)
@@ -21,14 +21,18 @@ func LagoonAPI(lc *lagoon.Config, debug bool) (api.Client, error) {
 }
 
 func hasValidToken(lc *lagoon.Config, lagoon string) bool {
-	return lc.Lagoons[lagoon].Token != ""
+	if lc.Lagoons[lagoon].Grant == nil {
+		return lc.Lagoons[lagoon].Token != ""
+	} else {
+		return lc.Lagoons[lagoon].Grant.AccessToken != ""
+	}
 }
 
 // VerifyTokenExpiry verfies if the current token is valid or not
 func VerifyTokenExpiry(lc *lagoon.Config, lagoon string) bool {
 	var p jwt.Parser
 	token, _, err := p.ParseUnverified(
-		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
+		lc.Lagoons[lagoon].Grant.AccessToken, &jwt.StandardClaims{})
 	if err != nil {
 		return false
 	}
