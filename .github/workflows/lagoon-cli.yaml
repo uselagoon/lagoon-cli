@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         goversion:
-        - 1.16
+        - 1.21
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -28,8 +28,8 @@ jobs:
         go-version: ${{matrix.goversion}}
     - name: Build
       run: |
-        go get github.com/golang/mock/mockgen@v1.4.3
-        go get -u github.com/go-bindata/go-bindata/...
+        go install github.com/golang/mock/mockgen@v1.4.3
+        go install github.com/go-bindata/go-bindata/...@latest
         ARTIFACT_DESTINATION=./builds make build
     # - name: Check version
     #   run: |

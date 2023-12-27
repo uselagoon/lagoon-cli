@@ -15,9 +15,10 @@ lagoon add notification microsoftteams [flags]
 ### Options
 
 ```
-  -h, --help             help for microsoftteams
-  -n, --name string      The name of the notification
-  -w, --webhook string   The webhook URL of the notification
+  -h, --help                   help for microsoftteams
+  -n, --name string            The name of the notification
+      --organization-id uint   ID of the Organization
+  -w, --webhook string         The webhook URL of the notification
 ```
 
 ### Options inherited from parent commands

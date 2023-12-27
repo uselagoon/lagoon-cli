@@ -15,9 +15,10 @@ lagoon add notification email [flags]
 ### Options
 
 ```
-  -E, --email string   The email address of the notification
-  -h, --help           help for email
-  -n, --name string    The name of the notification
+  -E, --email string           The email address of the notification
+  -h, --help                   help for email
+  -n, --name string            The name of the notification
+      --organization-id uint   ID of the Organization
 ```
 
 ### Options inherited from parent commands
