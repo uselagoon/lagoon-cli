@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -41,40 +44,57 @@ It does not configure a project to send notifications to RocketChat though, you 
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organization-id")
+		if err != nil {
+			return err
+		}
 		if name == "" || channel == "" || webhook == "" {
 			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an RocketChat notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationRocketChatInput{
-				Name:    name,
-				Webhook: webhook,
-				Channel: channel,
+
+			notification := s.AddNotificationRocketChatInput{
+				Name:         name,
+				Webhook:      webhook,
+				Channel:      channel,
+				Organization: &organizationID,
 			}
-			result, err := lagoon.AddNotificationRocketChat(context.TODO(), notification, lc)
+
+			result, err := l.AddNotificationRocketChat(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
-			data := []output.Data{
-				[]string{
-					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
-				},
+			var data []output.Data
+			notificationData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 			}
+			if result.Organization != nil {
+				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				if err != nil {
+					return err
+				}
+				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+			} else {
+				notificationData = append(notificationData, "-")
+			}
+			data = append(data, notificationData)
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Webhook",
 					"Channel",
+					"Organization",
 				},
 				Data: data,
 			}, outputOptions)
@@ -395,6 +415,7 @@ func init() {
 	addNotificationRocketchatCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationRocketchatCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
 	addNotificationRocketchatCmd.Flags().StringP("channel", "c", "", "The channel for the notification")
+	addNotificationRocketchatCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationRocketChatCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectRocketChatNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteRocketChatNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
