@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.8.2
-	github.com/uselagoon/machinery v0.0.15-0.20231214035056-b3e9d4c4b4dd
+	github.com/uselagoon/machinery v0.0.15
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	gopkg.in/yaml.v2 v2.2.8
 	sigs.k8s.io/yaml v1.2.0
