@@ -98,10 +98,10 @@ func TestRenderOutput(t *testing.T) {
 	var testData = `{"header":["NID","NotificationName","Channel","Webhook"],"data":[["1","amazeeio--lagoon-local-ci","lagoon-local-ci","https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"]]}`
 	var testSuccess1 = `{"data":[{"channel":"lagoon-local-ci","nid":"1","notificationname":"amazeeio--lagoon-local-ci","webhook":"https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"}]}
 `
-	var testSuccess2 = `NID	NOTIFICATIONNAME         	CHANNEL        	WEBHOOK 
-1  	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn	
+	var testSuccess2 = `NID	NOTIFICATIONNAME         	CHANNEL        	WEBHOOK
+1  	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 `
-	var testSuccess3 = `1	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn	
+	var testSuccess3 = `1	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 `
 
 	outputOptions := Options{
