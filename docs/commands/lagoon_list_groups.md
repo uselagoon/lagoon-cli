@@ -2,10 +2,6 @@
 
 List groups you have access to (alias: g)
 
-### Synopsis
-
-List groups you have access to (alias: g)
-
 ```
 lagoon list groups [flags]
 ```

@@ -2,10 +2,6 @@
 
 Remove a project from an Organization
 
-### Synopsis
-
-Remove a project from an Organization
-
 ```
 lagoon delete organization project [flags]
 ```

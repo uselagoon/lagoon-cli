@@ -2,10 +2,6 @@
 
 List deploy targets in an organization
 
-### Synopsis
-
-List deploy targets in an organization
-
 ```
 lagoon list organization deploytargets [flags]
 ```

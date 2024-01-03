@@ -2,10 +2,6 @@
 
 List all email notification details (alias: e)
 
-### Synopsis
-
-List all email notification details (alias: e)
-
 ```
 lagoon list notification email [flags]
 ```

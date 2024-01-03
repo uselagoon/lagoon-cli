@@ -2,10 +2,6 @@
 
 List tasks for an environment (alias: t)
 
-### Synopsis
-
-List tasks for an environment (alias: t)
-
 ```
 lagoon list tasks [flags]
 ```

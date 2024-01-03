@@ -2,10 +2,6 @@
 
 Remove a user to an Organization
 
-### Synopsis
-
-Remove a user to an Organization
-
 ```
 lagoon delete organization user [flags]
 ```

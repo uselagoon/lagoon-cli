@@ -2,10 +2,6 @@
 
 Delete an email notification from Lagoon
 
-### Synopsis
-
-Delete an email notification from Lagoon
-
 ```
 lagoon delete notification email [flags]
 ```

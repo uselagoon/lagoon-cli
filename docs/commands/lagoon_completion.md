@@ -1,15 +1,17 @@
-## lagoon list organization organizations
+## lagoon completion
 
-List all organizations
+Generate the autocompletion script for the specified shell
 
-```
-lagoon list organization organizations [flags]
-```
+### Synopsis
+
+Generate the autocompletion script for lagoon for the specified shell.
+See each sub-command's help for details on how to use the generated script.
+
 
 ### Options
 
 ```
-  -h, --help   help for organizations
+  -h, --help   help for completion
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +33,9 @@ lagoon list organization organizations [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon completion bash](lagoon_completion_bash.md)	 - Generate the autocompletion script for bash
+* [lagoon completion fish](lagoon_completion_fish.md)	 - Generate the autocompletion script for fish
+* [lagoon completion powershell](lagoon_completion_powershell.md)	 - Generate the autocompletion script for powershell
+* [lagoon completion zsh](lagoon_completion_zsh.md)	 - Generate the autocompletion script for zsh
 

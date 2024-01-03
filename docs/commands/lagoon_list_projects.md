@@ -2,10 +2,6 @@
 
 List all projects you have access to (alias: p)
 
-### Synopsis
-
-List all projects you have access to (alias: p)
-
 ```
 lagoon list projects [flags]
 ```

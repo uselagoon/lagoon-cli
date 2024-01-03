@@ -2,10 +2,6 @@
 
 Upload files to tasks
 
-### Synopsis
-
-Upload files to tasks
-
 ### Options
 
 ```

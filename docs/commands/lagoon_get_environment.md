@@ -2,10 +2,6 @@
 
 Get details about an environment
 
-### Synopsis
-
-Get details about an environment
-
 ```
 lagoon get environment [flags]
 ```

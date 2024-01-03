@@ -2,10 +2,6 @@
 
 Add a user to a group in lagoon
 
-### Synopsis
-
-Add a user to a group in lagoon
-
 ```
 lagoon add user-group [flags]
 ```

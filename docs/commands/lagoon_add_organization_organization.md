@@ -2,10 +2,6 @@
 
 Add a new organization to Lagoon
 
-### Synopsis
-
-Add a new organization to Lagoon
-
 ```
 lagoon add organization organization [flags]
 ```

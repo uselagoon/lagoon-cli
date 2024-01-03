@@ -2,10 +2,6 @@
 
 Update an existing email notification
 
-### Synopsis
-
-Update an existing email notification
-
 ```
 lagoon update notification email [flags]
 ```

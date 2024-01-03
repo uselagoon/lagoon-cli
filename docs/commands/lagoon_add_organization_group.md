@@ -2,10 +2,6 @@
 
 Add a group to an Organization
 
-### Synopsis
-
-Add a group to an Organization
-
 ```
 lagoon add organization group [flags]
 ```

@@ -2,10 +2,6 @@
 
 Delete a Microsoft Teams notification from Lagoon
 
-### Synopsis
-
-Delete a Microsoft Teams notification from Lagoon
-
 ```
 lagoon delete notification microsoftteams [flags]
 ```

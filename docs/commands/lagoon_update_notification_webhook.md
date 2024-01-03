@@ -2,10 +2,6 @@
 
 Update an existing webhook notification
 
-### Synopsis
-
-Update an existing webhook notification
-
 ```
 lagoon update notification webhook [flags]
 ```

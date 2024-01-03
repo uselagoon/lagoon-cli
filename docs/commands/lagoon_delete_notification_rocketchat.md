@@ -2,10 +2,6 @@
 
 Delete a RocketChat notification from Lagoon
 
-### Synopsis
-
-Delete a RocketChat notification from Lagoon
-
 ```
 lagoon delete notification rocketchat [flags]
 ```

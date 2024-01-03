@@ -2,10 +2,6 @@
 
 Set the default Lagoon to use
 
-### Synopsis
-
-Set the default Lagoon to use
-
 ```
 lagoon config default [flags]
 ```

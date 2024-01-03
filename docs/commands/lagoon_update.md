@@ -2,10 +2,6 @@
 
 Update a resource
 
-### Synopsis
-
-Update a resource
-
 ### Options
 
 ```

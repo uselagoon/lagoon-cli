@@ -2,10 +2,6 @@
 
 Delete a deploytarget config
 
-### Synopsis
-
-Delete a deploytarget config
-
 ```
 lagoon delete deploytarget-config [flags]
 ```

@@ -1,15 +1,31 @@
-## lagoon list organization organizations
+## lagoon completion fish
 
-List all organizations
+Generate the autocompletion script for fish
+
+### Synopsis
+
+Generate the autocompletion script for the fish shell.
+
+To load completions in your current shell session:
+
+	lagoon completion fish | source
+
+To load completions for every new session, execute once:
+
+	lagoon completion fish > ~/.config/fish/completions/lagoon.fish
+
+You will need to start a new shell for this setup to take effect.
+
 
 ```
-lagoon list organization organizations [flags]
+lagoon completion fish [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for organizations
+  -h, --help              help for fish
+      --no-descriptions   disable completion descriptions
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +47,5 @@ lagoon list organization organizations [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon completion](lagoon_completion.md)	 - Generate the autocompletion script for the specified shell
 

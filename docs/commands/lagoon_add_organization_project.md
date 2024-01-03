@@ -2,10 +2,6 @@
 
 Add a project to an Organization
 
-### Synopsis
-
-Add a project to an Organization
-
 ```
 lagoon add organization project [flags]
 ```

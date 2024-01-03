@@ -2,10 +2,6 @@
 
 List projects, environments, deployments, variables or notifications
 
-### Synopsis
-
-List projects, environments, deployments, variables or notifications
-
 ### Options
 
 ```

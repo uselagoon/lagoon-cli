@@ -2,10 +2,6 @@
 
 List projects in an organization
 
-### Synopsis
-
-List projects in an organization
-
 ```
 lagoon list organization projects [flags]
 ```

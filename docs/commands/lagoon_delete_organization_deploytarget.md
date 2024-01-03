@@ -2,10 +2,6 @@
 
 Remove a deploy target from an Organization
 
-### Synopsis
-
-Remove a deploy target from an Organization
-
 ```
 lagoon delete organization deploytarget [flags]
 ```

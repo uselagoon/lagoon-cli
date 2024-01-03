@@ -2,10 +2,6 @@
 
 Delete a group from lagoon
 
-### Synopsis
-
-Delete a group from lagoon
-
 ```
 lagoon delete group [flags]
 ```

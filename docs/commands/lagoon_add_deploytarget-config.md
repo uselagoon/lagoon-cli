@@ -2,10 +2,6 @@
 
 Add deploytarget config to a project
 
-### Synopsis
-
-Add deploytarget config to a project
-
 ```
 lagoon add deploytarget-config [flags]
 ```

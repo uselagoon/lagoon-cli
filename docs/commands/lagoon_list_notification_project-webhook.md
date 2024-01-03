@@ -2,10 +2,6 @@
 
 List webhook details about a project (alias: pw)
 
-### Synopsis
-
-List webhook details about a project (alias: pw)
-
 ```
 lagoon list notification project-webhook [flags]
 ```

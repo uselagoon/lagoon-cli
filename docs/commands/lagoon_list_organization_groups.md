@@ -2,10 +2,6 @@
 
 List groups in an organization
 
-### Synopsis
-
-List groups in an organization
-
 ```
 lagoon list organization groups [flags]
 ```

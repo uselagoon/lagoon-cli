@@ -2,10 +2,6 @@
 
 List users in an organization
 
-### Synopsis
-
-List users in an organization
-
 ```
 lagoon list organization users [flags]
 ```

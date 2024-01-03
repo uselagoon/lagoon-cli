@@ -2,10 +2,6 @@
 
 Get details about a project
 
-### Synopsis
-
-Get details about a project
-
 ```
 lagoon get project [flags]
 ```

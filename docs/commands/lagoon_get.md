@@ -2,10 +2,6 @@
 
 Get info on a resource
 
-### Synopsis
-
-Get info on a resource
-
 ### Options
 
 ```

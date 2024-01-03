@@ -1,15 +1,28 @@
-## lagoon list organization organizations
+## lagoon completion powershell
 
-List all organizations
+Generate the autocompletion script for powershell
+
+### Synopsis
+
+Generate the autocompletion script for powershell.
+
+To load completions in your current shell session:
+
+	lagoon completion powershell | Out-String | Invoke-Expression
+
+To load completions for every new session, add the output of the above command
+to your powershell profile.
+
 
 ```
-lagoon list organization organizations [flags]
+lagoon completion powershell [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for organizations
+  -h, --help              help for powershell
+      --no-descriptions   disable completion descriptions
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +44,5 @@ lagoon list organization organizations [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon completion](lagoon_completion.md)	 - Generate the autocompletion script for the specified shell
 

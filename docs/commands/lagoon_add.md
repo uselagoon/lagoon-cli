@@ -2,10 +2,6 @@
 
 Add a project, or add notifications and variables to projects or environments
 
-### Synopsis
-
-Add a project, or add notifications and variables to projects or environments
-
 ### Options
 
 ```

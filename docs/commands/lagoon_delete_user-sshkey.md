@@ -2,10 +2,6 @@
 
 Delete an SSH key from Lagoon
 
-### Synopsis
-
-Delete an SSH key from Lagoon
-
 ```
 lagoon delete user-sshkey [flags]
 ```

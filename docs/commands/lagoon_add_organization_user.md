@@ -2,10 +2,6 @@
 
 Add a user to an Organization
 
-### Synopsis
-
-Add a user to an Organization
-
 ```
 lagoon add organization user [flags]
 ```

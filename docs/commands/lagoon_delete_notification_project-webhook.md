@@ -2,10 +2,6 @@
 
 Delete a webhook notification from a project
 
-### Synopsis
-
-Delete a webhook notification from a project
-
 ```
 lagoon delete notification project-webhook [flags]
 ```

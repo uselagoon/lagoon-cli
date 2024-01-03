@@ -2,10 +2,6 @@
 
 Get details about an organization
 
-### Synopsis
-
-Get details about an organization
-
 ```
 lagoon get organization [flags]
 ```

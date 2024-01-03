@@ -2,10 +2,6 @@
 
 Delete a email notification from a project
 
-### Synopsis
-
-Delete a email notification from a project
-
 ```
 lagoon delete notification project-email [flags]
 ```

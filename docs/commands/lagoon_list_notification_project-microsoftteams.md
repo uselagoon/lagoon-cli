@@ -2,10 +2,6 @@
 
 List Microsoft Teams details about a project (alias: pm)
 
-### Synopsis
-
-List Microsoft Teams details about a project (alias: pm)
-
 ```
 lagoon list notification project-microsoftteams [flags]
 ```

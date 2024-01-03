@@ -2,10 +2,6 @@
 
 Update an existing Microsoft Teams notification
 
-### Synopsis
-
-Update an existing Microsoft Teams notification
-
 ```
 lagoon update notification microsoftteams [flags]
 ```

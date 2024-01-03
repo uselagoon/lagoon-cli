@@ -2,10 +2,6 @@
 
 List all webhook notification details (alias: w)
 
-### Synopsis
-
-List all webhook notification details (alias: w)
-
 ```
 lagoon list notification webhook [flags]
 ```
