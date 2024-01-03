@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -17,7 +16,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // LagoonConfigFlags .
@@ -327,7 +326,7 @@ func init() {
 
 // readLagoonConfig reads the lagoon config from specified file.
 func readLagoonConfig(lc *lagoon.Config, file string) error {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		// if there is no file found in the specified location, prompt the user to create it with the default
 		// configuration to point to the amazeeio lagoon instance
@@ -388,7 +387,7 @@ func writeLagoonConfig(lc *lagoon.Config, file string) error {
 	if err != nil {
 		return fmt.Errorf("unable to marshal config into valid yaml: %v", err)
 	}
-	err = ioutil.WriteFile(file, d, 0777)
+	err = os.WriteFile(file, d, 0777)
 	if err != nil {
 		return err
 	}

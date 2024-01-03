@@ -2,10 +2,6 @@
 
 List groups in a project (alias: pg)
 
-### Synopsis
-
-List groups in a project (alias: pg)
-
 ```
 lagoon list project-groups [flags]
 ```

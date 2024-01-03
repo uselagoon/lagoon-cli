@@ -2,10 +2,6 @@
 
 List an environments backups
 
-### Synopsis
-
-List an environments backups
-
 ```
 lagoon list backups [flags]
 ```

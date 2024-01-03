@@ -2,10 +2,6 @@
 
 Update an organization
 
-### Synopsis
-
-Update an organization
-
 ```
 lagoon update organization [flags]
 ```

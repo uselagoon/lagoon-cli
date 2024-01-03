@@ -2,10 +2,6 @@
 
 List projects in a group (alias: gp)
 
-### Synopsis
-
-List projects in a group (alias: gp)
-
 ```
 lagoon list group-projects [flags]
 ```

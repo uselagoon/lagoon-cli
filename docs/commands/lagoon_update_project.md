@@ -2,10 +2,6 @@
 
 Update a project
 
-### Synopsis
-
-Update a project
-
 ```
 lagoon update project [flags]
 ```

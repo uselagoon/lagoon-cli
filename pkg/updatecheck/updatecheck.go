@@ -10,7 +10,7 @@ import (
 
 	"os"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/github"
 )
 

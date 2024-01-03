@@ -2,10 +2,6 @@
 
 Trigger a retrieval operation on backups
 
-### Synopsis
-
-Trigger a retrieval operation on backups
-
 ### Options
 
 ```

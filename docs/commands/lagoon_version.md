@@ -2,10 +2,6 @@
 
 Version information
 
-### Synopsis
-
-Version information
-
 ```
 lagoon version [flags]
 ```

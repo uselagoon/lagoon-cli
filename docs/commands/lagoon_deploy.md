@@ -2,10 +2,6 @@
 
 Actions for deploying or promoting branches or environments in lagoon
 
-### Synopsis
-
-Actions for deploying or promoting branches or environments in lagoon
-
 ### Options
 
 ```

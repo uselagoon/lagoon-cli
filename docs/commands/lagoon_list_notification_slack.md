@@ -2,10 +2,6 @@
 
 List all Slacks notification details (alias: s)
 
-### Synopsis
-
-List all Slacks notification details (alias: s)
-
 ```
 lagoon list notification slack [flags]
 ```

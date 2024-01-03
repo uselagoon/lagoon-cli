@@ -2,10 +2,6 @@
 
 List all notifications or notifications on projects
 
-### Synopsis
-
-List all notifications or notifications on projects
-
 ### Options
 
 ```

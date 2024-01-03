@@ -2,10 +2,6 @@
 
 Add an organization, or add a group/project to an organization
 
-### Synopsis
-
-Add an organization, or add a group/project to an organization
-
 ### Options
 
 ```

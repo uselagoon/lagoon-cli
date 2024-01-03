@@ -2,10 +2,6 @@
 
 Delete a webhook notification from Lagoon
 
-### Synopsis
-
-Delete a webhook notification from Lagoon
-
 ```
 lagoon delete notification webhook [flags]
 ```

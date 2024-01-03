@@ -2,10 +2,6 @@
 
 List email details about a project (alias: pe)
 
-### Synopsis
-
-List email details about a project (alias: pe)
-
 ```
 lagoon list notification project-email [flags]
 ```

@@ -2,10 +2,6 @@
 
 List deployments for an environment (alias: d)
 
-### Synopsis
-
-List deployments for an environment (alias: d)
-
 ```
 lagoon list deployments [flags]
 ```

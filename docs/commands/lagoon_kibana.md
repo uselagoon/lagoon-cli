@@ -2,10 +2,6 @@
 
 Launch the kibana interface
 
-### Synopsis
-
-Launch the kibana interface
-
 ```
 lagoon kibana [flags]
 ```

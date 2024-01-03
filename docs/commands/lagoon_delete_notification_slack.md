@@ -2,10 +2,6 @@
 
 Delete a Slack notification from Lagoon
 
-### Synopsis
-
-Delete a Slack notification from Lagoon
-
 ```
 lagoon delete notification slack [flags]
 ```

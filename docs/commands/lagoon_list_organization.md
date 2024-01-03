@@ -2,10 +2,6 @@
 
 List all organizations projects, groups, deploy targets or users
 
-### Synopsis
-
-List all organizations projects, groups, deploy targets or users
-
 ### Options
 
 ```

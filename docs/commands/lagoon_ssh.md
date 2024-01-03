@@ -2,10 +2,6 @@
 
 Display the SSH command to access a specific environment in a project
 
-### Synopsis
-
-Display the SSH command to access a specific environment in a project
-
 ```
 lagoon ssh [flags]
 ```

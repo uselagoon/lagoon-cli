@@ -2,10 +2,6 @@
 
 List RocketChats details about a project (alias: pr)
 
-### Synopsis
-
-List RocketChats details about a project (alias: pr)
-
 ```
 lagoon list notification project-rocketchat [flags]
 ```

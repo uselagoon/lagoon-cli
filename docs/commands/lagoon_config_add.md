@@ -2,10 +2,6 @@
 
 Add information about an additional Lagoon instance to use
 
-### Synopsis
-
-Add information about an additional Lagoon instance to use
-
 ```
 lagoon config add [flags]
 ```
@@ -19,6 +15,7 @@ lagoon config add [flags]
   -H, --hostname string   Lagoon SSH hostname
   -k, --kibana string     Lagoon Kibana URL (https://logs.amazeeio.cloud)
   -P, --port string       Lagoon SSH port
+      --ssh-key string    SSH Key to use for this cluster for generating tokens
   -t, --token string      Lagoon GraphQL token
   -u, --ui string         Lagoon UI location (https://dashboard.amazeeio.cloud)
 ```
@@ -37,7 +34,6 @@ lagoon config add [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
 ### SEE ALSO

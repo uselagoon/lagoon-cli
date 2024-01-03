@@ -2,10 +2,6 @@
 
 List projects by a given metadata key or key:value
 
-### Synopsis
-
-List projects by a given metadata key or key:value
-
 ```
 lagoon list projects-by-metadata [flags]
 ```

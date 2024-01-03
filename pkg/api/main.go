@@ -1,18 +1,13 @@
 package api
 
 import (
-	//"bytes"
 	"context"
 	"fmt"
 	"strings"
 
-	//"errors"
-	//"fmt"
-	//"io/ioutil"
 	"net/http"
 	"regexp"
 
-	//"strings"
 	"crypto/tls"
 	"encoding/json"
 	"time"

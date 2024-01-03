@@ -2,10 +2,6 @@
 
 Add or update a variable to an environment or project
 
-### Synopsis
-
-Add or update a variable to an environment or project
-
 ```
 lagoon update variable [flags]
 ```

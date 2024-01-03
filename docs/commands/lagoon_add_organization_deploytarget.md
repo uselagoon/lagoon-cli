@@ -2,10 +2,6 @@
 
 Add a deploy target to an Organization
 
-### Synopsis
-
-Add a deploy target to an Organization
-
 ```
 lagoon add organization deploytarget [flags]
 ```

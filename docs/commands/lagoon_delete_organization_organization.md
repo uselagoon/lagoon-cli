@@ -2,10 +2,6 @@
 
 Delete an organization
 
-### Synopsis
-
-Delete an organization
-
 ```
 lagoon delete organization organization [flags]
 ```

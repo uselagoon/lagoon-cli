@@ -2,10 +2,6 @@
 
 Delete a project, or delete notifications and variables from projects or environments
 
-### Synopsis
-
-Delete a project, or delete notifications and variables from projects or environments
-
 ### Options
 
 ```

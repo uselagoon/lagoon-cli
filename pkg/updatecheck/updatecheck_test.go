@@ -2,7 +2,6 @@ package updatecheck
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"path/filepath"
 	"testing"
@@ -33,7 +32,7 @@ func CreateTmpDir(prefix string) string {
 	if err != nil {
 		log.Fatalln("Failed getting system temp dir", err)
 	}
-	fullPath, err := ioutil.TempDir(systemTempDir, prefix)
+	fullPath, err := os.MkdirTemp(systemTempDir, prefix)
 	if err != nil {
 		log.Fatalln("Failed to create temp directory, err=", err)
 	}

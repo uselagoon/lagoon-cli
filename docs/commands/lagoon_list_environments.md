@@ -2,10 +2,6 @@
 
 List environments for a project (alias: e)
 
-### Synopsis
-
-List environments for a project (alias: e)
-
 ```
 lagoon list environments [flags]
 ```

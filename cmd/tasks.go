@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -250,7 +249,7 @@ Path:
 		} else {
 			// otherwise we can read from a file
 			if taskCommandFile != "" {
-				taskCommandBytes, err := ioutil.ReadFile(taskCommandFile) // just pass the file name
+				taskCommandBytes, err := os.ReadFile(taskCommandFile) // just pass the file name
 				handleError(err)
 				taskCommand = string(taskCommandBytes)
 			}

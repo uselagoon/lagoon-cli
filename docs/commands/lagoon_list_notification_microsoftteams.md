@@ -2,10 +2,6 @@
 
 List all Microsoft Teams notification details (alias: m)
 
-### Synopsis
-
-List all Microsoft Teams notification details (alias: m)
-
 ```
 lagoon list notification microsoftteams [flags]
 ```

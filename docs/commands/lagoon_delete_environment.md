@@ -2,10 +2,6 @@
 
 Delete an environment
 
-### Synopsis
-
-Delete an environment
-
 ```
 lagoon delete environment [flags]
 ```

@@ -2,10 +2,6 @@
 
 Delete notifications or delete notifications from projects
 
-### Synopsis
-
-Delete notifications or delete notifications from projects
-
 ### Options
 
 ```

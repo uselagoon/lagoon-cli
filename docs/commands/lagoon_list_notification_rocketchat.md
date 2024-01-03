@@ -2,10 +2,6 @@
 
 List all RocketChats notification details (alias: r)
 
-### Synopsis
-
-List all RocketChats notification details (alias: r)
-
 ```
 lagoon list notification rocketchat [flags]
 ```

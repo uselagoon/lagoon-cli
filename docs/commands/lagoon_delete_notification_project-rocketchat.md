@@ -2,10 +2,6 @@
 
 Delete a RocketChat notification from a project
 
-### Synopsis
-
-Delete a RocketChat notification from a project
-
 ```
 lagoon delete notification project-rocketchat [flags]
 ```

@@ -2,10 +2,6 @@
 
 Run a task against an environment
 
-### Synopsis
-
-Run a task against an environment
-
 ### Options
 
 ```

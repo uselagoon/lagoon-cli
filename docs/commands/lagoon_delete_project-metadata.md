@@ -2,10 +2,6 @@
 
 Delete a key from a projects metadata
 
-### Synopsis
-
-Delete a key from a projects metadata
-
 ```
 lagoon delete project-metadata [flags]
 ```

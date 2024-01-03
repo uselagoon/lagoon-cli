@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
+
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -37,7 +37,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (api.SSHKey, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
-		b, err := ioutil.ReadFile(sshPubKey) // just pass the file name
+		b, err := os.ReadFile(sshPubKey) // just pass the file name
 		handleError(err)
 		keyValue = string(b)
 	}
