@@ -37,6 +37,7 @@ lagoon [flags]
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 * [lagoon completion](lagoon_completion.md)	 - Generate the autocompletion script for the specified shell
 * [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
+* [lagoon custom](lagoon_custom.md)	 - Run a custom command
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
 * [lagoon export](lagoon_export.md)	 - Export lagoon output to yaml

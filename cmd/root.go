@@ -205,6 +205,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(resetPasswordCmd)
 	rootCmd.AddCommand(logsCmd)
+	rootCmd.AddCommand(customCmd)
 }
 
 // version/build information command

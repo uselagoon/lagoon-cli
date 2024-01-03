@@ -1,0 +1,23 @@
+description: Query deploytargets
+query: |
+  query allk8s($buildimage: Boolean, $disabled: Boolean) {
+    allKubernetes(
+      buildImage: $buildimage
+      disabled: $disabled
+    ){
+      id
+      name
+      disabled
+      buildImage
+    }
+  }
+flags:
+  - name: build-image
+    description: Return deploytargets with buildimage overrides
+    variable: buildimage
+    type: Boolean
+    default: false
+  - name: disabled
+    description: Return deploytargets that are disabled
+    variable: disabled
+    type: Boolean
