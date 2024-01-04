@@ -29,7 +29,6 @@ jobs:
     - name: Build
       run: |
         go install github.com/golang/mock/mockgen@v1.4.3
-        go install github.com/go-bindata/go-bindata/...@latest
         ARTIFACT_DESTINATION=./builds make build
     # - name: Check version
     #   run: |
