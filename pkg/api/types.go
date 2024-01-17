@@ -232,6 +232,7 @@ type Project struct {
 	Name                         string                `json:"name,omitempty"`
 	GitURL                       string                `json:"gitUrl,omitempty"`
 	PrivateKey                   string                `json:"privateKey,omitempty"`
+	PublicKey                    string                `json:"publicKey,omitempty"`
 	Subfolder                    string                `json:"subfolder,omitempty"`
 	RouterPattern                string                `json:"routerPattern,omitempty"`
 	Branches                     string                `json:"branches,omitempty"`
