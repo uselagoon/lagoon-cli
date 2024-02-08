@@ -2,10 +2,6 @@
 
 List deploytarget configs for a project
 
-### Synopsis
-
-List deploytarget configs for a project
-
 ```
 lagoon list deploytarget-configs [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list deploytarget-configs [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

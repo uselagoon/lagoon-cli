@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strings"
 
@@ -228,6 +232,67 @@ var deleteGroupCmd = &cobra.Command{
 	},
 }
 
+var addGroupToOrganizationCmd = &cobra.Command{
+	Use:     "group",
+	Aliases: []string{"g"},
+	Short:   "Add a group to an Organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		handleError(err)
+		orgOwner, err := cmd.Flags().GetBool("org-owner")
+		if err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		groupName, err := cmd.Flags().GetString("group")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		handleError(err)
+
+		groupInput := s.AddGroupToOrganizationInput{
+			Name:         groupName,
+			Organization: organization.ID,
+			AddOrgOwner:  orgOwner,
+		}
+		group := s.OrgGroup{}
+		err = lc.AddGroupToOrganization(context.TODO(), &groupInput, &group)
+		handleError(err)
+
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"Group Name":        group.Name,
+				"Organization Name": organizationName,
+			},
+		}
+		output.RenderResult(resultData, outputOptions)
+		return nil
+	},
+}
+
 func init() {
 	addGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
@@ -238,4 +303,7 @@ func init() {
 	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	addGroupToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	addGroupToOrganizationCmd.Flags().StringP("group", "G", "", "Name of the group")
+	addGroupToOrganizationCmd.Flags().Bool("org-owner", false, "Flag to add the user to the group as an owner")
 }

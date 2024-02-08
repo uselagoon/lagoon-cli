@@ -40,6 +40,7 @@ const (
 	RocketChatNotification     NotificationType = "ROCKETCHAT"
 	EmailNotification          NotificationType = "EMAIL"
 	MicrosoftTeamsNotification NotificationType = "MICROSOFTTEAMS"
+	WebhookNotification        NotificationType = "WEBHOOK"
 )
 
 // DeploymentStatusType .
@@ -231,6 +232,7 @@ type Project struct {
 	Name                         string                `json:"name,omitempty"`
 	GitURL                       string                `json:"gitUrl,omitempty"`
 	PrivateKey                   string                `json:"privateKey,omitempty"`
+	PublicKey                    string                `json:"publicKey,omitempty"`
 	Subfolder                    string                `json:"subfolder,omitempty"`
 	RouterPattern                string                `json:"routerPattern,omitempty"`
 	Branches                     string                `json:"branches,omitempty"`
@@ -650,7 +652,6 @@ type Environment struct {
 	Deleted              string                `json:"deleted,omitempty"`
 	Route                string                `json:"route,omitempty"`
 	Routes               string                `json:"routes,omitempty"`
-	MonitoringUrls       string                `json:"monitoringUrls,omitempty"`
 	EnvVariables         []EnvironmentVariable `json:"envVariables,omitempty"`
 	Backups              []Backup              `json:"backups,omitempty"`
 	Tasks                []Task                `json:"tasks,omitempty"`

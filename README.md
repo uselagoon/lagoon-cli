@@ -2,8 +2,6 @@
 
 <img src="./docs/lagoon-cli-logo.png" width=100>
 
-[![CircleCI](https://circleci.com/gh/uselagoon/lagoon-cli.svg?style=svg)](https://circleci.com/gh/uselagoon/lagoon-cli) 
-
 This is a CLI for interacting with a [Lagoon](https://github.com/uselagoon/lagoon) instance. By default, it is configured
 to work against [Amazee.io](https://www.amazee.io/) instances.
 

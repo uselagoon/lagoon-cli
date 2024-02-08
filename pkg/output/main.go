@@ -6,8 +6,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/logrusorgru/aurora"
-	"github.com/olekukonko/tablewriter"
 )
 
 // Table .
@@ -26,6 +27,7 @@ type Options struct {
 	JSON   bool
 	Pretty bool
 	Debug  bool
+	Error  string
 }
 
 // Result .
@@ -125,34 +127,37 @@ func RenderOutput(data Table, opts Options) {
 		RenderJSON(returnedData, opts)
 	} else {
 		// otherwise render a table
-		table := tablewriter.NewWriter(os.Stdout)
+		if opts.Error != "" {
+			os.Stderr.WriteString(opts.Error)
+		}
+		t := table.NewWriter()
 		opts.Header = !opts.Header
 		if opts.Header {
-			table.SetHeader(data.Header)
+			var hRow table.Row
+			for _, k := range data.Header {
+				hRow = append(hRow, k)
+			}
+			t.AppendHeader(hRow)
 		}
-		table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-		table.SetAlignment(tablewriter.ALIGN_LEFT)
-		table.SetAutoWrapText(false)
-		table.SetAutoFormatHeaders(true)
-		if opts.CSV {
-			table.SetHeaderLine(false)
-			table.SetBorder(false)
-			table.SetCenterSeparator("")
-			table.SetRowSeparator("")
-			table.SetColumnSeparator(",")
-		} else {
-			table.SetHeaderLine(false)
-			table.SetBorder(false)
-			table.SetCenterSeparator("")
-			table.SetRowSeparator("")
-			table.SetColumnSeparator(",")
-			table.SetTablePadding("\t") // pad with tabs
-			table.SetNoWhiteSpace(true)
-		}
+		t.SetOutputMirror(os.Stdout)
 		for _, rowData := range data.Data {
-			table.Append(rowData)
+			var dRow table.Row
+			for _, k := range rowData {
+				dRow = append(dRow, k)
+			}
+			t.AppendRow(dRow)
 		}
-		table.Render()
+		t.SetStyle(table.StyleDefault)
+		t.Style().Options = table.OptionsNoBordersAndSeparators
+		t.Style().Box.PaddingLeft = ""    // trim left space
+		t.Style().Box.PaddingRight = "\t" // pad right with tab
+		t.SuppressTrailingSpaces()        // suppress the trailing spaces
+		t.SetColumnConfigs([]table.ColumnConfig{{Align: text.AlignLeft}})
+		if opts.CSV {
+			t.RenderCSV()
+			return
+		}
+		t.Render()
 	}
 }
 

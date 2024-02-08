@@ -2,10 +2,6 @@
 
 List deployments for an environment (alias: d)
 
-### Synopsis
-
-List deployments for an environment (alias: d)
-
 ```
 lagoon list deployments [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list deployments [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

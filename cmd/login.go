@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -41,7 +40,7 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 		}
 	}
 
-	key, err := ioutil.ReadFile(path)
+	key, err := os.ReadFile(path)
 	handleError(err)
 
 	// Try to look for an unencrypted private key

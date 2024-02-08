@@ -3,7 +3,7 @@ package schema_test
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/uselagoon/lagoon-cli/internal/schema"
@@ -40,7 +40,7 @@ func TestProjectsToConfig(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
 			// marshal testcase
-			testJSON, err := ioutil.ReadFile(tc.input)
+			testJSON, err := os.ReadFile(tc.input)
 			if err != nil {
 				tt.Fatalf("couldn't read file: %v", err)
 			}
@@ -57,12 +57,12 @@ func TestProjectsToConfig(t *testing.T) {
 
 			if *update {
 				tt.Logf("update golden file: %s", tc.expect)
-				if err = ioutil.WriteFile(tc.expect, result, 0644); err != nil {
+				if err = os.WriteFile(tc.expect, result, 0644); err != nil {
 					tt.Fatalf("failed to update golden file: %v", err)
 				}
 			}
 
-			expected, err := ioutil.ReadFile(tc.expect)
+			expected, err := os.ReadFile(tc.expect)
 			if err != nil {
 				tt.Fatalf("failed reading golden file: %v", err)
 			}

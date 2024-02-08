@@ -57,6 +57,7 @@ type ProjectNotifications struct {
 	RocketChat     []string `json:"rocketChat,omitempty"`
 	Email          []string `json:"email,omitempty"`
 	MicrosoftTeams []string `json:"microsoftTeams,omitempty"`
+	Webhook        []string `json:"webhook,omitempty"`
 }
 
 // OpenshiftID is unmarshalled during export.
@@ -85,8 +86,16 @@ type AddNotificationToProjectInput struct {
 	NotificationName string               `json:"notificationName"`
 }
 
+// RemoveNotificationFromProjectInput is based on the input to
+// removeNotificationFromProject.
+type RemoveNotificationFromProjectInput struct {
+	Project          string               `json:"project"`
+	NotificationType api.NotificationType `json:"notificationType"`
+	NotificationName string               `json:"notificationName"`
+}
+
 // ProjectMetadata .
 type ProjectMetadata struct {
 	Project
-	Metadata string `json:"metadata"`
+	Metadata map[string]string `json:"metadata"`
 }

@@ -2,10 +2,6 @@
 
 Display the current Lagoon that commands would be executed against
 
-### Synopsis
-
-Display the current Lagoon that commands would be executed against
-
 ```
 lagoon config current [flags]
 ```

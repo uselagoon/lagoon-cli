@@ -2,10 +2,6 @@
 
 Add a user to lagoon
 
-### Synopsis
-
-Add a user to lagoon
-
 ```
 lagoon add user [flags]
 ```

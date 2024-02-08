@@ -13,16 +13,32 @@ var addCmd = &cobra.Command{
 	},
 }
 
+var addNotificationCmd = &cobra.Command{
+	Use:     "notification",
+	Aliases: []string{"n"},
+	Short:   "Add notifications or add notifications to projects",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+}
+
+var addOrganizationCmd = &cobra.Command{
+	Use:     "organization",
+	Aliases: []string{"o"},
+	Short:   "Add an organization, or add a group/project to an organization",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+}
+
 func init() {
 	addCmd.AddCommand(addDeployTargetCmd)
 	addCmd.AddCommand(addGroupCmd)
 	addCmd.AddCommand(addProjectCmd)
 	addCmd.AddCommand(addProjectToGroupCmd)
-	addCmd.AddCommand(addProjectRocketChatNotificationCmd)
-	addCmd.AddCommand(addProjectSlackNotificationCmd)
-	addCmd.AddCommand(addRocketChatNotificationCmd)
-	addCmd.AddCommand(addSlackNotificationCmd)
+	addCmd.AddCommand(addNotificationCmd)
 	addCmd.AddCommand(addUserCmd)
+	addCmd.AddCommand(addOrganizationCmd)
 	addCmd.AddCommand(addUserToGroupCmd)
 	addCmd.AddCommand(addUserSSHKeyCmd)
 	addCmd.AddCommand(addVariableCmd)

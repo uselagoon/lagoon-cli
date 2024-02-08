@@ -2,10 +2,6 @@
 
 Launch the web user interface
 
-### Synopsis
-
-Launch the web user interface
-
 ```
 lagoon web [flags]
 ```

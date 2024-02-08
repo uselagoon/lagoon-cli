@@ -2,10 +2,6 @@
 
 Update a projects metadata with a given key or key:value
 
-### Synopsis
-
-Update a projects metadata with a given key or key:value
-
 ```
 lagoon update project-metadata [flags]
 ```

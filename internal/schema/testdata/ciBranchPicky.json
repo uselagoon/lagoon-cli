@@ -113,6 +113,9 @@
 					"deployTitle": null,
 					"environmentType": "production",
 					"openshiftProjectName": "ci-branch-picky",
+					"openshift": {
+						"id": 1
+					},
 					"autoIdle": 1,
 					"envVariables": []
 				},
@@ -124,6 +127,9 @@
 					"deployTitle": null,
 					"environmentType": "development",
 					"openshiftProjectName": "ci-branch-picky",
+					"openshift": {
+						"id": 1
+					},
 					"autoIdle": 1,
 					"envVariables": []
 				},
@@ -135,6 +141,9 @@
 					"deployTitle": null,
 					"environmentType": "development",
 					"openshiftProjectName": "ci-branch-picky",
+					"openshift": {
+						"id": 1
+					},
 					"autoIdle": 1,
 					"envVariables": []
 				},
@@ -146,6 +155,9 @@
 					"deployTitle": null,
 					"environmentType": "development",
 					"openshiftProjectName": "ci-branch-picky",
+					"openshift": {
+						"id": 1
+					},
 					"autoIdle": 1,
 					"envVariables": []
 				}

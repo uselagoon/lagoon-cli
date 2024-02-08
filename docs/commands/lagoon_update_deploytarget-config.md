@@ -2,10 +2,6 @@
 
 Update a deploytarget config
 
-### Synopsis
-
-Update a deploytarget config
-
 ```
 lagoon update deploytarget-config [flags]
 ```

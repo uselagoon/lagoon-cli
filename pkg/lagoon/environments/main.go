@@ -132,7 +132,7 @@ func processEnvInfo(projectByName []byte) ([]byte, error) {
 	var data []output.Data
 	data = append(data, environmentData)
 	dataMain := output.Table{
-		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "MonitoringURLS", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+		Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
@@ -160,7 +160,6 @@ func processEnvExtra(environment api.Environment) []string {
 		fmt.Sprintf("%v", envOpenshiftProjectName),
 		fmt.Sprintf("%v", envRoute),
 		fmt.Sprintf("%v", envRoutes),
-		fmt.Sprintf("%v", "-"), // MonitoringURLS is deprecated, don't query this data
 		fmt.Sprintf("%v", envAutoIdle),
 		fmt.Sprintf("%v", envDeployTitle),
 		fmt.Sprintf("%v", envDeployBaseRef),

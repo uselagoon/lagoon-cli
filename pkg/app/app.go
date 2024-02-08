@@ -2,14 +2,13 @@ package app
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/integralist/go-findroot/find"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // LagoonProject represets the information of a Lagoon project.
@@ -29,7 +28,7 @@ type LagoonDockerCompose struct {
 func (project *LagoonProject) ReadConfig() error {
 	var err error
 
-	source, err := ioutil.ReadFile(filepath.Join(project.Dir, ".lagoon.yml"))
+	source, err := os.ReadFile(filepath.Join(project.Dir, ".lagoon.yml"))
 	if err != nil {
 		return fmt.Errorf("unable to load config file %s/: %v", filepath.Join(project.Dir, ".lagoon.yml"), err)
 	}
@@ -42,7 +41,7 @@ func (project *LagoonProject) ReadConfig() error {
 	if !fileExists(dockerComposeFilepath) {
 		return fmt.Errorf("Could not load docker-compose.yml at %s", dockerComposeFilepath)
 	}
-	sourceCompose, _ := ioutil.ReadFile(dockerComposeFilepath)
+	sourceCompose, _ := os.ReadFile(dockerComposeFilepath)
 	var dockerCompose LagoonDockerCompose
 	yaml.Unmarshal(sourceCompose, &dockerCompose)
 	// Reset the name based on the docker-compose.yml file.

@@ -2,10 +2,6 @@
 
 List all projects you have access to (alias: p)
 
-### Synopsis
-
-List all projects you have access to (alias: p)
-
 ```
 lagoon list projects [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list projects [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

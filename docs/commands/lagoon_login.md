@@ -2,10 +2,6 @@
 
 Log into a Lagoon instance
 
-### Synopsis
-
-Log into a Lagoon instance
-
 ```
 lagoon login [flags]
 ```

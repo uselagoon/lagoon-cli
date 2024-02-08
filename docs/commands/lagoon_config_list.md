@@ -2,10 +2,6 @@
 
 View all configured Lagoon instances
 
-### Synopsis
-
-View all configured Lagoon instances
-
 ```
 lagoon config list [flags]
 ```

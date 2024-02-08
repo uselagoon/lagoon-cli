@@ -2,10 +2,6 @@
 
 Delete a Lagoon instance configuration
 
-### Synopsis
-
-Delete a Lagoon instance configuration
-
 ```
 lagoon config delete [flags]
 ```

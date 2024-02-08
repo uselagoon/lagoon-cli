@@ -2,10 +2,6 @@
 
 List variables for a project or environment (alias: v)
 
-### Synopsis
-
-List variables for a project or environment (alias: v)
-
 ```
 lagoon list variables [flags]
 ```
@@ -36,5 +32,5 @@ lagoon list variables [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

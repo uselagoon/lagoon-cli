@@ -10,7 +10,7 @@ PKGMODPATH=$(DIR)/vendor
 VERSION=$(shell echo $(shell git describe --abbrev=0 --tags)+$(shell git rev-parse --short=8 HEAD))
 BUILD=$(shell date +%FT%T%z)
 
-DOCKER_GO_VER=1.16
+DOCKER_GO_VER=1.21
 GO_VER=$(shell go version)
 LDFLAGS=-w -s -X ${PKG}/cmd.lagoonCLIVersion=${VERSION} -X ${PKG}/cmd.lagoonCLIBuild=${BUILD}
 

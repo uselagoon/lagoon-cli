@@ -1,0 +1,12 @@
+mutation (
+  $name: String!,
+  $emailAddress: String!) {
+    addNotificationEmail(input: {
+      name: $name,
+      emailAddress: $emailAddress
+    }) {
+      id
+      name
+      emailAddress
+    }
+  }

@@ -2,10 +2,6 @@
 
 List environments for a project (alias: e)
 
-### Synopsis
-
-List environments for a project (alias: e)
-
 ```
 lagoon list environments [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list environments [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 
