@@ -23,6 +23,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
+	config "github.com/uselagoon/machinery/utils/config"
 )
 
 var cmdProject app.LagoonProject
@@ -39,6 +40,10 @@ var createConfig bool
 var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
+
+var c *config.Config
+var lContext *config.Context
+var lUser *config.User
 
 var skipUpdateCheck bool
 
@@ -195,6 +200,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(config2Cmd)
 }
 
 // version/build information command
@@ -213,6 +219,34 @@ func displayVersionInfo() {
 
 func initConfig() {
 	var err error
+	// load or create the configuration
+	c, err = config.LoadConfig(createConfig)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	if cmdLagoon == "" {
+		// source the default context for the config
+		lContext, err = c.GetDefaultContext()
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+	} else {
+		// otherwise try find the one the user has provided
+		lContext, err = c.GetContext(cmdLagoon)
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+	}
+	// get the users details for the context
+	lUser, err = c.GetUser(lContext.User)
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+
 	// Find home directory.
 	userPath, err = os.UserHomeDir()
 	if err != nil {
