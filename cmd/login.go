@@ -1,16 +1,16 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/oauth2"
 )
 
 var loginCmd = &cobra.Command{
@@ -18,7 +18,7 @@ var loginCmd = &cobra.Command{
 	Short:   "Log into a Lagoon instance",
 	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 		fmt.Println("Token fetched and saved.")
 	},
 }
@@ -69,22 +69,16 @@ func loginToken() error {
 		return err
 	}
 
-	lc := lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current]
-	lc.Token = out
-	lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current] = lc
-	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-		return fmt.Errorf("couldn't write config: %v", err)
-	}
-
-	return nil
+	lUser.UserConfig.Grant = out
+	return lConfig.WriteConfig()
 }
 
-func retrieveTokenViaSsh() (string, error) {
+func retrieveTokenViaSsh() (*oauth2.Token, error) {
 	skipAgent := false
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 	// if the user has a key defined in their lagoon cli config, use it
-	if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
-		privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+	if lUser.UserConfig.SSHKey != "" {
+		privateKey = lUser.UserConfig.SSHKey
 		skipAgent = true
 	}
 	// otherwise check if one has been provided by the override flag
@@ -102,23 +96,25 @@ func retrieveTokenViaSsh() (string, error) {
 	}
 	defer closeSSHAgent()
 
-	sshHost := fmt.Sprintf("%s:%s",
-		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
-		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
+	sshHost := fmt.Sprintf("%s:%d",
+		lContext.ContextConfig.TokenHost,
+		lContext.ContextConfig.TokenPort)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
-		return "", fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
+		return nil, fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
 	}
 	defer conn.Close()
 
 	session, err := conn.NewSession()
 	if err != nil {
-		return "", fmt.Errorf("couldn't open session: %v", err)
+		return nil, fmt.Errorf("couldn't open session: %v", err)
 	}
 
-	out, err := session.CombinedOutput("token")
+	out, err := session.CombinedOutput("grant")
 	if err != nil {
-		return "", fmt.Errorf("couldn't get token: %v", err)
+		return nil, fmt.Errorf("couldn't get token: %v", err)
 	}
-	return strings.TrimSpace(string(out)), err
+	token := &oauth2.Token{}
+	json.Unmarshal(out, token)
+	return token, err
 }

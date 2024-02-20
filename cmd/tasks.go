@@ -23,7 +23,7 @@ var getTaskByID = &cobra.Command{
 	Long:    `Get information about a task by its ID`,
 	Aliases: []string{"t", "tbi"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -42,10 +42,9 @@ var getTaskByID = &cobra.Command{
 		if taskID == 0 {
 			return fmt.Errorf("Missing arguments: ID is not defined")
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
@@ -90,7 +89,7 @@ You should only run this once and then check the status of the task that gets cr
 If the task fails or fails to update, contact your Lagoon administrator for assistance.`,
 	Aliases: []string{"as", "standby"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -101,10 +100,9 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			return fmt.Errorf("Missing arguments: Project name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -114,7 +112,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			}
 			fmt.Println(fmt.Sprintf(`Created a new task with ID %d
 You can use the following command to query the task status:
-lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
+lagoon -l %s get task-by-id --id %d --logs`, result.ID, lContext.Name, result.ID))
 		}
 		return nil
 	},
@@ -284,7 +282,7 @@ var uploadFilesToTask = &cobra.Command{
 	Long:    `Upload files to a task by its ID`,
 	Aliases: []string{"tf"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -303,10 +301,9 @@ var uploadFilesToTask = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)

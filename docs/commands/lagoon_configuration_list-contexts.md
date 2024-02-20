@@ -1,20 +1,15 @@
-## lagoon delete project-email
+## lagoon configuration list-contexts
 
-Delete a Email notification from a project
-
-### Synopsis
-
-Delete a Email notification from a project
+View all configured Lagoon contexts
 
 ```
-lagoon delete project-email [flags]
+lagoon configuration list-contexts [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for project-email
-  -n, --name string   The name of the notification
+  -h, --help   help for list-contexts
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +31,5 @@ lagoon delete project-email [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

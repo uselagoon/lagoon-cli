@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/adrg/xdg v0.4.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
@@ -15,11 +16,10 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/machinebox/graphql v0.2.3-0.20181106130121-3a9253180225
 	github.com/manifoldco/promptui v0.9.0
-	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.2
-	github.com/uselagoon/machinery v0.0.17-0.20240215222546-031323511e1f
+	github.com/uselagoon/machinery v0.0.17-0.20240219222245-e048cbe368f3
 	golang.org/x/crypto v0.18.0
 	golang.org/x/oauth2 v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -27,7 +27,6 @@ require (
 )
 
 require (
-	github.com/adrg/xdg v0.4.0 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -46,4 +45,4 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-//replace github.com/uselagoon/machinery => ../machinery
+// replace github.com/uselagoon/machinery => ../machinery

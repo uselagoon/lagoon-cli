@@ -48,11 +48,10 @@ var addVariableCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		in := &schema.EnvVariableByNameInput{
@@ -128,11 +127,10 @@ var deleteVariableCmd = &cobra.Command{
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			in := &schema.DeleteEnvVariableByNameInput{

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -25,7 +26,7 @@ var addNotificationRocketchatCmd = &cobra.Command{
 This command is used to set up a new RocketChat notification in Lagoon. This requires information to talk to RocketChat like the webhook URL and the name of the channel.
 It does not configure a project to send notifications to RocketChat though, you need to use project-rocketchat for that.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -52,10 +53,9 @@ It does not configure a project to send notifications to RocketChat though, you 
 			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an RocketChat notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -110,7 +110,7 @@ var addProjectNotificationRocketChatCmd = &cobra.Command{
 	Long: `Add a RocketChat notification to a project
 This command is used to add an existing RocketChat notification in Lagoon to a project.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -125,11 +125,10 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add RocketChat notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -155,7 +154,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 	Aliases: []string{"pr"},
 	Short:   "List RocketChats details about a project (alias: pr)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -165,11 +164,10 @@ var listProjectRocketChatsCmd = &cobra.Command{
 		if cmdProjectName == "" {
 			return fmt.Errorf("Missing arguments: project name is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationRocketChat(context.TODO(), cmdProjectName, lc)
@@ -201,18 +199,17 @@ var listAllRocketChatsCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "List all RocketChats notification details (alias: r)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationRocketChat(context.TODO(), lc)
@@ -251,7 +248,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 	Aliases: []string{"pr"},
 	Short:   "Delete a RocketChat notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -266,11 +263,10 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete RocketChat notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -296,7 +292,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Delete a RocketChat notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -311,11 +307,10 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete RocketChat notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationRocketChat(context.TODO(), name, lc)
@@ -336,7 +331,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Update an existing RocketChat notification",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -373,11 +368,10 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update RocketChat notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 

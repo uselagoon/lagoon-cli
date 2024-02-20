@@ -22,7 +22,7 @@ var sshEnvCmd = &cobra.Command{
 	Aliases: []string{"s"},
 	Short:   "Display the SSH command to access a specific environment in a project",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			return fmt.Errorf("Missing arguments: Project name or environment name are not defined")
@@ -37,17 +37,16 @@ var sshEnvCmd = &cobra.Command{
 		// run the environment through the makesafe and shorted functions that lagoon uses
 		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
 
-		current := lagoonCLIConfig.Current
 		// set the default ssh host and port to the core ssh endpoint
-		sshHost := lagoonCLIConfig.Lagoons[current].HostName
-		sshPort := lagoonCLIConfig.Lagoons[current].Port
+		sshHost := lContext.ContextConfig.TokenHost
+		sshPort := fmt.Sprintf("%d", lContext.ContextConfig.TokenPort)
 		isPortal := false
 
 		// if the config for this lagoon is set to use ssh portal support, handle that here
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
@@ -72,8 +71,8 @@ var sshEnvCmd = &cobra.Command{
 
 		privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 		// if the user has a key defined in their lagoon cli config, use it
-		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
-			privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+		if lUser.UserConfig.SSHKey != "" {
+			privateKey = lUser.UserConfig.SSHKey
 			skipAgent = true
 		}
 		// otherwise check if one has been provided by the override flag

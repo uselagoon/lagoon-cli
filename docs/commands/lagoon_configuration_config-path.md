@@ -1,15 +1,15 @@
-## lagoon kibana
+## lagoon configuration config-path
 
-Launch the kibana interface
+Get the path of where the config file lives
 
 ```
-lagoon kibana [flags]
+lagoon configuration config-path [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for kibana
+  -h, --help   help for config-path
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +31,5 @@ lagoon kibana [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

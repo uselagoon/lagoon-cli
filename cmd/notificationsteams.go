@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -25,7 +26,7 @@ This command is used to set up a new Microsoft Teams notification in Lagoon. Thi
 It does not configure a project to send notifications to Microsoft Teams though, you need to use project-microsoftteams for that.`,
 	Aliases: []string{"m"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -48,10 +49,9 @@ It does not configure a project to send notifications to Microsoft Teams though,
 			return fmt.Errorf("Missing arguments: name or webhook is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a Microsoft Teams notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -103,7 +103,7 @@ var addProjectNotificationMicrosoftTeamsCmd = &cobra.Command{
 	Long: `Add a Microsoft Teams notification to a project
 This command is used to add an existing Microsoft Teams notification in Lagoon to a project.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -118,11 +118,10 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add Microsoft Teams notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -148,7 +147,7 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 	Aliases: []string{"pm"},
 	Short:   "List Microsoft Teams details about a project (alias: pm)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -158,11 +157,10 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 		if cmdProjectName == "" {
 			return fmt.Errorf("Missing arguments: project name is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationMicrosoftTeams(context.TODO(), cmdProjectName, lc)
@@ -192,18 +190,17 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 	Aliases: []string{"m"},
 	Short:   "List all Microsoft Teams notification details (alias: m)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationMicrosoftTeams(context.TODO(), lc)
@@ -240,7 +237,7 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 	Aliases: []string{"pr"},
 	Short:   "Delete a Microsoft Teams notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -255,11 +252,10 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete Microsoft Teams notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -285,7 +281,7 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 	Aliases: []string{"m"},
 	Short:   "Delete a Microsoft Teams notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -300,11 +296,10 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete Microsoft Teams notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationMicrosoftTeams(context.TODO(), name, lc)
@@ -325,7 +320,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 	Aliases: []string{"m"},
 	Short:   "Update an existing Microsoft Teams notification",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -357,11 +352,10 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update Microsoft Teams notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				"",
 				lagoonCLIVersion,
 				debug)
 

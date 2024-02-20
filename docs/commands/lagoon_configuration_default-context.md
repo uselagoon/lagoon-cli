@@ -1,24 +1,16 @@
-## lagoon add rocketchat
+## lagoon configuration default-context
 
-Add a new Rocket.Chat notification
-
-### Synopsis
-
-Add a new Rocket.Chat notification
-This command is used to set up a new Rocket.Chat notification in Lagoon. This requires information to talk to Rocket.Chat like the webhook URL and the name of the channel.
-It does not configure a project to send notifications to Rocket.Chat though, you need to use project-rocketchat for that.
+Change which context is the default
 
 ```
-lagoon add rocketchat [flags]
+lagoon configuration default-context [flags]
 ```
 
 ### Options
 
 ```
-  -c, --channel string   The channel for the notification
-  -h, --help             help for rocketchat
-  -n, --name string      The name of the notification
-  -w, --webhook string   The webhook URL of the notification
+  -h, --help          help for default-context
+      --name string   The name of the context to be default
 ```
 
 ### Options inherited from parent commands
@@ -40,5 +32,5 @@ lagoon add rocketchat [flags]
 
 ### SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

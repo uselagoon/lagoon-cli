@@ -2,20 +2,16 @@ package cmd
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"net"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/adrg/xdg"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	lagooncli "github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/app"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
 	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
@@ -41,15 +37,17 @@ var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
 
-var c *config.Config
-var lContext *config.Context
-var lUser *config.User
-
 var skipUpdateCheck bool
 
-// global for the lagoon config that the cli uses
-// @TODO: when lagoon-cli rewrite happens, do this a bit better
-var lagoonCLIConfig lagoon.Config
+// configv2 related globals
+var lConfig *config.Config
+var lContext *config.Context
+var lUser *config.User
+var configFeaturePrefix = "cli"
+var cliFeatures = []string{
+	"environment-from-directory", // feature that enables the sourcing of project/environment from within a git repository
+	"disable-update-check",       // feature that disables the automatic update check
+}
 
 // version/build information (populated at build time by make file)
 var (
@@ -63,13 +61,17 @@ var rootCmd = &cobra.Command{
 	Short:             "Command line integration for Lagoon",
 	Long:              `Lagoon CLI. Manage your Lagoon hosted projects.`,
 	DisableAutoGenTag: true,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if lagoonCLIConfig.UpdateCheckDisable == true {
-			skipUpdateCheck = true
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		skipUpdateCheck, err := lConfig.GetFeature(lContext.Name, configFeaturePrefix, "disable-update-check")
+		if err != nil {
+			return err
 		}
-		if skipUpdateCheck == false {
+		if !skipUpdateCheck {
+			updateFile, err := xdg.StateFile(fmt.Sprintf("%s/%s", "lagoon", "update"))
+			if err != nil {
+				return err
+			}
 			// Using code from https://github.com/drud/ddev/
-			updateFile := filepath.Join(userPath, ".lagoon.update")
 			// Do periodic detection of whether an update is available for lagoon-cli users.
 			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
 			if err != nil {
@@ -84,31 +86,29 @@ var rootCmd = &cobra.Command{
 				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
 				if err != nil {
 					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
-					output.RenderError(err.Error(), outputOptions)
-					return
+					return err
 				}
 				if updateNeeded {
 					output.RenderInfo(fmt.Sprintf("A new update is available! please visit %s to download the update.\nFor upgrade help see %s\n\nIf installed using brew, upgrade using `brew upgrade lagoon`\n", updateURL, updateDocURL), outputOptions)
 				}
 			}
 		}
+		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
 			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
+				return err
 			}
 			fmt.Println("Documentation updated")
-			return
+			return nil
 		}
 		if versionFlag {
 			displayVersionInfo()
-			return
+			return nil
 		}
-		cmd.Help()
-		os.Exit(1)
+		return fmt.Errorf("no command provided")
 	},
 }
 
@@ -124,7 +124,7 @@ func Execute() {
 // internet connection. It just tries a quick DNS query.
 // This requires that the named record be query-able.
 func isInternetActive() bool {
-	_, err := net.LookupHost("amazee.io")
+	_, err := net.LookupHost("lagoon.sh")
 	return err == nil
 }
 
@@ -183,11 +183,9 @@ Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
 Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
 `)
 	rootCmd.AddCommand(addCmd)
-	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(deployCmd)
 	rootCmd.AddCommand(getCmd)
-	rootCmd.AddCommand(kibanaCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(runCmd)
@@ -195,12 +193,11 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(retrieveCmd)
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(webCmd)
 	rootCmd.AddCommand(importCmd)
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
-	rootCmd.AddCommand(config2Cmd)
+	rootCmd.AddCommand(configCmd)
 }
 
 // version/build information command
@@ -219,55 +216,59 @@ func displayVersionInfo() {
 
 func initConfig() {
 	var err error
-	// load or create the configuration
-	c, err = config.LoadConfig(createConfig)
+	// load or prompt user to create configuration
+	lConfig, err = config.LoadConfig(createConfig)
 	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
+		// if there is no new config format
+		if strings.Contains(err.Error(), "could not locate `config.yaml`") {
+			// check for a legacy config
+			data, err2 := readLegacyConfig()
+			if err2 != nil {
+				if yn("Unable to find configuration, would you like to create one?") {
+					err := createInitialConfig()
+					if err != nil {
+						output.RenderError(err.Error(), outputOptions)
+						os.Exit(1)
+					}
+					fmt.Println("Configuration created")
+					os.Exit(0)
+				} else {
+					output.RenderError(fmt.Sprintf("No configuration created, configuration is required to use the CLI"), outputOptions)
+					os.Exit(1)
+				}
+			}
+			if len(data) > 0 {
+				if yn("Only a legacy configuration file was found, would you like to convert it to the new format?") {
+					convertConfig(true)
+					fmt.Println("Configuration converted")
+					os.Exit(0)
+				} else {
+					output.RenderError(fmt.Sprintf("Unable to find configuration, you may need to create one: %s", err.Error()), outputOptions)
+					os.Exit(1)
+				}
+			}
+		} else {
+			output.RenderError(fmt.Sprintf("Unable to detect or load configuration: %s", err.Error()), outputOptions)
+			os.Exit(1)
+		}
 	}
 	if cmdLagoon == "" {
 		// source the default context for the config
-		lContext, err = c.GetDefaultContext()
+		lContext, err = lConfig.GetDefaultContext()
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
 		}
 	} else {
 		// otherwise try find the one the user has provided
-		lContext, err = c.GetContext(cmdLagoon)
+		lContext, err = lConfig.GetContext(cmdLagoon)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
 		}
 	}
 	// get the users details for the context
-	lUser, err = c.GetUser(lContext.User)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-
-	// Find home directory.
-	userPath, err = os.UserHomeDir()
-	if err != nil {
-		output.RenderError(fmt.Errorf("couldn't get $HOME: %v", err).Error(), outputOptions)
-		os.Exit(1)
-	}
-	configFilePath = userPath
-
-	// check if we are being given a path to a different config file
-	err = getLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-
-	err = readLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	err = getLagoonContext(&lagoonCLIConfig, &cmdLagoon, rootCmd)
+	lUser, err = lConfig.GetUser(lContext.User)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -276,8 +277,13 @@ func initConfig() {
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
 	// and environments too
-	// this option is opt-in now, so to use it you will need to `lagoon config feature --enable-local-dir-check=true`
-	if lagoonCLIConfig.EnvironmentFromDirectory == true {
+	// this option is opt-in and will be deprecated in the future
+	envFromDir, err := lConfig.GetFeature(lContext.Name, configFeaturePrefix, "environment-from-directory")
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	if envFromDir {
 		cmdProject, _ = app.GetLocalProject()
 	}
 	if cmdProject.Name != "" && cmdProjectName == "" {
@@ -290,18 +296,22 @@ func initConfig() {
 
 func yesNo(message string) bool {
 	if forceAction != true {
-		prompt := promptui.Select{
-			Label: message + "; Select[Yes/No]",
-			Items: []string{"No", "Yes"},
-		}
-		_, result, err := prompt.Run()
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
-		return result == "Yes"
+		return yn(message)
 	}
 	return true
+}
+
+func yn(message string) bool {
+	prompt := promptui.Select{
+		Label: message + "; Select[Yes/No]",
+		Items: []string{"No", "Yes"},
+	}
+	_, result, err := prompt.Run()
+	if err != nil {
+		output.RenderError(err.Error(), outputOptions)
+		os.Exit(1)
+	}
+	return result == "Yes"
 }
 
 func selectList(listItems []string) string {
@@ -350,11 +360,7 @@ const (
 
 func validateToken(lagoon string) {
 	var err error
-	if err = checkContextExists(&lagoonCLIConfig); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	valid := graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon)
+	valid := graphql.VerifyTokenExpiry2(lUser.UserConfig.Grant.AccessToken, lagoon)
 	if valid == false {
 		loginErr := loginToken()
 		if loginErr != nil {
@@ -363,17 +369,17 @@ func validateToken(lagoon string) {
 		}
 	}
 	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
+	eClient, err = environments.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
+	uClient, err = users.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
+	pClient, err = projects.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
@@ -392,10 +398,7 @@ func validateToken(lagoon string) {
 // error instead of exiting on error.
 func validateTokenE(lagoon string) error {
 	var err error
-	if err = checkContextExists(&lagoonCLIConfig); err != nil {
-		return err
-	}
-	if graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon) {
+	if graphql.VerifyTokenExpiry2(lUser.UserConfig.Grant.AccessToken, lagoon) {
 		// check the API for the version of lagoon if we haven't got one set
 		// otherwise return nil, nothing to do
 		return versionCheck(lagoon)
@@ -404,17 +407,17 @@ func validateTokenE(lagoon string) error {
 		return fmt.Errorf("Couldn't refresh token, try `lagoon login`: %w", err)
 	}
 	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
+	eClient, err = environments.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		return err
 	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
+	uClient, err = users.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		return err
 	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
+	pClient, err = projects.New(lContext, lUser, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		return err
@@ -428,96 +431,23 @@ func validateTokenE(lagoon string) error {
 // this won't re-check the version if lagoon does update to a new api version
 // @TODO: maybe set a refresh interval or something on this
 func versionCheck(lagoon string) error {
-	if lagoonCLIConfig.Lagoons[lagoon].Version == "" {
-		lc := client.New(
-			lagoonCLIConfig.Lagoons[lagoon].GraphQL,
-			lagoonCLIConfig.Lagoons[lagoon].Token,
-			lagoonCLIConfig.Lagoons[lagoon].Version,
-			lagoonCLIVersion,
-			debugEnable)
-		lagoonVersion, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
-		if err != nil {
-			return err
-		}
-		l := lagoonCLIConfig.Lagoons[lagoon]
-		l.Version = lagoonVersion.LagoonVersion
-		lagoonCLIConfig.Lagoons[lagoon] = l
-		if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-			return fmt.Errorf("couldn't write config: %v", err)
-		}
-	}
-	return nil
-}
-
-func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
-	// check if we have an envvar or flag to define our confg file
-	var configFilePath string
-	configFilePath, err := cmd.Flags().GetString("config-file")
-	if err != nil {
-		return fmt.Errorf("Error reading flag `config-file`: %v", err)
-	}
-	if configFilePath == "" {
-		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOONCONFIG"); ok {
-			configFilePath = lagoonConfigEnvar
-		}
-		// prefer LAGOON_CONFIG_FILE
-		if lagoonConfigEnvar, ok := os.LookupEnv("LAGOON_CONFIG_FILE"); ok {
-			configFilePath = lagoonConfigEnvar
-		}
-	}
-	if configFilePath != "" {
-		if fileExists(configFilePath) || createConfig {
-			*configPath = filepath.Dir(configFilePath)
-			*configExtension = filepath.Ext(configFilePath)
-			*configName = strings.TrimSuffix(filepath.Base(configFilePath), *configExtension)
-			return nil
-		}
-		return fmt.Errorf("%s/%s File doesn't exist", *configPath, configFilePath)
-
-	}
-	// no config file found
-	return nil
-}
-
-func getLagoonContext(lagoonCLIConfig *lagoon.Config, lagoon *string, cmd *cobra.Command) error {
-	// check if we have an envvar or flag to define our lagoon context
-	var lagoonContext string
-	lagoonContext, err := cmd.Flags().GetString("lagoon")
-	if err != nil {
-		return fmt.Errorf("Error reading flag `lagoon`: %v", err)
-	}
-	if lagoonContext == "" {
-		if lagoonContextEnvar, ok := os.LookupEnv("LAGOONCONTEXT"); ok {
-			lagoonContext = lagoonContextEnvar
-		}
-		// prefer LAGOON_CONTEXT
-		if lagoonContextEnvar, ok := os.LookupEnv("LAGOON_CONTEXT"); ok {
-			configFilePath = lagoonContextEnvar
-		}
-	}
-	if lagoonContext != "" {
-		*lagoon = lagoonContext
-	} else {
-		if lagoonCLIConfig.Default == "" {
-			*lagoon = "amazeeio"
-		} else {
-			*lagoon = lagoonCLIConfig.Default
-		}
-	}
-	// set the Current lagoon to the one we've determined it needs to be
-	lagoonCLIConfig.Current = strings.TrimSpace(*lagoon)
-	return nil
-}
-
-func checkContextExists(lagoonCLIConfig *lagoon.Config) error {
-	contextExists := false
-	for l := range lagoonCLIConfig.Lagoons {
-		if l == lagoonCLIConfig.Current {
-			contextExists = true
-		}
-	}
-	if !contextExists {
-		return fmt.Errorf("Chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current)
-	}
+	// if lagoonCLIConfig.Lagoons[lagoon].Version == "" {
+	// 	lc := client.New(
+	// 		fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+	// 		lUser.UserConfig.Grant.AccessToken,
+	// 		"",
+	// 		lagoonCLIVersion,
+	// 		debugEnable)
+	// 	_, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	// l := lagoonCLIConfig.Lagoons[lagoon]
+	// 	// l.Version = lagoonVersion.LagoonVersion
+	// 	// lagoonCLIConfig.Lagoons[lagoon] = l
+	// 	// if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
+	// 	// 	return fmt.Errorf("couldn't write config: %v", err)
+	// 	// }
+	// }
 	return nil
 }

@@ -3,9 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strings"
+
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -47,7 +48,7 @@ var updateEnvironmentCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "Update an environment",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -99,10 +100,9 @@ var updateEnvironmentCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
@@ -179,11 +179,10 @@ var listBackupsCmd = &cobra.Command{
 		if cmdProjectEnvironment == "" || cmdProjectName == "" {
 			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -246,11 +245,10 @@ This returns a direct URL to the backup, this is a signed download link with a l
 		if cmdProjectEnvironment == "" || cmdProjectName == "" {
 			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			"",
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

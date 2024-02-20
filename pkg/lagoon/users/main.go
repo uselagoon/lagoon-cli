@@ -1,9 +1,9 @@
 package users
 
 import (
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
+	"github.com/uselagoon/machinery/utils/config"
 )
 
 // Users .
@@ -30,8 +30,8 @@ type Client interface {
 }
 
 // New .
-func New(lc *lagoon.Config, debug bool) (Client, error) {
-	lagoonAPI, err := graphql.LagoonAPI(lc, debug)
+func New(lc *config.Context, lu *config.User, debug bool) (Client, error) {
+	lagoonAPI, err := graphql.LagoonAPI(lc, lu, debug)
 	if err != nil {
 		return &Users{}, err
 	}
