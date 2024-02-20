@@ -153,7 +153,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 
@@ -228,7 +228,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -263,7 +263,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

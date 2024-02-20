@@ -50,7 +50,7 @@ use 'lagoon deploy latest' instead`,
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			depBranch := &schema.DeployEnvironmentBranchInput{
@@ -103,7 +103,7 @@ var deployPromoteCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeployPromote(context.TODO(), &schema.DeployEnvironmentPromoteInput{
@@ -148,7 +148,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
@@ -216,7 +216,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 

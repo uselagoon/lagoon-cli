@@ -48,7 +48,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 
@@ -107,7 +107,7 @@ You must specify to export a specific project by using the '-p <project-name>' f
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 

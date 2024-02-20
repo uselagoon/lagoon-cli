@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -19,6 +20,8 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	config "github.com/uselagoon/machinery/utils/config"
 )
 
@@ -29,7 +32,8 @@ var cmdSSHKey = ""
 var inputScanner = bufio.NewScanner(os.Stdin)
 var versionFlag bool
 var docsFlag bool
-var updateInterval = time.Hour * 24 * 7 // One week interval between updates
+var updateInterval = time.Hour * 24 * 7     // One week interval between updates
+var apiVersionInterval = time.Hour * 24 * 7 // One week interval between updates
 var configName = ".lagoon"
 var configExtension = ".yml"
 var createConfig bool
@@ -427,27 +431,32 @@ func validateTokenE(lagoon string) error {
 	return versionCheck(lagoon)
 }
 
-// check if we have a version set in config, if not get the version.
-// this won't re-check the version if lagoon does update to a new api version
-// @TODO: maybe set a refresh interval or something on this
 func versionCheck(lagoon string) error {
-	// if lagoonCLIConfig.Lagoons[lagoon].Version == "" {
-	// 	lc := client.New(
-	// 		fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-	// 		lUser.UserConfig.Grant.AccessToken,
-	// 		"",
-	// 		lagoonCLIVersion,
-	// 		debugEnable)
-	// 	_, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	// l := lagoonCLIConfig.Lagoons[lagoon]
-	// 	// l.Version = lagoonVersion.LagoonVersion
-	// 	// lagoonCLIConfig.Lagoons[lagoon] = l
-	// 	// if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-	// 	// 	return fmt.Errorf("couldn't write config: %v", err)
-	// 	// }
-	// }
+	apiVersionFile, err := xdg.StateFile(fmt.Sprintf("%s/%s-%s", "lagoon", "apiversion", lContext.Name))
+	if err != nil {
+		return err
+	}
+	// Using code from https://github.com/drud/ddev/
+	timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(apiVersionFile, apiVersionInterval)
+	if err != nil {
+		output.RenderInfo(fmt.Sprintf("Could not perform update check %v", err), outputOptions)
+	}
+	if timeToCheckForUpdates && isInternetActive() {
+		token := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			&token,
+			debugEnable)
+		lagoonVersion, err := l.GetLagoonAPIVersion(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+		if lagoonVersion.LagoonVersion == "" {
+			err = fmt.Errorf("project not found")
+		}
+		lContext.ContextConfig.Version = lagoonVersion.LagoonVersion
+		return lConfig.WriteConfig()
+	}
 	return nil
 }

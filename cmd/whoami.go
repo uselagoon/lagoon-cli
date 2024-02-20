@@ -34,7 +34,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 

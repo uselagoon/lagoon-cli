@@ -121,7 +121,7 @@ This command is used to add an existing webhook notification in Lagoon to a proj
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -160,7 +160,7 @@ var listProjectWebhooksCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationWebhook(context.TODO(), cmdProjectName, lc)
@@ -200,7 +200,7 @@ var listAllWebhooksCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationWebhook(context.TODO(), lc)
@@ -255,7 +255,7 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -299,7 +299,7 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationWebhook(context.TODO(), name, lc)
@@ -355,7 +355,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 

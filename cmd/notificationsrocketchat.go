@@ -128,7 +128,7 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -167,7 +167,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationRocketChat(context.TODO(), cmdProjectName, lc)
@@ -209,7 +209,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationRocketChat(context.TODO(), lc)
@@ -266,7 +266,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -310,7 +310,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationRocketChat(context.TODO(), name, lc)
@@ -371,7 +371,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 

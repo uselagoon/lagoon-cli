@@ -128,7 +128,7 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -167,7 +167,7 @@ var listProjectSlacksCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
@@ -209,7 +209,7 @@ var listAllSlacksCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationSlack(context.TODO(), lc)
@@ -266,7 +266,7 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -310,7 +310,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationSlack(context.TODO(), name, lc)
@@ -371,7 +371,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 

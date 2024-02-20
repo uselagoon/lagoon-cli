@@ -121,7 +121,7 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -160,7 +160,7 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetProjectNotificationMicrosoftTeams(context.TODO(), cmdProjectName, lc)
@@ -200,7 +200,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationMicrosoftTeams(context.TODO(), lc)
@@ -255,7 +255,7 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -299,7 +299,7 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationMicrosoftTeams(context.TODO(), name, lc)
@@ -355,7 +355,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 			lc := client.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lUser.UserConfig.Grant.AccessToken,
-				"",
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 

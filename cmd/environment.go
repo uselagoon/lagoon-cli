@@ -182,7 +182,7 @@ var listBackupsCmd = &cobra.Command{
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -248,7 +248,7 @@ This returns a direct URL to the backup, this is a signed download link with a l
 		lc := client.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lUser.UserConfig.Grant.AccessToken,
-			"",
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

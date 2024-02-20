@@ -666,6 +666,8 @@ func convertConfig(writeConfig bool) error {
 			TokenHost:              l.HostName,
 			TokenPort:              port,
 			AuthenticationEndpoint: result,
+			Version:                l.Version,
+			UIHostname:             l.UI,
 		}
 		err = cc.NewUser(uConfig)
 		if err != nil {
