@@ -117,6 +117,8 @@ github.com/uselagoon/machinery v0.0.16 h1:LGWUaESTXPfiTyJTJCC1i+3ghidY2qsf9li7mG
 github.com/uselagoon/machinery v0.0.16/go.mod h1:Duljjz/3d/7m0jbmF1nVRDTNaMxMr6m+5LkgjiRrQaU=
 github.com/uselagoon/machinery v0.0.17-0.20240226030936-ea455252977e h1:FgS9/a4FC7ksPPN9ukAnhZiIPBo4UPEpdmRfWqjZ4NU=
 github.com/uselagoon/machinery v0.0.17-0.20240226030936-ea455252977e/go.mod h1:Duljjz/3d/7m0jbmF1nVRDTNaMxMr6m+5LkgjiRrQaU=
+github.com/uselagoon/machinery v0.0.17-0.20240226053035-f276c8d3c9b1 h1:Vc40BRlLz0iV5HzwJvhr6nJvidTlGbdSBbYcCXAibVw=
+github.com/uselagoon/machinery v0.0.17-0.20240226053035-f276c8d3c9b1/go.mod h1:Duljjz/3d/7m0jbmF1nVRDTNaMxMr6m+5LkgjiRrQaU=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
