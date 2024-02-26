@@ -213,6 +213,10 @@ var listEnvironmentsCmd = &cobra.Command{
 			return err
 		}
 
+		if len(*environments) == 0 {
+			outputOptions.Error = fmt.Sprintf("No environments found for project '%s'\n", cmdProjectName)
+		}
+
 		data := []output.Data{}
 		for _, environment := range *environments {
 			var envRoute = "none"
