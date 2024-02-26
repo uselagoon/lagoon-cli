@@ -2,10 +2,6 @@
 
 List an environments backups
 
-### Synopsis
-
-List an environments backups
-
 ```
 lagoon list backups [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list backups [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

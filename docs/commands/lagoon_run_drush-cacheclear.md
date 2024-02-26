@@ -2,10 +2,6 @@
 
 Run a drush cache clear on an environment
 
-### Synopsis
-
-Run a drush cache clear on an environment
-
 ```
 lagoon run drush-cacheclear [flags]
 ```

@@ -61,24 +61,6 @@ func (u *Users) AddSSHKeyToUser(user api.User, sshKey api.SSHKey) ([]byte, error
 	return returnResult, nil
 }
 
-// DeleteSSHKey function
-func (u *Users) DeleteSSHKey(keyName string) ([]byte, error) {
-	customReq := api.CustomRequest{
-		Query: `mutation deleteSshKey ($keyname: String!) {
-				deleteSshKey(input:{name: $keyname})
-		  	}`,
-		Variables: map[string]interface{}{
-			"keyname": keyName,
-		},
-		MappedResult: "deleteSshKey",
-	}
-	returnResult, err := u.api.Request(customReq)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
 // DeleteUser function
 func (u *Users) DeleteUser(user api.User) ([]byte, error) {
 	customReq := api.CustomRequest{
@@ -210,58 +192,6 @@ func processUserList(listUsers []byte) ([]byte, error) {
 		Data:   data,
 	}
 	return json.Marshal(dataMain)
-}
-
-// ListUserSSHKeys function
-func (u *Users) ListUserSSHKeys(groupName string, email string, allUsers bool) ([]byte, error) {
-	//@TODO: once individual user interaction comes in, this will need to be adjusted
-	customReq := api.CustomRequest{
-		Query: `query allGroups ($name: String) {
-				allGroups (name: $name) {
-			  		name
-			  		id
-			  		members{
-						user{
-							id
-							email
-							firstName
-							lastName
-							sshKeys{
-								name
-								keyType
-								keyValue
-							}
-						}
-						role
-			  		}
-				}
-		  	}`,
-		Variables: map[string]interface{}{
-			"name": groupName,
-		},
-		MappedResult: "allGroups",
-	}
-	listUsers, err := u.api.Request(customReq)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnedKeys, err := processReturnedUserKeysList(listUsers)
-	if err != nil {
-		return []byte(""), err
-	}
-	var returnResult []byte
-	if allUsers {
-		returnResult, err = processAllUserKeysList(returnedKeys)
-		if err != nil {
-			return []byte(""), err
-		}
-	} else {
-		returnResult, err = processUserKeysList(returnedKeys, email)
-		if err != nil {
-			return []byte(""), err
-		}
-	}
-	return returnResult, nil
 }
 
 func processReturnedUserKeysList(listUsers []byte) ([]ExtendedSSHKey, error) {

@@ -2,10 +2,6 @@
 
 Enable or disable CLI features
 
-### Synopsis
-
-Enable or disable CLI features
-
 ```
 lagoon config feature [flags]
 ```

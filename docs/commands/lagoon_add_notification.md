@@ -2,10 +2,6 @@
 
 Add notifications or add notifications to projects
 
-### Synopsis
-
-Add notifications or add notifications to projects
-
 ### Options
 
 ```

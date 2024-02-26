@@ -2,10 +2,6 @@
 
 List tasks for an environment (alias: t)
 
-### Synopsis
-
-List tasks for an environment (alias: t)
-
 ```
 lagoon list tasks [flags]
 ```
@@ -35,5 +31,5 @@ lagoon list tasks [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

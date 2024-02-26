@@ -15,10 +15,11 @@ lagoon add notification slack [flags]
 ### Options
 
 ```
-  -c, --channel string   The channel for the notification
-  -h, --help             help for slack
-  -n, --name string      The name of the notification
-  -w, --webhook string   The webhook URL of the notification
+  -c, --channel string         The channel for the notification
+  -h, --help                   help for slack
+  -n, --name string            The name of the notification
+      --organization-id uint   ID of the Organization
+  -w, --webhook string         The webhook URL of the notification
 ```
 
 ### Options inherited from parent commands

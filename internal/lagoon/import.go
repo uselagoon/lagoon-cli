@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -54,7 +53,7 @@ type Importer interface {
 func Import(ctx context.Context, i Importer, r io.Reader, keepGoing bool,
 	openshiftID uint) error {
 
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return fmt.Errorf("couldn't read file: %w", err)
 	}

@@ -2,10 +2,6 @@
 
 Generates a Lagoon auth token (for use in, for example, graphQL queries)
 
-### Synopsis
-
-Generates a Lagoon auth token (for use in, for example, graphQL queries)
-
 ```
 lagoon get token [flags]
 ```

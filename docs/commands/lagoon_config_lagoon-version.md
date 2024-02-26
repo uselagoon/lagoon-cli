@@ -2,10 +2,6 @@
 
 Checks the current Lagoon for its version and sets it in the config file
 
-### Synopsis
-
-Checks the current Lagoon for its version and sets it in the config file
-
 ```
 lagoon config lagoon-version [flags]
 ```

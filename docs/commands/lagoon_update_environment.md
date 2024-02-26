@@ -2,10 +2,6 @@
 
 Update an environment
 
-### Synopsis
-
-Update an environment
-
 ```
 lagoon update environment [flags]
 ```

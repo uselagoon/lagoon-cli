@@ -2,10 +2,6 @@
 
 Get all metadata for a project
 
-### Synopsis
-
-Get all metadata for a project
-
 ```
 lagoon get project-metadata [flags]
 ```

@@ -2,10 +2,6 @@
 
 List projects by a given metadata key or key:value
 
-### Synopsis
-
-List projects by a given metadata key or key:value
-
 ```
 lagoon list projects-by-metadata [flags]
 ```
@@ -38,5 +34,5 @@ lagoon list projects-by-metadata [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

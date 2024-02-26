@@ -2,10 +2,6 @@
 
 Update an existing Slack notification
 
-### Synopsis
-
-Update an existing Slack notification
-
 ```
 lagoon update notification slack [flags]
 ```

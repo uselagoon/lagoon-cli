@@ -215,6 +215,10 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
 			return fmt.Errorf("Missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
 		}
+		returnData, err := cmd.Flags().GetBool("returnData")
+		if err != nil {
+			return err
+		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			lc := client.New(
@@ -234,6 +238,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 				BaseBranchRef:  baseBranchRef,
 				HeadBranchName: headBranchName,
 				HeadBranchRef:  headBranchRef,
+				ReturnData:     returnData,
 			}, lc)
 			if err != nil {
 				return err

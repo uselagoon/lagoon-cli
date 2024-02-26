@@ -11,7 +11,6 @@ import (
 // DeployTargetConfigs interface contains methods for getting info on deploytarget configs.
 type DeployTargetConfigs interface {
 	DeployTargetConfigsByProjectID(ctx context.Context, project int, deployTargets *[]schema.DeployTargetConfig) error
-	AddDeployTargetConfiguration(ctx context.Context, in *schema.AddDeployTargetConfigInput, deployTargets *schema.DeployTargetConfig) error
 	UpdateDeployTargetConfiguration(ctx context.Context, in *schema.UpdateDeployTargetConfigInput, deployTargets *schema.DeployTargetConfig) error
 	DeleteDeployTargetConfiguration(ctx context.Context, id int, project int, deployTargets *schema.DeleteDeployTargetConfig) error
 }
@@ -20,12 +19,6 @@ type DeployTargetConfigs interface {
 func GetDeployTargetConfigs(ctx context.Context, project int, dtc DeployTargetConfigs) (*[]schema.DeployTargetConfig, error) {
 	deployTargets := []schema.DeployTargetConfig{}
 	return &deployTargets, dtc.DeployTargetConfigsByProjectID(ctx, project, &deployTargets)
-}
-
-// AddDeployTargetConfiguration adds a deploytarget config to a specific project.
-func AddDeployTargetConfiguration(ctx context.Context, in *schema.AddDeployTargetConfigInput, dtc DeployTargetConfigs) (*schema.DeployTargetConfig, error) {
-	deployTarget := schema.DeployTargetConfig{}
-	return &deployTarget, dtc.AddDeployTargetConfiguration(ctx, in, &deployTarget)
 }
 
 // UpdateDeployTargetConfiguration adds a deploytarget config to a specific project.

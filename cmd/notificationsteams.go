@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -37,37 +40,54 @@ It does not configure a project to send notifications to Microsoft Teams though,
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organization-id")
+		if err != nil {
+			return err
+		}
 		if name == "" || webhook == "" {
 			return fmt.Errorf("Missing arguments: name or webhook is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a Microsoft Teams notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationMicrosoftTeamsInput{
-				Name:    name,
-				Webhook: webhook,
+
+			notification := s.AddNotificationMicrosoftTeamsInput{
+				Name:         name,
+				Webhook:      webhook,
+				Organization: &organizationID,
 			}
-			result, err := lagoon.AddNotificationMicrosoftTeams(context.TODO(), notification, lc)
+
+			result, err := l.AddNotificationMicrosoftTeams(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
-			data := []output.Data{
-				[]string{
-					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
-				},
+			var data []output.Data
+			notificationData := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", result.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
 			}
+			if result.Organization != nil {
+				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				if err != nil {
+					return err
+				}
+				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+			} else {
+				notificationData = append(notificationData, "-")
+			}
+			data = append(data, notificationData)
 			output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Webhook",
+					"Organization",
 				},
 				Data: data,
 			}, outputOptions)
@@ -376,6 +396,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 func init() {
 	addNotificationMicrosoftTeamsCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	addNotificationMicrosoftTeamsCmd.Flags().StringP("webhook", "w", "", "The webhook URL of the notification")
+	addNotificationMicrosoftTeamsCmd.Flags().Uint("organization-id", 0, "ID of the Organization")
 	addProjectNotificationMicrosoftTeamsCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteProjectMicrosoftTeamsNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")
 	deleteMicrosoftTeamsNotificationCmd.Flags().StringP("name", "n", "", "The name of the notification")

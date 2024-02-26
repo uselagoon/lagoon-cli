@@ -2,10 +2,6 @@
 
 Configure Lagoon CLI
 
-### Synopsis
-
-Configure Lagoon CLI
-
 ### Options
 
 ```

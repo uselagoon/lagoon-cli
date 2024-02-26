@@ -3,6 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
@@ -41,6 +44,12 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 
+		if cmdProjectName == "" {
+			return fmt.Errorf("Missing arguments: project is a required flag")
+		}
+		if deploytarget == 0 {
+			return fmt.Errorf("Missing arguments: deploytarget id is a required flag")
+		}
 		if pullrequests == "" {
 			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
 		}
@@ -48,31 +57,31 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: branches is a required flag")
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		addDeployTargetConfig := &schema.AddDeployTargetConfigInput{
+		addDeployTargetConfig := &s.AddDeployTargetConfigInput{
 			Project: uint(project.ID),
 			Weight:  weight,
 		}
 		if branches != "" {
 			addDeployTargetConfig.Branches = branches
 		}
-		if branches != "" {
+		if pullrequests != "" {
 			addDeployTargetConfig.Pullrequests = pullrequests
 		}
 		if deploytarget != 0 {
 			addDeployTargetConfig.DeployTarget = deploytarget
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add a deploytarget configuration to project '%s', are you sure?", cmdProjectName)) {
-			deployTargetConfig, err := lagoon.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
+			deployTargetConfig, err := l.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
 			if err != nil {
 				return err
 			}

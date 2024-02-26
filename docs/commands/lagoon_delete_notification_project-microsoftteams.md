@@ -2,10 +2,6 @@
 
 Delete a Microsoft Teams notification from a project
 
-### Synopsis
-
-Delete a Microsoft Teams notification from a project
-
 ```
 lagoon delete notification project-microsoftteams [flags]
 ```

@@ -2,10 +2,6 @@
 
 List Slacks details about a project (alias: ps)
 
-### Synopsis
-
-List Slacks details about a project (alias: ps)
-
 ```
 lagoon list notification project-slack [flags]
 ```

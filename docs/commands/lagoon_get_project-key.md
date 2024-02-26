@@ -2,10 +2,6 @@
 
 Get a projects public key
 
-### Synopsis
-
-Get a projects public key
-
 ```
 lagoon get project-key [flags]
 ```

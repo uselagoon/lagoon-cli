@@ -9,7 +9,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	"golang.org/x/crypto/ssh"
 )
 
 // Projects .
@@ -233,8 +232,14 @@ func (p *Projects) GetProjectKey(projectName string, revealValue bool) ([]byte, 
 		Name: projectName,
 	}
 	keyFragment := `fragment Project on Project {
-		privateKey
+		publicKey
 	}`
+	if revealValue {
+		keyFragment = `fragment Project on Project {
+			privateKey
+			publicKey
+		}`
+	}
 	projectByName, err := p.api.GetProjectByName(project, keyFragment)
 	if err != nil {
 		return []byte(""), err
@@ -252,15 +257,9 @@ func processProjectKey(projectByName []byte, revealValue bool) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	signer, err := ssh.ParsePrivateKey([]byte(project.PrivateKey))
-	if err != nil {
-		fmt.Println("Error was:", err.Error())
-		return []byte(""), err
-	}
-	publicKey := signer.PublicKey()
 	// get the key, but strip the newlines we don't need
 	projectData := []string{
-		strings.TrimSuffix(string(ssh.MarshalAuthorizedKey(publicKey)), "\n"),
+		strings.TrimSuffix(project.PublicKey, "\n"),
 	}
 	if revealValue {
 		projectData = append(projectData, strings.TrimSuffix(project.PrivateKey, "\n"))

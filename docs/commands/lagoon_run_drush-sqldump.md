@@ -2,10 +2,6 @@
 
 Run a drush sql dump on an environment
 
-### Synopsis
-
-Run a drush sql dump on an environment
-
 ```
 lagoon run drush-sqldump [flags]
 ```

@@ -2,10 +2,6 @@
 
 Delete a project
 
-### Synopsis
-
-Delete a project
-
 ```
 lagoon delete project [flags]
 ```

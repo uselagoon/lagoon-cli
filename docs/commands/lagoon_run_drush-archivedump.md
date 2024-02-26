@@ -2,10 +2,6 @@
 
 Run a drush archive dump on an environment
 
-### Synopsis
-
-Run a drush archive dump on an environment
-
 ```
 lagoon run drush-archivedump [flags]
 ```

@@ -2,10 +2,6 @@
 
 Delete a project, or delete notifications and variables from projects or environments
 
-### Synopsis
-
-Delete a project, or delete notifications and variables from projects or environments
-
 ### Options
 
 ```
@@ -37,6 +33,7 @@ Delete a project, or delete notifications and variables from projects or environ
 * [lagoon delete environment](lagoon_delete_environment.md)	 - Delete an environment
 * [lagoon delete group](lagoon_delete_group.md)	 - Delete a group from lagoon
 * [lagoon delete notification](lagoon_delete_notification.md)	 - Delete notifications or delete notifications from projects
+* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
 * [lagoon delete project](lagoon_delete_project.md)	 - Delete a project
 * [lagoon delete project-group](lagoon_delete_project-group.md)	 - Delete a project from a group in lagoon
 * [lagoon delete project-metadata](lagoon_delete_project-metadata.md)	 - Delete a key from a projects metadata
