@@ -763,10 +763,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			if err := requiredInputCheck("Organization ID", strconv.Itoa(int(organizationID))); err != nil {
-				return err
-			}
+		if err := requiredInputCheck("Organization name", organizationName, "Organization ID", strconv.Itoa(int(organizationID))); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current

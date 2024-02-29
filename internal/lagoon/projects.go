@@ -10,15 +10,8 @@ import (
 
 // Projects interface contains methods for getting info on projects.
 type Projects interface {
-	MinimalProjectByName(ctx context.Context, name string, project *schema.Project) error
 	ProjectByNameMetadata(ctx context.Context, name string, project *schema.ProjectMetadata) error
 	SSHEndpointsByProject(ctx context.Context, name string, project *schema.Project) error
-}
-
-// GetMinimalProjectByName gets info of projects in lagoon that have matching metadata.
-func GetMinimalProjectByName(ctx context.Context, name string, p Projects) (*schema.Project, error) {
-	project := schema.Project{}
-	return &project, p.MinimalProjectByName(ctx, name, &project)
 }
 
 // GetProjectMetadata gets the metadata key:values for a lagoon project.

@@ -5,12 +5,10 @@ import (
 	"fmt"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	ls "github.com/uselagoon/machinery/api/schema"
+	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -44,18 +42,10 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project is a required flag")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Deploytarget", strconv.Itoa(int(deploytarget)), "Pullrequests", pullrequests, "Branches", branches); err != nil {
+			return err
 		}
-		if deploytarget == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget id is a required flag")
-		}
-		if pullrequests == "" {
-			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
-		}
-		if branches == "" {
-			return fmt.Errorf("Missing arguments: branches is a required flag")
-		}
+
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -63,12 +53,13 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
+
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		addDeployTargetConfig := &s.AddDeployTargetConfigInput{
-			Project: uint(project.ID),
+		addDeployTargetConfig := &ls.AddDeployTargetConfigInput{
+			Project: project.ID,
 			Weight:  weight,
 		}
 		if branches != "" {
@@ -147,18 +138,19 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id))); err != nil {
+			return err
 		}
+
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
 
-		updateDeployTargetConfig := &schema.UpdateDeployTargetConfigInput{
+		updateDeployTargetConfig := &ls.UpdateDeployTargetConfigInput{
 			ID:     id,
 			Weight: weight,
 		}
@@ -173,7 +165,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update a deploytarget configuration with id '%d', are you sure?", id)) {
-			deployTargetConfig, err := lagoon.UpdateDeployTargetConfiguration(context.TODO(), updateDeployTargetConfig, lc)
+			deployTargetConfig, err := l.UpdateDeployTargetConfiguration(context.TODO(), updateDeployTargetConfig, lc)
 			if err != nil {
 				return err
 			}
@@ -223,23 +215,25 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id))); err != nil {
+			return err
 		}
+
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {
-			result, err := lagoon.DeleteDeployTargetConfiguration(context.TODO(), int(id), int(project.ID), lc)
+			result, err := l.DeleteDeployTargetConfiguration(context.TODO(), int(id), int(project.ID), lc)
 			if err != nil {
 				return err
 			}
@@ -262,18 +256,20 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
+		deployTargetConfigs, err := l.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
 		if err != nil {
 			return err
 		}
