@@ -80,13 +80,13 @@ var listDeployTargetsCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
+		deploytargets, err := l.ListDeployTargets(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -197,10 +197,8 @@ var listEnvironmentsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -248,10 +246,8 @@ var listVariablesCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		reveal, err := cmd.Flags().GetBool("reveal")
 		if err != nil {
@@ -323,11 +319,12 @@ var listDeploymentsCmd = &cobra.Command{
 	Use:     "deployments",
 	Aliases: []string{"d"},
 	Short:   "List deployments for an environment (alias: d)",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		returnedJSON, err := eClient.GetEnvironmentDeployments(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -340,6 +337,7 @@ var listDeploymentsCmd = &cobra.Command{
 			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -347,11 +345,12 @@ var listTasksCmd = &cobra.Command{
 	Use:     "tasks",
 	Aliases: []string{"t"},
 	Short:   "List tasks for an environment (alias: t)",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		returnedJSON, err := eClient.GetEnvironmentTasks(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -364,6 +363,7 @@ var listTasksCmd = &cobra.Command{
 			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -501,8 +501,8 @@ var listUsersGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if emailAddress == "" {
-			return fmt.Errorf("Missing arguments: email address is not defined")
+		if err := requiredInputCheck("Email Address", emailAddress); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -538,11 +538,12 @@ var listInvokableTasks = &cobra.Command{
 	Aliases: []string{"dcc"},
 	Short:   "Print a list of invokable tasks",
 	Long:    "Print a list of invokable user defined tasks registered against an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		taskResult, err := eClient.ListInvokableAdvancedTaskDefinitions(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -570,6 +571,7 @@ var listInvokableTasks = &cobra.Command{
 			os.Exit(0)
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
