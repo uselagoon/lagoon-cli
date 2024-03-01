@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -56,9 +55,8 @@ var getProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			return nil
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -73,9 +71,8 @@ var getProjectCmd = &cobra.Command{
 			return err
 		}
 
-		if project == nil {
-			output.RenderInfo(fmt.Sprintf("No details for project '%s'", cmdProjectName), outputOptions)
-			return nil
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("No details for project '%s'\n", cmdProjectName)
 		}
 
 		DevEnvironments := 0
@@ -198,23 +195,48 @@ var getEnvironmentCmd = &cobra.Command{
 	Use:     "environment",
 	Aliases: []string{"e"},
 	Short:   "Get details about an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
-		returnedJSON, err := eClient.GetEnvironmentInfo(cmdProjectName, cmdProjectEnvironment)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
 		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
+		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No environment '%s' for project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
-			os.Exit(0)
+
+		data := []output.Data{}
+		data = append(data, []string{
+			returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployType)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.Created)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.OpenshiftProjectName)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.Route)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)),
+			returnNonEmptyString(fmt.Sprintf("%d", environment.AutoIdle)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)),
+		})
+		dataMain := output.Table{
+			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
@@ -222,24 +244,25 @@ var getProjectKeyCmd = &cobra.Command{
 	Use:     "project-key",
 	Aliases: []string{"pk"},
 	Short:   "Get a projects public key",
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		getProjectFlags := parseGetFlags(*cmd.Flags())
-		if getProjectFlags.Project == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
+
 		returnedJSON, err := pClient.GetProjectKey(getProjectFlags.Project, revealValue)
 		handleError(err)
 		var dataMain output.Table
 		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
 		handleError(err)
 		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project), outputOptions)
-			os.Exit(0)
+			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project)
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
