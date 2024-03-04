@@ -25,15 +25,28 @@ var deleteEnvCmd = &cobra.Command{
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		// environmentFlags := parseEnvironmentFlags(*cmd.Flags()) //@TODO re-enable this at some point if more environment based commands are made available
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
 		if yesNo(fmt.Sprintf("You are attempting to delete environment '%s' from project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
-			projectByName, err := eClient.DeleteEnvironment(cmdProjectName, cmdProjectEnvironment)
-			handleError(err)
+			environment, err := l.DeleteEnvironment(context.TODO(), cmdProjectEnvironment, cmdProjectName, true, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
-				Result: string(projectByName),
+				Result: environment.DeleteEnvironment,
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
