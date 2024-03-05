@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -248,18 +249,43 @@ var getProjectKeyCmd = &cobra.Command{
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		getProjectFlags := parseGetFlags(*cmd.Flags())
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
 
-		returnedJSON, err := pClient.GetProjectKey(getProjectFlags.Project, revealValue)
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		projectKey, err := l.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
+		projectKeys := []string{projectKey.PublicKey}
+		if projectKey.PrivateKey != "" {
+			projectKeys = append(projectKeys, strings.TrimSuffix(projectKey.PrivateKey, "\n"))
+			outputOptions.MultiLine = true
+		}
+
+		var data []output.Data
+		data = append(data, projectKeys)
+
+		dataMain := output.Table{
+			Header: []string{"PublicKey"},
+			Data:   data,
+		}
+
 		if len(dataMain.Data) == 0 {
-			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project)
+			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
+		}
+
+		if projectKey.PrivateKey != "" {
+			dataMain.Header = append(dataMain.Header, "PrivateKey")
 		}
 		output.RenderOutput(dataMain, outputOptions)
 		return nil

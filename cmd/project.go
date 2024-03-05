@@ -7,7 +7,6 @@ import (
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -45,11 +44,12 @@ var deleteProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Delete a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s', are you sure?", cmdProjectName)) {
 			deleteResult, err := pClient.DeleteProject(cmdProjectName)
@@ -59,6 +59,7 @@ var deleteProjectCmd = &cobra.Command{
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -66,12 +67,13 @@ var addProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Add a new project to Lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		projectFlags := parseProjectFlags(*cmd.Flags())
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
 		jsonPatch, _ := json.Marshal(projectFlags)
@@ -93,6 +95,7 @@ var addProjectCmd = &cobra.Command{
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -100,12 +103,13 @@ var updateProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Update a project",
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		projectFlags := parseProjectFlags(*cmd.Flags())
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
 		var jsonPatchFromProjectFlags string
@@ -128,6 +132,7 @@ var updateProjectCmd = &cobra.Command{
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -155,8 +160,8 @@ var listProjectByMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" {
-			return fmt.Errorf("Missing arguments: key is not defined")
+		if err := requiredInputCheck("Key", key); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -171,9 +176,9 @@ var listProjectByMetadata = &cobra.Command{
 		}
 		if len(*projects) == 0 {
 			if value != "" {
-				return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s and value %s", key, value))
+				outputOptions.Error = fmt.Sprintf("No projects found with metadata key %s and value %s\n", key, value)
 			}
-			return fmt.Errorf(fmt.Sprintf("No projects found with metadata key %s", key))
+			outputOptions.Error = fmt.Sprintf("No projects found with metadata key %s\n", key)
 		}
 		data := []output.Data{}
 		for _, project := range *projects {
@@ -214,10 +219,8 @@ var getProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(
@@ -231,8 +234,7 @@ var getProjectMetadata = &cobra.Command{
 			return err
 		}
 		if len(project.Metadata) == 0 {
-			output.RenderInfo(fmt.Sprintf("There is no metadata for project '%s'", cmdProjectName), outputOptions)
-			return nil
+			outputOptions.Error = fmt.Sprintf("There is no metadata for project '%s'\n", cmdProjectName)
 		}
 		data := []output.Data{}
 		for metaKey, metaVal := range project.Metadata {
@@ -274,8 +276,8 @@ var updateProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Key", key); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -329,8 +331,8 @@ var deleteProjectMetadataByKey = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Key", key); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -378,38 +380,26 @@ var addProjectToOrganizationCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
-
-		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
-			return err
-		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
-			return err
-		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 		gitUrl, err := cmd.Flags().GetString("git-url")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("gitUrl", gitUrl); err != nil {
-			return err
-		}
 		productionEnvironment, err := cmd.Flags().GetString("production-environment")
 		if err != nil {
-			return err
-		}
-		if err := requiredInputCheck("Production Environment", productionEnvironment); err != nil {
 			return err
 		}
 		openshift, err := cmd.Flags().GetUint("openshift")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("openshift", strconv.Itoa(int(openshift))); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Organization name", organizationName, "gitUrl", gitUrl, "Production Environment", productionEnvironment, "openshift", strconv.Itoa(int(openshift))); err != nil {
 			return err
 		}
+
 		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
 		if err != nil {
 			return err
@@ -545,18 +535,13 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
-
-		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
-			return err
-		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Organization name", organizationName); err != nil {
 			return err
 		}
-
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(

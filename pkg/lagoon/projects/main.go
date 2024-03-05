@@ -3,8 +3,6 @@ package projects
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
@@ -21,7 +19,6 @@ type Projects struct {
 type Client interface {
 	ListAllProjects() ([]byte, error)
 	ListProjectVariables(string, bool) ([]byte, error)
-	GetProjectKey(string, bool) ([]byte, error)
 	GetProjectInfo(string) ([]byte, error)
 	DeleteProject(string) ([]byte, error)
 	AddProject(string, string) ([]byte, error)
@@ -223,55 +220,4 @@ func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdatePro
 		Patch: project,
 	}
 	return projectUpdate, nil
-}
-
-// GetProjectKey will get basic info about a project
-func (p *Projects) GetProjectKey(projectName string, revealValue bool) ([]byte, error) {
-	// get project info from lagoon
-	project := api.Project{
-		Name: projectName,
-	}
-	keyFragment := `fragment Project on Project {
-		publicKey
-	}`
-	if revealValue {
-		keyFragment = `fragment Project on Project {
-			privateKey
-			publicKey
-		}`
-	}
-	projectByName, err := p.api.GetProjectByName(project, keyFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processProjectKey(projectByName, revealValue)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
-func processProjectKey(projectByName []byte, revealValue bool) ([]byte, error) {
-	var project api.Project
-	err := json.Unmarshal([]byte(projectByName), &project)
-	if err != nil {
-		return []byte(""), err
-	}
-	// get the key, but strip the newlines we don't need
-	projectData := []string{
-		strings.TrimSuffix(project.PublicKey, "\n"),
-	}
-	if revealValue {
-		projectData = append(projectData, strings.TrimSuffix(project.PrivateKey, "\n"))
-	}
-	var data []output.Data
-	data = append(data, projectData)
-	dataMain := output.Table{
-		Header: []string{"PublicKey"},
-		Data:   data,
-	}
-	if revealValue {
-		dataMain.Header = append(dataMain.Header, "PrivateKey")
-	}
-	return json.Marshal(dataMain)
 }
