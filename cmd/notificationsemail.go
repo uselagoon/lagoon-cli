@@ -6,14 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	ls "github.com/uselagoon/machinery/api/schema"
 )
 
 var addNotificationEmailCmd = &cobra.Command{
@@ -43,8 +39,8 @@ It does not configure a project to send notifications to email though, you need 
 		if err != nil {
 			return err
 		}
-		if name == "" || email == "" {
-			return fmt.Errorf("Missing arguments: name or email is not defined")
+		if err := requiredInputCheck("Name", name, "Email", email); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an email notification '%s' with email address '%s', are you sure?", name, email)) {
 			current := lagoonCLIConfig.Current
@@ -55,7 +51,7 @@ It does not configure a project to send notifications to email though, you need 
 				&token,
 				debug)
 
-			notification := s.AddNotificationEmailInput{
+			notification := ls.AddNotificationEmailInput{
 				Name:         name,
 				EmailAddress: email,
 				Organization: &organizationID,
@@ -109,27 +105,28 @@ This command is used to add an existing email notification in Lagoon to a projec
 		if err != nil {
 			return err
 		}
+
 		name, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		if err := requiredInputCheck("Notification name", name, "Project name", cmdProjectName); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add email notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationToProjectInput{
-				NotificationType: api.EmailNotification,
+			notification := &ls.AddNotificationToProjectInput{
+				NotificationType: ls.EmailNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -154,17 +151,17 @@ var listProjectEmailsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
+		result, err := l.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -199,13 +196,13 @@ var listAllEmailsCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.GetAllNotificationEmail(context.TODO(), lc)
+		result, err := l.GetAllNotificationEmail(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -250,23 +247,23 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Notification name", name); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete email notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.RemoveNotificationFromProjectInput{
-				NotificationType: api.EmailNotification,
+			notification := &ls.RemoveNotificationFromProjectInput{
+				NotificationType: ls.EmailNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -295,18 +292,18 @@ var deleteEmailNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+		if err := requiredInputCheck("Notification name", name); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete email notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			result, err := lagoon.DeleteNotificationEmail(context.TODO(), name, lc)
+			result, err := l.DeleteNotificationEmail(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -343,10 +340,10 @@ var updateEmailNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+		if err := requiredInputCheck("Notification name", name); err != nil {
+			return err
 		}
-		patch := schema.AddNotificationEmailInput{
+		patch := ls.AddNotificationEmailInput{
 			Name:         newname,
 			EmailAddress: email,
 		}
@@ -357,18 +354,18 @@ var updateEmailNotificationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to update email notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
 
-			notification := &schema.UpdateNotificationEmailInput{
+			notification := &ls.UpdateNotificationEmailInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := lagoon.UpdateNotificationEmail(context.TODO(), notification, lc)
+			result, err := l.UpdateNotificationEmail(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
