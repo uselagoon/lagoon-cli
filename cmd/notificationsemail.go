@@ -154,26 +154,36 @@ var listProjectEmailsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
+
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
+
+		result, err := l.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
+		if len(result.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("No project found for '%s'\n", cmdProjectName)
+		} else if len(result.Notifications.Email) == 0 {
+			outputOptions.Error = fmt.Sprintf("No email notificatons found for project: '%s'\n", cmdProjectName)
+		}
+
 		data := []output.Data{}
-		for _, notification := range result.Notifications.Email {
-			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", notification.EmailAddress)),
-			})
+		if result.Notifications != nil {
+			for _, notification := range result.Notifications.Email {
+				data = append(data, []string{
+					returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", notification.EmailAddress)),
+				})
+			}
 		}
 		output.RenderOutput(output.Table{
 			Header: []string{
