@@ -35,13 +35,6 @@ var addOrganizationCmd = &cobra.Command{
 		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//fmt.Println(args)
-		//var commandNames []string
-		//for _, command := range cmd.Commands() {
-		//	commandNames = append(commandNames, append(command.Aliases, command.Name())...)
-		//}
-		//fmt.Println(commandNames)
-		//return nil
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
