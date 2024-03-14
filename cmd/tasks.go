@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -39,8 +40,8 @@ var getTaskByID = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if taskID == 0 {
-			return fmt.Errorf("Missing arguments: ID is not defined")
+		if err := requiredInputCheck("ID", strconv.Itoa(taskID)); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -97,8 +98,8 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -124,11 +125,12 @@ var runDrushArchiveDump = &cobra.Command{
 	Use:     "drush-archivedump",
 	Aliases: []string{"dard"},
 	Short:   "Run a drush archive dump on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -140,6 +142,7 @@ var runDrushArchiveDump = &cobra.Command{
 			ResultData: resultMap,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -147,11 +150,12 @@ var runDrushSQLDump = &cobra.Command{
 	Use:     "drush-sqldump",
 	Aliases: []string{"dsqld"},
 	Short:   "Run a drush sql dump on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -163,6 +167,7 @@ var runDrushSQLDump = &cobra.Command{
 			ResultData: resultMap,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -170,11 +175,12 @@ var runDrushCacheClear = &cobra.Command{
 	Use:     "drush-cacheclear",
 	Aliases: []string{"dcc"},
 	Short:   "Run a drush cache clear on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
 		handleError(err)
@@ -186,6 +192,7 @@ var runDrushCacheClear = &cobra.Command{
 			ResultData: resultMap,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -198,13 +205,13 @@ The following are supported methods to use
 Direct:
  lagoon run invoke -p example -e main -N "advanced task name"
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
-			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", invokedTaskName); err != nil {
+			return err
 		}
-
 		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
 		handleError(err)
 		var resultMap map[string]interface{}
@@ -215,6 +222,7 @@ Direct:
 			ResultData: resultMap,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -233,7 +241,10 @@ STDIN:
 Path:
   lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {
 			// check if we are getting data froms stdin
@@ -255,10 +266,8 @@ Path:
 			}
 		}
 
-		if cmdProjectName == "" || cmdProjectEnvironment == "" || taskCommand == "" {
-			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", invokedTaskName); err != nil {
+			return err
 		}
 		task := api.Task{
 			Name:    taskName,
@@ -275,6 +284,7 @@ Path:
 			ResultData: resultMap,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -296,8 +306,8 @@ var uploadFilesToTask = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if taskID == 0 {
-			return fmt.Errorf("Missing arguments: ID is not defined")
+		if err := requiredInputCheck("ID", strconv.Itoa(taskID)); err != nil {
+			return err
 		}
 		files, err := cmd.Flags().GetStringSlice("file")
 		if err != nil {
