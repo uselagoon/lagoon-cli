@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -44,7 +45,7 @@ var addOrganizationCmd = &cobra.Command{
 			return err
 		}
 		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
+			return fmt.Errorf("%v | Additional subcommands for deploytarget, group, project & user are available. --help for more information", err)
 		}
 		organizationFriendlyName, err := cmd.Flags().GetString("friendly-name")
 		if err != nil {

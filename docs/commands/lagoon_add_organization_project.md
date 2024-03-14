@@ -53,5 +53,5 @@ lagoon add organization project [flags]
 
 ### SEE ALSO
 
-* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a deploytarget/group/project/user to an organization
 
