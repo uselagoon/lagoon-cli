@@ -153,6 +153,16 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		if err != nil {
 			return err
 		}
+
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
 		}
@@ -171,7 +181,8 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 						Name: cmdProjectName,
 					},
 				},
-				ReturnData: returnData,
+				ReturnData:     returnData,
+				BuildVariables: buildVarMap,
 			}, lc)
 			if err != nil {
 				return err
@@ -225,6 +236,15 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
 			return fmt.Errorf("Missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
 		}
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		returnData, err := cmd.Flags().GetBool("returnData")
 		if err != nil {
 			return err
@@ -249,6 +269,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 				HeadBranchName: headBranchName,
 				HeadBranchRef:  headBranchRef,
 				ReturnData:     returnData,
+				BuildVariables: buildVarMap,
 			}, lc)
 			if err != nil {
 				return err
@@ -272,6 +293,7 @@ func init() {
 
 	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployLatestCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
@@ -288,4 +310,5 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
 	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
 	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPullrequestCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
 }
