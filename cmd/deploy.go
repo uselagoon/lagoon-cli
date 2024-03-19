@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -46,6 +45,16 @@ use 'lagoon deploy latest' instead`,
 		if cmdProjectName == "" || branch == "" {
 			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
 		}
+
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to deploy branch '%s' for project '%s', are you sure?", branch, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			lc := client.New(
@@ -55,9 +64,10 @@ use 'lagoon deploy latest' instead`,
 				lagoonCLIVersion,
 				debug)
 			depBranch := &schema.DeployEnvironmentBranchInput{
-				Branch:     branch,
-				Project:    cmdProjectName,
-				ReturnData: returnData,
+				Branch:         branch,
+				Project:        cmdProjectName,
+				ReturnData:     returnData,
+				BuildVariables: buildVarMap,
 			}
 			if branchRef != "" {
 				depBranch.BranchRef = branchRef
@@ -266,7 +276,7 @@ func init() {
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
-
+	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
