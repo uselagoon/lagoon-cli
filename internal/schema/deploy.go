@@ -46,10 +46,11 @@ type DeployEnvironmentBranch struct {
 
 // DeployEnvironmentPromoteInput is used as the input for promoting one environment to another.
 type DeployEnvironmentPromoteInput struct {
-	Project                string `json:"project"`
-	SourceEnvironment      string `json:"sourceEnvironment"`
-	DestinationEnvironment string `json:"destinationEnvironment"`
-	ReturnData             bool   `json:"returnData"`
+	Project                string             `json:"project"`
+	SourceEnvironment      string             `json:"sourceEnvironment"`
+	DestinationEnvironment string             `json:"destinationEnvironment"`
+	BuildVariables         []EnvKeyValueInput `json:"buildVariables,omitempty"`
+	ReturnData             bool               `json:"returnData"`
 }
 
 // DeployEnvironmentPromote is the response.

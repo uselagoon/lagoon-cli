@@ -110,6 +110,16 @@ var deployPromoteCmd = &cobra.Command{
 		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
 			return fmt.Errorf("Missing arguments: Project name, source environment, or destination environment is not defined")
 		}
+
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", sourceEnvironment, destinationEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			lc := client.New(
@@ -122,6 +132,7 @@ var deployPromoteCmd = &cobra.Command{
 				SourceEnvironment:      sourceEnvironment,
 				DestinationEnvironment: destinationEnvironment,
 				Project:                cmdProjectName,
+				BuildVariables:         buildVarMap,
 				ReturnData:             returnData,
 			}, lc)
 			if err != nil {
@@ -299,9 +310,11 @@ func init() {
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
 	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPromoteCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
