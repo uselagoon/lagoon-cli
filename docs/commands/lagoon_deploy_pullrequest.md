@@ -16,6 +16,7 @@ lagoon deploy pullrequest [flags]
 ```
   -N, --baseBranchName string   Pullrequest base branch name
   -R, --baseBranchRef string    Pullrequest base branch reference hash
+      --buildvar =              Adds one or more build variables to deployment, key and values separated by =: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`
   -H, --headBranchName string   Pullrequest head branch name
   -M, --headBranchRef string    Pullrequest head branch reference hash
   -h, --help                    help for pullrequest
