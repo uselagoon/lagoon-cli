@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"reflect"
 	"testing"
 
@@ -160,6 +161,99 @@ func Test_flagStringNullValueOrNil(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("flagStringNullValueOrNil() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_buildVarsToMap(t *testing.T) {
+	type args struct {
+		slice []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []schema.EnvKeyValueInput
+		wantErr bool
+	}{
+		{
+			name: "Empty case",
+			args: args{
+				slice: []string{},
+			},
+			want:    []schema.EnvKeyValueInput{},
+			wantErr: false,
+		},
+		{
+			name: "Valid simple case",
+			args: args{
+				slice: []string{
+					"KEY1=VAL1",
+				},
+			},
+			want: []schema.EnvKeyValueInput{
+				{
+					Name:  "KEY1",
+					Value: "VAL1",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Invalid Case - should fail",
+			args: args{
+				slice: []string{
+					"FAILKEY",
+				},
+			},
+			want:    []schema.EnvKeyValueInput{},
+			wantErr: true,
+		},
+		{
+			name: "Valid case - multiple entries",
+			args: args{
+				slice: []string{
+					"KEY1=VAL1",
+					"KEY2=VAL2",
+				},
+			},
+			want: []schema.EnvKeyValueInput{
+				{
+					Name:  "KEY1",
+					Value: "VAL1",
+				},
+				{
+					Name:  "KEY2",
+					Value: "VAL2",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Valid complex parse case - multiple '=' in string",
+			args: args{
+				slice: []string{
+					"KEY1=VAL1==",
+				},
+			},
+			want: []schema.EnvKeyValueInput{
+				{
+					Name:  "KEY1",
+					Value: "VAL1==",
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := buildVarsToMap(tt.args.slice)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("buildVarsToMap() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("buildVarsToMap() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
