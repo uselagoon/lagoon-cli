@@ -63,9 +63,9 @@ func buildVarsToMap(slice []string) ([]schema.EnvKeyValueInput, error) {
 
 	for _, entry := range slice {
 		// Split the entry by "="
-		parts := strings.Split(entry, "=")
+		parts := strings.SplitN(entry, "=", 2)
 		if len(parts) != 2 {
-			return nil, errors.New("Malformed build variable entry (expects `KEY=VALUE`) got: " + entry)
+			return []schema.EnvKeyValueInput{}, errors.New("Malformed build variable entry (expects `KEY=VALUE`) got: " + entry)
 		}
 
 		// Trim spaces from key and value
