@@ -30,10 +30,11 @@ type DeployEnvironmentPullrequest struct {
 
 // DeployEnvironmentBranchInput is used as the input for deploying a branch.
 type DeployEnvironmentBranchInput struct {
-	Project    string `json:"project"`
-	Branch     string `json:"branch"`
-	BranchRef  string `json:"branchRef"`
-	ReturnData bool   `json:"returnData"`
+	Project        string             `json:"project"`
+	Branch         string             `json:"branch"`
+	BranchRef      string             `json:"branchRef"`
+	ReturnData     bool               `json:"returnData"`
+	BuildVariables []EnvKeyValueInput `json:"buildVariables,omitempty"`
 }
 
 // DeployEnvironmentBranch is the response.

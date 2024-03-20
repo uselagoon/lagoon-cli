@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
+	ls "github.com/uselagoon/machinery/api/schema"
 	"regexp"
 	"strings"
 
@@ -52,4 +54,25 @@ func flagStringNullValueOrNil(flags *pflag.FlagSet, flag string) (*null.String, 
 	}
 	// if not defined, return nil
 	return nil, nil
+}
+
+// buildVarsToMap is used to convert incoming build variable arguments into a structure consumable by the graphQL call
+func buildVarsToMap(slice []string) ([]ls.EnvKeyValueInput, error) {
+	result := []ls.EnvKeyValueInput{}
+
+	for _, entry := range slice {
+		// Split the entry by "="
+		parts := strings.SplitN(entry, "=", 2)
+		if len(parts) != 2 {
+			return []ls.EnvKeyValueInput{}, errors.New("Malformed build variable entry (expects `KEY=VALUE`) got: " + entry)
+		}
+
+		// Trim spaces from key and value
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		result = append(result, ls.EnvKeyValueInput{Name: key, Value: value})
+	}
+
+	return result, nil
 }
