@@ -13,7 +13,7 @@ lagoon deploy promote [flags]
 ### Options
 
 ```
-      --buildvar =           Adds one or more build variables to deployment, key and values separated by =: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`
+      --buildvar strings     Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
   -d, --destination string   Destination environment name to create
   -h, --help                 help for promote
       --returnData           Returns the build name instead of success text

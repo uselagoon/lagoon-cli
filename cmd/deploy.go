@@ -304,17 +304,17 @@ func init() {
 
 	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployLatestCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+	deployLatestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployPromoteCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+	deployPromoteCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
@@ -323,5 +323,5 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
 	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
 	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployPullrequestCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+	deployPullrequestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 }
