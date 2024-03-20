@@ -154,6 +154,7 @@ var listProjectEmailsCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
+
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -161,16 +162,25 @@ var listProjectEmailsCmd = &cobra.Command{
 			lagoonCLIVersion,
 			&token,
 			debug)
+
 		result, err := l.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
+		if len(result.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("No project found for '%s'\n", cmdProjectName)
+		} else if len(result.Notifications.Email) == 0 {
+			outputOptions.Error = fmt.Sprintf("No email notificatons found for project: '%s'\n", cmdProjectName)
+		}
+
 		data := []output.Data{}
-		for _, notification := range result.Notifications.Email {
-			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", notification.EmailAddress)),
-			})
+		if result.Notifications != nil {
+			for _, notification := range result.Notifications.Email {
+				data = append(data, []string{
+					returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", notification.EmailAddress)),
+				})
+			}
 		}
 		output.RenderOutput(output.Table{
 			Header: []string{

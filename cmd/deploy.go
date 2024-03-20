@@ -112,6 +112,16 @@ var deployPromoteCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Source environment", sourceEnvironment, "Destination environment", destinationEnvironment); err != nil {
 			return err
 		}
+
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", sourceEnvironment, destinationEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			token := lagoonCLIConfig.Lagoons[current].Token
@@ -124,6 +134,7 @@ var deployPromoteCmd = &cobra.Command{
 				SourceEnvironment:      sourceEnvironment,
 				DestinationEnvironment: destinationEnvironment,
 				Project:                cmdProjectName,
+				BuildVariables:         buildVarMap,
 				ReturnData:             returnData,
 			}, lc)
 			if err != nil {
@@ -146,6 +157,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		returnData, err := cmd.Flags().GetBool("returnData")
 		if err != nil {
 			return err
@@ -157,6 +169,15 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to deploy the latest environment '%s' for project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			token := lagoonCLIConfig.Lagoons[current].Token
@@ -172,7 +193,8 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 						Name: cmdProjectName,
 					},
 				},
-				ReturnData: returnData,
+				ReturnData:     returnData,
+				BuildVariables: buildVarMap,
 			}, lc)
 			if err != nil {
 				return err
@@ -225,6 +247,15 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err := requiredInputCheck("Project name", cmdProjectName, "Pullrequest title", prTitle, "Pullrequest number", strconv.Itoa(int(prNumber)), "baseBranchName", baseBranchName, "baseBranchRef", baseBranchRef, "headBranchName", headBranchName, "headBranchRef", headBranchRef); err != nil {
 			return err
 		}
+		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		if err != nil {
+			return err
+		}
+		buildVarMap, err := buildVarsToMap(buildVarStrings)
+		if err != nil {
+			return err
+		}
+
 		returnData, err := cmd.Flags().GetBool("returnData")
 		if err != nil {
 			return err
@@ -249,6 +280,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 				HeadBranchName: headBranchName,
 				HeadBranchRef:  headBranchRef,
 				ReturnData:     returnData,
+				BuildVariables: buildVarMap,
 			}, lc)
 			if err != nil {
 				return err
@@ -272,14 +304,17 @@ func init() {
 
 	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployLatestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Adds one or more build variables to deployment, key and values separated by `=`: `--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2]`")
+	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPromoteCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
@@ -288,4 +323,5 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
 	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
 	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPullrequestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 }
