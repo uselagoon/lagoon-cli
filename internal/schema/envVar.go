@@ -47,3 +47,9 @@ type UpdateEnvVarResponse struct {
 type DeleteEnvVarResponse struct {
 	DeleteEnvVar string `json:"deleteEnvVariableByName,omitempty"`
 }
+
+// EnvKeyValueInput  is based on the Lagoon API type.
+type EnvKeyValueInput struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
