@@ -26,7 +26,7 @@ var loginCmd = &cobra.Command{
 func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	noopCloseFunc := func() error { return nil }
 
-	if skipAgent != true {
+	if !skipAgent {
 		// Connect to SSH agent to ask for unencrypted private keys
 		if sshAgentConn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
 			sshAgent := agent.NewClient(sshAgentConn)
@@ -46,20 +46,23 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	// Try to look for an unencrypted private key
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		fmt.Println("Error was:", err.Error())
-		fmt.Println("Lagoon CLI cannot decode private keys, you will need to add your private key to your ssh-agent.")
-		os.Exit(1)
-	} else if err == nil {
-		// return unencrypted private key
+		fmt.Printf("Enter passphrase for %s:", path)
+		bytePassword, err := terminal.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			fmt.Println("Error was:", err.Error())
+			fmt.Println("Lagoon CLI could not decode private key, you will need to add your private key to your ssh-agent.")
+			os.Exit(1)
+		}
+		fmt.Println()
+		signer, err = ssh.ParsePrivateKeyWithPassphrase(key, bytePassword)
+		if err != nil {
+			fmt.Println("Error was:", err.Error())
+			fmt.Println("Lagoon CLI could not decode private key, you will need to add your private key to your ssh-agent.")
+			os.Exit(1)
+		}
 		return ssh.PublicKeys(signer), noopCloseFunc
 	}
-
-	// Handle encrypted private keys
-	fmt.Println("Found an encrypted private key!")
-	fmt.Printf("Enter passphrase for '%s': ", path)
-	bytePassword, err := terminal.ReadPassword(int(os.Stdin.Fd()))
-	fmt.Println()
-	signer, err = ssh.ParsePrivateKeyWithPassphrase(key, bytePassword)
+	// return unencrypted private key
 	return ssh.PublicKeys(signer), noopCloseFunc
 }
 
