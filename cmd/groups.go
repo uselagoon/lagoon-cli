@@ -73,46 +73,64 @@ var addUserToGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
 	Short:   "Add a user to a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		var roleType api.GroupRole
-		roleType = api.GuestRole
-		if strings.EqualFold(string(groupRole), "guest") {
-			roleType = api.GuestRole
-		} else if strings.EqualFold(string(groupRole), "reporter") {
-			roleType = api.ReporterRole
-		} else if strings.EqualFold(string(groupRole), "developer") {
-			roleType = api.DeveloperRole
-		} else if strings.EqualFold(string(groupRole), "maintainer") {
-			roleType = api.MaintainerRole
-		} else if strings.EqualFold(string(groupRole), "owner") {
-			roleType = api.OwnerRole
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		userGroupRole := api.UserGroupRole{
-			User: api.User{
-				Email: strings.ToLower(userEmail),
-			},
-			Group: api.Group{
-				Name: groupName,
-			},
-			Role: roleType,
+		groupRole, err := cmd.Flags().GetString("role")
+		if err != nil {
+			return err
 		}
-		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" || userGroupRole.Role == "" {
-			output.RenderError("Missing arguments: Email address, group name, or role is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		customReqResult, err = uClient.AddUserToGroup(userGroupRole)
+
+		var roleType ls.GroupRole
+		roleType = ls.GuestRole
+		switch strings.ToLower(groupRole) {
+		case "guest":
+			roleType = ls.GuestRole
+		case "reporter":
+			roleType = ls.ReporterRole
+		case "developer":
+			roleType = ls.DeveloperRole
+		case "maintainer":
+			roleType = ls.MaintainerRole
+		case "owner":
+			roleType = ls.OwnerRole
+		}
+
+		if err := requiredInputCheck("Group name", groupName, "Email address", userEmail, "Role", string(roleType)); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		userGroupRole := &ls.UserGroupRoleInput{
+			UserEmail: userEmail,
+			GroupName: groupName,
+			GroupRole: roleType,
+		}
+		_, err = l.AddUserToGroup(context.TODO(), userGroupRole, lc)
 		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -120,34 +138,55 @@ var addProjectToGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
 	Short:   "Add a project to a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		projectGroup := api.ProjectGroups{
-			Project: api.Project{
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName, "Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		projectGroup := &ls.ProjectGroupsInput{
+			Project: ls.ProjectInput{
 				Name: cmdProjectName,
 			},
-			Groups: []api.Group{
+			Groups: []ls.GroupInput{
 				{
 					Name: groupName,
 				},
 			},
 		}
-		if projectGroup.Project.Name == "" || len(projectGroup.Groups) == 0 {
-			output.RenderError("Missing arguments: Project name or group name is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if len(project.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
 		}
-		var customReqResult []byte
-		var err error
-		customReqResult, err = uClient.AddProjectToGroup(projectGroup)
+		result, err := l.AddProjectToGroup(context.TODO(), projectGroup, lc)
 		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id": result.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -309,10 +348,10 @@ var addGroupToOrganizationCmd = &cobra.Command{
 
 func init() {
 	addGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
-	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	addUserToGroupCmd.Flags().StringVarP(&groupRole, "role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
-	addUserToGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	addProjectToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
+	addUserToGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
+	addUserToGroupCmd.Flags().StringP("role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
+	addUserToGroupCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addProjectToGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
 	deleteUserFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
