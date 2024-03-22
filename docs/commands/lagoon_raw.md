@@ -1,25 +1,21 @@
-## lagoon deploy branch
+## lagoon raw
 
-Deploy a new branch
+Run a custom query or mutation
 
 ### Synopsis
 
-Deploy a new branch
-This branch may or may not already exist in lagoon, if it already exists you may want to
-use 'lagoon deploy latest' instead
+Run a custom query or mutation.
+The output of this command will be the JSON response from the API
 
 ```
-lagoon deploy branch [flags]
+lagoon raw [flags]
 ```
 
 ### Options
 
 ```
-  -b, --branch string      Branch name to deploy
-  -r, --branchRef string   Branch ref to deploy
-      --buildvar strings   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
-  -h, --help               help for branch
-      --returnData         Returns the build name instead of success text
+  -h, --help         help for raw
+      --raw string   The raw query or mutation to run
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +37,5 @@ lagoon deploy branch [flags]
 
 ### SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

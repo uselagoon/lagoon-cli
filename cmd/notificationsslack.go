@@ -161,26 +161,34 @@ var listProjectSlacksCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
-		lc := client.New(
+		token := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
+		result, err := l.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
+		if len(result.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("No project found for '%s'\n", cmdProjectName)
+		} else if len(result.Notifications.Slack) == 0 {
+			outputOptions.Error = fmt.Sprintf("No slack notificatons found for project: '%s'\n", cmdProjectName)
+		}
+
 		data := []output.Data{}
-		for _, notification := range result.Notifications.Slack {
-			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", notification.Webhook)),
-				returnNonEmptyString(fmt.Sprintf("%v", notification.Channel)),
-			})
+		if result.Notifications != nil {
+			for _, notification := range result.Notifications.Slack {
+				data = append(data, []string{
+					returnNonEmptyString(fmt.Sprintf("%v", notification.Name)),
+					returnNonEmptyString(fmt.Sprintf("%v", notification.Webhook)),
+					returnNonEmptyString(fmt.Sprintf("%v", notification.Channel)),
+				})
+			}
 		}
 		output.RenderOutput(output.Table{
 			Header: []string{

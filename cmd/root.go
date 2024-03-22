@@ -39,6 +39,7 @@ var configExtension = ".yml"
 var createConfig bool
 var userPath string
 var configFilePath string
+var commandsFilePath = ".lagoon-cli/commands"
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
@@ -201,6 +202,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(rawCmd)
 	rootCmd.AddCommand(configCmd)
 }
 
