@@ -22,14 +22,14 @@ var addNotificationCmd = &cobra.Command{
 	},
 }
 
-var addOrganizationCmd = &cobra.Command{
-	Use:     "organization",
-	Aliases: []string{"o"},
-	Short:   "Add an organization, or add a group/project to an organization",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
-	},
-}
+//var addOrganizationCmd = &cobra.Command{
+//	Use:     "organization",
+//	Aliases: []string{"o"},
+//	Short:   "Add an organization, or add a group/project to an organization",
+//	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+//		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+//	},
+//}
 
 func init() {
 	addCmd.AddCommand(addDeployTargetCmd)
@@ -43,4 +43,7 @@ func init() {
 	addCmd.AddCommand(addUserSSHKeyCmd)
 	addCmd.AddCommand(addVariableCmd)
 	addCmd.AddCommand(addDeployTargetConfigCmd)
+	addCmd.AddCommand(addDeployTargetToOrganizationCmd)
+	addCmd.AddCommand(addAdministratorToOrganizationCmd)
+	addCmd.AddCommand(addProjectToOrganizationCmd)
 }

@@ -323,8 +323,8 @@ var deleteDeployTargetCmd = &cobra.Command{
 }
 
 var addDeployTargetToOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Add a deploy target to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -380,8 +380,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 }
 
 var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)

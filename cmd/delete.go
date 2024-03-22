@@ -22,15 +22,6 @@ var deleteNotificationCmd = &cobra.Command{
 	},
 }
 
-var deleteOrganizationCmd = &cobra.Command{
-	Use:     "organization",
-	Aliases: []string{"o"},
-	Short:   "Add an organization, or add a group/project to an organization",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
-	},
-}
-
 func init() {
 	deleteCmd.AddCommand(deleteEnvCmd)
 	deleteCmd.AddCommand(deleteGroupCmd)
@@ -44,4 +35,6 @@ func init() {
 	deleteCmd.AddCommand(deleteVariableCmd)
 	deleteCmd.AddCommand(deleteDeployTargetConfigCmd)
 	deleteCmd.AddCommand(deleteOrganizationCmd)
+	deleteCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
+	deleteCmd.AddCommand(RemoveAdministratorFromOrganizationCmd)
 }
