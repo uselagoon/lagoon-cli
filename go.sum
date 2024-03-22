@@ -72,6 +72,8 @@ github.com/uselagoon/machinery v0.0.17-0.20240305055829-835b0b423ec2 h1:2wpN+2HS
 github.com/uselagoon/machinery v0.0.17-0.20240305055829-835b0b423ec2/go.mod h1:Duljjz/3d/7m0jbmF1nVRDTNaMxMr6m+5LkgjiRrQaU=
 github.com/uselagoon/machinery v0.0.19-0.20240320041534-683f398167dd h1:xT/RCZgiVseuvnL9MtTQsOh9fAvH/dwh+SsCE58Vv+M=
 github.com/uselagoon/machinery v0.0.19-0.20240320041534-683f398167dd/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
+github.com/uselagoon/machinery v0.0.19-0.20240322032550-e091c29da848 h1:MjOFsr4cw70IaUgR/G9ZdixPXevSVh3RPG0Z57UBD4c=
+github.com/uselagoon/machinery v0.0.19-0.20240322032550-e091c29da848/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
