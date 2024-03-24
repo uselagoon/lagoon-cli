@@ -7,10 +7,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	auth "github.com/uselagoon/machinery/utils/auth"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
-	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/oauth2"
+	terminal "golang.org/x/term"
 )
 
 var loginCmd = &cobra.Command{
@@ -67,12 +68,28 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 }
 
 func loginToken() error {
-	out, err := retrieveTokenViaSsh()
+	// check if the ssh-token only feature is enabled for this context for cli generally
+	sshTokenOnly, err := lConfig.GetFeature(lContext.Name, configFeaturePrefix, "ssh-token")
 	if err != nil {
 		return err
 	}
-
-	lUser.UserConfig.Grant = out
+	if lContext.ContextConfig.AuthenticationEndpoint == "" || sshTokenOnly {
+		// if no keycloak url is found in the config, perform a token request via ssh
+		// or the ssh-token override is set to enforce tokens via ssh (accounts in CI jobs)
+		out, err := retrieveTokenViaSsh()
+		if err != nil {
+			return err
+		}
+		lUser.UserConfig.Grant = out
+	} else {
+		// otherwise get a token via keycloak
+		token := &oauth2.Token{}
+		if lUser.UserConfig.Grant != nil {
+			token = lUser.UserConfig.Grant
+		}
+		_ = auth.TokenRequest(lContext.ContextConfig.AuthenticationEndpoint, "lagoon", "", token)
+		lUser.UserConfig.Grant = token
+	}
 	return lConfig.WriteConfig()
 }
 

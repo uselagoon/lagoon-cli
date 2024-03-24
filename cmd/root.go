@@ -52,6 +52,7 @@ var configFeaturePrefix = "cli"
 var cliFeatures = []string{
 	"environment-from-directory", // feature that enables the sourcing of project/environment from within a git repository
 	"disable-update-check",       // feature that disables the automatic update check
+	"ssh-token",                  // feature that forces the cli to use ssh token base authentication instead of keycloak based
 }
 
 // version/build information (populated at build time by make file)
