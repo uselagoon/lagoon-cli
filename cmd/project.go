@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -158,10 +159,9 @@ var listProjectByMetadata = &cobra.Command{
 		if key == "" {
 			return fmt.Errorf("Missing arguments: key is not defined")
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
@@ -219,11 +219,10 @@ var getProjectMetadata = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetProjectMetadata(context.TODO(), cmdProjectName, lc)
@@ -277,10 +276,9 @@ var updateProjectMetadata = &cobra.Command{
 			return fmt.Errorf("Missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -332,10 +330,9 @@ var deleteProjectMetadataByKey = &cobra.Command{
 			return fmt.Errorf("Missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -372,7 +369,7 @@ var addProjectToOrganizationCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Add a project to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -482,10 +479,9 @@ var addProjectToOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
@@ -539,7 +535,7 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Remove a project from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -556,10 +552,9 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)

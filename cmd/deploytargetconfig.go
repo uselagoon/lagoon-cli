@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -20,7 +21,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 	Hidden:  false,
 	Short:   "Add deploytarget config to a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -56,10 +57,9 @@ var addDeployTargetConfigCmd = &cobra.Command{
 		if branches == "" {
 			return fmt.Errorf("Missing arguments: branches is a required flag")
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
@@ -120,7 +120,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 	Hidden:  false,
 	Short:   "Update a deploytarget config",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -150,11 +150,10 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		if id == 0 {
 			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 
@@ -212,7 +211,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 	Hidden:  false,
 	Short:   "Delete a deploytarget config",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -226,11 +225,10 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		if id == 0 {
 			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -255,18 +253,17 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 	Hidden:  false,
 	Short:   "List deploytarget configs for a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

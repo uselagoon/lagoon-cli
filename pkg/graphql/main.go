@@ -1,17 +1,18 @@
 package graphql
 
 import (
+	"fmt"
+
 	"github.com/golang-jwt/jwt"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
+	"github.com/uselagoon/machinery/utils/config"
 )
 
 // LagoonAPI .
-func LagoonAPI(lc *lagoon.Config, debug bool) (api.Client, error) {
-	lagoon := lc.Current
+func LagoonAPI(lc *config.Context, lu *config.User, debug bool) (api.Client, error) {
 	lagoonAPI, err := api.NewWithToken(
-		lc.Lagoons[lagoon].Token,
-		lc.Lagoons[lagoon].GraphQL,
+		lu.UserConfig.Grant.AccessToken,
+		fmt.Sprintf("%s/graphql", lc.ContextConfig.APIHostname),
 	)
 	lagoonAPI.Debug(debug)
 	if err != nil {
@@ -20,15 +21,29 @@ func LagoonAPI(lc *lagoon.Config, debug bool) (api.Client, error) {
 	return lagoonAPI, nil
 }
 
-func hasValidToken(lc *lagoon.Config, lagoon string) bool {
-	return lc.Lagoons[lagoon].Token != ""
-}
+// func hasValidToken(lc *lagoon.Config, lagoon string) bool {
+// 	return lc.Lagoons[lagoon].Token != ""
+// }
+
+// // VerifyTokenExpiry verfies if the current token is valid or not
+// func VerifyTokenExpiry(lc *lagoon.Config, lagoon string) bool {
+// 	var p jwt.Parser
+// 	token, _, err := p.ParseUnverified(
+// 		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
+// 	if err != nil {
+// 		return false
+// 	}
+// 	if token.Claims.Valid() != nil {
+// 		return false
+// 	}
+// 	return true
+// }
 
 // VerifyTokenExpiry verfies if the current token is valid or not
-func VerifyTokenExpiry(lc *lagoon.Config, lagoon string) bool {
+func VerifyTokenExpiry2(token2, lagoon string) bool {
 	var p jwt.Parser
 	token, _, err := p.ParseUnverified(
-		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
+		token2, &jwt.StandardClaims{})
 	if err != nil {
 		return false
 	}

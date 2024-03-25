@@ -1,19 +1,15 @@
-## lagoon list rocketchat
+## lagoon configuration list-users
 
-List Rocket.Chat details about a project (alias: r)
-
-### Synopsis
-
-List Rocket.Chat details about a project (alias: r)
+View all configured Lagoon context users
 
 ```
-lagoon list rocketchat [flags]
+lagoon configuration list-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for rocketchat
+  -h, --help   help for list-users
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +31,5 @@ lagoon list rocketchat [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

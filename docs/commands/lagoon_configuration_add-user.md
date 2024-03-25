@@ -1,15 +1,17 @@
-## lagoon config lagoon-version
+## lagoon configuration add-user
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a new Lagoon context user
 
 ```
-lagoon config lagoon-version [flags]
+lagoon configuration add-user [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for lagoon-version
+  -h, --help             help for add-user
+      --name string      The name to reference this user as
+      --ssh-key string   The full path to this users ssh-key
 ```
 
 ### Options inherited from parent commands
@@ -26,10 +28,9 @@ lagoon config lagoon-version [flags]
       --pretty               Make JSON pretty (if supported)
   -p, --project string       Specify a project to use
       --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
 ```
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

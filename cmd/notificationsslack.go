@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -25,7 +26,7 @@ var addNotificationSlackCmd = &cobra.Command{
 This command is used to set up a new Slack notification in Lagoon. This requires information to talk to Slack like the webhook URL and the name of the channel.
 It does not configure a project to send notifications to Slack though, you need to use project-slack for that.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -52,10 +53,9 @@ It does not configure a project to send notifications to Slack though, you need 
 			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an Slack notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			token := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
 				&token,
 				debug)
@@ -110,7 +110,7 @@ var addProjectNotificationSlackCmd = &cobra.Command{
 	Long: `Add a Slack notification to a project
 This command is used to add an existing Slack notification in Lagoon to a project.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -125,11 +125,10 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add Slack notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
@@ -155,7 +154,7 @@ var listProjectSlacksCmd = &cobra.Command{
 	Aliases: []string{"ps"},
 	Short:   "List Slacks details about a project (alias: ps)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -165,15 +164,12 @@ var listProjectSlacksCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
-
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		token := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
 			&token,
 			debug)
-
 		result, err := l.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
@@ -211,18 +207,17 @@ var listAllSlacksCmd = &cobra.Command{
 	Aliases: []string{"s"},
 	Short:   "List all Slacks notification details (alias: s)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 		result, err := lagoon.GetAllNotificationSlack(context.TODO(), lc)
@@ -261,7 +256,7 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 	Aliases: []string{"ps"},
 	Short:   "Delete a Slack notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -276,11 +271,10 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete Slack notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
@@ -306,7 +300,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 	Aliases: []string{"s"},
 	Short:   "Delete a Slack notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -321,11 +315,10 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			return fmt.Errorf("Missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete Slack notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 			result, err := lagoon.DeleteNotificationSlack(context.TODO(), name, lc)
@@ -346,7 +339,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 	Aliases: []string{"s"},
 	Short:   "Update an existing Slack notification",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -383,11 +376,10 @@ var updateSlackNotificationCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update Slack notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
 			lc := client.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+				lUser.UserConfig.Grant.AccessToken,
+				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
 				debug)
 
