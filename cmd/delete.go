@@ -37,4 +37,5 @@ func init() {
 	deleteCmd.AddCommand(deleteOrganizationCmd)
 	deleteCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
 	deleteCmd.AddCommand(RemoveAdministratorFromOrganizationCmd)
+	deleteCmd.AddCommand(RemoveProjectFromOrganizationCmd)
 }

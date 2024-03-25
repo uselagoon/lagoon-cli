@@ -217,17 +217,6 @@ var updateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	//addOrganizationCmd.AddCommand(addOrgCmd)
-	addOrganizationCmd.AddCommand(addGroupToOrganizationCmd)
-	//addOrganizationCmd.AddCommand(addProjectToOrganizationCmd)
-	//addOrganizationCmd.AddCommand(addDeployTargetToOrganizationCmd)
-	//addOrganizationCmd.AddCommand(addUserToOrganizationCmd)
-
-	//deleteOrganizationCmd.AddCommand(deleteOrgCmd)
-	//deleteOrganizationCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
-	deleteOrganizationCmd.AddCommand(RemoveProjectFromOrganizationCmd)
-	//deleteOrganizationCmd.AddCommand(RemoveUserFromOrganization)
-
 	addOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 	addOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	addOrganizationCmd.Flags().String("description", "", "Description of the organization")

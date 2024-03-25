@@ -376,14 +376,11 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
-		}
 		userEmail, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("User email", userEmail); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "User email", userEmail); err != nil {
 			return err
 		}
 		owner, err := cmd.Flags().GetBool("owner")
