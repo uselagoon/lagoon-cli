@@ -113,9 +113,15 @@ func nullIntCheck(i int) *int {
 	return &i
 }
 
-func requiredInputCheck(field string, value string) error {
-	if value == "" || value == "0" {
-		return fmt.Errorf(fmt.Sprintf("Missing argument: %s is not defined", field))
+// Specify the fields and values to check for required input e.g. requiredInputCheck("field1", value1, "field2", value2)
+func requiredInputCheck(fieldsAndValues ...string) error {
+	for i := 0; i < len(fieldsAndValues); i += 2 {
+		field := fieldsAndValues[i]
+		value := fieldsAndValues[i+1]
+
+		if value == "" || value == "0" {
+			return fmt.Errorf("Missing argument: %s is not defined", field)
+		}
 	}
 	return nil
 }

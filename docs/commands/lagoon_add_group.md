@@ -9,8 +9,10 @@ lagoon add group [flags]
 ### Options
 
 ```
-  -h, --help          help for group
-  -N, --name string   Name of the group
+  -h, --help                  help for group
+  -N, --name string           Name of the group
+      --org-owner             Flag to add the user to the group as an owner
+  -O, --organization string   Name of the organization
 ```
 
 ### Options inherited from parent commands

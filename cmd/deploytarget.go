@@ -323,8 +323,8 @@ var deleteDeployTargetCmd = &cobra.Command{
 }
 
 var addDeployTargetToOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Add a deploy target to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -332,19 +332,16 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		handleError(err)
-
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
-			return err
-		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 		deployTarget, err := cmd.Flags().GetUint("deploy-target")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
 			return err
 		}
 
@@ -366,12 +363,11 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 
 		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
 		handleError(err)
-
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"Deploy Target":     deployTargetResponse.Name,
-				"Organization Name": organizationName,
+				"Deploy Target":     deployTarget,
+				"Organization Name": deployTargetResponse.Name,
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
@@ -380,8 +376,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 }
 
 var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
