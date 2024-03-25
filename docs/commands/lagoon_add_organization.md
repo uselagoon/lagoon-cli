@@ -1,11 +1,23 @@
 ## lagoon add organization
 
-Add an organization, or add a group/project to an organization
+Add a new organization to Lagoon
+
+```
+lagoon add organization [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for organization
+      --description string       Description of the organization
+      --environment-quota int    Environment quota for the organization
+      --friendly-name string     Friendly name of the organization
+      --group-quota int          Group quota for the organization
+  -h, --help                     help for organization
+  -O, --name string              Name of the organization
+      --notification-quota int   Notification quota for the organization
+      --project-quota int        Project quota for the organization
+      --route-quota int          Route quota for the organization
 ```
 
 ### Options inherited from parent commands
@@ -28,9 +40,4 @@ Add an organization, or add a group/project to an organization
 ### SEE ALSO
 
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
-* [lagoon add organization deploytarget](lagoon_add_organization_deploytarget.md)	 - Add a deploy target to an Organization
-* [lagoon add organization group](lagoon_add_organization_group.md)	 - Add a group to an Organization
-* [lagoon add organization organization](lagoon_add_organization_organization.md)	 - Add a new organization to Lagoon
-* [lagoon add organization project](lagoon_add_organization_project.md)	 - Add a project to an Organization
-* [lagoon add organization user](lagoon_add_organization_user.md)	 - Add a user to an Organization
 
