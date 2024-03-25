@@ -230,7 +230,20 @@ func initConfig() {
 		if strings.Contains(err.Error(), "could not locate `config.yaml`") {
 			// check for a legacy config
 			data, err2 := readLegacyConfig()
+			noConfig := false
 			if err2 != nil {
+				noConfig = true
+			}
+			if len(data) > 0 {
+				if yn("Only a legacy configuration file was found, would you like to convert it to the new format?") {
+					convertConfig(true)
+					fmt.Println("Configuration converted")
+					os.Exit(0)
+				} else {
+					noConfig = true
+				}
+			}
+			if noConfig {
 				if yn("Unable to find configuration, would you like to create one?") {
 					err := createInitialConfig()
 					if err != nil {
@@ -239,20 +252,9 @@ func initConfig() {
 					}
 					fmt.Println("Configuration created")
 					os.Exit(0)
-				} else {
-					output.RenderError(fmt.Sprintf("No configuration created, configuration is required to use the CLI"), outputOptions)
-					os.Exit(1)
 				}
-			}
-			if len(data) > 0 {
-				if yn("Only a legacy configuration file was found, would you like to convert it to the new format?") {
-					convertConfig(true)
-					fmt.Println("Configuration converted")
-					os.Exit(0)
-				} else {
-					output.RenderError(fmt.Sprintf("Unable to find configuration, you may need to create one: %s", err.Error()), outputOptions)
-					os.Exit(1)
-				}
+				output.RenderError("No configuration created, configuration is required to use the CLI", outputOptions)
+				os.Exit(1)
 			}
 		} else {
 			output.RenderError(fmt.Sprintf("Unable to detect or load configuration: %s", err.Error()), outputOptions)
