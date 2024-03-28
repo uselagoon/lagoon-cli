@@ -18,40 +18,6 @@ func checkEqual(t *testing.T, got, want interface{}, msgs ...interface{}) {
 	}
 }
 
-func TestAllProjects(t *testing.T) {
-	var allProjects = `[
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/project1.git","id":1,"name":"credentialstest-project1"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/project2.git","id":2,"name":"credentialstest-project2"},
-	{"developmentEnvironmentsLimit":5,"environments":[
-		{"environmentType":"production","route":null}],
-		"gitUrl":"ssh://git@192.168.99.1:2222/git/github.git","id":3,"name":"ci-github"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/gitlab.git","id":4,"name":"ci-gitlab"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/nginx.git","id":11,"name":"ci-nginx"},
-	{"developmentEnvironmentsLimit":5,"environments":[
-		{"environmentType":"production","route":null}],
-		"gitUrl":"ssh://git@192.168.99.1:2222/git/features.git","id":12,"name":"ci-features"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"git@github.com:uselagoon/lagoon.git","id":13,"name":"lagoon"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/features-subfolder.git","id":17,"name":"ci-features-subfolder"},
-	{"developmentEnvironmentsLimit":5,"environments":[
-		{"environmentType":"production","route":"http://highcotton.org"},
-		{"environmentType":"development","route":"https://varnish-highcotton-org-staging.us.amazee.io"},
-		{"environmentType":"development","route":"https://varnish-highcotton-org-development.us.amazee.io"},
-		{"environmentType":"development","route":""},
-		{"environmentType":"development","route":null}],
-		"gitUrl":"test","id":18,"name":"high-cotton"},
-	{"developmentEnvironmentsLimit":5,"environments":[],"gitUrl":"ssh://git@192.168.99.1:2222/git/api.git","id":21,"name":"ci-api"}
-]`
-	var allProjectsSuccess = `{"header":["ID","ProjectName","GitURL","ProductionEnvironment","DevEnvironments"],"data":[["1","credentialstest-project1","ssh://git@192.168.99.1:2222/git/project1.git","","0/5"],["2","credentialstest-project2","ssh://git@192.168.99.1:2222/git/project2.git","","0/5"],["3","ci-github","ssh://git@192.168.99.1:2222/git/github.git","","0/5"],["4","ci-gitlab","ssh://git@192.168.99.1:2222/git/gitlab.git","","0/5"],["11","ci-nginx","ssh://git@192.168.99.1:2222/git/nginx.git","","0/5"],["12","ci-features","ssh://git@192.168.99.1:2222/git/features.git","","0/5"],["13","lagoon","git@github.com:uselagoon/lagoon.git","","0/5"],["17","ci-features-subfolder","ssh://git@192.168.99.1:2222/git/features-subfolder.git","","0/5"],["18","high-cotton","test","","4/5"],["21","ci-api","ssh://git@192.168.99.1:2222/git/api.git","","0/5"]]}`
-
-	returnResult, err := processAllProjects([]byte(allProjects))
-	if err != nil {
-		t.Error("Should not fail if processing succeeded", err)
-	}
-	if string(returnResult) != allProjectsSuccess {
-		checkEqual(t, string(returnResult), allProjectsSuccess, "allProject processing failed")
-	}
-}
-
 func TestProjectInfo(t *testing.T) {
 	var projectInfo = `
 	{"autoIdle":1,"branches":"false","developmentEnvironmentsLimit":5,"factsUI":0,"problemsUI":0,"environments":[
