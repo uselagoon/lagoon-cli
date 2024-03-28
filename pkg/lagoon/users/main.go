@@ -14,18 +14,11 @@ type Users struct {
 
 // Client .
 type Client interface {
-	AddGroup(api.Group) ([]byte, error)
-	AddUserToGroup(api.UserGroupRole) ([]byte, error)
-	AddProjectToGroup(api.ProjectGroups) ([]byte, error)
-	RemoveUserFromGroup(api.UserGroup) ([]byte, error)
-	RemoveGroupsFromProject(api.ProjectGroups) ([]byte, error)
-	DeleteGroup(api.Group) ([]byte, error)
 	ListUsers(string) ([]byte, error)
 	AddUser(api.User) ([]byte, error)
 	AddSSHKeyToUser(api.User, api.SSHKey) ([]byte, error)
 	DeleteUser(api.User) ([]byte, error)
 	ModifyUser(api.User, api.User) ([]byte, error)
-	ListGroups(string) ([]byte, error)
 	ListGroupProjects(string, bool) ([]byte, error)
 }
 

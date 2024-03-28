@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 var retrieveCmd = &cobra.Command{
@@ -39,18 +39,18 @@ You can check the status of the backup using the list backups or get backup comm
 		if err != nil {
 			return err
 		}
-		if backupID == "" {
-			return fmt.Errorf("Missing arguments: backup-id is not defined")
+		if err := requiredInputCheck("Backup ID", backupID); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to trigger a retrieval for backup ID '%s', are you sure?", backupID)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			result, err := lagoon.AddBackupRestore(context.TODO(), backupID, lc)
+			result, err := l.AddBackupRestore(context.TODO(), backupID, lc)
 			if err != nil {
 				if strings.Contains(err.Error(), "Duplicate entry") {
 					// this error reports a lot about the sql backup, need to fix that in Lagoon upstream

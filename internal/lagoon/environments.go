@@ -10,14 +10,7 @@ import (
 
 // Environments interface contains methods for getting info on environments.
 type Environments interface {
-	BackupsForEnvironmentByName(context.Context, string, uint, *schema.Environment) error
 	AddRestore(context.Context, string, *schema.Restore) error
-}
-
-// GetBackupsForEnvironmentByName gets backup info in lagoon for specific environment.
-func GetBackupsForEnvironmentByName(ctx context.Context, name string, project uint, e Environments) (*schema.Environment, error) {
-	environment := schema.Environment{}
-	return &environment, e.BackupsForEnvironmentByName(ctx, name, project, &environment)
 }
 
 // AddBackupRestore adds a backup restore based on backup ID.

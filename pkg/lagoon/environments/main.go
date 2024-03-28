@@ -22,10 +22,7 @@ type Client interface {
 	DeployEnvironmentBranch(string, string) ([]byte, error)
 	DeleteEnvironment(string, string) ([]byte, error)
 	GetDeploymentLog(string) ([]byte, error)
-	GetEnvironmentInfo(string, string) ([]byte, error)
 	ListEnvironmentVariables(string, string, bool) ([]byte, error)
-	GetEnvironmentDeployments(string, string) ([]byte, error)
-	GetEnvironmentTasks(string, string) ([]byte, error)
 	RunDrushArchiveDump(string, string) ([]byte, error)
 	RunDrushSQLDump(string, string) ([]byte, error)
 	RunDrushCacheClear(string, string) ([]byte, error)
@@ -34,7 +31,6 @@ type Client interface {
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
 	InvokeAdvancedTaskDefinition(string, string, string) ([]byte, error)
-	ListInvokableAdvancedTaskDefinitions(string, string) ([]byte, error)
 }
 
 // New .
@@ -82,44 +78,6 @@ func (e *Environments) DeleteEnvironment(projectName string, environmentName str
 	}
 	returnResult, err := e.api.DeleteEnvironment(evironment)
 	return returnResult, err
-}
-
-// GetEnvironmentInfo will get basic info about a project
-func (e *Environments) GetEnvironmentInfo(projectName string, environmentName string) ([]byte, error) {
-	// get project info from lagoon
-	project := api.Project{
-		Name: projectName,
-	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	var projectInfo api.Project
-	err = json.Unmarshal([]byte(projectByName), &projectInfo)
-	if err != nil {
-		return []byte(""), err
-	}
-	// get the environment info from lagoon, we need the environment ID for later
-	// we consume the project ID here
-	environment := api.EnvironmentByName{
-		Name:    environmentName,
-		Project: projectInfo.ID,
-	}
-	environmentByName, err := e.api.GetEnvironmentByName(environment, graphql.EnvironmentByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	var environmentInfo api.Environment
-	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
-	if err != nil {
-		return []byte(""), err
-	}
-
-	returnResult, err := processEnvInfo(environmentByName)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
 }
 
 func processEnvInfo(projectByName []byte) ([]byte, error) {

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/uselagoon/lagoon-cli/internal/schema"
+	ls "github.com/uselagoon/machinery/api/schema"
 	"reflect"
 	"testing"
 
@@ -173,7 +173,7 @@ func Test_buildVarsToMap(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []schema.EnvKeyValueInput
+		want    []ls.EnvKeyValueInput
 		wantErr bool
 	}{
 		{
@@ -181,7 +181,7 @@ func Test_buildVarsToMap(t *testing.T) {
 			args: args{
 				slice: []string{},
 			},
-			want:    []schema.EnvKeyValueInput{},
+			want:    []ls.EnvKeyValueInput{},
 			wantErr: false,
 		},
 		{
@@ -191,7 +191,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY1=VAL1",
 				},
 			},
-			want: []schema.EnvKeyValueInput{
+			want: []ls.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1",
@@ -206,7 +206,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"FAILKEY",
 				},
 			},
-			want:    []schema.EnvKeyValueInput{},
+			want:    []ls.EnvKeyValueInput{},
 			wantErr: true,
 		},
 		{
@@ -217,7 +217,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY2=VAL2",
 				},
 			},
-			want: []schema.EnvKeyValueInput{
+			want: []ls.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1",
@@ -236,7 +236,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY1=VAL1==",
 				},
 			},
-			want: []schema.EnvKeyValueInput{
+			want: []ls.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1==",

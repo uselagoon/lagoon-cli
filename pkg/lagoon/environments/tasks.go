@@ -165,56 +165,6 @@ func (e *Environments) RunDrushCacheClear(projectName string, environmentName st
 	return returnResult, nil
 }
 
-// GetEnvironmentTasks .
-func (e *Environments) GetEnvironmentTasks(projectName string, environmentName string) ([]byte, error) {
-	// get project info from lagoon, we need the project ID for later
-	project := api.Project{
-		Name: projectName,
-	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectNameID)
-	if err != nil {
-		return []byte(""), err
-	}
-	var projectInfo api.Project
-	err = json.Unmarshal([]byte(projectByName), &projectInfo)
-	if err != nil {
-		return []byte(""), err
-	}
-
-	customRequest := api.CustomRequest{
-		Query: `query ($project: Int!, $name: String!){
-			environmentByName(
-					project: $project
-					name: $name
-			){
-				tasks{
-					name
-					id
-					remoteId
-					status
-					created
-					started
-					completed
-				}
-			}
-		}`,
-		Variables: map[string]interface{}{
-			"name":    environmentName,
-			"project": projectInfo.ID,
-		},
-		MappedResult: "environmentByName",
-	}
-	environmentByName, err := e.api.Request(customRequest)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processEnvironmentTasks(environmentByName)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
 func processEnvironmentTasks(environmentByName []byte) ([]byte, error) {
 	var environment api.Environment
 	err := json.Unmarshal([]byte(environmentByName), &environment)
@@ -334,43 +284,6 @@ const environmentWithTasksFragment = `fragment Environment on Environment {
       }
     }
 }`
-
-// ListInvokableAdvancedTaskDefinitions returns a list of tasks invokable against an environment
-func (e *Environments) ListInvokableAdvancedTaskDefinitions(projectName string, environmentName string) ([]byte, error) {
-	// get project info from lagoon, we need the project ID for later
-	project := api.Project{
-		Name: projectName,
-	}
-	projectByName, err := e.api.GetProjectByName(project, graphql.ProjectByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	var projectInfo api.Project
-	err = json.Unmarshal([]byte(projectByName), &projectInfo)
-	if err != nil {
-		return []byte(""), err
-	}
-
-	// get the environment info from lagoon, we need the environment ID for later
-	// we consume the project ID here
-	environment := api.EnvironmentByName{
-		Name:    environmentName,
-		Project: projectInfo.ID,
-	}
-
-	environmentByName, err := e.api.GetEnvironmentByName(environment, environmentWithTasksFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	var environmentInfo api.Environment
-	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
-	if err != nil {
-		return []byte(""), err
-	}
-
-	retvar, _ := json.Marshal(environmentInfo.AdvancedTasks)
-	return retvar, nil
-}
 
 // InvokeAdvancedTaskDefinition will attempt to invoke an advanced task definition on an environment
 func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environmentName string, advancedTaskName string) ([]byte, error) {
