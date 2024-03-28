@@ -17,7 +17,6 @@ type Projects struct {
 
 // Client .
 type Client interface {
-	ListAllProjects() ([]byte, error)
 	ListProjectVariables(string, bool) ([]byte, error)
 	GetProjectInfo(string) ([]byte, error)
 	DeleteProject(string) ([]byte, error)
@@ -41,56 +40,6 @@ func New(lc *lagoon.Config, debug bool) (Client, error) {
 }
 
 var noDataError = "no data returned from the lagoon api"
-
-// ListAllProjects will list all projects
-func (p *Projects) ListAllProjects() ([]byte, error) {
-	allProjects, err := p.api.GetAllProjects(graphql.AllProjectsFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processAllProjects(allProjects)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
-func processAllProjects(allProjects []byte) ([]byte, error) {
-	var projects []api.Project
-	err := json.Unmarshal([]byte(allProjects), &projects)
-	if err != nil {
-		return []byte(""), err
-	}
-	// process the data for output
-	data := []output.Data{}
-	for _, project := range projects {
-		projectData := processProject(project)
-		data = append(data, projectData)
-	}
-	dataMain := output.Table{
-		Header: []string{"ID", "ProjectName", "GitURL", "ProductionEnvironment", "DevEnvironments"},
-		Data:   data,
-	}
-	return json.Marshal(dataMain)
-}
-
-func processProject(project api.Project) []string {
-	// count the current dev environments in a project
-	var currentDevEnvironments = 0
-	for _, environment := range project.Environments {
-		if environment.EnvironmentType == "development" {
-			currentDevEnvironments++
-		}
-	}
-	data := []string{
-		fmt.Sprintf("%v", project.ID),
-		fmt.Sprintf("%v", project.Name),
-		fmt.Sprintf("%v", project.GitURL),
-		fmt.Sprintf("%v", project.ProductionEnvironment),
-		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
-	}
-	return data
-}
 
 // GetProjectInfo will get basic info about a project
 func (p *Projects) GetProjectInfo(projectName string) ([]byte, error) {

@@ -23,8 +23,6 @@ type Client interface {
 	DeleteEnvironment(string, string) ([]byte, error)
 	GetDeploymentLog(string) ([]byte, error)
 	ListEnvironmentVariables(string, string, bool) ([]byte, error)
-	GetEnvironmentDeployments(string, string) ([]byte, error)
-	GetEnvironmentTasks(string, string) ([]byte, error)
 	RunDrushArchiveDump(string, string) ([]byte, error)
 	RunDrushSQLDump(string, string) ([]byte, error)
 	RunDrushCacheClear(string, string) ([]byte, error)
@@ -33,7 +31,6 @@ type Client interface {
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
 	InvokeAdvancedTaskDefinition(string, string, string) ([]byte, error)
-	ListInvokableAdvancedTaskDefinitions(string, string) ([]byte, error)
 }
 
 // New .
