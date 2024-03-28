@@ -39,8 +39,8 @@ build-linux: test
 build-darwin: test
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
 
-docs: test build
-	GO111MODULE=on $(GOCMD) run main.go --docs
+docs: test
+	LAGOON_GEN_DOCS=true GO111MODULE=on $(GOCMD) run main.go --docs 
 
 tidy:
 	GO111MODULE=on $(GOCMD) mod tidy

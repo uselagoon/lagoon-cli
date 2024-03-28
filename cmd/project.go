@@ -176,9 +176,9 @@ var listProjectByMetadata = &cobra.Command{
 		}
 		if len(*projects) == 0 {
 			if value != "" {
-				outputOptions.Error = fmt.Sprintf("No projects found with metadata key %s and value %s\n", key, value)
+				outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s' and value '%s'\n", key, value)
 			}
-			outputOptions.Error = fmt.Sprintf("No projects found with metadata key %s\n", key)
+			outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s'\n", key)
 		}
 		data := []output.Data{}
 		for _, project := range *projects {

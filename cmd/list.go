@@ -341,6 +341,10 @@ var listEnvironmentsCmd = &cobra.Command{
 			return err
 		}
 
+		if len(*environments) == 0 {
+			outputOptions.Error = fmt.Sprintf("No environments found for project '%s'\n", cmdProjectName)
+		}
+
 		data := []output.Data{}
 		for _, environment := range *environments {
 			var envRoute = "none"
@@ -871,6 +875,10 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), org.ID, lc)
 		handleError(err)
 
+		if len(*orgProjects) == 0 {
+			outputOptions.Error = fmt.Sprintf("No associated projects found for organization '%s'\n", organizationName)
+		}
+
 		data := []output.Data{}
 		for _, project := range *orgProjects {
 			data = append(data, []string{
@@ -919,6 +927,10 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), org.ID, lc)
 		handleError(err)
+
+		if len(*orgGroups) == 0 {
+			outputOptions.Error = fmt.Sprintf("No associated groups found for organization '%s'\n", organizationName)
+		}
 
 		data := []output.Data{}
 		for _, group := range *orgGroups {
@@ -971,6 +983,10 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			debug)
 		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
 		handleError(err)
+
+		if len(*deployTargets) == 0 {
+			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
+		}
 
 		data := []output.Data{}
 		for _, dt := range *deployTargets {
