@@ -19,9 +19,7 @@ type Projects struct {
 type Client interface {
 	ListProjectVariables(string, bool) ([]byte, error)
 	GetProjectInfo(string) ([]byte, error)
-	DeleteProject(string) ([]byte, error)
 	AddProject(string, string) ([]byte, error)
-	UpdateProject(string, string) ([]byte, error)
 	AddEnvironmentVariableToProject(string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromProject(string, api.EnvVariable) ([]byte, error)
 }
@@ -117,36 +115,6 @@ func (p *Projects) AddProject(projectName string, jsonPatch string) ([]byte, err
 		return []byte(""), err
 	}
 	return projectAddResult, nil
-}
-
-// DeleteProject .
-func (p *Projects) DeleteProject(projectName string) ([]byte, error) {
-	project := api.Project{
-		Name: projectName,
-	}
-	returnResult, err := p.api.DeleteProject(project)
-	return returnResult, err
-}
-
-// UpdateProject .
-func (p *Projects) UpdateProject(projectName string, jsonPatch string) ([]byte, error) {
-	// get the project id from name
-	projectBName := api.Project{
-		Name: projectName,
-	}
-	projectByName, err := p.api.GetProjectByName(projectBName, graphql.ProjectByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	projectUpdate, err := processProjectUpdate(projectByName, jsonPatch)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := p.api.UpdateProject(projectUpdate, graphql.ProjectByNameFragment)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
 }
 
 func processProjectUpdate(projectByName []byte, jsonPatch string) (api.UpdateProject, error) {
