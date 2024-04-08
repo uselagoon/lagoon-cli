@@ -347,13 +347,6 @@ func validateToken(lagoon string) {
 		os.Exit(1)
 	}
 	outputOptions.Debug = debugEnable
-	// check the API for the version of lagoon if we haven't got one set
-	// otherwise return nil, nothing to do
-	err = versionCheck(lagoon)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
 }
 
 // validateTokenE does the same thing as validateToken, it just returns an
@@ -366,7 +359,7 @@ func validateTokenE(lagoon string) error {
 	if graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon) {
 		// check the API for the version of lagoon if we haven't got one set
 		// otherwise return nil, nothing to do
-		return versionCheck(lagoon)
+		return nil
 	}
 	if err = loginToken(); err != nil {
 		return fmt.Errorf("Couldn't refresh token, try `lagoon login`: %w", err)
@@ -389,30 +382,27 @@ func validateTokenE(lagoon string) error {
 	}
 	outputOptions.Debug = debugEnable
 	// fallback if token is expired or there was no token to begin with
-	return versionCheck(lagoon)
+	return nil
 }
 
 // check if we have a version set in config, if not get the version.
-// this won't re-check the version if lagoon does update to a new api version
-// @TODO: maybe set a refresh interval or something on this
+// this checks whenever a token is refreshed
 func versionCheck(lagoon string) error {
-	if lagoonCLIConfig.Lagoons[lagoon].Version == "" {
-		lc := client.New(
-			lagoonCLIConfig.Lagoons[lagoon].GraphQL,
-			lagoonCLIConfig.Lagoons[lagoon].Token,
-			lagoonCLIConfig.Lagoons[lagoon].Version,
-			lagoonCLIVersion,
-			debugEnable)
-		lagoonVersion, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
-		if err != nil {
-			return err
-		}
-		l := lagoonCLIConfig.Lagoons[lagoon]
-		l.Version = lagoonVersion.LagoonVersion
-		lagoonCLIConfig.Lagoons[lagoon] = l
-		if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-			return fmt.Errorf("couldn't write config: %v", err)
-		}
+	lc := client.New(
+		lagoonCLIConfig.Lagoons[lagoon].GraphQL,
+		lagoonCLIConfig.Lagoons[lagoon].Token,
+		lagoonCLIConfig.Lagoons[lagoon].Version,
+		lagoonCLIVersion,
+		debugEnable)
+	lagoonVersion, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
+	if err != nil {
+		return err
+	}
+	l := lagoonCLIConfig.Lagoons[lagoon]
+	l.Version = lagoonVersion.LagoonVersion
+	lagoonCLIConfig.Lagoons[lagoon] = l
+	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
+		return fmt.Errorf("couldn't write config: %v", err)
 	}
 	return nil
 }

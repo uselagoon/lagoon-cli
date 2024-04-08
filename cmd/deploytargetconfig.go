@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -61,6 +62,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

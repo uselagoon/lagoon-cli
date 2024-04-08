@@ -3,9 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	s "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strings"
+
+	s "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -104,6 +105,7 @@ var updateEnvironmentCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)

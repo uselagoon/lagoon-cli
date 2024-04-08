@@ -47,6 +47,7 @@ var getTaskByID = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.TaskByID(context.TODO(), taskID, lc)
@@ -106,6 +107,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
@@ -308,6 +310,7 @@ var uploadFilesToTask = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.UploadFilesForTask(context.TODO(), taskID, files, lc)
