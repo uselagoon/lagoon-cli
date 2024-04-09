@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -353,12 +352,11 @@ var updateEmailNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
-		patch := ls.AddNotificationEmailInput{
-			Name:         newname,
-			EmailAddress: email,
+		patch := ls.UpdateNotificationEmailPatchInput{
+			Name:         nullStrCheck(newname),
+			EmailAddress: nullStrCheck(email),
 		}
-		b1, _ := json.Marshal(patch)
-		if bytes.Equal(b1, []byte("{}")) {
+		if patch == (ls.UpdateNotificationEmailPatchInput{}) {
 			return fmt.Errorf("Missing arguments: either email or newname must be defined")
 		}
 

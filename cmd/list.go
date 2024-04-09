@@ -200,42 +200,6 @@ var listGroupsCmd = &cobra.Command{
 	},
 }
 
-//var listGroupProjectsCmd = &cobra.Command{
-//	Use:     "group-projects",
-//	Aliases: []string{"gp"},
-//	Short:   "List projects in a group (alias: gp)",
-//	Run: func(cmd *cobra.Command, args []string) {
-//		if !listAllProjects {
-//			if groupName == "" {
-//				fmt.Println("Missing arguments: Group name is not defined")
-//				cmd.Help()
-//				os.Exit(1)
-//			}
-//		}
-//		var returnedJSON []byte
-//		var err error
-//		if listAllProjects {
-//			returnedJSON, err = uClient.ListGroupProjects("", listAllProjects)
-//		} else {
-//			returnedJSON, err = uClient.ListGroupProjects(groupName, listAllProjects)
-//		}
-//		handleError(err)
-//		var dataMain output.Table
-//		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-//		handleError(err)
-//		if len(dataMain.Data) == 0 {
-//			if !listAllProjects {
-//				output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
-//			} else {
-//				output.RenderInfo("There are no projects in any groups", outputOptions)
-//			}
-//			os.Exit(0)
-//		}
-//		output.RenderOutput(dataMain, outputOptions)
-//
-//	},
-//}
-
 var listGroupProjectsCmd = &cobra.Command{
 	Use:     "group-projects",
 	Aliases: []string{"gp"},

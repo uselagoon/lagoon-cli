@@ -3,11 +3,11 @@ package cmd
 import (
 	"context"
 	"fmt"
+	l "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -32,16 +32,16 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		}
 
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
 
-		user, err := lagoon.GetMeInfo(context.TODO(), lc)
+		user, err := l.Me(context.TODO(), lc)
 		if err != nil {
-			if strings.Contains(err.Error(), "Cannot read property 'access_token' of null") {
+			if strings.Contains(err.Error(), "Cannot read properties of null (reading 'access_token')") {
 				return fmt.Errorf("Unable to get user information, you may be using an administration token")
 			}
 			return err

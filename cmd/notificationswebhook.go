@@ -1,19 +1,14 @@
 package cmd
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	ls "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -44,8 +39,8 @@ It does not configure a project to send notifications to webhook though, you nee
 		if err != nil {
 			return err
 		}
-		if name == "" || webhook == "" {
-			return fmt.Errorf("Missing arguments: name or webhook is not defined")
+		if err := requiredInputCheck("Notification name", name, "Webhook", webhook); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a webhook notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
 			current := lagoonCLIConfig.Current
@@ -56,7 +51,7 @@ It does not configure a project to send notifications to webhook though, you nee
 				&token,
 				debug)
 
-			notification := s.AddNotificationWebhookInput{
+			notification := ls.AddNotificationWebhookInput{
 				Name:         name,
 				Webhook:      webhook,
 				Organization: &organizationID,
@@ -98,7 +93,7 @@ It does not configure a project to send notifications to webhook though, you nee
 
 var addProjectNotificationWebhookCmd = &cobra.Command{
 	Use:     "project-webhook",
-	Aliases: []string{"pe"},
+	Aliases: []string{"pw"},
 	Short:   "Add a webhook notification to a project",
 	Long: `Add a webhook notification to a project
 This command is used to add an existing webhook notification in Lagoon to a project.`,
@@ -114,23 +109,23 @@ This command is used to add an existing webhook notification in Lagoon to a proj
 		if err != nil {
 			return err
 		}
-		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		if err := requiredInputCheck("Notification name", name, "Project name", cmdProjectName); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add webhook notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.AddNotificationToProjectInput{
-				NotificationType: api.WebhookNotification,
+			notification := &ls.AddNotificationToProjectInput{
+				NotificationType: ls.WebhookNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -210,13 +205,13 @@ var listAllWebhooksCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			&token,
 			debug)
-		result, err := lagoon.GetAllNotificationWebhook(context.TODO(), lc)
+		result, err := l.GetAllNotificationWebhook(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -247,7 +242,7 @@ var listAllWebhooksCmd = &cobra.Command{
 
 var deleteProjectWebhookNotificationCmd = &cobra.Command{
 	Use:     "project-webhook",
-	Aliases: []string{"pr"},
+	Aliases: []string{"pw"},
 	Short:   "Delete a webhook notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -261,23 +256,23 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Notification name", name); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			notification := &schema.RemoveNotificationFromProjectInput{
-				NotificationType: api.WebhookNotification,
+			notification := &ls.RemoveNotificationFromProjectInput{
+				NotificationType: ls.WebhookNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -306,18 +301,18 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+		if err := requiredInputCheck("Notification name", name); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
-			result, err := lagoon.DeleteNotificationWebhook(context.TODO(), name, lc)
+			result, err := l.DeleteNotificationWebhook(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -354,32 +349,31 @@ var updateWebhookNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+		if err := requiredInputCheck("Notification name", name); err != nil {
+			return err
 		}
-		patch := schema.AddNotificationWebhookInput{
-			Name:    newname,
-			Webhook: webhook,
+		patch := ls.UpdateNotificationWebhookPatchInput{
+			Name:    nullStrCheck(newname),
+			Webhook: nullStrCheck(webhook),
 		}
-		b1, _ := json.Marshal(patch)
-		if bytes.Equal(b1, []byte("{}")) {
+		if patch == (ls.UpdateNotificationWebhookPatchInput{}) {
 			return fmt.Errorf("Missing arguments: either webhook or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update webhook notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				&token,
 				debug)
 
-			notification := &schema.UpdateNotificationWebhookInput{
+			notification := &ls.UpdateNotificationWebhookInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := lagoon.UpdateNotificationWebhook(context.TODO(), notification, lc)
+			result, err := l.UpdateNotificationWebhook(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}

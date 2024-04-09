@@ -29,35 +29,6 @@ func (u *Users) AddGroupWithParent(group api.Group, parent api.Group) ([]byte, e
 	return returnResult, nil
 }
 
-// ListGroupProjects function
-func (u *Users) ListGroupProjects(name string, allProjects bool) ([]byte, error) {
-	customReq := api.CustomRequest{
-		Query: `query allGroups ($name: String) {
-			allGroups(name: $name) {
-				id
-				name
-				projects {
-					id
-					name
-				}
-			}
-		}`,
-		Variables: map[string]interface{}{
-			"name": name,
-		},
-		MappedResult: "allGroups",
-	}
-	reqResult, err := u.api.Request(customReq)
-	if err != nil {
-		return []byte(""), err
-	}
-	returnResult, err := processListGroupProjects(reqResult, allProjects)
-	if err != nil {
-		return []byte(""), err
-	}
-	return returnResult, nil
-}
-
 func processListGroupProjects(groupData []byte, allProjects bool) ([]byte, error) {
 	var data []output.Data
 	var groups []struct {

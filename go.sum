@@ -80,6 +80,10 @@ github.com/uselagoon/machinery v0.0.19-0.20240328043551-42f50ea66338 h1:yTLIKXOt
 github.com/uselagoon/machinery v0.0.19-0.20240328043551-42f50ea66338/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
 github.com/uselagoon/machinery v0.0.19-0.20240405062123-3f40c7214e99 h1:gpKeY8lfHOy2cFhgm1+itbFmJmaIN9f8j5qKtekzVLE=
 github.com/uselagoon/machinery v0.0.19-0.20240405062123-3f40c7214e99/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
+github.com/uselagoon/machinery v0.0.19-0.20240408082416-ac4de57c8c06 h1:6soMlZylQZ2xmH1S+BNGavFmf5OvIUnHAB20qG626UI=
+github.com/uselagoon/machinery v0.0.19-0.20240408082416-ac4de57c8c06/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
+github.com/uselagoon/machinery v0.0.19-0.20240409013657-8109c3f582ca h1:jPx6/bPUPqRb8fWpP7b55gi+rhu7st7DYBktKdCvDEs=
+github.com/uselagoon/machinery v0.0.19-0.20240409013657-8109c3f582ca/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
