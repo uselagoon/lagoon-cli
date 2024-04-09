@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -59,19 +60,21 @@ var addUserToGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
 	Short:   "Add a user to a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		var roleType api.GroupRole
-		roleType = api.GuestRole
-		if strings.EqualFold(string(groupRole), "guest") {
-			roleType = api.GuestRole
-		} else if strings.EqualFold(string(groupRole), "reporter") {
-			roleType = api.ReporterRole
-		} else if strings.EqualFold(string(groupRole), "developer") {
-			roleType = api.DeveloperRole
-		} else if strings.EqualFold(string(groupRole), "maintainer") {
-			roleType = api.MaintainerRole
-		} else if strings.EqualFold(string(groupRole), "owner") {
-			roleType = api.OwnerRole
+	RunE: func(cmd *cobra.Command, args []string) error {
+		gRole, err := cmd.Flags().GetString("role")
+		if err != nil {
+			return err
+		}
+		cmd.Flags().Visit(
+			func(f *pflag.Flag) {
+				if f.Name == "role" {
+					gRole = strings.ToUpper(f.Value.String())
+				}
+			},
+		)
+		if gRole == "" {
+			// if no role flag is provided, fallback to guest (previous behavior, could be removed though)
+			gRole = "GUEST"
 		}
 		userGroupRole := api.UserGroupRole{
 			User: api.User{
@@ -80,25 +83,26 @@ var addUserToGroupCmd = &cobra.Command{
 			Group: api.Group{
 				Name: groupName,
 			},
-			Role: roleType,
+			Role: api.GroupRole(gRole),
 		}
 		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" || userGroupRole.Role == "" {
-			output.RenderError("Missing arguments: Email address, group name, or role is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+			return fmt.Errorf("missing arguments: Email address, group name, or role is not defined")
 		}
 		var customReqResult []byte
-		var err error
 		customReqResult, err = uClient.AddUserToGroup(userGroupRole)
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+		if err = json.Unmarshal([]byte(customReqResult), &returnResultData); err != nil {
+			return err
+		}
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: returnResultData,
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -296,7 +300,7 @@ var addGroupToOrganizationCmd = &cobra.Command{
 func init() {
 	addGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	addUserToGroupCmd.Flags().StringVarP(&groupRole, "role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
+	addUserToGroupCmd.Flags().StringP("role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
 	addUserToGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addProjectToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteUserFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
