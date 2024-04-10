@@ -1,6 +1,8 @@
 package users
 
 import (
+	"slices"
+
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
@@ -105,19 +107,11 @@ func (ud *Data) AddItem(userData UserData) {
 
 func distinctObjects(objs []UserData) (distinctedObjs []UserData) {
 	var output []UserData
-	for i := range objs {
-		if output == nil || len(output) == 0 {
-			output = append(output, objs[i])
-		} else {
-			founded := false
-			for j := range output {
-				if output[j].ID == objs[i].ID {
-					founded = true
-				}
-			}
-			if !founded {
-				output = append(output, objs[i])
-			}
+	ids := []string{}
+	for _, e := range objs {
+		if !slices.Contains(ids, e.ID) {
+			ids = append(ids, e.ID)
+			output = append(output, e)
 		}
 	}
 	return output
@@ -125,19 +119,11 @@ func distinctObjects(objs []UserData) (distinctedObjs []UserData) {
 
 func distinctKeys(objs []ExtendedSSHKey) (distinctedObjs []ExtendedSSHKey) {
 	var output []ExtendedSSHKey
-	for i := range objs {
-		if output == nil || len(output) == 0 {
-			output = append(output, objs[i])
-		} else {
-			founded := false
-			for j := range output {
-				if output[j].Email == objs[i].Email {
-					founded = true
-				}
-			}
-			if !founded {
-				output = append(output, objs[i])
-			}
+	ids := []string{}
+	for _, e := range objs {
+		if !slices.Contains(ids, e.Email) {
+			ids = append(ids, e.Email)
+			output = append(output, e)
 		}
 	}
 	return output

@@ -413,7 +413,7 @@ func (e *Environments) InvokeAdvancedTaskDefinition(projectName string, environm
 	}
 
 	if taskId == 0 {
-		return nil, errors.New(fmt.Sprintf("Could not find a task `%v` for project/environment %v/%v",
+		return nil, fmt.Errorf(fmt.Sprintf("Could not find a task `%v` for project/environment %v/%v",
 			advancedTaskName, projectName, environmentName))
 	}
 

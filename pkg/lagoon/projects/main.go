@@ -43,8 +43,6 @@ func New(lc *lagoon.Config, debug bool) (Client, error) {
 
 }
 
-var noDataError = "no data returned from the lagoon api"
-
 // ListAllProjects will list all projects
 func (p *Projects) ListAllProjects() ([]byte, error) {
 	allProjects, err := p.api.GetAllProjects(graphql.AllProjectsFragment)
@@ -150,7 +148,7 @@ func processProjectExtra(project api.Project) []string {
 		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.ProductionEnvironment),
-		fmt.Sprintf("%s", project.RouterPattern),
+		project.RouterPattern,
 		fmt.Sprintf("%v", *project.AutoIdle),
 		fmt.Sprintf("%v", *project.FactsUI),
 		fmt.Sprintf("%v", *project.ProblemsUI),

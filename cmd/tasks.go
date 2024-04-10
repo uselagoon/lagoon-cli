@@ -40,7 +40,7 @@ var getTaskByID = &cobra.Command{
 			return err
 		}
 		if taskID == 0 {
-			return fmt.Errorf("Missing arguments: ID is not defined")
+			return fmt.Errorf("missing arguments: ID is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -99,7 +99,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			return err
 		}
 		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name is not defined")
+			return fmt.Errorf("missing arguments: Project name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -114,9 +114,9 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			if err != nil {
 				return err
 			}
-			fmt.Println(fmt.Sprintf(`Created a new task with ID %d
+			fmt.Printf(`Created a new task with ID %d
 You can use the following command to query the task status:
-lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
+lagoon -l %s get task-by-id --id %d --logs\n`, result.ID, current, result.ID)
 		}
 		return nil
 	},
@@ -299,7 +299,7 @@ var uploadFilesToTask = &cobra.Command{
 			return err
 		}
 		if taskID == 0 {
-			return fmt.Errorf("Missing arguments: ID is not defined")
+			return fmt.Errorf("missing arguments: ID is not defined")
 		}
 		files, err := cmd.Flags().GetStringSlice("file")
 		if err != nil {

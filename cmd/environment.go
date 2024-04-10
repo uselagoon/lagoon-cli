@@ -179,7 +179,7 @@ var listBackupsCmd = &cobra.Command{
 			return err
 		}
 		if cmdProjectEnvironment == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+			return fmt.Errorf("missing arguments: Project name or environment name is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(
@@ -246,7 +246,7 @@ This returns a direct URL to the backup, this is a signed download link with a l
 			return err
 		}
 		if cmdProjectEnvironment == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+			return fmt.Errorf("missing arguments: Project name or environment name is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(

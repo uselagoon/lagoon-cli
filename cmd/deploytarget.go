@@ -66,13 +66,13 @@ var addDeployTargetCmd = &cobra.Command{
 		}
 
 		if name == "" {
-			return fmt.Errorf("Missing arguments: name is not defined")
+			return fmt.Errorf("missing arguments: name is not defined")
 		}
 		if token == "" {
-			return fmt.Errorf("Missing arguments: token is not defined")
+			return fmt.Errorf("missing arguments: token is not defined")
 		}
 		if consoleURL == "" {
-			return fmt.Errorf("Missing arguments: console-url is not defined")
+			return fmt.Errorf("missing arguments: console-url is not defined")
 		}
 
 		addDeployTarget := &schema.AddDeployTargetInput{

@@ -25,7 +25,7 @@ var sshEnvCmd = &cobra.Command{
 		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name are not defined")
+			return fmt.Errorf("missing arguments: Project name or environment name are not defined")
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
@@ -128,7 +128,7 @@ func init() {
 
 // generateSSHConnectionString .
 func generateSSHConnectionString(lagoon map[string]string, service string, container string, isPortal bool) string {
-	connString := fmt.Sprintf("ssh -t")
+	connString := "ssh -t"
 	if lagoon["sshKey"] != "" {
 		connString = fmt.Sprintf("%s -i %s", connString, lagoon["sshKey"])
 	}
