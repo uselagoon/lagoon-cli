@@ -11,7 +11,7 @@ import (
 
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	ls "github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -34,7 +34,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (api.SSHKey, error) {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (ls.AddSSHKeyInput, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := os.ReadFile(sshPubKey) // just pass the file name
@@ -42,23 +42,23 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyValue = string(b)
 	}
 	splitKey := strings.Split(keyValue, " ")
-	var keyType api.SSHKeyType
+	var keyType ls.SSHKeyType
 	var err error
 
 	// will fail if value is not right
 	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
-		keyType = api.SSHRsa
+		keyType = ls.SSHRsa
 	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
-		keyType = api.SSHEd25519
+		keyType = ls.SSHEd25519
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
-		keyType = api.SSHECDSA256
+		keyType = ls.SSHECDSA256
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
-		keyType = api.SSHECDSA384
+		keyType = ls.SSHECDSA384
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
-		keyType = api.SSHECDSA521
+		keyType = ls.SSHECDSA521
 	} else {
 		// return error stating key type not supported
-		keyType = api.SSHRsa
+		keyType = ls.SSHRsa
 		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
 
@@ -70,37 +70,73 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyName = userEmail
 		output.RenderInfo("no name provided, using email address as key name", outputOptions)
 	}
-	parsedFlags := api.SSHKey{
-		KeyType:  keyType,
-		KeyValue: stripNewLines(splitKey[1]),
-		Name:     keyName,
+	SSHKeyInput := ls.AddSSHKeyInput{
+		SSHKey: ls.SSHKey{
+			KeyType:  keyType,
+			KeyValue: stripNewLines(splitKey[1]),
+			Name:     keyName,
+		},
+		UserEmail: userEmail,
 	}
-	return parsedFlags, err
+
+	return SSHKeyInput, err
 }
 
 var addUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
 	Short:   "Add a user to lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		userFlags := parseUser(*cmd.Flags())
-		if userFlags.Email == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		customReqResult, err = uClient.AddUser(userFlags)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+		firstName, err := cmd.Flags().GetString("first-name")
+		if err != nil {
+			return err
+		}
+		LastName, err := cmd.Flags().GetString("last-name")
+		if err != nil {
+			return err
+		}
+		email, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Email address", email); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		userInput := &ls.AddUserInput{
+			FirstName: firstName,
+			LastName:  LastName,
+			Email:     email,
+		}
+
+		user, err := l.AddUser(context.TODO(), userInput, lc)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id": user.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -124,47 +160,83 @@ Add key by defining key value, but not specifying a key name (will default to tr
   lagoon add user-sshkey --email test@example.com --keyvalue "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/"
 
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		userFlags := parseUser(*cmd.Flags())
-		if userFlags.Email == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		var err error
-		userSSHKey, err := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, userFlags.Email)
-		handleError(err)
-		var customReqResult []byte
-		customReqResult, err = uClient.AddSSHKeyToUser(userFlags, userSSHKey)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+		pubKeyFile, err := cmd.Flags().GetString("pubkey")
+		if err != nil {
+			return err
+		}
+		sshKeyName, err := cmd.Flags().GetString("keyname")
+		if err != nil {
+			return err
+		}
+		pubKeyValue, err := cmd.Flags().GetString("keyvalue")
+		if err != nil {
+			return err
+		}
+		email, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+
+		if err := requiredInputCheck("Email address", email); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		userSSHKey, err := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, email)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+		result, err := l.AddSSHKey(context.TODO(), &userSSHKey, lc)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"ID": result.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
 var deleteSSHKeyCmd = &cobra.Command{
 	Use:     "user-sshkey",
-	Aliases: []string{"u"},
+	Aliases: []string{"uk"},
 	Short:   "Delete an SSH key from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		sshKeyID, err := cmd.Flags().GetUint("id")
 		if err != nil {
 			return err
 		}
-		if sshKeyID == 0 {
-			fmt.Println("Missing arguments: SSH key ID is not defined")
-			return nil
+		if err := requiredInputCheck("SSH key ID", strconv.Itoa(int(sshKeyID))); err != nil {
+			return err
 		}
+
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -175,7 +247,9 @@ var deleteSSHKeyCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete SSH key ID:'%d', are you sure?", sshKeyID)) {
 			_, err := l.RemoveSSHKey(context.TODO(), sshKeyID, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 			}
@@ -189,23 +263,44 @@ var deleteUserCmd = &cobra.Command{
 	Use:     "user",
 	Aliases: []string{"u"},
 	Short:   "Delete a user from Lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		userFlags := parseUser(*cmd.Flags())
-		if userFlags.Email == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		if yesNo(fmt.Sprintf("You are attempting to delete user with email address '%s', are you sure?", userFlags.Email)) {
-			customReqResult, err = uClient.DeleteUser(userFlags)
-			handleError(err)
+		emailAddress, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Email address", emailAddress); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		deleteUserInput := &ls.DeleteUserInput{
+			User: ls.UserInput{Email: emailAddress},
+		}
+		if yesNo(fmt.Sprintf("You are attempting to delete user with email address '%s', are you sure?", emailAddress)) {
+			_, err := l.DeleteUser(context.TODO(), deleteUserInput, lc)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
-				Result: string(customReqResult),
+				Result: "success",
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -214,28 +309,71 @@ var updateUserCmd = &cobra.Command{
 	Aliases: []string{"u"},
 	Short:   "Update a user in Lagoon",
 	Long:    "Update a user in Lagoon (change name, or email address)",
-	Run: func(cmd *cobra.Command, args []string) {
-		userFlags := parseUser(*cmd.Flags())
-		if userFlags.Email == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		emailAddress, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		firstName, err := cmd.Flags().GetString("first-name")
+		if err != nil {
+			return err
+		}
+		lastName, err := cmd.Flags().GetString("last-name")
+		if err != nil {
+			return err
+		}
+		currentEmail, err := cmd.Flags().GetString("current-email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Current email address", currentEmail); err != nil {
+			return err
+		}
+		if firstName == "" && lastName == "" && emailAddress == "" {
 			cmd.Help()
-			os.Exit(1)
+			output.RenderError("Missing arguments: Nothing to update, please provide a field to update", outputOptions)
+			return nil
 		}
-		var customReqResult []byte
-		var err error
-		currentUser := api.User{
-			Email: strings.ToLower(currentUserEmail),
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			&token,
+			debug)
+
+		currentUser := &ls.UpdateUserInput{
+			User: ls.UserInput{
+				Email: strings.ToLower(currentEmail),
+			},
+			Patch: ls.UpdateUserPatchInput{
+				Email:     nullStrCheck(strings.ToLower(emailAddress)),
+				FirstName: nullStrCheck(firstName),
+				LastName:  nullStrCheck(lastName),
+			},
 		}
-		customReqResult, err = uClient.ModifyUser(currentUser, userFlags)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+
+		user, err := l.UpdateUser(context.TODO(), currentUser, lc)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"ID": user.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -257,9 +395,8 @@ var getUserKeysCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if userEmail == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
-			return nil
+		if err := requiredInputCheck("Email address", userEmail); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -270,7 +407,9 @@ var getUserKeysCmd = &cobra.Command{
 			&token,
 			debug)
 		userKeys, err := l.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		if len(userKeys.SSHKeys) == 0 {
 			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
 			return nil
@@ -326,11 +465,11 @@ var getAllUserKeysCmd = &cobra.Command{
 		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
 		handleError(err)
 
-		var userGroups []s.AddSSHKeyInput
+		var userGroups []ls.AddSSHKeyInput
 		for _, group := range *groupMembers {
 			for _, member := range group.Members {
 				for _, key := range member.User.SSHKeys {
-					userGroups = append(userGroups, s.AddSSHKeyInput{SSHKey: key, UserEmail: member.User.Email})
+					userGroups = append(userGroups, ls.AddSSHKeyInput{SSHKey: key, UserEmail: member.User.Email})
 				}
 			}
 		}
@@ -402,13 +541,13 @@ var addUserToOrganizationCmd = &cobra.Command{
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		handleError(err)
 
-		userInput := s.AddUserToOrganizationInput{
-			User:         s.UserInput{Email: userEmail},
+		userInput := ls.AddUserToOrganizationInput{
+			User:         ls.UserInput{Email: userEmail},
 			Organization: organization.ID,
 			Owner:        owner,
 		}
 
-		orgUser := s.Organization{}
+		orgUser := ls.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
 		handleError(err)
 
@@ -465,13 +604,13 @@ var RemoveUserFromOrganization = &cobra.Command{
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		handleError(err)
 
-		userInput := s.AddUserToOrganizationInput{
-			User:         s.UserInput{Email: userEmail},
+		userInput := ls.AddUserToOrganizationInput{
+			User:         ls.UserInput{Email: userEmail},
 			Organization: organization.ID,
 			Owner:        owner,
 		}
 
-		orgUser := s.Organization{}
+		orgUser := ls.Organization{}
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
@@ -495,19 +634,19 @@ var (
 )
 
 func init() {
-	addUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "First name of the user")
-	addUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "Last name of the user")
-	addUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the SSH key (optional, if not provided will try use what is in the pubkey file)")
-	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "Specify path to the public key to add")
-	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyValue, "keyvalue", "V", "", "Value of the public key to add (ssh-ed25519 AAA..)")
-	deleteUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
+	addUserCmd.Flags().StringP("first-name", "F", "", "First name of the user")
+	addUserCmd.Flags().StringP("last-name", "L", "", "Last name of the user")
+	addUserCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addUserSSHKeyCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addUserSSHKeyCmd.Flags().StringP("keyname", "N", "", "Name of the SSH key (optional, if not provided will try use what is in the pubkey file)")
+	addUserSSHKeyCmd.Flags().StringP("pubkey", "K", "", "Specify path to the public key to add")
+	addUserSSHKeyCmd.Flags().StringP("keyvalue", "V", "", "Value of the public key to add (ssh-ed25519 AAA..)")
+	deleteUserCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	deleteSSHKeyCmd.Flags().Uint("id", 0, "ID of the SSH key")
-	updateUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "New first name of the user")
-	updateUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "New last name of the user")
-	updateUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "New email address of the user")
-	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
+	updateUserCmd.Flags().StringP("first-name", "F", "", "New first name of the user")
+	updateUserCmd.Flags().StringP("last-name", "L", "", "New last name of the user")
+	updateUserCmd.Flags().StringP("email", "E", "", "New email address of the user")
+	updateUserCmd.Flags().StringP("current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringP("email", "E", "", "New email address of the user")
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	addUserToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
