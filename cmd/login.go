@@ -113,18 +113,18 @@ func retrieveTokenViaSsh() (string, error) {
 		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
-		return "", fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
+		return "", fmt.Errorf("unable to authenticate or connect to host %s\nthere may be an issue determining which ssh-key to use, or there may be an issue establishing a connection to the host\nthe error returned was: %v", sshHost, err)
 	}
 	defer conn.Close()
 
 	session, err := conn.NewSession()
 	if err != nil {
-		return "", fmt.Errorf("couldn't open session: %v", err)
+		return "", fmt.Errorf("unable to establish ssh session, error from attempt is: %v", err)
 	}
 
 	out, err := session.CombinedOutput("token")
 	if err != nil {
-		return "", fmt.Errorf("couldn't get token: %v", err)
+		return "", fmt.Errorf("unable to get token: %v", err)
 	}
 	return strings.TrimSpace(string(out)), err
 }

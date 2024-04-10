@@ -157,7 +157,7 @@ var listProjectByMetadata = &cobra.Command{
 			return err
 		}
 		if key == "" {
-			return fmt.Errorf("Missing arguments: key is not defined")
+			return fmt.Errorf("missing arguments: key is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -276,7 +276,7 @@ var updateProjectMetadata = &cobra.Command{
 			return err
 		}
 		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+			return fmt.Errorf("missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -332,7 +332,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 			return err
 		}
 		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+			return fmt.Errorf("missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current

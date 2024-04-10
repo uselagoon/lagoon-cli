@@ -46,7 +46,7 @@ It does not configure a project to send notifications to webhook though, you nee
 			return err
 		}
 		if name == "" || webhook == "" {
-			return fmt.Errorf("Missing arguments: name or webhook is not defined")
+			return fmt.Errorf("missing arguments: name or webhook is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a webhook notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
 			current := lagoonCLIConfig.Current
@@ -79,7 +79,7 @@ It does not configure a project to send notifications to webhook though, you nee
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -117,7 +117,7 @@ This command is used to add an existing webhook notification in Lagoon to a proj
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add webhook notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -265,7 +265,7 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -310,7 +310,7 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
@@ -358,7 +358,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		patch := schema.AddNotificationWebhookInput{
 			Name:    newname,
@@ -366,7 +366,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 		}
 		b1, _ := json.Marshal(patch)
 		if bytes.Equal(b1, []byte("{}")) {
-			return fmt.Errorf("Missing arguments: either webhook or newname must be defined")
+			return fmt.Errorf("missing arguments: either webhook or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update webhook notification '%s', are you sure?", name)) {

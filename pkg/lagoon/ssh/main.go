@@ -2,25 +2,24 @@ package ssh
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 // InteractiveSSH .
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return errors.New("Failed to create session: " + err.Error())
+		return fmt.Errorf("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -32,13 +31,13 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 	fileDescriptor := int(os.Stdin.Fd())
-	if terminal.IsTerminal(fileDescriptor) {
-		originalState, err := terminal.MakeRaw(fileDescriptor)
+	if term.IsTerminal(fileDescriptor) {
+		originalState, err := term.MakeRaw(fileDescriptor)
 		if err != nil {
 			return err
 		}
-		defer terminal.Restore(fileDescriptor, originalState)
-		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		defer term.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
 		}
@@ -56,7 +55,7 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	err = session.Start(connString)
 	if err != nil {
-		return errors.New("Failed to start shell: " + err.Error())
+		return fmt.Errorf("Failed to start shell: " + err.Error())
 	}
 	session.Wait()
 	return nil
@@ -66,13 +65,13 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return errors.New("Failed to create session: " + err.Error())
+		return fmt.Errorf("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -84,13 +83,13 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 	fileDescriptor := int(os.Stdin.Fd())
-	if terminal.IsTerminal(fileDescriptor) {
-		originalState, err := terminal.MakeRaw(fileDescriptor)
+	if term.IsTerminal(fileDescriptor) {
+		originalState, err := term.MakeRaw(fileDescriptor)
 		if err != nil {
 			return err
 		}
-		defer terminal.Restore(fileDescriptor, originalState)
-		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		defer term.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
 		}

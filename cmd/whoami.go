@@ -42,7 +42,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		user, err := lagoon.GetMeInfo(context.TODO(), lc)
 		if err != nil {
 			if strings.Contains(err.Error(), "Cannot read property 'access_token' of null") {
-				return fmt.Errorf("Unable to get user information, you may be using an administration token")
+				return fmt.Errorf("unable to get user information, you may be using an administration token")
 			}
 			return err
 		}
@@ -74,7 +74,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 					keyData = append(keyData, key.Created)
 				}
 				if opts["type"] {
-					keyData = append(keyData, fmt.Sprintf("%s", key.KeyType))
+					keyData = append(keyData, string(key.KeyType))
 				}
 				if opts["key"] {
 					keyData = append(keyData, key.KeyValue)

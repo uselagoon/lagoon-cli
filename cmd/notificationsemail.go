@@ -45,7 +45,7 @@ It does not configure a project to send notifications to email though, you need 
 			return err
 		}
 		if name == "" || email == "" {
-			return fmt.Errorf("Missing arguments: name or email is not defined")
+			return fmt.Errorf("missing arguments: name or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an email notification '%s' with email address '%s', are you sure?", name, email)) {
 			current := lagoonCLIConfig.Current
@@ -78,7 +78,7 @@ It does not configure a project to send notifications to email though, you need 
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -116,7 +116,7 @@ This command is used to add an existing email notification in Lagoon to a projec
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add email notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -264,7 +264,7 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete email notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -309,7 +309,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete email notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
@@ -357,7 +357,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		patch := schema.AddNotificationEmailInput{
 			Name:         newname,
@@ -365,7 +365,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 		}
 		b1, _ := json.Marshal(patch)
 		if bytes.Equal(b1, []byte("{}")) {
-			return fmt.Errorf("Missing arguments: either email or newname must be defined")
+			return fmt.Errorf("missing arguments: either email or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update email notification '%s', are you sure?", name)) {

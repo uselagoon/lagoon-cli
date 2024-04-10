@@ -44,7 +44,7 @@ use 'lagoon deploy latest' instead`,
 			return err
 		}
 		if cmdProjectName == "" || branch == "" {
-			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
+			return fmt.Errorf("missing arguments: Project name or branch name is not defined")
 		}
 
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
@@ -109,7 +109,7 @@ var deployPromoteCmd = &cobra.Command{
 			return err
 		}
 		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name, source environment, or destination environment is not defined")
+			return fmt.Errorf("missing arguments: Project name, source environment, or destination environment is not defined")
 		}
 
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
@@ -176,7 +176,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		}
 
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
+			return fmt.Errorf("missing arguments: Project name or environment name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy the latest environment '%s' for project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -246,7 +246,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		}
 		if cmdProjectName == "" || prTitle == "" || prNumber == 0 || baseBranchName == "" ||
 			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
-			return fmt.Errorf("Missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
+			return fmt.Errorf("missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
 		}
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
@@ -291,11 +291,6 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		return nil
 	},
 }
-
-var (
-	promoteSourceEnv string
-	promoteDestEnv   string
-)
 
 func init() {
 	deployCmd.AddCommand(deployBranchCmd)

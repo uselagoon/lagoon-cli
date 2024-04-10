@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -59,7 +58,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	} else {
 		// return error stating key type not supported
 		keyType = api.SSHRsa
-		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
+		err = fmt.Errorf(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
 	}
 
 	// if the sshkey has a comment/name in it, we can use that
@@ -157,6 +156,9 @@ var deleteSSHKeyCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		sshKeyID, err := cmd.Flags().GetUint("id")
 		if err != nil {
 			return err

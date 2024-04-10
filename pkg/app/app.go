@@ -39,7 +39,7 @@ func (project *LagoonProject) ReadConfig() error {
 
 	dockerComposeFilepath := filepath.Join(project.Dir, project.DockerComposeYaml)
 	if !fileExists(dockerComposeFilepath) {
-		return fmt.Errorf("Could not load docker-compose.yml at %s", dockerComposeFilepath)
+		return fmt.Errorf("could not load docker-compose.yml at %s", dockerComposeFilepath)
 	}
 	sourceCompose, _ := os.ReadFile(dockerComposeFilepath)
 	var dockerCompose LagoonDockerCompose
