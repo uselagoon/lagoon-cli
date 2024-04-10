@@ -78,6 +78,9 @@ func loginToken() error {
 	if err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
 	}
+	if err = versionCheck(lagoonCLIConfig.Current); err != nil {
+		return fmt.Errorf("couldn't check version: %v", err)
+	}
 
 	return nil
 }

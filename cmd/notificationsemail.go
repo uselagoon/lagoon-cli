@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -52,6 +53,7 @@ It does not configure a project to send notifications to email though, you need 
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -163,6 +165,7 @@ var listProjectEmailsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

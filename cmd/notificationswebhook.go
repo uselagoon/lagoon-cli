@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -53,6 +54,7 @@ It does not configure a project to send notifications to webhook though, you nee
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -164,6 +166,7 @@ var listProjectWebhooksCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
