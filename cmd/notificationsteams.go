@@ -250,7 +250,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 
 var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 	Use:     "project-microsoftteams",
-	Aliases: []string{"pr"},
+	Aliases: []string{"pm"},
 	Short:   "Delete a Microsoft Teams notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
