@@ -2,6 +2,10 @@
 
 Add an administrator to an Organization
 
+### Synopsis
+
+Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers
+
 ```
 lagoon add organization-administrator [flags]
 ```

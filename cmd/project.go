@@ -464,7 +464,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 	},
 }
 
-var RemoveProjectFromOrganizationCmd = &cobra.Command{
+var removeProjectFromOrganizationCmd = &cobra.Command{
 	Use:     "organization-project",
 	Aliases: []string{"org-p"},
 	Short:   "Remove a project from an Organization",
@@ -575,5 +575,5 @@ func init() {
 
 	getCmd.AddCommand(getProjectMetadata)
 
-	RemoveProjectFromOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the Organization to remove the project from")
+	removeProjectFromOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the Organization to remove the project from")
 }

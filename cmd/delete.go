@@ -35,7 +35,7 @@ func init() {
 	deleteCmd.AddCommand(deleteVariableCmd)
 	deleteCmd.AddCommand(deleteDeployTargetConfigCmd)
 	deleteCmd.AddCommand(deleteOrganizationCmd)
-	deleteCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
-	deleteCmd.AddCommand(RemoveAdministratorFromOrganizationCmd)
-	deleteCmd.AddCommand(RemoveProjectFromOrganizationCmd)
+	deleteCmd.AddCommand(removeDeployTargetFromOrganizationCmd)
+	deleteCmd.AddCommand(removeAdministratorFromOrganizationCmd)
+	deleteCmd.AddCommand(removeProjectFromOrganizationCmd)
 }

@@ -370,6 +370,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 	Use:     "organization-administrator",
 	Aliases: []string{"org-admin"},
 	Short:   "Add an administrator to an Organization",
+	Long:    "Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -427,7 +428,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 	},
 }
 
-var RemoveAdministratorFromOrganizationCmd = &cobra.Command{
+var removeAdministratorFromOrganizationCmd = &cobra.Command{
 	Use:     "organization-administrator",
 	Aliases: []string{"org-admin"},
 	Short:   "Remove an administrator from an Organization",
@@ -517,7 +518,7 @@ func init() {
 	addAdministratorToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
 	addAdministratorToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	addAdministratorToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
-	RemoveAdministratorFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
-	RemoveAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
-	RemoveAdministratorFromOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	removeAdministratorFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	removeAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	removeAdministratorFromOrganizationCmd.Flags().Bool("owner", false, "Set the user as an administrator of the organization")
 }

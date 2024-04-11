@@ -14,9 +14,9 @@ lagoon deploy latest [flags]
 ### Options
 
 ```
-      --buildvar strings   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
-  -h, --help               help for latest
-      --returnData         Returns the build name instead of success text
+      --buildvar stringArray   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
+  -h, --help                   help for latest
+      --returnData             Returns the build name instead of success text
 ```
 
 ### Options inherited from parent commands

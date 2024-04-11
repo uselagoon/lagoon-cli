@@ -337,12 +337,12 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
 
-		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
@@ -359,7 +359,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		handleError(err)
 
 		deployTargetInput := s.AddDeployTargetToOrganizationInput{
-			DeployTarget: deployTarget,
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
@@ -368,7 +368,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"Deploy Target":     deployTarget,
+				"Deploy Target":     deploytarget,
 				"Organization Name": deployTargetResponse.Name,
 			},
 		}
@@ -377,7 +377,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	},
 }
 
-var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
+var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 	Use:     "organization-deploytarget",
 	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
@@ -395,11 +395,11 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
@@ -416,17 +416,17 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		handleError(err)
 
 		deployTargetInput := s.RemoveDeployTargetFromOrganizationInput{
-			DeployTarget: deployTarget,
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
-		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deployTarget, organization.Name)) {
+		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
 			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
 			handleError(err)
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
-					"Deploy Target":     deployTarget,
+					"Deploy Target":     deploytarget,
 					"Organization Name": organizationName,
 				},
 			}
@@ -450,13 +450,13 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
 	addDeployTargetToOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	addDeployTargetToOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	addDeployTargetToOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	RemoveDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	RemoveDeployTargetFromOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	removeDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
+	removeDeployTargetFromOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")

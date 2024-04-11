@@ -12,7 +12,7 @@ lagoon delete organization-administrator [flags]
   -E, --email string   Email address of the user
   -h, --help           help for organization-administrator
   -O, --name string    Name of the organization
-      --owner          Set the user as an owner of the organization
+      --owner          Set the user as an administrator of the organization
 ```
 
 ### Options inherited from parent commands

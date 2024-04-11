@@ -767,7 +767,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			return err
 		}
 		if organizationName == "" && organizationID == 0 {
-			return fmt.Errorf("Missing arguments: Organization name or ID is not defined")
+			return fmt.Errorf("missing arguments: Organization name or ID is not defined")
 		}
 
 		current := lagoonCLIConfig.Current

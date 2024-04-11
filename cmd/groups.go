@@ -33,7 +33,8 @@ func parseGroup(flags pflag.FlagSet) api.Group {
 var addGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
-	Short:   "Add a group to lagoon",
+	Short:   "Add a group to lagoon, or add a group to an organization",
+	Long:    "To add a group to an organization, you'll need to include the `organization` flag and provide the name of the organization. You need to be an owner of this organization to do this.\nIf you're the organization owner and want to grant yourself ownership to this group to be able to deploy projects that may be added to it, specify the `owner` flag, otherwise you will still be able to add and remove users without being an owner",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -47,7 +48,7 @@ var addGroupCmd = &cobra.Command{
 		if err := requiredInputCheck("Group name", groupName); err != nil {
 			return err
 		}
-		orgOwner, err := cmd.Flags().GetBool("org-owner")
+		orgOwner, err := cmd.Flags().GetBool("owner")
 		if err != nil {
 			return err
 		}
@@ -280,7 +281,7 @@ var deleteGroupCmd = &cobra.Command{
 func init() {
 	addGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
 	addGroupCmd.Flags().StringP("organization", "O", "", "Name of the organization")
-	addGroupCmd.Flags().Bool("org-owner", false, "Flag to add the user to the group as an owner")
+	addGroupCmd.Flags().Bool("owner", false, "Organization owner only: Flag to grant yourself ownership of this group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringP("role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
 	addUserToGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")

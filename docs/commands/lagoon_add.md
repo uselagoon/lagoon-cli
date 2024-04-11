@@ -30,7 +30,7 @@ Add a project, or add notifications and variables to projects or environments
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
 * [lagoon add deploytarget](lagoon_add_deploytarget.md)	 - Add a DeployTarget to lagoon
 * [lagoon add deploytarget-config](lagoon_add_deploytarget-config.md)	 - Add deploytarget config to a project
-* [lagoon add group](lagoon_add_group.md)	 - Add a group to lagoon
+* [lagoon add group](lagoon_add_group.md)	 - Add a group to lagoon, or add a group to an organization
 * [lagoon add notification](lagoon_add_notification.md)	 - Add notifications or add notifications to projects
 * [lagoon add organization](lagoon_add_organization.md)	 - Add a new organization to Lagoon
 * [lagoon add organization-administrator](lagoon_add_organization-administrator.md)	 - Add an administrator to an Organization
