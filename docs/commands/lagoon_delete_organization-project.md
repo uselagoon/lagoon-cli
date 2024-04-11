@@ -2,6 +2,11 @@
 
 Remove a project from an Organization
 
+### Synopsis
+
+Removes a project from an Organization, but does not delete the project.
+This is used by platform administrators to be able to reset a project.
+
 ```
 lagoon delete organization-project [flags]
 ```

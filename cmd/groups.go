@@ -33,7 +33,7 @@ func parseGroup(flags pflag.FlagSet) api.Group {
 var addGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
-	Short:   "Add a group to lagoon, or add a group to an organization",
+	Short:   "Add a group to Lagoon, or add a group to an organization",
 	Long:    "To add a group to an organization, you'll need to include the `organization` flag and provide the name of the organization. You need to be an owner of this organization to do this.\nIf you're the organization owner and want to grant yourself ownership to this group to be able to deploy projects that may be added to it, specify the `owner` flag, otherwise you will still be able to add and remove users without being an owner",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)

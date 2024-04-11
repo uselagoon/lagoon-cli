@@ -66,7 +66,8 @@ var deleteProjectCmd = &cobra.Command{
 var addProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
-	Short:   "Add a new project to Lagoon",
+	Short:   "Add a new project to Lagoon, or add a project to an organization",
+	Long:    "To add a project to an organization, you'll need to include the `organization` flag and provide the name of the organization. You need to be an owner of this organization to do this.\nIf you're the organization owner and want to grant yourself ownership to this project to be able to deploy environments, specify the `owner` flag.",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -126,7 +127,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		orgOwner, err := cmd.Flags().GetBool("org-owner")
+		orgOwner, err := cmd.Flags().GetBool("owner")
 		if err != nil {
 			return err
 		}
@@ -468,6 +469,7 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 	Use:     "organization-project",
 	Aliases: []string{"org-p"},
 	Short:   "Remove a project from an Organization",
+	Long:    "Removes a project from an Organization, but does not delete the project.\nThis is used by platform administrators to be able to reset a project.",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -558,7 +560,7 @@ func init() {
 	addProjectCmd.Flags().UintP("storageCalc", "C", 0, "Should storage for this environment be calculated")
 	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
-	addProjectCmd.Flags().Bool("org-owner", false, "Add the user as an owner of the project")
+	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization", "O", "", "Name of the Organization to add the project to")
 
 	listCmd.AddCommand(listProjectByMetadata)

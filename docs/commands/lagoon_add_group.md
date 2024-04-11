@@ -1,6 +1,6 @@
 ## lagoon add group
 
-Add a group to lagoon, or add a group to an organization
+Add a group to Lagoon, or add a group to an organization
 
 ### Synopsis
 
