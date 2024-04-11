@@ -1,15 +1,16 @@
-## lagoon list organization organizations
+## lagoon list organization-users
 
-List all organizations
+List users in an organization
 
 ```
-lagoon list organization organizations [flags]
+lagoon list organization-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for organizations
+  -h, --help                  help for organization-users
+  -O, --organization string   Name of the organization to list associated users for
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +32,5 @@ lagoon list organization organizations [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

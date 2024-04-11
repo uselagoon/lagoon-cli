@@ -1,16 +1,16 @@
-## lagoon list organization groups
+## lagoon list organization-groups
 
 List groups in an organization
 
 ```
-lagoon list organization groups [flags]
+lagoon list organization-groups [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for groups
-  -O, --name string   Name of the organization to list associated groups for
+  -h, --help                  help for organization-groups
+  -O, --organization string   Name of the organization to list associated groups for
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +32,5 @@ lagoon list organization groups [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

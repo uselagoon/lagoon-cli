@@ -1,17 +1,15 @@
-## lagoon delete organization deploytarget
+## lagoon list organizations
 
-Remove a deploy target from an Organization
+List all organizations
 
 ```
-lagoon delete organization deploytarget [flags]
+lagoon list organizations [flags]
 ```
 
 ### Options
 
 ```
-  -D, --deploy-target uint   ID of DeployTarget
-  -h, --help                 help for deploytarget
-  -O, --name string          Name of Organization
+  -h, --help   help for organizations
 ```
 
 ### Options inherited from parent commands
@@ -33,5 +31,5 @@ lagoon delete organization deploytarget [flags]
 
 ### SEE ALSO
 
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

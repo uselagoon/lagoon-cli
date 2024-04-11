@@ -1,16 +1,18 @@
-## lagoon delete organization organization
+## lagoon add organization-administrator
 
-Delete an organization
+Add an administrator to an Organization
 
 ```
-lagoon delete organization organization [flags]
+lagoon add organization-administrator [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for organization
-  -O, --name string   Name of the organization to delete
+  -E, --email string   Email address of the user
+  -h, --help           help for organization-administrator
+  -O, --name string    Name of the organization
+      --owner          Set the user as an owner of the organization
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +34,5 @@ lagoon delete organization organization [flags]
 
 ### SEE ALSO
 
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

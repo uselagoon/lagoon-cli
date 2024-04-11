@@ -1,23 +1,17 @@
-## lagoon add organization organization
+## lagoon list organization-deploytargets
 
-Add a new organization to Lagoon
+List deploy targets in an organization
 
 ```
-lagoon add organization organization [flags]
+lagoon list organization-deploytargets [flags]
 ```
 
 ### Options
 
 ```
-      --description string       Description of the organization
-      --environment-quota int    Environment quota for the organization
-      --friendly-name string     Friendly name of the organization
-      --group-quota int          Group quota for the organization
-  -h, --help                     help for organization
-  -O, --name string              Name of the organization
-      --notification-quota int   Notification quota for the organization
-      --project-quota int        Project quota for the organization
-      --route-quota int          Route quota for the organization
+  -h, --help                  help for organization-deploytargets
+      --id uint               ID of the organization to list associated deploy targets for
+  -O, --organization string   Name of the organization to list associated deploy targets for
 ```
 
 ### Options inherited from parent commands
@@ -39,5 +33,5 @@ lagoon add organization organization [flags]
 
 ### SEE ALSO
 
-* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 
