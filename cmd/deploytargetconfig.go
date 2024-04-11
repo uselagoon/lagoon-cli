@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -45,22 +46,23 @@ var addDeployTargetConfigCmd = &cobra.Command{
 		}
 
 		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project is a required flag")
+			return fmt.Errorf("missing arguments: project is a required flag")
 		}
 		if deploytarget == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget id is a required flag")
+			return fmt.Errorf("missing arguments: deploytarget id is a required flag")
 		}
 		if pullrequests == "" {
-			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
+			return fmt.Errorf("missing arguments: pullrequests is a required flag")
 		}
 		if branches == "" {
-			return fmt.Errorf("Missing arguments: branches is a required flag")
+			return fmt.Errorf("missing arguments: branches is a required flag")
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -148,7 +150,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+			return fmt.Errorf("missing arguments: deploytarget config id is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(
@@ -224,7 +226,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+			return fmt.Errorf("missing arguments: deploytarget config id is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		lc := client.New(

@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"os"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -143,6 +144,7 @@ var addProjectCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -248,13 +250,14 @@ var listProjectByMetadata = &cobra.Command{
 			return err
 		}
 		if key == "" {
-			return fmt.Errorf("Missing arguments: key is not defined")
+			return fmt.Errorf("missing arguments: key is not defined")
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		projects, err := l.GetProjectsByMetadata(context.TODO(), key, value, lc)
@@ -366,7 +369,7 @@ var updateProjectMetadata = &cobra.Command{
 			return err
 		}
 		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+			return fmt.Errorf("missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -374,6 +377,7 @@ var updateProjectMetadata = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -421,7 +425,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 			return err
 		}
 		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: Project name or key is not defined")
+			return fmt.Errorf("missing arguments: Project name or key is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -429,6 +433,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -483,6 +488,7 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

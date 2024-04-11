@@ -40,7 +40,7 @@ You can check the status of the backup using the list backups or get backup comm
 			return err
 		}
 		if backupID == "" {
-			return fmt.Errorf("Missing arguments: backup-id is not defined")
+			return fmt.Errorf("missing arguments: backup-id is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to trigger a retrieval for backup ID '%s', are you sure?", backupID)) {
 			current := lagoonCLIConfig.Current

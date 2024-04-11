@@ -75,9 +75,7 @@ type Client interface {
 
 // Interface struct
 type Interface struct {
-	tokenSigningKey string
 	token           string
-	jwtAudience     string
 	graphQLEndpoint string
 	debug           bool
 	netClient       *http.Client
@@ -223,9 +221,9 @@ func debugRequest(req *graphql.Request) {
 		data.Vars = append(data.Vars, DebugVar{Name: n, Value: v})
 	}
 	jsonData, _ := json.Marshal(data)
-	fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Request"), strings.Replace(string(jsonData), "\\t", "", -1)))
+	fmt.Printf("%s: %s\n", aurora.Yellow("Request"), strings.Replace(string(jsonData), "\\t", "", -1))
 }
 
 func debugResponse(resp []byte) {
-	fmt.Println(fmt.Sprintf("%s: %s", aurora.Yellow("Response"), string(resp)))
+	fmt.Printf("%s: %s\n", aurora.Yellow("Response"), string(resp))
 }

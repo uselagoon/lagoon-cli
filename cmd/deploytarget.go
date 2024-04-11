@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
@@ -11,7 +13,6 @@ import (
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
-	"strconv"
 )
 
 var addDeployTargetCmd = &cobra.Command{
@@ -65,13 +66,13 @@ var addDeployTargetCmd = &cobra.Command{
 		}
 
 		if name == "" {
-			return fmt.Errorf("Missing arguments: name is not defined")
+			return fmt.Errorf("missing arguments: name is not defined")
 		}
 		if token == "" {
-			return fmt.Errorf("Missing arguments: token is not defined")
+			return fmt.Errorf("missing arguments: token is not defined")
 		}
 		if consoleURL == "" {
-			return fmt.Errorf("Missing arguments: console-url is not defined")
+			return fmt.Errorf("missing arguments: console-url is not defined")
 		}
 
 		addDeployTarget := &schema.AddDeployTargetInput{
@@ -350,6 +351,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -406,6 +408,7 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

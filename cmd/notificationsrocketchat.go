@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	s "github.com/uselagoon/machinery/api/schema"
@@ -49,7 +50,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 			return err
 		}
 		if name == "" || channel == "" || webhook == "" {
-			return fmt.Errorf("Missing arguments: name, webhook, or email is not defined")
+			return fmt.Errorf("missing arguments: name, webhook, or email is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an RocketChat notification '%s' with webhook '%s' channel '%s', are you sure?", name, webhook, channel)) {
 			current := lagoonCLIConfig.Current
@@ -57,6 +58,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -83,7 +85,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -122,7 +124,7 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add RocketChat notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -171,6 +173,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -273,7 +276,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" || cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project name or notification name is not defined")
+			return fmt.Errorf("missing arguments: project name or notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete RocketChat notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -318,7 +321,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete RocketChat notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
@@ -370,7 +373,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 			return err
 		}
 		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+			return fmt.Errorf("missing arguments: notification name is not defined")
 		}
 		patch := schema.AddNotificationRocketChatInput{
 			Name:    newname,
@@ -379,7 +382,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 		}
 		b1, _ := json.Marshal(patch)
 		if bytes.Equal(b1, []byte("{}")) {
-			return fmt.Errorf("Missing arguments: either channel, webhook, or newname must be defined")
+			return fmt.Errorf("missing arguments: either channel, webhook, or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update RocketChat notification '%s', are you sure?", name)) {

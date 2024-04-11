@@ -65,6 +65,7 @@ var getProjectCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -148,6 +149,7 @@ This returns information about a deployment, the logs of this build can also be 
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		deployment, err := l.GetDeploymentByName(context.TODO(), cmdProjectName, cmdProjectEnvironment, buildName, showLogs, lc)
@@ -279,6 +281,7 @@ var getOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
