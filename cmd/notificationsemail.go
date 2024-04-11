@@ -249,7 +249,7 @@ var listAllEmailsCmd = &cobra.Command{
 
 var deleteProjectEmailNotificationCmd = &cobra.Command{
 	Use:     "project-email",
-	Aliases: []string{"pr"},
+	Aliases: []string{"pe"},
 	Short:   "Delete a email notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
