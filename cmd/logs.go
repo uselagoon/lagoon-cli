@@ -64,29 +64,27 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, error) 
 	sshHost := lagoonCLIConfig.Lagoons[current].HostName
 	sshPort := lagoonCLIConfig.Lagoons[current].Port
 
-	// get SSH Portal endpoint if reqiured
-	if lagoonCLIConfig.Lagoons[current].SSHPortal {
-		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
-			lagoonCLIVersion,
-			debug)
-		ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
-		defer cancel()
-		project, err := lagoon.GetSSHEndpointsByProject(ctx, cmdProjectName, lc)
-		if err != nil {
-			return "", "", fmt.Errorf("couldn't get SSH endpoint by project: %v", err)
-		}
-		// check all the environments for this project
-		for _, env := range project.Environments {
-			// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
-			if env.Name == environmentName {
-				// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
-				if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
-					sshHost = env.DeployTarget.SSHHost
-					sshPort = env.DeployTarget.SSHPort
-				}
+	// get SSH Portal endpoint if required
+	lc := client.New(
+		lagoonCLIConfig.Lagoons[current].GraphQL,
+		lagoonCLIConfig.Lagoons[current].Token,
+		lagoonCLIConfig.Lagoons[current].Version,
+		lagoonCLIVersion,
+		debug)
+	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
+	defer cancel()
+	project, err := lagoon.GetSSHEndpointsByProject(ctx, cmdProjectName, lc)
+	if err != nil {
+		return "", "", fmt.Errorf("couldn't get SSH endpoint by project: %v", err)
+	}
+	// check all the environments for this project
+	for _, env := range project.Environments {
+		// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
+		if env.Name == environmentName {
+			// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
+			if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
+				sshHost = env.DeployTarget.SSHHost
+				sshPort = env.DeployTarget.SSHPort
 			}
 		}
 	}
