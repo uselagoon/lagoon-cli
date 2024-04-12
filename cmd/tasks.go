@@ -6,12 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	ls "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
 	l "github.com/uselagoon/machinery/api/lagoon"
@@ -48,6 +48,7 @@ var getTaskByID = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.TaskByID(context.TODO(), taskID, lc)
@@ -107,6 +108,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
@@ -226,6 +228,7 @@ Direct:
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -282,6 +285,26 @@ Path:
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		taskName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		taskService, err := cmd.Flags().GetString("service")
+		if err != nil {
+			return err
+		}
+		taskCommand, err := cmd.Flags().GetString("command")
+		if err != nil {
+			return err
+		}
+		taskCommandFile, err := cmd.Flags().GetString("script")
+		if err != nil {
+			return err
+		}
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {
 			// check if we are getting data froms stdin
@@ -291,7 +314,6 @@ Path:
 				taskCommand = taskCommand + scanner.Text() + "\n"
 			}
 			if err := scanner.Err(); err != nil {
-				// fmt.Fprintln(os.Stderr, "reading standard input:", err)
 				handleError(errors.New("reading standard input:" + err.Error()))
 			}
 		} else {
@@ -303,22 +325,39 @@ Path:
 			}
 		}
 
-		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", invokedTaskName); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", taskCommand, "Task name", taskName, "Task service", taskService); err != nil {
 			return err
 		}
-		task := api.Task{
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		task := ls.Task{
 			Name:    taskName,
 			Command: taskCommand,
 			Service: taskService,
 		}
-		taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		taskResult, err := l.AddTask(context.TODO(), environment.ID, task, lc)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+		//taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
+		//handleError(err)
+		//var resultMap map[string]interface{}
+		//err = json.Unmarshal([]byte(taskResult), &resultMap)
+		//handleError(err)
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id": taskResult.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
 		return nil
@@ -355,6 +394,7 @@ var uploadFilesToTask = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.UploadFilesForTask(context.TODO(), taskID, files, lc)
@@ -384,20 +424,12 @@ var uploadFilesToTask = &cobra.Command{
 	},
 }
 
-var (
-	taskName        string
-	invokedTaskName string
-	taskService     string
-	taskCommand     string
-	taskCommandFile string
-)
-
 func init() {
 	uploadFilesToTask.Flags().IntP("id", "I", 0, "ID of the task")
 	uploadFilesToTask.Flags().StringSliceP("file", "F", []string{}, "File to upload (add multiple flags to upload multiple files)")
 	invokeDefinedTask.Flags().StringP("name", "N", "", "Name of the task that will be invoked")
-	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
-	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
-	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
-	runCustomTask.Flags().StringVarP(&taskCommandFile, "script", "s", "", "Path to bash script to run (will use this before command(-c) if both are defined)")
+	runCustomTask.Flags().StringP("name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
+	runCustomTask.Flags().StringP("service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
+	runCustomTask.Flags().StringP("command", "c", "", "The command to run in the task")
+	runCustomTask.Flags().StringP("script", "s", "", "Path to bash script to run (will use this before command(-c) if both are defined)")
 }

@@ -26,7 +26,6 @@ type Client interface {
 	RunDrushArchiveDump(string, string) ([]byte, error)
 	RunDrushSQLDump(string, string) ([]byte, error)
 	RunDrushCacheClear(string, string) ([]byte, error)
-	RunCustomTask(string, string, api.Task) ([]byte, error)
 	AddEnvironmentVariableToEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	DeleteEnvironmentVariableFromEnvironment(string, string, api.EnvVariable) ([]byte, error)
 	PromoteEnvironment(string, string, string) ([]byte, error)
