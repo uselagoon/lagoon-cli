@@ -18,7 +18,7 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 	// https://stackoverflow.com/a/37088088
 	client, err := ssh.Dial("tcp", host+":"+port, config)
 	if err != nil {
-		return fmt.Errorf("couldn't dial SSH: %v", err)
+		return fmt.Errorf("couldn't dial SSH (maybe this service doesn't support logs?): %v", err)
 	}
 	session, err := client.NewSession()
 	if err != nil {
