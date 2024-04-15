@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -59,7 +58,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	} else {
 		// return error stating key type not supported
 		keyType = ls.SSHRsa
-		err = errors.New(fmt.Sprintf("SSH key type %s not supported", string(splitKey[0])))
+		err = fmt.Errorf(fmt.Sprintf("SSH key type %s not supported", splitKey[0]))
 	}
 
 	// if the sshkey has a comment/name in it, we can use that
@@ -115,6 +114,7 @@ var addUserCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -194,6 +194,7 @@ Add key by defining key value, but not specifying a key name (will default to tr
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -242,6 +243,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -284,6 +286,7 @@ var deleteUserCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -347,6 +350,7 @@ var updateUserCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -404,6 +408,7 @@ var getUserKeysCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		userKeys, err := l.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
@@ -460,6 +465,7 @@ var getAllUserKeysCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
@@ -535,6 +541,7 @@ var addUserToOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -598,6 +605,7 @@ var RemoveUserFromOrganization = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

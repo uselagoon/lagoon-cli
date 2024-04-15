@@ -45,6 +45,7 @@ var addVariableCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -125,6 +126,7 @@ var deleteVariableCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			in := &ls.DeleteEnvVariableByNameInput{

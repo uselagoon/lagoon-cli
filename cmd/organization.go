@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
@@ -63,6 +64,7 @@ var addOrgCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -116,6 +118,7 @@ var deleteOrgCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -189,10 +192,14 @@ var updateOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
 		organizationInput := s.UpdateOrganizationPatchInput{
 			Description:       nullStrCheck(organizationDescription),
 			FriendlyName:      nullStrCheck(organizationFriendlyName),
@@ -203,7 +210,9 @@ var updateOrganizationCmd = &cobra.Command{
 			QuotaRoute:        nullIntCheck(organizationQuotaRoute),
 		}
 		result, err := l.UpdateOrganization(context.TODO(), organization.ID, organizationInput, lc)
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		resultData := output.Result{
 			Result: "success",

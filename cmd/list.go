@@ -2,15 +2,14 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"strconv"
+
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	ls "github.com/uselagoon/machinery/api/schema"
-	"strconv"
 )
 
 // ListFlags .
@@ -18,19 +17,6 @@ type ListFlags struct {
 	Project     string `json:"project,omitempty"`
 	Environment string `json:"environment,omitempty"`
 	Reveal      bool   `json:"reveal,omitempty"`
-}
-
-func parseListFlags(flags pflag.FlagSet) ListFlags {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := ListFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
 }
 
 var listCmd = &cobra.Command{
@@ -58,6 +44,7 @@ var listProjectsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -112,6 +99,7 @@ var listDeployTargetsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		deploytargets, err := l.ListDeployTargets(context.TODO(), lc)
@@ -175,6 +163,7 @@ var listGroupsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -232,6 +221,7 @@ var listGroupProjectsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -298,6 +288,7 @@ var listEnvironmentsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		environments, err := l.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
@@ -358,6 +349,7 @@ var listVariablesCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		in := &ls.EnvVariableByProjectEnvironmentNameInput{
@@ -432,6 +424,7 @@ var listDeploymentsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -487,6 +480,7 @@ var listTasksCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -546,6 +540,7 @@ Without a group name, this query may time out in large Lagoon installs.`,
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		data := []output.Data{}
@@ -557,10 +552,10 @@ Without a group name, this query may time out in large Lagoon installs.`,
 			}
 			for _, member := range groupMembers.Members {
 				data = append(data, []string{
-					returnNonEmptyString(fmt.Sprintf("%s", groupMembers.ID)),
-					returnNonEmptyString(fmt.Sprintf("%s", groupMembers.Name)),
-					returnNonEmptyString(fmt.Sprintf("%s", member.User.Email)),
-					returnNonEmptyString(fmt.Sprintf("%s", member.Role)),
+					returnNonEmptyString(groupMembers.ID.String()),
+					returnNonEmptyString(groupMembers.Name),
+					returnNonEmptyString(member.User.Email),
+					returnNonEmptyString(string(member.Role)),
 				})
 			}
 		} else {
@@ -572,10 +567,10 @@ Without a group name, this query may time out in large Lagoon installs.`,
 			for _, group := range *groupMembers {
 				for _, member := range group.Members {
 					data = append(data, []string{
-						returnNonEmptyString(fmt.Sprintf("%s", group.ID)),
-						returnNonEmptyString(fmt.Sprintf("%s", group.Name)),
-						returnNonEmptyString(fmt.Sprintf("%s", member.User.Email)),
-						returnNonEmptyString(fmt.Sprintf("%s", member.Role)),
+						returnNonEmptyString(group.ID.String()),
+						returnNonEmptyString(group.Name),
+						returnNonEmptyString(member.User.Email),
+						returnNonEmptyString(string(member.Role)),
 					})
 				}
 			}
@@ -612,6 +607,7 @@ This query can take a long time to run if there are a lot of users.`,
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		allUsers, err := l.AllUsers(context.TODO(), ls.AllUsersFilter{
@@ -623,11 +619,11 @@ This query can take a long time to run if there are a lot of users.`,
 		data := []output.Data{}
 		for _, user := range *allUsers {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", user.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.FirstName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.LastName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Comment)),
+				returnNonEmptyString(user.ID.String()),
+				returnNonEmptyString(user.Email),
+				returnNonEmptyString(user.FirstName),
+				returnNonEmptyString(user.LastName),
+				returnNonEmptyString(user.Comment),
 			})
 		}
 		dataMain := output.Table{
@@ -664,6 +660,7 @@ var listUsersGroupsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		allUsers, err := l.GetUserByEmail(context.TODO(), emailAddress, lc)
@@ -673,10 +670,10 @@ var listUsersGroupsCmd = &cobra.Command{
 		data := []output.Data{}
 		for _, grouprole := range allUsers.GroupRoles {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", allUsers.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", allUsers.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", grouprole.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", grouprole.Role)),
+				returnNonEmptyString(allUsers.ID.String()),
+				returnNonEmptyString(allUsers.Email),
+				returnNonEmptyString(grouprole.Name),
+				returnNonEmptyString(grouprole.Role),
 			})
 		}
 		dataMain := output.Table{
@@ -710,6 +707,7 @@ var listInvokableTasks = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -768,6 +766,7 @@ var listProjectGroupsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
@@ -832,12 +831,18 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
 		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), org.ID, lc)
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		if len(*orgProjects) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated projects found for organization '%s'\n", organizationName)
@@ -847,7 +852,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		for _, project := range *orgProjects {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", project.Name)),
+				returnNonEmptyString(project.Name),
 				returnNonEmptyString(fmt.Sprintf("%d", project.GroupCount)),
 			})
 		}
@@ -885,13 +890,18 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
 		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), org.ID, lc)
-		handleError(err)
-
+		if err != nil {
+			return err
+		}
 		if len(*orgGroups) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated groups found for organization '%s'\n", organizationName)
 		}
@@ -899,9 +909,9 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		data := []output.Data{}
 		for _, group := range *orgGroups {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", group.ID.String())),
-				returnNonEmptyString(fmt.Sprintf("%s", group.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", group.Type)),
+				returnNonEmptyString(group.ID.String()),
+				returnNonEmptyString(group.Name),
+				returnNonEmptyString(group.Type),
 				returnNonEmptyString(fmt.Sprintf("%d", group.MemberCount)),
 			})
 		}
@@ -943,6 +953,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
@@ -956,12 +967,12 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		for _, dt := range *deployTargets {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", dt.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.RouterPattern)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudRegion)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudProvider)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.SSHHost)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.SSHPort)),
+				returnNonEmptyString(dt.Name),
+				returnNonEmptyString(dt.RouterPattern),
+				returnNonEmptyString(dt.CloudRegion),
+				returnNonEmptyString(dt.CloudProvider),
+				returnNonEmptyString(dt.SSHHost),
+				returnNonEmptyString(dt.SSHPort),
 			})
 		}
 		dataMain := output.Table{
@@ -998,6 +1009,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
@@ -1008,11 +1020,11 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		data := []output.Data{}
 		for _, user := range *users {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", user.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.FirstName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.LastName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Comment)),
+				returnNonEmptyString(user.ID),
+				returnNonEmptyString(user.Email),
+				returnNonEmptyString(user.FirstName),
+				returnNonEmptyString(user.LastName),
+				returnNonEmptyString(user.Comment),
 				returnNonEmptyString(fmt.Sprintf("%v", user.Owner)),
 			})
 		}
@@ -1043,17 +1055,21 @@ var listOrganizationsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		organizations, err := l.AllOrganizations(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
 
 		data := []output.Data{}
 		for _, organization := range *organizations {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", organization.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", organization.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", organization.Description)),
+				returnNonEmptyString(organization.Name),
+				returnNonEmptyString(organization.Description),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaProject)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaGroup)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaNotification)),

@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	ls "github.com/uselagoon/machinery/api/schema"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -50,6 +52,7 @@ var addGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -77,6 +80,9 @@ var addUserToGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -90,22 +96,24 @@ var addUserToGroupCmd = &cobra.Command{
 			return err
 		}
 
-		var roleType ls.GroupRole
-		roleType = ls.GuestRole
-		switch strings.ToLower(groupRole) {
-		case "guest":
-			roleType = ls.GuestRole
-		case "reporter":
-			roleType = ls.ReporterRole
-		case "developer":
-			roleType = ls.DeveloperRole
-		case "maintainer":
-			roleType = ls.MaintainerRole
-		case "owner":
-			roleType = ls.OwnerRole
+		cmd.Flags().Visit(
+			func(f *pflag.Flag) {
+				if f.Name == "role" {
+					groupRole = strings.ToUpper(f.Value.String())
+				}
+			},
+		)
+
+		if groupRole == "" {
+			// if no role flag is provided, fallback to guest (previous behavior, could be removed though)
+			groupRole = "GUEST"
 		}
 
-		if err := requiredInputCheck("Group name", groupName, "Email address", userEmail, "Role", string(roleType)); err != nil {
+		if groupRole != "" && !slices.Contains(groupRoles, strings.ToLower(groupRole)) {
+			return fmt.Errorf("role '%s' is not valid - valid roles include \"guest\", \"reporter\", \"developer\", \"maintainer\", \"owner\"", groupRole)
+		}
+
+		if err := requiredInputCheck("Group name", groupName, "Email address", userEmail); err != nil {
 			return err
 		}
 
@@ -114,13 +122,14 @@ var addUserToGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		userGroupRole := &ls.UserGroupRoleInput{
 			UserEmail: userEmail,
 			GroupName: groupName,
-			GroupRole: roleType,
+			GroupRole: ls.GroupRole(groupRole),
 		}
 		_, err = l.AddUserToGroup(context.TODO(), userGroupRole, lc)
 		handleError(err)
@@ -166,6 +175,7 @@ var addProjectToGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -218,6 +228,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -270,6 +281,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -311,6 +323,7 @@ var deleteGroupCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -360,6 +373,7 @@ var addGroupToOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

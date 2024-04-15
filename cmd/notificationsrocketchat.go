@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	ls "github.com/uselagoon/machinery/api/schema"
@@ -52,6 +53,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -78,7 +80,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -125,6 +127,7 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -168,6 +171,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -220,6 +224,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.GetAllNotificationRocketChat(context.TODO(), lc)
@@ -278,6 +283,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			notification := &ls.RemoveNotificationFromProjectInput{
@@ -323,6 +329,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.DeleteNotificationRocketChat(context.TODO(), name, lc)
@@ -375,7 +382,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 			Channel: nullStrCheck(channel),
 		}
 		if patch == (ls.UpdateNotificationRocketChatPatchInput{}) {
-			return fmt.Errorf("Missing arguments: either channel, webhook, or newname must be defined")
+			return fmt.Errorf("missing arguments: either channel, webhook, or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update RocketChat notification '%s', are you sure?", name)) {
@@ -384,6 +391,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 

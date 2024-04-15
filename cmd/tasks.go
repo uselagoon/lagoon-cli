@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	ls "github.com/uselagoon/machinery/api/schema"
 	"os"
 	"strconv"
 	"strings"
@@ -16,6 +15,7 @@ import (
 
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	ls "github.com/uselagoon/machinery/api/schema"
 )
 
 var getTaskByID = &cobra.Command{
@@ -115,9 +115,9 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			if err != nil {
 				return err
 			}
-			fmt.Println(fmt.Sprintf(`Created a new task with ID %d
+			fmt.Printf(`Created a new task with ID %d
 You can use the following command to query the task status:
-lagoon -l %s get task-by-id --id %d --logs`, result.ID, current, result.ID))
+lagoon -l %s get task-by-id --id %d --logs\n`, result.ID, current, result.ID)
 		}
 		return nil
 	},

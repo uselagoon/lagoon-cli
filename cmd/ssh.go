@@ -49,6 +49,7 @@ var sshEnvCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		project, err := l.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
@@ -129,7 +130,7 @@ func init() {
 
 // generateSSHConnectionString .
 func generateSSHConnectionString(lagoon map[string]string, service string, container string, isPortal bool) string {
-	connString := fmt.Sprintf("ssh -t")
+	connString := "ssh -t"
 	if lagoon["sshKey"] != "" {
 		connString = fmt.Sprintf("%s -i %s", connString, lagoon["sshKey"])
 	}

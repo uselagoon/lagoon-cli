@@ -3,12 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	ls "github.com/uselagoon/machinery/api/schema"
-	"strconv"
 )
 
 var addDeployTargetCmd = &cobra.Command{
@@ -93,6 +94,7 @@ var addDeployTargetCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&lagoonToken,
 			debug)
 
@@ -206,6 +208,7 @@ var updateDeployTargetCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&lagoonToken,
 			debug)
 
@@ -288,11 +291,12 @@ var deleteDeployTargetCmd = &cobra.Command{
 		}
 
 		current := lagoonCLIConfig.Current
-		lagoonToken := lagoonCLIConfig.Lagoons[current].Token
+		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
-			&lagoonToken,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
 
 		deleteDeployTarget := &ls.DeleteDeployTargetInput{
@@ -341,6 +345,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -395,6 +400,7 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 

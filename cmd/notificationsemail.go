@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
@@ -47,6 +48,7 @@ It does not configure a project to send notifications to email though, you need 
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -71,7 +73,7 @@ It does not configure a project to send notifications to email though, you need 
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -118,6 +120,7 @@ This command is used to add an existing email notification in Lagoon to a projec
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			notification := &ls.AddNotificationToProjectInput{
@@ -159,6 +162,7 @@ var listProjectEmailsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -209,6 +213,7 @@ var listAllEmailsCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.GetAllNotificationEmail(context.TODO(), lc)
@@ -242,7 +247,7 @@ var listAllEmailsCmd = &cobra.Command{
 
 var deleteProjectEmailNotificationCmd = &cobra.Command{
 	Use:     "project-email",
-	Aliases: []string{"pr"},
+	Aliases: []string{"pe"},
 	Short:   "Delete a email notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -265,6 +270,7 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			notification := &ls.RemoveNotificationFromProjectInput{
@@ -310,6 +316,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.DeleteNotificationEmail(context.TODO(), name, lc)
@@ -357,7 +364,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 			EmailAddress: nullStrCheck(email),
 		}
 		if patch == (ls.UpdateNotificationEmailPatchInput{}) {
-			return fmt.Errorf("Missing arguments: either email or newname must be defined")
+			return fmt.Errorf("missing arguments: either email or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update email notification '%s', are you sure?", name)) {
@@ -366,6 +373,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 

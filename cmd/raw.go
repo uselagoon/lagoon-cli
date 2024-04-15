@@ -35,6 +35,7 @@ The output of this command will be the JSON response from the API`,
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		if err != nil {

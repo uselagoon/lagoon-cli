@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	l "github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	ls "github.com/uselagoon/machinery/api/schema"
@@ -52,6 +53,7 @@ It does not configure a project to send notifications to Slack though, you need 
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 
@@ -78,7 +80,7 @@ It does not configure a project to send notifications to Slack though, you need 
 				if err != nil {
 					return err
 				}
-				notificationData = append(notificationData, fmt.Sprintf("%s", organization.Name))
+				notificationData = append(notificationData, organization.Name)
 			} else {
 				notificationData = append(notificationData, "-")
 			}
@@ -125,6 +127,7 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			notification := &ls.AddNotificationToProjectInput{
@@ -166,6 +169,7 @@ var listProjectSlacksCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
@@ -218,6 +222,7 @@ var listAllSlacksCmd = &cobra.Command{
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 		result, err := l.GetAllNotificationSlack(context.TODO(), lc)
@@ -276,6 +281,7 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			notification := &ls.RemoveNotificationFromProjectInput{
@@ -321,6 +327,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.DeleteNotificationSlack(context.TODO(), name, lc)
@@ -364,8 +371,8 @@ var updateSlackNotificationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if name == "" {
-			return fmt.Errorf("Missing arguments: notification name is not defined")
+		if err := requiredInputCheck("Notification name", name); err != nil {
+			return err
 		}
 		patch := ls.UpdateNotificationSlackPatchInput{
 			Name:    nullStrCheck(newname),
@@ -373,7 +380,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 			Channel: nullStrCheck(channel),
 		}
 		if patch == (ls.UpdateNotificationSlackPatchInput{}) {
-			return fmt.Errorf("Missing arguments: either channel, webhook, or newname must be defined")
+			return fmt.Errorf("missing arguments: either channel, webhook, or newname must be defined")
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update Slack notification '%s', are you sure?", name)) {
@@ -382,6 +389,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 

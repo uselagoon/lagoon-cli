@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -146,7 +144,7 @@ var configAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
-			return fmt.Errorf("Missing arguments: Lagoon name is not defined")
+			return fmt.Errorf("missing arguments: Lagoon name is not defined")
 		}
 
 		if lagoonConfig.Hostname != "" && lagoonConfig.Port != "" && lagoonConfig.GraphQL != "" {
@@ -193,7 +191,7 @@ var configAddCmd = &cobra.Command{
 				},
 			}, outputOptions)
 		} else {
-			return fmt.Errorf("Must have Hostname, Port, and GraphQL endpoint")
+			return fmt.Errorf("must have Hostname, Port, and GraphQL endpoint")
 		}
 		return nil
 	},
@@ -357,26 +355,6 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 	}
 	return nil
 
-}
-
-func analyze(file string) error {
-	handle, err := os.Open(file)
-
-	if err != nil {
-		return err
-	}
-	defer handle.Close()
-	return doSomething(handle)
-}
-
-func doSomething(handle io.Reader) error {
-	scanner := bufio.NewScanner(handle)
-	for scanner.Scan() {
-		// Do something with line
-		d := scanner.Text()
-		fmt.Println(d)
-	}
-	return nil
 }
 
 // functions to handle read/write of configuration file

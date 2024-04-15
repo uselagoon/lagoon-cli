@@ -94,7 +94,7 @@ func processProjectExtra(project api.Project) []string {
 		fmt.Sprintf("%v/%v", currentDevEnvironments, project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.DevelopmentEnvironmentsLimit),
 		fmt.Sprintf("%v", project.ProductionEnvironment),
-		fmt.Sprintf("%s", project.RouterPattern),
+		project.RouterPattern,
 		fmt.Sprintf("%v", *project.AutoIdle),
 		fmt.Sprintf("%v", *project.FactsUI),
 		fmt.Sprintf("%v", *project.ProblemsUI),

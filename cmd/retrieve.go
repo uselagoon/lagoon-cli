@@ -48,6 +48,7 @@ You can check the status of the backup using the list backups or get backup comm
 			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
 			result, err := l.AddBackupRestore(context.TODO(), backupID, lc)

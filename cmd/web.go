@@ -31,7 +31,7 @@ var webCmd = &cobra.Command{
 		}
 
 		url := urlBuilder.String()
-		fmt.Println(fmt.Sprintf("Opening %s", url))
+		fmt.Printf("Opening %s\n", url)
 		_ = browser.OpenURL(url)
 	},
 }
@@ -49,7 +49,7 @@ var kibanaCmd = &cobra.Command{
 		}
 
 		url := urlBuilder.String()
-		fmt.Println(fmt.Sprintf("Opening %s", url))
+		fmt.Printf("Opening %s\n", url)
 		_ = browser.OpenURL(url)
 	},
 }

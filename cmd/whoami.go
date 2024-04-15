@@ -36,13 +36,14 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
 
 		user, err := l.Me(context.TODO(), lc)
 		if err != nil {
 			if strings.Contains(err.Error(), "Cannot read properties of null (reading 'access_token')") {
-				return fmt.Errorf("Unable to get user information, you may be using an administration token")
+				return fmt.Errorf("unable to get user information, you may be using an administration token")
 			}
 			return err
 		}
@@ -74,7 +75,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 					keyData = append(keyData, key.Created)
 				}
 				if opts["type"] {
-					keyData = append(keyData, fmt.Sprintf("%s", key.KeyType))
+					keyData = append(keyData, string(key.KeyType))
 				}
 				if opts["key"] {
 					keyData = append(keyData, key.KeyValue)

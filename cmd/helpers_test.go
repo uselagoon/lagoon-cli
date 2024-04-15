@@ -244,6 +244,21 @@ func Test_buildVarsToMap(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Valid case - entry with comma separated items",
+			args: args{
+				slice: []string{
+					`KEY1=type:thistype,othertype:thisone`,
+				},
+			},
+			want: []ls.EnvKeyValueInput{
+				{
+					Name:  "KEY1",
+					Value: "type:thistype,othertype:thisone",
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -153,6 +153,9 @@ func (e *Environments) ListEnvironmentVariables(projectName string, environmentN
 	}
 	var environmentInfo api.Environment
 	err = json.Unmarshal([]byte(environmentByName), &environmentInfo)
+	if err != nil {
+		return []byte(""), err
+	}
 	returnResult, err := processEnvironmentVariables(environmentInfo, projectName, revealValue)
 	if err != nil {
 		return []byte(""), err
