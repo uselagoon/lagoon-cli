@@ -100,7 +100,7 @@ It does not configure a project to send notifications to webhook though, you nee
 
 var addProjectNotificationWebhookCmd = &cobra.Command{
 	Use:     "project-webhook",
-	Aliases: []string{"pe"},
+	Aliases: []string{"pw"},
 	Short:   "Add a webhook notification to a project",
 	Long: `Add a webhook notification to a project
 This command is used to add an existing webhook notification in Lagoon to a project.`,
@@ -250,7 +250,7 @@ var listAllWebhooksCmd = &cobra.Command{
 
 var deleteProjectWebhookNotificationCmd = &cobra.Command{
 	Use:     "project-webhook",
-	Aliases: []string{"pr"},
+	Aliases: []string{"pw"},
 	Short:   "Delete a webhook notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
