@@ -29,6 +29,7 @@ type Client interface {
 	ModifyUser(api.User, api.User) ([]byte, error)
 	ListGroups(string) ([]byte, error)
 	ListGroupProjects(string, bool) ([]byte, error)
+	ResetPassword(string) ([]byte, error)
 }
 
 // New .

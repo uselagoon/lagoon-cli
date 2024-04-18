@@ -496,6 +496,28 @@ var RemoveUserFromOrganization = &cobra.Command{
 	},
 }
 
+var resetPasswordCmd = &cobra.Command{
+	Use:     "reset-password",
+	Aliases: []string{"reset-pass", "rp"},
+	Short:   "Send a password reset email",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		if userEmail == "" {
+			fmt.Println("Missing arguments: Email address is not defined")
+			cmd.Help()
+			os.Exit(1)
+		}
+
+		if yesNo(fmt.Sprintf("You are attempting to send a password reset email to '%s', are you sure?", userEmail)) {
+			result, err := uClient.ResetPassword(userEmail)
+			handleError(err)
+			fmt.Println(string(result))
+		}
+	},
+}
+
 var (
 	currentUserEmail string
 	pubKeyValue      string
@@ -524,4 +546,5 @@ func init() {
 	RemoveUserFromOrganization.Flags().StringP("name", "O", "", "Name of the organization")
 	RemoveUserFromOrganization.Flags().StringP("email", "E", "", "Email address of the user")
 	RemoveUserFromOrganization.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	resetPasswordCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 }

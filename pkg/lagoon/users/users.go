@@ -139,6 +139,23 @@ func (u *Users) ListUsers(groupName string) ([]byte, error) {
 	return returnResult, nil
 }
 
+func (u *Users) ResetPassword(email string) ([]byte, error) {
+	customReq := api.CustomRequest{
+		Query: `mutation resetPassword ($email: String!) {
+				resetUserPassword (input: { user: { email: $email } })
+		  }`,
+		Variables: map[string]interface{}{
+			"email": email,
+		},
+		MappedResult: "resetUserPassword",
+	}
+	returnResult, err := u.api.Request(customReq)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
 func processUserList(listUsers []byte) ([]byte, error) {
 	var groupMembers GroupMembers
 	err := json.Unmarshal([]byte(listUsers), &groupMembers)

@@ -195,6 +195,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
 	rootCmd.AddCommand(rawCmd)
+	rootCmd.AddCommand(resetPasswordCmd)
 }
 
 // version/build information command
