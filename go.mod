@@ -19,7 +19,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.2
-	github.com/uselagoon/machinery v0.0.20
+	github.com/uselagoon/machinery v0.0.21-0.20240418053856-64532c59a80d
 	golang.org/x/crypto v0.21.0
 	golang.org/x/term v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -40,4 +40,4 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 )
 
-// replace github.com/uselagoon/machinery => ../machinery
+//replace github.com/uselagoon/machinery => ../machinery

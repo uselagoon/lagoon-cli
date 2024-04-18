@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/logrusorgru/aurora"
 )
 
@@ -22,12 +21,13 @@ type Data []string
 
 // Options .
 type Options struct {
-	Header bool
-	CSV    bool
-	JSON   bool
-	Pretty bool
-	Debug  bool
-	Error  string
+	Header    bool
+	CSV       bool
+	JSON      bool
+	Pretty    bool
+	Debug     bool
+	Error     string
+	MultiLine bool
 }
 
 // Result .
@@ -151,8 +151,17 @@ func RenderOutput(data Table, opts Options) {
 		t.Style().Options = table.OptionsNoBordersAndSeparators
 		t.Style().Box.PaddingLeft = ""    // trim left space
 		t.Style().Box.PaddingRight = "\t" // pad right with tab
-		t.SuppressTrailingSpaces()        // suppress the trailing spaces
-		t.SetColumnConfigs([]table.ColumnConfig{{Align: text.AlignLeft}})
+		if !opts.MultiLine {
+			t.SuppressTrailingSpaces() // suppress the trailing spaces if not multiline
+		}
+		if opts.MultiLine {
+			// stops multiline values bleeding into other columns
+			t.SetColumnConfigs([]table.ColumnConfig{
+				{Name: "Value", WidthMax: 75}, // Set specific width for "Value" column if multiline
+				{Name: "Token", WidthMax: 50}, // Set specific width for "Token" column if multiline
+			})
+		}
+
 		if opts.CSV {
 			t.RenderCSV()
 			return

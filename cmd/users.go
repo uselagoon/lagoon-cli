@@ -260,9 +260,8 @@ var getUserKeysCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if userEmail == "" {
-			fmt.Println("Missing arguments: Email address is not defined")
-			return nil
+		if err := requiredInputCheck("Email address", userEmail); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -274,7 +273,9 @@ var getUserKeysCmd = &cobra.Command{
 			&token,
 			debug)
 		userKeys, err := l.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		if len(userKeys.SSHKeys) == 0 {
 			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
 			return nil
@@ -296,6 +297,7 @@ var getUserKeysCmd = &cobra.Command{
 			Data:   data,
 		}
 
+		outputOptions.MultiLine = true
 		output.RenderOutput(dataMain, outputOptions)
 		return nil
 	},
@@ -360,7 +362,7 @@ var getAllUserKeysCmd = &cobra.Command{
 			Header: []string{"ID", "Email", "Name", "Type", "Value"},
 			Data:   data,
 		}
-
+		outputOptions.MultiLine = true
 		output.RenderOutput(dataMain, outputOptions)
 		return nil
 	},

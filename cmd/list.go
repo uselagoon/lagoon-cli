@@ -8,9 +8,6 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	l "github.com/uselagoon/machinery/api/lagoon"
@@ -66,13 +63,14 @@ var listDeployTargetsCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
-		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
+		deploytargets, err := l.ListDeployTargets(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -94,6 +92,7 @@ var listDeployTargetsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
 			})
 		}
+		outputOptions.MultiLine = true
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
@@ -239,10 +238,8 @@ var listVariablesCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		reveal, err := cmd.Flags().GetBool("reveal")
 		if err != nil {
@@ -253,17 +250,18 @@ var listVariablesCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
-		in := &schema.EnvVariableByProjectEnvironmentNameInput{
+		in := &ls.EnvVariableByProjectEnvironmentNameInput{
 			Project:     cmdProjectName,
 			Environment: cmdProjectEnvironment,
 		}
-		envvars, err := lagoon.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
+		envvars, err := l.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
 		if err != nil {
 			return err
 		}
@@ -280,6 +278,7 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
 				env = append(env, fmt.Sprintf("%v", envvar.Value))
+				outputOptions.MultiLine = true
 			}
 			data = append(data, env)
 		}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -224,24 +225,55 @@ var getProjectKeyCmd = &cobra.Command{
 	Use:     "project-key",
 	Aliases: []string{"pk"},
 	Short:   "Get a projects public key",
-	Run: func(cmd *cobra.Command, args []string) {
-		getProjectFlags := parseGetFlags(*cmd.Flags())
-		if getProjectFlags.Project == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		returnedJSON, err := pClient.GetProjectKey(getProjectFlags.Project, revealValue)
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
+		reveal, err := cmd.Flags().GetBool("reveal")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		projectKey, err := l.GetProjectKeyByName(context.TODO(), cmdProjectName, reveal, lc)
+		projectKeys := []string{projectKey.PublicKey}
+		if projectKey.PrivateKey != "" {
+			projectKeys = append(projectKeys, strings.TrimSuffix(projectKey.PrivateKey, "\n"))
+			outputOptions.MultiLine = true
+		}
+
+		var data []output.Data
+		data = append(data, projectKeys)
+
+		dataMain := output.Table{
+			Header: []string{"PublicKey"},
+			Data:   data,
+		}
+
 		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("No project-key for project '%s'", getProjectFlags.Project), outputOptions)
-			os.Exit(0)
+			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
+		}
+
+		if projectKey.PrivateKey != "" {
+			dataMain.Header = append(dataMain.Header, "PrivateKey")
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 

@@ -35,11 +35,6 @@ type DeleteEnvVariableByNameInput struct {
 	Name        string `json:"name"`
 }
 
-type EnvVariableByProjectEnvironmentNameInput struct {
-	Environment string `json:"environment,omitempty"`
-	Project     string `json:"project"`
-}
-
 type UpdateEnvVarResponse struct {
 	EnvKeyValue
 }
