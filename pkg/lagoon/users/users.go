@@ -10,17 +10,18 @@ import (
 )
 
 // AddUser function
-func (u *Users) AddUser(user api.User) ([]byte, error) {
+func (u *Users) AddUser(user api.User, resetPassword bool) ([]byte, error) {
 	customReq := api.CustomRequest{
-		Query: `mutation addUser ($firstname: String, $lastname: String, $email: String!) {
-				addUser(input:{firstName: $firstname, lastName: $lastname, email: $email}) {
+		Query: `mutation addUser ($firstname: String, $lastname: String, $email: String!, $resetPassword: Boolean) {
+				addUser(input:{firstName: $firstname, lastName: $lastname, email: $email, resetPassword: $resetPassword}) {
 					id
 				}
 			}`,
 		Variables: map[string]interface{}{
-			"firstname": user.FirstName,
-			"lastname":  user.LastName,
-			"email":     user.Email,
+			"firstname":     user.FirstName,
+			"lastname":      user.LastName,
+			"email":         user.Email,
+			"resetPassword": resetPassword,
 		},
 		MappedResult: "addUser",
 	}

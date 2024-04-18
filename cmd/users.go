@@ -82,15 +82,15 @@ var addUserCmd = &cobra.Command{
 	Aliases: []string{"u"},
 	Short:   "Add a user to lagoon",
 	Run: func(cmd *cobra.Command, args []string) {
-		userFlags := parseUser(*cmd.Flags())
-		if userFlags.Email == "" {
+		user := parseUser(*cmd.Flags())
+		if user.Email == "" {
 			fmt.Println("Missing arguments: Email address is not defined")
 			cmd.Help()
 			os.Exit(1)
 		}
 		var customReqResult []byte
 		var err error
-		customReqResult, err = uClient.AddUser(userFlags)
+		customReqResult, err = uClient.AddUser(user, resetPassword)
 		handleError(err)
 		returnResultData := map[string]interface{}{}
 		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
@@ -505,6 +505,7 @@ func init() {
 	addUserCmd.Flags().StringVarP(&userFirstName, "firstName", "F", "", "First name of the user")
 	addUserCmd.Flags().StringVarP(&userLastName, "lastName", "L", "", "Last name of the user")
 	addUserCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
+	addUserCmd.Flags().BoolVarP(&resetPassword, "reset-password", "", false, "Send a password reset email")
 	addUserSSHKeyCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringVarP(&sshKeyName, "keyname", "N", "", "Name of the SSH key (optional, if not provided will try use what is in the pubkey file)")
 	addUserSSHKeyCmd.Flags().StringVarP(&pubKeyFile, "pubkey", "K", "", "Specify path to the public key to add")
