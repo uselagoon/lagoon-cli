@@ -261,6 +261,10 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 			return err
 		}
 
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -273,6 +277,11 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
+		}
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
 		}
 		deployTargetConfigs, err := l.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
 		if err != nil {

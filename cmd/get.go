@@ -133,7 +133,6 @@ This returns information about a deployment, the logs of this build can also be 
 		if err != nil {
 			return err
 		}
-
 		buildName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -142,6 +141,10 @@ This returns information about a deployment, the logs of this build can also be 
 		if err != nil {
 			return err
 		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Build name", buildName); err != nil {
+			return err
+		}
+
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
