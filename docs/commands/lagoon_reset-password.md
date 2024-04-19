@@ -1,19 +1,16 @@
-## lagoon add user
+## lagoon reset-password
 
-Add a user to lagoon
+Send a password reset email
 
 ```
-lagoon add user [flags]
+lagoon reset-password [flags]
 ```
 
 ### Options
 
 ```
-  -E, --email string       Email address of the user
-  -F, --firstName string   First name of the user
-  -h, --help               help for user
-  -L, --lastName string    Last name of the user
-      --reset-password     Send a password reset email
+  -E, --email string   Email address of the user
+  -h, --help           help for reset-password
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +32,5 @@ lagoon add user [flags]
 
 ### SEE ALSO
 
-* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 
