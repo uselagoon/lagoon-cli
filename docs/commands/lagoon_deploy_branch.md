@@ -15,11 +15,11 @@ lagoon deploy branch [flags]
 ### Options
 
 ```
-  -b, --branch string      Branch name to deploy
-  -r, --branchRef string   Branch ref to deploy
-      --buildvar strings   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
-  -h, --help               help for branch
-      --returnData         Returns the build name instead of success text
+  -b, --branch string          Branch name to deploy
+  -r, --branchRef string       Branch ref to deploy
+      --buildvar stringArray   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
+  -h, --help                   help for branch
+      --returnData             Returns the build name instead of success text
 ```
 
 ### Options inherited from parent commands
