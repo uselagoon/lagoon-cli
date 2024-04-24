@@ -1,3 +1,0 @@
-mutation ($name: String!) {
-    deleteNotification: deleteNotificationMicrosoftTeams(input:{name: $name})
-}

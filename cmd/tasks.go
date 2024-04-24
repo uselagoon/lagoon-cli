@@ -115,9 +115,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			if err != nil {
 				return err
 			}
-			fmt.Printf(`Created a new task with ID %d
-You can use the following command to query the task status:
-lagoon -l %s get task-by-id --id %d --logs\n`, result.ID, current, result.ID)
+			fmt.Printf("Created a new task with ID %d \nYou can use the following command to query the task status: \nlagoon -l %s get task-by-id --id %d --logs \n", result.ID, current, result.ID)
 		}
 		return nil
 	},
@@ -135,10 +133,14 @@ var runDrushArchiveDump = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -160,10 +162,14 @@ var runDrushSQLDump = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -185,10 +191,14 @@ var runDrushCacheClear = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		resultData := output.Result{
 			Result:     "success",
 			ResultData: resultMap,
@@ -201,7 +211,7 @@ var runDrushCacheClear = &cobra.Command{
 var invokeDefinedTask = &cobra.Command{
 	Use:     "invoke",
 	Aliases: []string{"i"},
-	Short:   "",
+	Short:   "Invoke a task registered against an environment",
 	Long: `Invoke a task registered against an environment
 The following are supported methods to use
 Direct:
@@ -320,7 +330,9 @@ Path:
 			// otherwise we can read from a file
 			if taskCommandFile != "" {
 				taskCommandBytes, err := os.ReadFile(taskCommandFile) // just pass the file name
-				handleError(err)
+				if err := handleErr(err); err != nil {
+					return nil
+				}
 				taskCommand = string(taskCommandBytes)
 			}
 		}
@@ -342,17 +354,13 @@ Path:
 			Command: taskCommand,
 			Service: taskService,
 		}
+		fmt.Println(task.Name)
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		taskResult, err := l.AddTask(context.TODO(), environment.ID, task, lc)
 		if err := handleErr(err); err != nil {
 			return nil
 		}
-		//taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
-		//handleError(err)
-		//var resultMap map[string]interface{}
-		//err = json.Unmarshal([]byte(taskResult), &resultMap)
-		//handleError(err)
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{

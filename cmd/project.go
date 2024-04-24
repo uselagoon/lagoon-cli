@@ -23,9 +23,6 @@ var projectAutoIdle int
 var projectStorageCalc int
 var projectDevelopmentEnvironmentsLimit int
 var projectOpenshift int
-var projectDeploymentsDisabled int
-var factsUi int
-var problemsUi int
 
 func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
 	configMap := make(map[string]interface{})
@@ -67,7 +64,9 @@ var deleteProjectCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s', are you sure?", cmdProjectName)) {
 			_, err := l.DeleteProject(context.TODO(), cmdProjectName, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 			}
@@ -92,10 +91,14 @@ var addProjectCmd = &cobra.Command{
 
 		jsonPatch, _ := json.Marshal(projectFlags)
 		addResult, err := pClient.AddProject(cmdProjectName, string(jsonPatch))
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		var addedProject api.Project
 		err = json.Unmarshal([]byte(addResult), &addedProject)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
@@ -169,6 +172,7 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		autoIdleProvided := cmd.Flags().Lookup("auto-idle").Changed
 		subfolder, err := cmd.Flags().GetString("subfolder")
 		if err != nil {
 			return err
@@ -189,10 +193,12 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		factsUIProvided := cmd.Flags().Lookup("facts-ui").Changed
 		problemsUi, err := cmd.Flags().GetUint("problems-ui")
 		if err != nil {
 			return err
 		}
+		problemsUIProvided := cmd.Flags().Lookup("problems-ui").Changed
 		routerPattern, err := cmd.Flags().GetString("router-pattern")
 		if err != nil {
 			return err
@@ -201,6 +207,7 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		deploymentsDisabledProvided := cmd.Flags().Lookup("deployments-disabled").Changed
 		ProductionBuildPriority, err := cmd.Flags().GetUint("production-build-priority")
 		if err != nil {
 			return err
@@ -250,16 +257,32 @@ var updateProjectCmd = &cobra.Command{
 			ProjectAvailability := ls.ProjectAvailability(strings.ToUpper(availability))
 			projectPatch.Availability = &ProjectAvailability
 		}
+		if autoIdleProvided {
+			projectPatch.AutoIdle = &autoIdle
+		}
+		if deploymentsDisabledProvided {
+			projectPatch.DeploymentsDisabled = &deploymentsDisabled
+		}
+		if factsUIProvided {
+			projectPatch.FactsUI = &factsUi
+		}
+		if problemsUIProvided {
+			projectPatch.ProblemsUI = &problemsUi
+		}
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 		projectUpdate, err := l.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		resultData := output.Result{
 			Result: "success",
@@ -519,7 +542,9 @@ var addProjectToOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -623,7 +648,9 @@ var addProjectToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		projectInput := ls.AddProjectInput{
 			Name:                         cmdProjectName,
@@ -652,7 +679,9 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		}
 		project := ls.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		resultData := output.Result{
 			Result: "success",
@@ -675,7 +704,9 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -693,9 +724,13 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		projectInput := ls.RemoveProjectFromOrganizationInput{
 			Project:      project.ID,
@@ -704,7 +739,9 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
 			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{

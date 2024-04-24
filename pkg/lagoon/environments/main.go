@@ -20,7 +20,6 @@ type Environments struct {
 // Client .
 type Client interface {
 	DeployEnvironmentBranch(string, string) ([]byte, error)
-	DeleteEnvironment(string, string) ([]byte, error)
 	GetDeploymentLog(string) ([]byte, error)
 	ListEnvironmentVariables(string, string, bool) ([]byte, error)
 	RunDrushArchiveDump(string, string) ([]byte, error)
@@ -64,17 +63,6 @@ func (e *Environments) DeployEnvironmentBranch(projectName string, branchName st
 		MappedResult: "deployEnvironmentBranch",
 	}
 	returnResult, err := e.api.Request(customRequest)
-	return returnResult, err
-}
-
-// DeleteEnvironment .
-func (e *Environments) DeleteEnvironment(projectName string, environmentName string) ([]byte, error) {
-	evironment := api.DeleteEnvironment{
-		Name:    environmentName,
-		Project: projectName,
-		Execute: true,
-	}
-	returnResult, err := e.api.DeleteEnvironment(evironment)
 	return returnResult, err
 }
 

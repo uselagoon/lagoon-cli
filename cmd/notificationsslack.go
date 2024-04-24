@@ -401,7 +401,6 @@ var updateSlackNotificationCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			fmt.Println(result)
 			data := []output.Data{
 				[]string{
 					returnNonEmptyString(fmt.Sprintf("%v", result.ID)),

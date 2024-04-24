@@ -86,8 +86,8 @@ var addDeployTargetCmd = &cobra.Command{
 			addDeployTarget.ID = id
 		}
 		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
-			handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
 		}
 		current := lagoonCLIConfig.Current
 		lagoonToken := lagoonCLIConfig.Lagoons[current].Token
@@ -100,8 +100,8 @@ var addDeployTargetCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to add '%s' DeployTarget, are you sure?", addDeployTarget.Name)) {
 			addDeployTargetResponse, err := l.AddDeployTarget(context.TODO(), addDeployTarget, lc)
-			if err != nil {
-				handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
 			}
 
 			data := []output.Data{}
@@ -199,8 +199,12 @@ var updateDeployTargetCmd = &cobra.Command{
 		}
 
 		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
-			handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+
+		if err := requiredInputCheck("Deploytarget ID", strconv.Itoa(int(id))); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -228,8 +232,8 @@ var updateDeployTargetCmd = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
 			updateDeployTargetResponse, err := l.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
-			if err != nil {
-				handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
 			}
 
 			data := []output.Data{}
@@ -286,8 +290,12 @@ var deleteDeployTargetCmd = &cobra.Command{
 		}
 
 		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
-			handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
+
+		if err := requiredInputCheck("Deploytarget name", name); err != nil {
+			return err
 		}
 
 		current := lagoonCLIConfig.Current
@@ -304,11 +312,10 @@ var deleteDeployTargetCmd = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete DeployTarget '%s', are you sure?", deleteDeployTarget.Name)) {
 			deleteDeployTargetResponse, err := l.DeleteDeployTarget(context.TODO(), deleteDeployTarget, lc)
-			if err != nil {
-				handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
 			}
 
-			handleError(err)
 			resultData := output.Result{
 				Result: deleteDeployTargetResponse.DeleteDeployTarget,
 			}
@@ -327,7 +334,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -350,7 +359,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		deployTargetInput := ls.AddDeployTargetToOrganizationInput{
 			DeployTarget: deployTarget,
@@ -358,7 +369,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		}
 
 		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		resultData := output.Result{
 			Result: "success",
@@ -381,7 +394,9 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -405,7 +420,9 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		deployTargetInput := ls.RemoveDeployTargetFromOrganizationInput{
 			DeployTarget: deployTarget,
@@ -414,7 +431,9 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deployTarget, organization.Name)) {
 			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{

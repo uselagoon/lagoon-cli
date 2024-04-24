@@ -469,7 +469,9 @@ var getAllUserKeysCmd = &cobra.Command{
 			&token,
 			debug)
 		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		var userGroups []ls.AddSSHKeyInput
 		for _, group := range *groupMembers {
@@ -479,7 +481,9 @@ var getAllUserKeysCmd = &cobra.Command{
 				}
 			}
 		}
-
+		if len(userGroups) == 0 {
+			outputOptions.Error = fmt.Sprintf("No SSH keys for group '%s'\n", groupName)
+		}
 		var data []output.Data
 		for _, userData := range userGroups {
 			keyID := strconv.Itoa(int(userData.SSHKey.ID))
@@ -515,8 +519,9 @@ var addUserToOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
-
+		if err != nil {
+			return err
+		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -546,7 +551,9 @@ var addUserToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		userInput := ls.AddUserToOrganizationInput{
 			User:         ls.UserInput{Email: userEmail},
@@ -556,7 +563,9 @@ var addUserToOrganizationCmd = &cobra.Command{
 
 		orgUser := ls.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		resultData := output.Result{
 			Result: "success",
@@ -579,8 +588,9 @@ var RemoveUserFromOrganization = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
-
+		if err != nil {
+			return err
+		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -610,7 +620,9 @@ var RemoveUserFromOrganization = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		userInput := ls.AddUserToOrganizationInput{
 			User:         ls.UserInput{Email: userEmail},
@@ -622,7 +634,9 @@ var RemoveUserFromOrganization = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{

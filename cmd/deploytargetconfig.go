@@ -218,7 +218,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id))); err != nil {
+		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id)), "Project name", cmdProjectName); err != nil {
 			return err
 		}
 
@@ -234,6 +234,11 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
+		}
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {

@@ -110,7 +110,7 @@ func requiredInputCheck(fieldsAndValues ...string) error {
 		value := fieldsAndValues[i+1]
 
 		if value == "" || value == "0" {
-			return fmt.Errorf("Missing argument: %s is not defined", field)
+			return fmt.Errorf("missing argument: %s is not defined", field)
 		}
 	}
 	return nil

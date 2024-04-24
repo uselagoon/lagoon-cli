@@ -49,7 +49,9 @@ var listProjectsCmd = &cobra.Command{
 			debug)
 
 		projects, err := l.ListAllProjects(context.TODO(), lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, project := range *projects {
@@ -168,7 +170,9 @@ var listGroupsCmd = &cobra.Command{
 			debug)
 
 		groups, err := l.ListAllGroups(context.TODO(), lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, group := range *groups {
@@ -229,10 +233,15 @@ var listGroupProjectsCmd = &cobra.Command{
 
 		if listAllProjects {
 			groupProjects, err = l.GetGroupProjects(context.TODO(), "", lc)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 		} else {
 			groupProjects, err = l.GetGroupProjects(context.TODO(), groupName, lc)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 		}
-		handleError(err)
 		var data []output.Data
 		idx := 0
 		for _, group := range *groupProjects {
@@ -390,7 +399,7 @@ var listVariablesCmd = &cobra.Command{
 		}
 		if len(data) == 0 {
 			if cmdProjectEnvironment != "" {
-				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
+				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
 			} else {
 				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
 			}
@@ -429,10 +438,14 @@ var listDeploymentsCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		deployments, err := l.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, deployment := range deployments.Deployments {
@@ -485,10 +498,14 @@ var listTasksCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		tasks, err := l.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, task := range tasks.Tasks {
@@ -712,9 +729,13 @@ var listInvokableTasks = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		tasks, err := l.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, task := range tasks.AdvancedTasks {
@@ -770,7 +791,9 @@ var listProjectGroupsCmd = &cobra.Command{
 			&token,
 			debug)
 		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		if len(projectGroups.Groups) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no groups for project '%s'\n", cmdProjectName)
@@ -944,8 +967,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName, "Organization ID", strconv.Itoa(int(organizationID))); err != nil {
-			return err
+		if organizationName == "" && organizationID == 0 {
+			return fmt.Errorf("missing arguments: Organization name or ID is not defined")
 		}
 
 		current := lagoonCLIConfig.Current
@@ -957,7 +980,9 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			&token,
 			debug)
 		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
@@ -1013,9 +1038,13 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, user := range *users {

@@ -109,38 +109,6 @@ func (api *Interface) UpdateGroup(group UpdateGroup) ([]byte, error) {
 	return jsonBytes, nil
 }
 
-// DeleteGroup .
-func (api *Interface) DeleteGroup(group AddGroup) ([]byte, error) {
-	req := graphql.NewRequest(`
-	mutation ($name: String!) {
-		deleteGroup(input: {
-			group: {
-				name: $name
-			}
-		})
-	}`)
-	generateVars(req, group)
-	if api.debug {
-		debugRequest(req)
-	}
-	returnType, err := api.RunQuery(req, Data{})
-	if err != nil {
-		return []byte(""), err
-	}
-	reMappedResult := returnType.(map[string]interface{})
-	jsonBytes, err := json.Marshal(reMappedResult["deleteGroup"])
-	if err != nil {
-		return []byte(""), err
-	}
-	if api.debug {
-		debugResponse(jsonBytes)
-	}
-	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
-	}
-	return jsonBytes, nil
-}
-
 // AddUserToGroup .
 func (api *Interface) AddUserToGroup(user AddUserToGroup) ([]byte, error) {
 	req := graphql.NewRequest(`
@@ -198,73 +166,6 @@ func (api *Interface) AddGroupToProject(group ProjectToGroup) ([]byte, error) {
 	}
 	reMappedResult := returnType.(map[string]interface{})
 	jsonBytes, err := json.Marshal(reMappedResult["addUserToGroup"])
-	if err != nil {
-		return []byte(""), err
-	}
-	if api.debug {
-		debugResponse(jsonBytes)
-	}
-	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
-	}
-	return jsonBytes, nil
-}
-
-// RemoveGroupFromProject .
-func (api *Interface) RemoveGroupFromProject(group ProjectToGroup) ([]byte, error) {
-	req := graphql.NewRequest(`
-	mutation ($project: String!, $group: String!) {
-		removeGroupsFromProject(input: {
-			project: { name: $project}
-			groups: [{name: $group}]
-		}) {
-		 	...Project
-		}
-	}` + projectFragment)
-	generateVars(req, group)
-	if api.debug {
-		debugRequest(req)
-	}
-	returnType, err := api.RunQuery(req, Data{})
-	if err != nil {
-		return []byte(""), err
-	}
-	reMappedResult := returnType.(map[string]interface{})
-	jsonBytes, err := json.Marshal(reMappedResult["removeGroupsFromProject"])
-	if err != nil {
-		return []byte(""), err
-	}
-	if api.debug {
-		debugResponse(jsonBytes)
-	}
-	if string(jsonBytes) == "null" {
-		return []byte(""), errors.New("GraphQL API returned a null response, the requested resource may not exist, or there was an error. Use `--debug` to check what was returned")
-	}
-	return jsonBytes, nil
-}
-
-// RemoveUserFromGroup .
-func (api *Interface) RemoveUserFromGroup(user UserGroup) ([]byte, error) {
-	req := graphql.NewRequest(`
-	mutation ($userEmail: String!, $groupName: String!) {
-		removeUserFromGroup(input: {
-			user: { email: $userEmail }
-			group: { name: $groupName }
-		}) {
-		 	...Group
-		}
-	}` + groupFragment)
-	req.Var("userEmail", user.User.Email)
-	req.Var("groupName", user.Group)
-	if api.debug {
-		debugRequest(req)
-	}
-	returnType, err := api.RunQuery(req, Data{})
-	if err != nil {
-		return []byte(""), err
-	}
-	reMappedResult := returnType.(map[string]interface{})
-	jsonBytes, err := json.Marshal(reMappedResult["removeUserFromGroup"])
 	if err != nil {
 		return []byte(""), err
 	}

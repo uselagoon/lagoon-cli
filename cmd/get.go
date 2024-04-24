@@ -80,13 +80,21 @@ var getProjectCmd = &cobra.Command{
 		DevEnvironments := 0
 		productionRoute := "none"
 		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(project.DeploymentsDisabled)))
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(project.AutoIdle)))
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		factsUI, err := strconv.ParseBool(strconv.Itoa(int(project.FactsUI)))
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		problemsUI, err := strconv.ParseBool(strconv.Itoa(int(project.ProblemsUI)))
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		for _, environment := range project.Environments {
 			if environment.EnvironmentType == "development" {
 				DevEnvironments++
@@ -219,9 +227,13 @@ var getEnvironmentCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		data = append(data, []string{
@@ -303,10 +315,13 @@ var getToken = &cobra.Command{
 	Use:     "token",
 	Aliases: []string{"tk"},
 	Short:   "Generates a Lagoon auth token (for use in, for example, graphQL queries)",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		token, err := retrieveTokenViaSsh()
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		fmt.Println(token)
+		return nil
 	},
 }
 
@@ -339,7 +354,9 @@ var getOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		if organization.Name == "" {
 			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)
