@@ -1,23 +1,16 @@
-## lagoon deploy promote
+## lagoon reset-password
 
-Promote an environment
-
-### Synopsis
-
-Promote one environment to another
+Send a password reset email
 
 ```
-lagoon deploy promote [flags]
+lagoon reset-password [flags]
 ```
 
 ### Options
 
 ```
-      --buildvar stringArray   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
-  -d, --destination string     Destination environment name to create
-  -h, --help                   help for promote
-      --returnData             Returns the build name instead of success text
-  -s, --source string          Source environment name to use as the base to deploy from
+  -E, --email string   Email address of the user
+  -h, --help           help for reset-password
 ```
 
 ### Options inherited from parent commands
@@ -39,5 +32,5 @@ lagoon deploy promote [flags]
 
 ### SEE ALSO
 
-* [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

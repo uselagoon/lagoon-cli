@@ -21,6 +21,7 @@ var lagoonSSHKey string
 var userFirstName string
 var userLastName string
 var userEmail string
+var resetPassword bool
 var pubKeyFile string
 var sshKeyName string
 
