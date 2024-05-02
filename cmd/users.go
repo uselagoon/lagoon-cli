@@ -105,6 +105,10 @@ var addUserCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		resetPassword, err := cmd.Flags().GetBool("reset-password")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Email address", email); err != nil {
 			return err
 		}
@@ -119,11 +123,11 @@ var addUserCmd = &cobra.Command{
 			debug)
 
 		userInput := &ls.AddUserInput{
-			FirstName: firstName,
-			LastName:  LastName,
-			Email:     email,
+			FirstName:     firstName,
+			LastName:      LastName,
+			Email:         email,
+			ResetPassword: resetPassword,
 		}
-
 		user, err := l.AddUser(context.TODO(), userInput, lc)
 		if err := handleErr(err); err != nil {
 			return nil
@@ -650,15 +654,58 @@ var RemoveUserFromOrganization = &cobra.Command{
 	},
 }
 
-var (
-	currentUserEmail string
-	pubKeyValue      string
-)
+var resetPasswordCmd = &cobra.Command{
+	Use:     "reset-password",
+	Aliases: []string{"reset-pass", "rp"},
+	Short:   "Send a password reset email",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Email address", userEmail); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		resetPasswordInput := ls.ResetUserPasswordInput{
+			User: ls.UserInput{Email: userEmail},
+		}
+
+		if yesNo(fmt.Sprintf("You are attempting to send a password reset email to '%s', are you sure?", userEmail)) {
+			_, err := l.ResetUserPassword(context.TODO(), &resetPasswordInput, lc)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
+			resultData := output.Result{
+				Result: "success",
+			}
+			output.RenderResult(resultData, outputOptions)
+		}
+		return nil
+	},
+}
 
 func init() {
 	addUserCmd.Flags().StringP("first-name", "F", "", "First name of the user")
 	addUserCmd.Flags().StringP("last-name", "L", "", "Last name of the user")
 	addUserCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addUserCmd.Flags().BoolP("reset-password", "", false, "Send a password reset email")
 	addUserSSHKeyCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	addUserSSHKeyCmd.Flags().StringP("keyname", "N", "", "Name of the SSH key (optional, if not provided will try use what is in the pubkey file)")
 	addUserSSHKeyCmd.Flags().StringP("pubkey", "K", "", "Specify path to the public key to add")
@@ -677,4 +724,5 @@ func init() {
 	RemoveUserFromOrganization.Flags().StringP("name", "O", "", "Name of the organization")
 	RemoveUserFromOrganization.Flags().StringP("email", "E", "", "Email address of the user")
 	RemoveUserFromOrganization.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	resetPasswordCmd.Flags().StringP("email", "E", "", "Email address of the user")
 }
