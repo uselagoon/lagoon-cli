@@ -23,12 +23,13 @@ type Client interface {
 	RemoveGroupsFromProject(api.ProjectGroups) ([]byte, error)
 	DeleteGroup(api.Group) ([]byte, error)
 	ListUsers(string) ([]byte, error)
-	AddUser(api.User) ([]byte, error)
+	AddUser(api.User, bool) ([]byte, error)
 	AddSSHKeyToUser(api.User, api.SSHKey) ([]byte, error)
 	DeleteUser(api.User) ([]byte, error)
 	ModifyUser(api.User, api.User) ([]byte, error)
 	ListGroups(string) ([]byte, error)
 	ListGroupProjects(string, bool) ([]byte, error)
+	ResetPassword(string) ([]byte, error)
 }
 
 // New .
