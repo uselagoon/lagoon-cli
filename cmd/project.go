@@ -11,6 +11,7 @@ import (
 	ls "github.com/uselagoon/machinery/api/schema"
 	"strings"
 
+	"github.com/guregu/null"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/api"
@@ -185,6 +186,7 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		buildImageProvided := cmd.Flags().Lookup("build-image").Changed
 		availability, err := cmd.Flags().GetString("availability")
 		if err != nil {
 			return err
@@ -243,7 +245,6 @@ var updateProjectCmd = &cobra.Command{
 			AutoIdle:                     nullUintCheck(autoIdle),
 			Subfolder:                    nullStrCheck(subfolder),
 			PrivateKey:                   nullStrCheck(privateKey),
-			BuildImage:                   nullStrCheck(buildImage),
 			FactsUI:                      nullUintCheck(factsUi),
 			ProblemsUI:                   nullUintCheck(problemsUi),
 			RouterPattern:                nullStrCheck(routerPattern),
@@ -268,6 +269,15 @@ var updateProjectCmd = &cobra.Command{
 		}
 		if problemsUIProvided {
 			projectPatch.ProblemsUI = &problemsUi
+		}
+		if buildImageProvided {
+			if buildImage == "null" {
+				nullBuildImage := null.String{}
+				projectPatch.BuildImage = &nullBuildImage
+			} else {
+				buildImg := null.StringFrom(buildImage)
+				projectPatch.BuildImage = &buildImg
+			}
 		}
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
@@ -769,7 +779,7 @@ func init() {
 	updateProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
 	updateProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
 	updateProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
-	updateProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project")
+	updateProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project. Set to 'null' to remove the build image")
 	updateProjectCmd.Flags().StringP("availability", "", "", "Availability of the project")
 
 	updateProjectCmd.Flags().Uint("production-build-priority", 0, "Set the priority of the production build")
