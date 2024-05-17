@@ -779,7 +779,9 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			&token,
 			debug)
 		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
 		}
@@ -834,9 +836,13 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		data := []output.Data{}
 		for _, user := range *users {

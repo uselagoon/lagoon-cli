@@ -376,7 +376,9 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -404,7 +406,9 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		userInput := s.AddUserToOrganizationInput{
 			User:         s.UserInput{Email: userEmail},
@@ -414,7 +418,9 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 
 		orgUser := s.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		resultData := output.Result{
 			Result: "success",
@@ -437,7 +443,9 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -468,7 +476,9 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		userInput := s.AddUserToOrganizationInput{
 			User:         s.UserInput{Email: userEmail},
@@ -480,7 +490,9 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{

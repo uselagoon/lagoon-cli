@@ -40,7 +40,9 @@ var addGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -68,20 +70,26 @@ var addGroupCmd = &cobra.Command{
 
 		if organizationName != "" {
 			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			groupInput := s.AddGroupToOrganizationInput{
 				Name:         groupName,
 				Organization: organization.ID,
 				AddOrgOwner:  orgOwner,
 			}
 			_, err = l.AddGroupToOrganization(context.TODO(), &groupInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 		} else {
 			groupInput := s.AddGroupInput{
 				Name: groupName,
 			}
 			_, err = l.AddGroup(context.TODO(), &groupInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 		}
 
 		resultData := output.Result{

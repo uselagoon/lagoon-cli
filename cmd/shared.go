@@ -53,6 +53,15 @@ func handleError(err error) {
 	}
 }
 
+func handleErr(err error) error {
+	if err != nil {
+		outputOptions.Error = err.Error()
+		output.RenderError(outputOptions.Error, outputOptions)
+		return err
+	}
+	return nil
+}
+
 func returnNonEmptyString(value string) string {
 	if len(value) == 0 {
 		return "-"

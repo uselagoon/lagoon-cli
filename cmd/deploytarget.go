@@ -332,7 +332,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -356,7 +358,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		deployTargetInput := s.AddDeployTargetToOrganizationInput{
 			DeployTarget: deploytarget,
@@ -364,7 +368,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		}
 
 		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
@@ -386,7 +392,9 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -413,7 +421,9 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		deployTargetInput := s.RemoveDeployTargetFromOrganizationInput{
 			DeployTarget: deploytarget,
@@ -422,7 +432,9 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
 			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{

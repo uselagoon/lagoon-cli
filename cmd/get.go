@@ -285,7 +285,9 @@ var getOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		if organization.Name == "" {
 			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)

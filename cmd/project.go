@@ -73,7 +73,9 @@ var addProjectCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("organization")
 		if err != nil {
@@ -169,13 +171,17 @@ var addProjectCmd = &cobra.Command{
 
 		if organizationName != "" {
 			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			projectInput.Organization = organization.ID
 		}
 
 		project := s.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
@@ -475,7 +481,9 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
+		if err != nil {
+			return err
+		}
 
 		organizationName, err := cmd.Flags().GetString("organization")
 		if err != nil {
@@ -495,9 +503,13 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err := handleErr(err); err != nil {
+			return nil
+		}
 
 		projectInput := s.RemoveProjectFromOrganizationInput{
 			Project:      project.ID,
@@ -506,7 +518,9 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
 			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
-			handleError(err)
+			if err := handleErr(err); err != nil {
+				return nil
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
