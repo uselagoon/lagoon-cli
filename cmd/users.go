@@ -406,8 +406,8 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		userInput := s.AddUserToOrganizationInput{
@@ -418,8 +418,8 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 
 		orgUser := s.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -476,8 +476,8 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		userInput := s.AddUserToOrganizationInput{
@@ -490,8 +490,8 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",

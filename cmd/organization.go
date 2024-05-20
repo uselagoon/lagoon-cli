@@ -80,8 +80,8 @@ var addOrganizationCmd = &cobra.Command{
 		}
 		org := s.Organization{}
 		err = lc.AddOrganization(context.TODO(), &organizationInput, &org)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -125,13 +125,13 @@ var deleteOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete organization '%s', are you sure?", organization.Name)) {
 			_, err := l.DeleteOrganization(context.TODO(), organization.ID, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: organization.Name,

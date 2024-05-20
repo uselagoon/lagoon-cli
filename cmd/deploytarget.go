@@ -358,8 +358,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		deployTargetInput := s.AddDeployTargetToOrganizationInput{
@@ -368,8 +368,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		}
 
 		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		resultData := output.Result{
 			Result: "success",
@@ -400,14 +400,11 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
-		}
 		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
@@ -421,8 +418,8 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		deployTargetInput := s.RemoveDeployTargetFromOrganizationInput{
@@ -432,8 +429,8 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
 			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",

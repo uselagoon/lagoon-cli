@@ -70,8 +70,8 @@ var addGroupCmd = &cobra.Command{
 
 		if organizationName != "" {
 			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			groupInput := s.AddGroupToOrganizationInput{
 				Name:         groupName,
@@ -79,16 +79,16 @@ var addGroupCmd = &cobra.Command{
 				AddOrgOwner:  orgOwner,
 			}
 			_, err = l.AddGroupToOrganization(context.TODO(), &groupInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 		} else {
 			groupInput := s.AddGroupInput{
 				Name: groupName,
 			}
 			_, err = l.AddGroup(context.TODO(), &groupInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 		}
 
