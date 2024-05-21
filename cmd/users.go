@@ -129,8 +129,8 @@ var addUserCmd = &cobra.Command{
 			ResetPassword: resetPassword,
 		}
 		user, err := l.AddUser(context.TODO(), userInput, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -203,12 +203,12 @@ Add key by defining key value, but not specifying a key name (will default to tr
 			debug)
 
 		userSSHKey, err := parseSSHKeyFile(pubKeyFile, sshKeyName, pubKeyValue, email)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		result, err := l.AddSSHKey(context.TODO(), &userSSHKey, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -253,8 +253,8 @@ var deleteSSHKeyCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete SSH key ID:'%d', are you sure?", sshKeyID)) {
 			_, err := l.RemoveSSHKey(context.TODO(), sshKeyID, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",
@@ -299,8 +299,8 @@ var deleteUserCmd = &cobra.Command{
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete user with email address '%s', are you sure?", emailAddress)) {
 			_, err := l.DeleteUser(context.TODO(), deleteUserInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",
@@ -370,8 +370,8 @@ var updateUserCmd = &cobra.Command{
 		}
 
 		user, err := l.UpdateUser(context.TODO(), currentUser, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -416,8 +416,8 @@ var getUserKeysCmd = &cobra.Command{
 			&token,
 			debug)
 		userKeys, err := l.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		if len(userKeys.SSHKeys) == 0 {
 			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
@@ -473,8 +473,8 @@ var getAllUserKeysCmd = &cobra.Command{
 			&token,
 			debug)
 		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		var userGroups []ls.AddSSHKeyInput
@@ -555,8 +555,8 @@ var addUserToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		userInput := ls.AddUserToOrganizationInput{
@@ -567,8 +567,8 @@ var addUserToOrganizationCmd = &cobra.Command{
 
 		orgUser := ls.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -624,8 +624,8 @@ var RemoveUserFromOrganization = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		userInput := ls.AddUserToOrganizationInput{
@@ -638,8 +638,8 @@ var RemoveUserFromOrganization = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",
@@ -689,8 +689,8 @@ var resetPasswordCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to send a password reset email to '%s', are you sure?", userEmail)) {
 			_, err := l.ResetUserPassword(context.TODO(), &resetPasswordInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",

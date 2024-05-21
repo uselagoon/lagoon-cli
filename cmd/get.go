@@ -80,20 +80,20 @@ var getProjectCmd = &cobra.Command{
 		DevEnvironments := 0
 		productionRoute := "none"
 		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(project.DeploymentsDisabled)))
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(project.AutoIdle)))
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		factsUI, err := strconv.ParseBool(strconv.Itoa(int(project.FactsUI)))
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		problemsUI, err := strconv.ParseBool(strconv.Itoa(int(project.ProblemsUI)))
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		for _, environment := range project.Environments {
 			if environment.EnvironmentType == "development" {
@@ -227,12 +227,12 @@ var getEnvironmentCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -317,8 +317,8 @@ var getToken = &cobra.Command{
 	Short:   "Generates a Lagoon auth token (for use in, for example, graphQL queries)",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		token, err := retrieveTokenViaSsh()
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		fmt.Println(token)
 		return nil
@@ -354,8 +354,8 @@ var getOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		if organization.Name == "" {

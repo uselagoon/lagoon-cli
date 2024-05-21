@@ -65,8 +65,8 @@ var deleteProjectCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s', are you sure?", cmdProjectName)) {
 			_, err := l.DeleteProject(context.TODO(), cmdProjectName, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",
@@ -92,13 +92,13 @@ var addProjectCmd = &cobra.Command{
 
 		jsonPatch, _ := json.Marshal(projectFlags)
 		addResult, err := pClient.AddProject(cmdProjectName, string(jsonPatch))
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		var addedProject api.Project
 		err = json.Unmarshal([]byte(addResult), &addedProject)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		if err != nil {
@@ -281,8 +281,8 @@ var updateProjectCmd = &cobra.Command{
 		}
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
@@ -290,8 +290,8 @@ var updateProjectCmd = &cobra.Command{
 			return nil
 		}
 		projectUpdate, err := l.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -658,8 +658,8 @@ var addProjectToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		projectInput := ls.AddProjectInput{
@@ -689,8 +689,8 @@ var addProjectToOrganizationCmd = &cobra.Command{
 		}
 		project := ls.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -734,12 +734,12 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		projectInput := ls.RemoveProjectFromOrganizationInput{
@@ -749,8 +749,8 @@ var RemoveProjectFromOrganizationCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
 			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",

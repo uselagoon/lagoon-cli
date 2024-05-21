@@ -39,6 +39,9 @@ var addGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -58,8 +61,8 @@ var addGroupCmd = &cobra.Command{
 
 		grp := &ls.AddGroupInput{Name: groupName}
 		group, err := l.AddGroup(context.TODO(), grp, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -134,8 +137,8 @@ var addUserToGroupCmd = &cobra.Command{
 			GroupRole: ls.GroupRole(groupRole),
 		}
 		_, err = l.AddUserToGroup(context.TODO(), userGroupRole, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -190,8 +193,8 @@ var addProjectToGroupCmd = &cobra.Command{
 			return nil
 		}
 		_, err = l.AddProjectToGroup(context.TODO(), projectGroup, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -240,8 +243,8 @@ var deleteUserFromGroupCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete user '%s' from group '%s', are you sure?", userEmail, groupName)) {
 			result, err := l.RemoveUserFromGroup(context.TODO(), user, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 
 			resultData := output.Result{
@@ -302,8 +305,8 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s' from group '%s', are you sure?", projectGroup.Project.Name, projectGroup.Groups[0].Name)) {
 			_, err = l.RemoveGroupsFromProject(context.TODO(), projectGroup, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 
 			resultData := output.Result{
@@ -339,8 +342,8 @@ var deleteGroupCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to delete group '%s', are you sure?", groupName)) {
 			_, err := l.DeleteGroup(context.TODO(), groupName, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 			resultData := output.Result{
 				Result: "success",
@@ -392,8 +395,8 @@ var addGroupToOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		groupInput := ls.AddGroupToOrganizationInput{
@@ -403,8 +406,8 @@ var addGroupToOrganizationCmd = &cobra.Command{
 		}
 		group := ls.OrgGroup{}
 		err = lc.AddGroupToOrganization(context.TODO(), &groupInput, &group)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{

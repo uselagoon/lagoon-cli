@@ -122,15 +122,15 @@ var updateEnvironmentCmd = &cobra.Command{
 		if project.Name == "" {
 			err = fmt.Errorf("project not found")
 		}
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if environment.Name == "" {
 			err = fmt.Errorf("environment not found")
 		}
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		environmentFlags := ls.UpdateEnvironmentPatchInput{
@@ -161,8 +161,8 @@ var updateEnvironmentCmd = &cobra.Command{
 		}
 
 		result, err := l.UpdateEnvironment(context.TODO(), environment.ID, environmentFlags, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{

@@ -133,13 +133,13 @@ var runDrushArchiveDump = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		resultData := output.Result{
 			Result:     "success",
@@ -162,13 +162,13 @@ var runDrushSQLDump = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		resultData := output.Result{
 			Result:     "success",
@@ -191,13 +191,13 @@ var runDrushCacheClear = &cobra.Command{
 			return err
 		}
 		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		var resultMap map[string]interface{}
 		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		resultData := output.Result{
 			Result:     "success",
@@ -243,12 +243,12 @@ Direct:
 			debug)
 
 		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		environment, err := l.GetAdvancedTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		var taskId uint
@@ -259,8 +259,8 @@ Direct:
 		}
 
 		taskResult, err := l.InvokeAdvancedTaskDefinition(context.TODO(), environment.ID, taskId, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		resultData := output.Result{
@@ -330,8 +330,8 @@ Path:
 			// otherwise we can read from a file
 			if taskCommandFile != "" {
 				taskCommandBytes, err := os.ReadFile(taskCommandFile) // just pass the file name
-				if err := handleErr(err); err != nil {
-					return nil
+				if err != nil {
+					return err
 				}
 				taskCommand = string(taskCommandBytes)
 			}
@@ -358,8 +358,8 @@ Path:
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		taskResult, err := l.AddTask(context.TODO(), environment.ID, task, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		resultData := output.Result{
 			Result: "success",

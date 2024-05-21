@@ -49,8 +49,8 @@ var listProjectsCmd = &cobra.Command{
 			debug)
 
 		projects, err := l.ListAllProjects(context.TODO(), lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -170,8 +170,8 @@ var listGroupsCmd = &cobra.Command{
 			debug)
 
 		groups, err := l.ListAllGroups(context.TODO(), lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -233,13 +233,13 @@ var listGroupProjectsCmd = &cobra.Command{
 
 		if listAllProjects {
 			groupProjects, err = l.GetGroupProjects(context.TODO(), "", lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 		} else {
 			groupProjects, err = l.GetGroupProjects(context.TODO(), groupName, lc)
-			if err := handleErr(err); err != nil {
-				return nil
+			if err != nil {
+				return err
 			}
 		}
 		var data []output.Data
@@ -438,13 +438,13 @@ var listDeploymentsCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		deployments, err := l.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -498,13 +498,13 @@ var listTasksCmd = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		tasks, err := l.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -729,12 +729,12 @@ var listInvokableTasks = &cobra.Command{
 			debug)
 
 		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		tasks, err := l.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
@@ -791,8 +791,8 @@ var listProjectGroupsCmd = &cobra.Command{
 			&token,
 			debug)
 		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		if len(projectGroups.Groups) == 0 {
@@ -980,8 +980,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			&token,
 			debug)
 		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		if len(*deployTargets) == 0 {
@@ -1038,12 +1038,12 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			&token,
 			debug)
 		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
-		if err := handleErr(err); err != nil {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		data := []output.Data{}
