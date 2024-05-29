@@ -23,7 +23,7 @@ var addOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ var deleteOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -154,7 +154,7 @@ var updateOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -232,7 +232,7 @@ var updateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	addOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	addOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	addOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	addOrganizationCmd.Flags().String("description", "", "Description of the organization")
 	addOrganizationCmd.Flags().Int("project-quota", 0, "Project quota for the organization")
@@ -241,7 +241,7 @@ func init() {
 	addOrganizationCmd.Flags().Int("environment-quota", 0, "Environment quota for the organization")
 	addOrganizationCmd.Flags().Int("route-quota", 0, "Route quota for the organization")
 
-	updateOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization to update")
+	updateOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to update")
 	updateOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	updateOrganizationCmd.Flags().String("description", "", "Description of the organization")
 	updateOrganizationCmd.Flags().Int("project-quota", 0, "Project quota for the organization")
@@ -250,5 +250,5 @@ func init() {
 	updateOrganizationCmd.Flags().Int("environment-quota", 0, "Environment quota for the organization")
 	updateOrganizationCmd.Flags().Int("route-quota", 0, "Route quota for the organization")
 
-	deleteOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization to delete")
+	deleteOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to delete")
 }

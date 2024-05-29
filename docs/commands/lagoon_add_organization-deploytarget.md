@@ -9,9 +9,9 @@ lagoon add organization-deploytarget [flags]
 ### Options
 
 ```
-  -D, --deploytarget uint   ID of DeployTarget
-  -h, --help                help for organization-deploytarget
-  -O, --name string         Name of Organization
+  -D, --deploytarget uint          ID of DeployTarget
+  -h, --help                       help for organization-deploytarget
+  -O, --organization-name string   Name of Organization
 ```
 
 ### Options inherited from parent commands

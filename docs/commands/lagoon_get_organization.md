@@ -9,8 +9,8 @@ lagoon get organization [flags]
 ### Options
 
 ```
-  -h, --help          help for organization
-  -O, --name string   Name of the organization
+  -h, --help                       help for organization
+  -O, --organization-name string   Name of the organization
 ```
 
 ### Options inherited from parent commands

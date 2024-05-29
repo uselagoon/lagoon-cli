@@ -268,7 +268,7 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -329,5 +329,5 @@ func init() {
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
 	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
-	getOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	getOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 }

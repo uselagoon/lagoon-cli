@@ -9,8 +9,8 @@ lagoon delete organization [flags]
 ### Options
 
 ```
-  -h, --help          help for organization
-  -O, --name string   Name of the organization to delete
+  -h, --help                       help for organization
+  -O, --organization-name string   Name of the organization to delete
 ```
 
 ### Options inherited from parent commands

@@ -77,7 +77,7 @@ var addProjectCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -485,7 +485,7 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -575,7 +575,7 @@ func init() {
 	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
-	addProjectCmd.Flags().StringP("organization", "O", "", "Name of the Organization to add the project to")
+	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
@@ -591,5 +591,5 @@ func init() {
 
 	getCmd.AddCommand(getProjectMetadata)
 
-	removeProjectFromOrganizationCmd.Flags().StringP("organization", "O", "", "Name of the Organization to remove the project from")
+	removeProjectFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to remove the project from")
 }

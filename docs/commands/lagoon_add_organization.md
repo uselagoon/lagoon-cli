@@ -9,15 +9,15 @@ lagoon add organization [flags]
 ### Options
 
 ```
-      --description string       Description of the organization
-      --environment-quota int    Environment quota for the organization
-      --friendly-name string     Friendly name of the organization
-      --group-quota int          Group quota for the organization
-  -h, --help                     help for organization
-  -O, --name string              Name of the organization
-      --notification-quota int   Notification quota for the organization
-      --project-quota int        Project quota for the organization
-      --route-quota int          Route quota for the organization
+      --description string         Description of the organization
+      --environment-quota int      Environment quota for the organization
+      --friendly-name string       Friendly name of the organization
+      --group-quota int            Group quota for the organization
+  -h, --help                       help for organization
+      --notification-quota int     Notification quota for the organization
+  -O, --organization-name string   Name of the organization
+      --project-quota int          Project quota for the organization
+      --route-quota int            Route quota for the organization
 ```
 
 ### Options inherited from parent commands

@@ -13,10 +13,10 @@ lagoon add organization-administrator [flags]
 ### Options
 
 ```
-  -E, --email string   Email address of the user
-  -h, --help           help for organization-administrator
-  -O, --name string    Name of the organization
-      --owner          Set the user as an owner of the organization
+  -E, --email string               Email address of the user
+  -h, --help                       help for organization-administrator
+  -O, --organization-name string   Name of the organization
+      --owner                      Set the user as an owner of the organization
 ```
 
 ### Options inherited from parent commands

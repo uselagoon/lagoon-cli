@@ -14,8 +14,8 @@ lagoon delete organization-project [flags]
 ### Options
 
 ```
-  -h, --help                  help for organization-project
-  -O, --organization string   Name of the Organization to remove the project from
+  -h, --help                       help for organization-project
+  -O, --organization-name string   Name of the Organization to remove the project from
 ```
 
 ### Options inherited from parent commands

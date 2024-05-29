@@ -380,7 +380,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -447,7 +447,7 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -550,10 +550,10 @@ func init() {
 	updateUserCmd.Flags().StringVarP(&currentUserEmail, "current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringP("email", "E", "", "New email address of the user")
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
-	addAdministratorToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	addAdministratorToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	addAdministratorToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	addAdministratorToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
-	removeAdministratorFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
+	removeAdministratorFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	removeAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	removeAdministratorFromOrganizationCmd.Flags().Bool("owner", false, "Set the user as an administrator of the organization")
 	resetPasswordCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")

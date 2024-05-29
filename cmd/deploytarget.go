@@ -335,7 +335,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -396,7 +396,7 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -458,13 +458,13 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
-	addDeployTargetToOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
+	addDeployTargetToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
 	addDeployTargetToOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	removeDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
+	removeDeployTargetFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
 	removeDeployTargetFromOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")

@@ -9,8 +9,8 @@ lagoon list organization-users [flags]
 ### Options
 
 ```
-  -h, --help                  help for organization-users
-  -O, --organization string   Name of the organization to list associated users for
+  -h, --help                       help for organization-users
+  -O, --organization-name string   Name of the organization to list associated users for
 ```
 
 ### Options inherited from parent commands

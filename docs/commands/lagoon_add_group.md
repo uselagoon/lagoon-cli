@@ -14,10 +14,10 @@ lagoon add group [flags]
 ### Options
 
 ```
-  -h, --help                  help for group
-  -N, --name string           Name of the group
-  -O, --organization string   Name of the organization
-      --owner                 Organization owner only: Flag to grant yourself ownership of this group
+  -h, --help                       help for group
+  -N, --name string                Name of the group
+  -O, --organization-name string   Name of the organization
+      --owner                      Organization owner only: Flag to grant yourself ownership of this group
 ```
 
 ### Options inherited from parent commands

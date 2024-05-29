@@ -22,7 +22,7 @@ lagoon add project [flags]
   -j, --json string                           JSON string to patch
   -S, --openshift uint                        Reference to OpenShift Object this Project should be deployed to
   -o, --openshiftProjectPattern string        Pattern of OpenShift Project/Namespace that should be generated
-  -O, --organization string                   Name of the Organization to add the project to
+  -O, --organization-name string              Name of the Organization to add the project to
       --owner                                 Add the user as an owner of the project
   -I, --privateKey string                     Private key to use for the project
   -E, --productionEnvironment string          Which environment(the name) should be marked as the production environment

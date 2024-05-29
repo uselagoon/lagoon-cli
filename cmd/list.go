@@ -640,7 +640,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -699,7 +699,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -758,7 +758,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -819,7 +819,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -941,9 +941,9 @@ func init() {
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in")
 	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
-	listOrganizationProjectsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated users for")
-	listOrganizationGroupsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated groups for")
-	listOrganizationDeployTargetsCmd.Flags().StringP("organization", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
+	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
+	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
 }

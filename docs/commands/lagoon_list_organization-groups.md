@@ -9,8 +9,8 @@ lagoon list organization-groups [flags]
 ### Options
 
 ```
-  -h, --help                  help for organization-groups
-  -O, --organization string   Name of the organization to list associated groups for
+  -h, --help                       help for organization-groups
+  -O, --organization-name string   Name of the organization to list associated groups for
 ```
 
 ### Options inherited from parent commands

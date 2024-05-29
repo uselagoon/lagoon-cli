@@ -54,7 +54,7 @@ var addGroupCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("organization")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -288,7 +288,7 @@ var deleteGroupCmd = &cobra.Command{
 
 func init() {
 	addGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
-	addGroupCmd.Flags().StringP("organization", "O", "", "Name of the organization")
+	addGroupCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	addGroupCmd.Flags().Bool("owner", false, "Organization owner only: Flag to grant yourself ownership of this group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringP("role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")

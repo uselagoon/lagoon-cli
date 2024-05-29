@@ -9,9 +9,9 @@ lagoon list organization-deploytargets [flags]
 ### Options
 
 ```
-  -h, --help                  help for organization-deploytargets
-      --id uint               ID of the organization to list associated deploy targets for
-  -O, --organization string   Name of the organization to list associated deploy targets for
+  -h, --help                       help for organization-deploytargets
+      --id uint                    ID of the organization to list associated deploy targets for
+  -O, --organization-name string   Name of the organization to list associated deploy targets for
 ```
 
 ### Options inherited from parent commands

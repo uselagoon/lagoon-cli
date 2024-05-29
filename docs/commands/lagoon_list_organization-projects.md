@@ -9,8 +9,8 @@ lagoon list organization-projects [flags]
 ### Options
 
 ```
-  -h, --help                  help for organization-projects
-  -O, --organization string   Name of the organization to list associated projects for
+  -h, --help                       help for organization-projects
+  -O, --organization-name string   Name of the organization to list associated projects for
 ```
 
 ### Options inherited from parent commands
