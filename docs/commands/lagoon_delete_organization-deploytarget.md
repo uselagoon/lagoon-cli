@@ -1,16 +1,17 @@
-## lagoon list organization users
+## lagoon delete organization-deploytarget
 
-List users in an organization
+Remove a deploy target from an Organization
 
 ```
-lagoon list organization users [flags]
+lagoon delete organization-deploytarget [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for users
-  -O, --name string   Name of the organization to list associated users for
+  -D, --deploytarget uint          ID of DeployTarget
+  -h, --help                       help for organization-deploytarget
+  -O, --organization-name string   Name of Organization
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +33,5 @@ lagoon list organization users [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 

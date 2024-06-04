@@ -1,17 +1,16 @@
-## lagoon add organization deploytarget
+## lagoon list organization-projects
 
-Add a deploy target to an Organization
+List projects in an organization
 
 ```
-lagoon add organization deploytarget [flags]
+lagoon list organization-projects [flags]
 ```
 
 ### Options
 
 ```
-  -D, --deploy-target uint   ID of DeployTarget
-  -h, --help                 help for deploytarget
-  -O, --name string          Name of Organization
+  -h, --help                       help for organization-projects
+  -O, --organization-name string   Name of the organization to list associated projects for
 ```
 
 ### Options inherited from parent commands
@@ -33,5 +32,5 @@ lagoon add organization deploytarget [flags]
 
 ### SEE ALSO
 
-* [lagoon add organization](lagoon_add_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

@@ -1,16 +1,16 @@
-## lagoon delete organization organization
+## lagoon list organization-groups
 
-Delete an organization
+List groups in an organization
 
 ```
-lagoon delete organization organization [flags]
+lagoon list organization-groups [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for organization
-  -O, --name string   Name of the organization to delete
+  -h, --help                       help for organization-groups
+  -O, --organization-name string   Name of the organization to list associated groups for
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +32,5 @@ lagoon delete organization organization [flags]
 
 ### SEE ALSO
 
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

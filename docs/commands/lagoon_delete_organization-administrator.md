@@ -1,16 +1,18 @@
-## lagoon list organization groups
+## lagoon delete organization-administrator
 
-List groups in an organization
+Remove an administrator from an Organization
 
 ```
-lagoon list organization groups [flags]
+lagoon delete organization-administrator [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for groups
-  -O, --name string   Name of the organization to list associated groups for
+  -E, --email string               Email address of the user
+  -h, --help                       help for organization-administrator
+  -O, --organization-name string   Name of the organization
+      --owner                      Set the user as an administrator of the organization
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +34,5 @@ lagoon list organization groups [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 
