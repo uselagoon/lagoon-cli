@@ -1,15 +1,22 @@
-## lagoon list organization organizations
+## lagoon add organization-administrator
 
-List all organizations
+Add an administrator to an Organization
+
+### Synopsis
+
+Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers
 
 ```
-lagoon list organization organizations [flags]
+lagoon add organization-administrator [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for organizations
+  -E, --email string               Email address of the user
+  -h, --help                       help for organization-administrator
+  -O, --organization-name string   Name of the organization
+      --owner                      Set the user as an owner of the organization
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +38,5 @@ lagoon list organization organizations [flags]
 
 ### SEE ALSO
 
-* [lagoon list organization](lagoon_list_organization.md)	 - List all organizations projects, groups, deploy targets or users
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 

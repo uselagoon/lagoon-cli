@@ -1,11 +1,21 @@
-## lagoon list organization
+## lagoon delete organization-project
 
-List all organizations projects, groups, deploy targets or users
+Remove a project from an Organization
+
+### Synopsis
+
+Removes a project from an Organization, but does not delete the project.
+This is used by platform administrators to be able to reset a project.
+
+```
+lagoon delete organization-project [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for organization
+  -h, --help                       help for organization-project
+  -O, --organization-name string   Name of the Organization to remove the project from
 ```
 
 ### Options inherited from parent commands
@@ -27,10 +37,5 @@ List all organizations projects, groups, deploy targets or users
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
-* [lagoon list organization deploytargets](lagoon_list_organization_deploytargets.md)	 - List deploy targets in an organization
-* [lagoon list organization groups](lagoon_list_organization_groups.md)	 - List groups in an organization
-* [lagoon list organization organizations](lagoon_list_organization_organizations.md)	 - List all organizations
-* [lagoon list organization projects](lagoon_list_organization_projects.md)	 - List projects in an organization
-* [lagoon list organization users](lagoon_list_organization_users.md)	 - List users in an organization
+* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 

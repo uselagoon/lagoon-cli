@@ -1,18 +1,15 @@
-## lagoon delete organization user
+## lagoon list organizations
 
-Remove a user to an Organization
+List all organizations
 
 ```
-lagoon delete organization user [flags]
+lagoon list organizations [flags]
 ```
 
 ### Options
 
 ```
-  -E, --email string   Email address of the user
-  -h, --help           help for user
-  -O, --name string    Name of the organization
-      --owner          Set the user as an owner of the organization
+  -h, --help   help for organizations
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +31,5 @@ lagoon delete organization user [flags]
 
 ### SEE ALSO
 
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

@@ -13,6 +13,7 @@ lagoon add user [flags]
   -F, --firstName string   First name of the user
   -h, --help               help for user
   -L, --lastName string    Last name of the user
+      --reset-password     Send a password reset email
 ```
 
 ### Options inherited from parent commands

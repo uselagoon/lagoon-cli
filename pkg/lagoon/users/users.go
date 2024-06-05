@@ -10,17 +10,18 @@ import (
 )
 
 // AddUser function
-func (u *Users) AddUser(user api.User) ([]byte, error) {
+func (u *Users) AddUser(user api.User, resetPassword bool) ([]byte, error) {
 	customReq := api.CustomRequest{
-		Query: `mutation addUser ($firstname: String, $lastname: String, $email: String!) {
-				addUser(input:{firstName: $firstname, lastName: $lastname, email: $email}) {
+		Query: `mutation addUser ($firstname: String, $lastname: String, $email: String!, $resetPassword: Boolean) {
+				addUser(input:{firstName: $firstname, lastName: $lastname, email: $email, resetPassword: $resetPassword}) {
 					id
 				}
 			}`,
 		Variables: map[string]interface{}{
-			"firstname": user.FirstName,
-			"lastname":  user.LastName,
-			"email":     user.Email,
+			"firstname":     user.FirstName,
+			"lastname":      user.LastName,
+			"email":         user.Email,
+			"resetPassword": resetPassword,
 		},
 		MappedResult: "addUser",
 	}
@@ -132,6 +133,23 @@ func (u *Users) ListUsers(groupName string) ([]byte, error) {
 		return []byte(""), err
 	}
 	returnResult, err := processUserList(listUsers)
+	if err != nil {
+		return []byte(""), err
+	}
+	return returnResult, nil
+}
+
+func (u *Users) ResetPassword(email string) ([]byte, error) {
+	customReq := api.CustomRequest{
+		Query: `mutation resetPassword ($email: String!) {
+				resetUserPassword (input: { user: { email: $email } })
+		  }`,
+		Variables: map[string]interface{}{
+			"email": email,
+		},
+		MappedResult: "resetUserPassword",
+	}
+	returnResult, err := u.api.Request(customReq)
 	if err != nil {
 		return []byte(""), err
 	}

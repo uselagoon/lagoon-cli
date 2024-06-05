@@ -1,11 +1,16 @@
 ## lagoon delete organization
 
-Add an organization, or add a group/project to an organization
+Delete an organization
+
+```
+lagoon delete organization [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for organization
+  -h, --help                       help for organization
+  -O, --organization-name string   Name of the organization to delete
 ```
 
 ### Options inherited from parent commands
@@ -28,8 +33,4 @@ Add an organization, or add a group/project to an organization
 ### SEE ALSO
 
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
-* [lagoon delete organization deploytarget](lagoon_delete_organization_deploytarget.md)	 - Remove a deploy target from an Organization
-* [lagoon delete organization organization](lagoon_delete_organization_organization.md)	 - Delete an organization
-* [lagoon delete organization project](lagoon_delete_organization_project.md)	 - Remove a project from an Organization
-* [lagoon delete organization user](lagoon_delete_organization_user.md)	 - Remove a user to an Organization
 
