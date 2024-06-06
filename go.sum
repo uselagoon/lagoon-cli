@@ -66,10 +66,6 @@ github.com/stretchr/testify v1.7.4/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/uselagoon/machinery v0.0.20 h1:4pGGX/Y5UwbT86TU9vaP7QyjGk8wvikUVDvkTpesvbs=
-github.com/uselagoon/machinery v0.0.20/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
-github.com/uselagoon/machinery v0.0.21-0.20240418053856-64532c59a80d h1:tBLPNkjps1mBkCupbvaWsko+ZuQO157RnWLTWON044k=
-github.com/uselagoon/machinery v0.0.21-0.20240418053856-64532c59a80d/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
 github.com/uselagoon/machinery v0.0.21 h1:IdFBi6eWi8x3kgVPK+HSzdsJPJpynk7hAE8eIVES8BM=
 github.com/uselagoon/machinery v0.0.21/go.mod h1:NbgtEofjK2XY0iUpk9aMYazIo+W/NI56+UF72jv8zVY=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
