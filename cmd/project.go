@@ -81,11 +81,11 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		gitUrl, err := cmd.Flags().GetString("gitUrl")
+		gitUrl, err := cmd.Flags().GetString("git-url")
 		if err != nil {
 			return err
 		}
-		productionEnvironment, err := cmd.Flags().GetString("productionEnvironment")
+		productionEnvironment, err := cmd.Flags().GetString("production-environment")
 		if err != nil {
 			return err
 		}
@@ -93,7 +93,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		standbyProductionEnvironment, err := cmd.Flags().GetString("standbyProductionEnvironment")
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
 		if err != nil {
 			return err
 		}
@@ -105,19 +105,19 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshiftProjectPattern")
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
 		if err != nil {
 			return err
 		}
-		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("developmentEnvironmentsLimit")
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storageCalc")
+		storageCalc, err := cmd.Flags().GetUint("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("autoIdle")
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
 		if err != nil {
 			return err
 		}
@@ -125,7 +125,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		privateKey, err := cmd.Flags().GetString("privateKey")
+		privateKey, err := cmd.Flags().GetString("private-key")
 		if err != nil {
 			return err
 		}
@@ -133,7 +133,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		routerPattern, err := cmd.Flags().GetString("routerPattern")
+		routerPattern, err := cmd.Flags().GetString("router-pattern")
 		if err != nil {
 			return err
 		}
@@ -538,41 +538,83 @@ func init() {
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
 	// @TODO this seems needlessly busy, maybe see if cobra supports grouping flags and applying them to commands easier?
-	updateProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "g", "", "GitURL of the project")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "privateKey", "I", "", "Private key to use for the project")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "", "", "GitURL of the project")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "git-url", "g", "", "Git URL of the project")
+	updateProjectCmd.Flags().MarkDeprecated("gitUrl", "please use --git-url instead")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "privateKey", "", "", "Private key to use for the project")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "private-key", "I", "", "Private key to use for the project")
+	updateProjectCmd.Flags().MarkDeprecated("privateKey", "please use --private-key instead")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.RouterPattern, "routerPattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.RouterPattern, "routerPattern", "", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.RouterPattern, "router-pattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	updateProjectCmd.Flags().MarkDeprecated("routerPattern", "please use --router-pattern instead")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.Branches, "branches", "b", "", "Which branches should be deployed")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.Name, "name", "N", "", "Change the name of the project by specifying a new name (careful!)")
 	updateProjectCmd.Flags().StringVarP(&projectPatch.Pullrequests, "pullrequests", "m", "", "Which Pull Requests should be deployed")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.ProductionEnvironment, "productionEnvironment", "E", "", "Which environment(the name) should be marked as the production environment")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.ProductionEnvironment, "productionEnvironment", "", "", "Which environment(the name) should be marked as the production environment")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.ProductionEnvironment, "production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
+	updateProjectCmd.Flags().MarkDeprecated("productionEnvironment", "please use --production-environment instead")
 	updateProjectCmd.Flags().StringVar(&projectPatch.StandbyProductionEnvironment, "standbyProductionEnvironment", "", "Which environment(the name) should be marked as the standby production environment")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.OpenshiftProjectPattern, "openshiftProjectPattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().StringVar(&projectPatch.StandbyProductionEnvironment, "standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
+	updateProjectCmd.Flags().MarkDeprecated("standbyProductionEnvironment", "please use --standby-production-environment instead")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.OpenshiftProjectPattern, "openshiftProjectPattern", "", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().StringVarP(&projectPatch.OpenshiftProjectPattern, "openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().MarkDeprecated("openshiftProjectPattern", "please use --openshift-project-pattern instead")
 
-	updateProjectCmd.Flags().IntVarP(&projectAutoIdle, "autoIdle", "a", 0, "Auto idle setting of the project")
-	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "C", 0, "Should storage for this environment be calculated")
-	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
+	updateProjectCmd.Flags().IntVarP(&projectAutoIdle, "autoIdle", "", 0, "Auto idle setting of the project")
+	updateProjectCmd.Flags().IntVarP(&projectAutoIdle, "auto-idle", "a", 0, "Auto idle setting of the project")
+	updateProjectCmd.Flags().MarkDeprecated("autoIdle", "please use --auto-idle instead")
+	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "", 0, "Should storage for this environment be calculated")
+	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storage-calc", "C", 0, "Should storage for this environment be calculated")
+	updateProjectCmd.Flags().MarkDeprecated("storageCalc", "please use --storage-calc instead")
+	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "", 0, "How many environments can be deployed at one time")
+	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "development-environments-limit", "L", 0, "How many environments can be deployed at one time")
+	updateProjectCmd.Flags().MarkDeprecated("developmentEnvironmentsLimit", "please use --development-environments-limit instead")
 	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 	updateProjectCmd.Flags().IntVarP(&projectDeploymentsDisabled, "deploymentsDisabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+	updateProjectCmd.Flags().IntVarP(&projectDeploymentsDisabled, "deployments-disabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+	updateProjectCmd.Flags().MarkDeprecated("deploymentsDisabled", "please use --deployments-disabled instead")
 
 	updateProjectCmd.Flags().IntVarP(&factsUi, "factsUi", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().IntVarP(&factsUi, "facts-ui", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().MarkDeprecated("factsUi", "please use --facts-ui instead")
 	updateProjectCmd.Flags().IntVarP(&problemsUi, "problemsUi", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().IntVarP(&problemsUi, "problems-ui", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().MarkDeprecated("problemsUi", "please use --problems-ui instead")
 
 	addProjectCmd.Flags().StringP("json", "j", "", "JSON string to patch")
 
-	addProjectCmd.Flags().StringP("gitUrl", "g", "", "GitURL of the project")
-	addProjectCmd.Flags().StringP("privateKey", "I", "", "Private key to use for the project")
+	addProjectCmd.Flags().StringP("gitUrl", "", "", "GitURL of the project")
+	addProjectCmd.Flags().StringP("git-url", "g", "", "GitURL of the project")
+	addProjectCmd.Flags().MarkDeprecated("gitUrl", "please use --git-url instead")
+	addProjectCmd.Flags().StringP("privateKey", "", "", "Private key to use for the project")
+	addProjectCmd.Flags().StringP("private-key", "I", "", "Private key to use for the project")
+	addProjectCmd.Flags().MarkDeprecated("privateKey", "please use --private-key instead")
 	addProjectCmd.Flags().StringP("subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	addProjectCmd.Flags().StringP("routerPattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	addProjectCmd.Flags().StringP("routerPattern", "", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	addProjectCmd.Flags().StringP("router-pattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	addProjectCmd.Flags().MarkDeprecated("routerPattern", "please use --router-pattern instead")
 	addProjectCmd.Flags().StringP("branches", "b", "", "Which branches should be deployed")
 	addProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
-	addProjectCmd.Flags().StringP("productionEnvironment", "E", "", "Which environment(the name) should be marked as the production environment")
+	addProjectCmd.Flags().StringP("productionEnvironment", "", "", "Which environment(the name) should be marked as the production environment")
+	addProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
+	addProjectCmd.Flags().MarkDeprecated("productionEnvironment", "please use --production-environment instead")
 	addProjectCmd.Flags().String("standbyProductionEnvironment", "", "Which environment(the name) should be marked as the standby production environment")
-	addProjectCmd.Flags().StringP("openshiftProjectPattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
+	addProjectCmd.Flags().MarkDeprecated("standbyProductionEnvironment", "please use --standby-production-environment instead")
+	addProjectCmd.Flags().StringP("openshiftProjectPattern", "", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().MarkDeprecated("openshiftProjectPattern", "please use --openshift-project-pattern instead")
 
-	addProjectCmd.Flags().UintP("autoIdle", "a", 0, "Auto idle setting of the project")
-	addProjectCmd.Flags().UintP("storageCalc", "C", 0, "Should storage for this environment be calculated")
-	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
+	addProjectCmd.Flags().UintP("autoIdle", "", 0, "Auto idle setting of the project")
+	addProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
+	addProjectCmd.Flags().MarkDeprecated("autoIdle", "please use --auto-idle instead")
+	addProjectCmd.Flags().UintP("storageCalc", "", 0, "Should storage for this environment be calculated")
+	addProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	addProjectCmd.Flags().MarkDeprecated("storageCalc", "please use --storage-calc instead")
+	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "", 0, "How many environments can be deployed at one time")
+	addProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
+	addProjectCmd.Flags().MarkDeprecated("developmentEnvironmentsLimit", "please use --development-environments-limit instead")
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
