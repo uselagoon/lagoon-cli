@@ -820,18 +820,9 @@ var listProjectGroupsCmd = &cobra.Command{
 	},
 }
 
-var listOrganizationCmd = &cobra.Command{
-	Use:     "organization",
-	Aliases: []string{"o"},
-	Short:   "List all organizations projects, groups, deploy targets or users",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current)
-	},
-}
-
 var listOrganizationProjectsCmd = &cobra.Command{
-	Use:     "projects",
-	Aliases: []string{"p"},
+	Use:     "organization-projects",
+	Aliases: []string{"org-p"},
 	Short:   "List projects in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -841,7 +832,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -889,8 +880,8 @@ var listOrganizationProjectsCmd = &cobra.Command{
 }
 
 var listOrganizationGroupsCmd = &cobra.Command{
-	Use:     "groups",
-	Aliases: []string{"g"},
+	Use:     "organization-groups",
+	Aliases: []string{"org-g"},
 	Short:   "List groups in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -900,7 +891,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -948,8 +939,8 @@ var listOrganizationGroupsCmd = &cobra.Command{
 }
 
 var listOrganizationDeployTargetsCmd = &cobra.Command{
-	Use:     "deploytargets",
-	Aliases: []string{"d"},
+	Use:     "organization-deploytargets",
+	Aliases: []string{"org-dt"},
 	Short:   "List deploy targets in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -959,7 +950,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -983,7 +974,6 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
 		}
@@ -1010,8 +1000,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 }
 
 var ListOrganizationUsersCmd = &cobra.Command{
-	Use:     "users",
-	Aliases: []string{"u"},
+	Use:     "organization-users",
+	Aliases: []string{"org-u"},
 	Short:   "List users in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -1021,7 +1011,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -1132,22 +1122,21 @@ func init() {
 	listCmd.AddCommand(listDeployTargetConfigsCmd)
 	listCmd.AddCommand(listAllUsersCmd)
 	listCmd.AddCommand(listUsersGroupsCmd)
+	listCmd.AddCommand(listOrganizationProjectsCmd)
+	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(listOrganizationGroupsCmd)
+	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
+	listCmd.AddCommand(listOrganizationsCmd)
 	listAllUsersCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
 	listUsersGroupsCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
-	listCmd.AddCommand(listOrganizationCmd)
-	listOrganizationCmd.AddCommand(listOrganizationProjectsCmd)
-	listOrganizationCmd.AddCommand(ListOrganizationUsersCmd)
-	listOrganizationCmd.AddCommand(listOrganizationGroupsCmd)
-	listOrganizationCmd.AddCommand(listOrganizationDeployTargetsCmd)
-	listOrganizationCmd.AddCommand(listOrganizationsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in")
 	listGroupProjectsCmd.Flags().StringP("name", "N", "", "Name of the group to list projects in")
 	listGroupProjectsCmd.Flags().BoolP("all-projects", "", false, "All projects")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
-	listOrganizationProjectsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated users for")
-	listOrganizationGroupsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated groups for")
-	listOrganizationDeployTargetsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
+	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
+	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
 }

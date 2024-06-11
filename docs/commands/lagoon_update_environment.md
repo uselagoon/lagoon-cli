@@ -12,9 +12,9 @@ lagoon update environment [flags]
   -a, --auto-idle uint            Auto idle setting of the environment (default 1)
       --deploy-base-ref string    Updates the deploy base ref for the selected environment
       --deploy-head-ref string    Updates the deploy head ref for the selected environment
-  -d, --deploy-target uint        Reference to OpenShift Object this Environment should be deployed to
       --deploy-title string       Updates the deploy title for the selected environment
       --deploy-type string        Update the deploy type - branch | pullrequest | promote
+  -d, --deploytarget uint         Reference to OpenShift Object this Environment should be deployed to
       --environment-type string   Update the environment type - production | development
   -h, --help                      help for environment
       --namespace string          Update the namespace for the selected environment

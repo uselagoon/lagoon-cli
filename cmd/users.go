@@ -514,10 +514,11 @@ var getAllUserKeysCmd = &cobra.Command{
 	},
 }
 
-var addUserToOrganizationCmd = &cobra.Command{
-	Use:     "user",
-	Aliases: []string{"u"},
-	Short:   "Add a user to an Organization",
+var addAdministratorToOrganizationCmd = &cobra.Command{
+	Use:     "organization-administrator",
+	Aliases: []string{"org-admin"},
+	Short:   "Add an administrator to an Organization",
+	Long:    "Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -526,18 +527,16 @@ var addUserToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
-			return err
-		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
 			return err
 		}
 		userEmail, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("User email", userEmail); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "User email", userEmail); err != nil {
 			return err
 		}
 		owner, err := cmd.Flags().GetBool("owner")
@@ -583,10 +582,10 @@ var addUserToOrganizationCmd = &cobra.Command{
 	},
 }
 
-var RemoveUserFromOrganization = &cobra.Command{
-	Use:     "user",
-	Aliases: []string{"u"},
-	Short:   "Remove a user to an Organization",
+var removeAdministratorFromOrganizationCmd = &cobra.Command{
+	Use:     "organization-administrator",
+	Aliases: []string{"org-admin"},
+	Short:   "Remove an administrator from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -595,7 +594,8 @@ var RemoveUserFromOrganization = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -624,9 +624,7 @@ var RemoveUserFromOrganization = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		if err != nil {
-			return err
-		}
+		handleError(err)
 
 		userInput := ls.AddUserToOrganizationInput{
 			User:         ls.UserInput{Email: userEmail},
@@ -638,9 +636,7 @@ var RemoveUserFromOrganization = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
-			if err != nil {
-				return err
-			}
+			handleError(err)
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
@@ -718,11 +714,11 @@ func init() {
 	updateUserCmd.Flags().StringP("current-email", "C", "", "Current email address of the user")
 	getUserKeysCmd.Flags().StringP("email", "E", "", "New email address of the user")
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
-	addUserToOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization")
-	addUserToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
-	addUserToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
-	RemoveUserFromOrganization.Flags().StringP("name", "O", "", "Name of the organization")
-	RemoveUserFromOrganization.Flags().StringP("email", "E", "", "Email address of the user")
-	RemoveUserFromOrganization.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	addAdministratorToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
+	addAdministratorToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addAdministratorToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	removeAdministratorFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
+	removeAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	removeAdministratorFromOrganizationCmd.Flags().Bool("owner", false, "Set the user as an administrator of the organization")
 	resetPasswordCmd.Flags().StringP("email", "E", "", "Email address of the user")
 }

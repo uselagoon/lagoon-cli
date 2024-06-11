@@ -1,16 +1,16 @@
-## lagoon delete organization project
+## lagoon list organization-users
 
-Remove a project from an Organization
+List users in an organization
 
 ```
-lagoon delete organization project [flags]
+lagoon list organization-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for project
-  -O, --name string   Name of the Organization to remove the project from
+  -h, --help                       help for organization-users
+  -O, --organization-name string   Name of the organization to list associated users for
 ```
 
 ### Options inherited from parent commands
@@ -32,5 +32,5 @@ lagoon delete organization project [flags]
 
 ### SEE ALSO
 
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 

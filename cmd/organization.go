@@ -11,7 +11,7 @@ import (
 	s "github.com/uselagoon/machinery/api/schema"
 )
 
-var addOrgCmd = &cobra.Command{
+var addOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
 	Short:   "Add a new organization to Lagoon",
@@ -23,7 +23,7 @@ var addOrgCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -95,7 +95,7 @@ var addOrgCmd = &cobra.Command{
 	},
 }
 
-var deleteOrgCmd = &cobra.Command{
+var deleteOrganizationCmd = &cobra.Command{
 	Use:     "organization",
 	Aliases: []string{"o"},
 	Short:   "Delete an organization",
@@ -107,7 +107,7 @@ var deleteOrgCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -154,7 +154,7 @@ var updateOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -232,27 +232,16 @@ var updateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	addOrganizationCmd.AddCommand(addOrgCmd)
-	addOrganizationCmd.AddCommand(addGroupToOrganizationCmd)
-	addOrganizationCmd.AddCommand(addProjectToOrganizationCmd)
-	addOrganizationCmd.AddCommand(addDeployTargetToOrganizationCmd)
-	addOrganizationCmd.AddCommand(addUserToOrganizationCmd)
+	addOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
+	addOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
+	addOrganizationCmd.Flags().String("description", "", "Description of the organization")
+	addOrganizationCmd.Flags().Int("project-quota", 0, "Project quota for the organization")
+	addOrganizationCmd.Flags().Int("group-quota", 0, "Group quota for the organization")
+	addOrganizationCmd.Flags().Int("notification-quota", 0, "Notification quota for the organization")
+	addOrganizationCmd.Flags().Int("environment-quota", 0, "Environment quota for the organization")
+	addOrganizationCmd.Flags().Int("route-quota", 0, "Route quota for the organization")
 
-	deleteOrganizationCmd.AddCommand(deleteOrgCmd)
-	deleteOrganizationCmd.AddCommand(RemoveDeployTargetFromOrganizationCmd)
-	deleteOrganizationCmd.AddCommand(RemoveProjectFromOrganizationCmd)
-	deleteOrganizationCmd.AddCommand(RemoveUserFromOrganization)
-
-	addOrgCmd.Flags().StringP("name", "O", "", "Name of the organization")
-	addOrgCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
-	addOrgCmd.Flags().String("description", "", "Description of the organization")
-	addOrgCmd.Flags().Int("project-quota", 0, "Project quota for the organization")
-	addOrgCmd.Flags().Int("group-quota", 0, "Group quota for the organization")
-	addOrgCmd.Flags().Int("notification-quota", 0, "Notification quota for the organization")
-	addOrgCmd.Flags().Int("environment-quota", 0, "Environment quota for the organization")
-	addOrgCmd.Flags().Int("route-quota", 0, "Route quota for the organization")
-
-	updateOrganizationCmd.Flags().StringP("name", "O", "", "Name of the organization to update")
+	updateOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to update")
 	updateOrganizationCmd.Flags().String("friendly-name", "", "Friendly name of the organization")
 	updateOrganizationCmd.Flags().String("description", "", "Description of the organization")
 	updateOrganizationCmd.Flags().Int("project-quota", 0, "Project quota for the organization")
@@ -261,5 +250,5 @@ func init() {
 	updateOrganizationCmd.Flags().Int("environment-quota", 0, "Environment quota for the organization")
 	updateOrganizationCmd.Flags().Int("route-quota", 0, "Route quota for the organization")
 
-	deleteOrgCmd.Flags().StringP("name", "O", "", "Name of the organization to delete")
+	deleteOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to delete")
 }

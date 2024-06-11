@@ -12,7 +12,7 @@ lagoon update project [flags]
   -a, --auto-idle uint                          Auto idle setting of the project
       --availability string                     Availability of the project
   -b, --branches string                         Which branches should be deployed
-      --build-image string                      Build Image for the project
+      --build-image string                      Build Image for the project. Set to 'null' to remove the build image
       --deployments-disabled uint               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
       --development-build-priority uint         Set the priority of the development build
   -L, --development-environments-limit uint     How many environments can be deployed at one time

@@ -326,8 +326,8 @@ var deleteDeployTargetCmd = &cobra.Command{
 }
 
 var addDeployTargetToOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Add a deploy target to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -337,16 +337,16 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		organizationName, err := cmd.Flags().GetString("organization-name")
+		if err != nil {
+			return err
+		}
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
+		if err != nil {
+			return err
+		}
 
-		organizationName, err := cmd.Flags().GetString("name")
-		if err != nil {
-			return err
-		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
-		if err != nil {
-			return err
-		}
-		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 		current := lagoonCLIConfig.Current
@@ -364,7 +364,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		}
 
 		deployTargetInput := ls.AddDeployTargetToOrganizationInput{
-			DeployTarget: deployTarget,
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
@@ -376,8 +376,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"Deploy Target":     deployTargetResponse.Name,
-				"Organization Name": organizationName,
+				"Deploy Target":     deploytarget,
+				"Organization Name": deployTargetResponse.Name,
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
@@ -385,9 +385,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	},
 }
 
-var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+var removeDeployTargetFromOrganizationCmd = &cobra.Command{
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
@@ -398,15 +398,15 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
@@ -425,11 +425,11 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 		}
 
 		deployTargetInput := ls.RemoveDeployTargetFromOrganizationInput{
-			DeployTarget: deployTarget,
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
-		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deployTarget, organization.Name)) {
+		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
 			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
 			if err != nil {
 				return err
@@ -437,7 +437,7 @@ var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
-					"Deploy Target":     deployTarget,
+					"Deploy Target":     deploytarget,
 					"Organization Name": organizationName,
 				},
 			}
@@ -460,14 +460,14 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
-	addDeployTargetToOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	addDeployTargetToOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	addDeployTargetToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
+	addDeployTargetToOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	RemoveDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	RemoveDeployTargetFromOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	removeDeployTargetFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
+	removeDeployTargetFromOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")
