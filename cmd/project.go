@@ -13,30 +13,8 @@ import (
 
 	"github.com/guregu/null"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-var projectPatch api.ProjectPatch
-
-var projectAutoIdle int
-var projectStorageCalc int
-var projectDevelopmentEnvironmentsLimit int
-var projectOpenshift int
-
-func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = &f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.ProjectPatch{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var deleteProjectCmd = &cobra.Command{
 	Use:     "project",
@@ -95,11 +73,11 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		gitUrl, err := cmd.Flags().GetString("gitUrl")
+		gitUrl, err := cmd.Flags().GetString("git-url")
 		if err != nil {
 			return err
 		}
-		productionEnvironment, err := cmd.Flags().GetString("productionEnvironment")
+		productionEnvironment, err := cmd.Flags().GetString("production-environment")
 		if err != nil {
 			return err
 		}
@@ -107,7 +85,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		standbyProductionEnvironment, err := cmd.Flags().GetString("standbyProductionEnvironment")
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
 		if err != nil {
 			return err
 		}
@@ -119,19 +97,19 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshiftProjectPattern")
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
 		if err != nil {
 			return err
 		}
-		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("developmentEnvironmentsLimit")
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storageCalc")
+		storageCalc, err := cmd.Flags().GetUint("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("autoIdle")
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
 		if err != nil {
 			return err
 		}
@@ -139,7 +117,11 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		privateKey, err := cmd.Flags().GetString("privateKey")
+		privateKey, err := cmd.Flags().GetString("private-key")
+		if err != nil {
+			return err
+		}
+		buildImage, err := cmd.Flags().GetString("build-image")
 		if err != nil {
 			return err
 		}
@@ -147,12 +129,12 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		routerPattern, err := cmd.Flags().GetString("routerPattern")
+		routerPattern, err := cmd.Flags().GetString("router-pattern")
 		if err != nil {
 			return err
 		}
 
-		if err := requiredInputCheck("Project name", cmdProjectName, "GitURL", gitUrl, "Production environment", productionEnvironment, "Openshift", strconv.Itoa(int(openshift))); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Openshift", strconv.Itoa(int(openshift))); err != nil {
 			return err
 		}
 
@@ -180,6 +162,7 @@ var addProjectCmd = &cobra.Command{
 			AutoIdle:                     autoIdle,
 			Subfolder:                    subfolder,
 			PrivateKey:                   privateKey,
+			BuildImage:                   buildImage,
 			RouterPattern:                routerPattern,
 		}
 
@@ -730,20 +713,21 @@ func init() {
 
 	addProjectCmd.Flags().StringP("json", "j", "", "JSON string to patch")
 
-	addProjectCmd.Flags().StringP("gitUrl", "g", "", "GitURL of the project")
-	addProjectCmd.Flags().StringP("privateKey", "I", "", "Private key to use for the project")
+	addProjectCmd.Flags().StringP("git-url", "g", "", "GitURL of the project")
+	addProjectCmd.Flags().StringP("private-key", "I", "", "Private key to use for the project")
 	addProjectCmd.Flags().StringP("subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	addProjectCmd.Flags().StringP("routerPattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	addProjectCmd.Flags().StringP("router-pattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
 	addProjectCmd.Flags().StringP("branches", "b", "", "Which branches should be deployed")
 	addProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
-	addProjectCmd.Flags().StringP("productionEnvironment", "E", "", "Which environment(the name) should be marked as the production environment")
-	addProjectCmd.Flags().String("standbyProductionEnvironment", "", "Which environment(the name) should be marked as the standby production environment")
-	addProjectCmd.Flags().StringP("openshiftProjectPattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
+	addProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
+	addProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
 
-	addProjectCmd.Flags().UintP("autoIdle", "a", 0, "Auto idle setting of the project")
-	addProjectCmd.Flags().UintP("storageCalc", "C", 0, "Should storage for this environment be calculated")
-	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
+	addProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
+	addProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	addProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	addProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 
