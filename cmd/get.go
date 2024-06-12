@@ -288,10 +288,8 @@ var getOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
 		if organization.Name == "" {
-			output.RenderInfo(fmt.Sprintf("No organization found for '%s'", organizationName), outputOptions)
-			return nil
+			return fmt.Errorf("error querying organization by name")
 		}
 
 		data := []output.Data{}

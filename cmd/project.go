@@ -81,6 +81,10 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		organizationID, err := cmd.Flags().GetUint("organization-id")
+		if err != nil {
+			return err
+		}
 		gitUrl, err := cmd.Flags().GetString("gitUrl")
 		if err != nil {
 			return err
@@ -168,11 +172,20 @@ var addProjectCmd = &cobra.Command{
 			PrivateKey:                   privateKey,
 			RouterPattern:                routerPattern,
 		}
-
-		if organizationName != "" {
+		// if organizationid is provided, use it over the name
+		if organizationID != 0 {
+			projectInput.Organization = organizationID
+		}
+		// otherwise if name is provided use it
+		if organizationName != "" && organizationID == 0 {
 			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 			if err != nil {
 				return err
+			}
+			// since getorganizationbyname returns null response if an organization doesn't exist
+			// check if the result has a name
+			if organization.Name == "" {
+				return fmt.Errorf("error querying organization by name")
 			}
 			projectInput.Organization = organization.ID
 		}
@@ -510,6 +523,9 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
 		projectInput := s.RemoveProjectFromOrganizationInput{
 			Project:      project.ID,
@@ -576,6 +592,7 @@ func init() {
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
+	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
