@@ -75,6 +75,8 @@ var getProjectCmd = &cobra.Command{
 
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'\n", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		DevEnvironments := 0
@@ -285,6 +287,9 @@ var getProjectKeyCmd = &cobra.Command{
 			debug)
 
 		projectKey, err := l.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
+		if err != nil {
+			return err
+		}
 		projectKeys := []string{projectKey.PublicKey}
 		if projectKey.PrivateKey != "" {
 			projectKeys = append(projectKeys, strings.TrimSuffix(projectKey.PrivateKey, "\n"))
@@ -301,6 +306,8 @@ var getProjectKeyCmd = &cobra.Command{
 
 		if len(dataMain.Data) == 0 {
 			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		if projectKey.PrivateKey != "" {
