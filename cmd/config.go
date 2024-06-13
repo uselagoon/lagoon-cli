@@ -164,6 +164,14 @@ var configAddCmd = &cobra.Command{
 			if lagoonConfig.SSHKey != "" {
 				lc.SSHKey = lagoonConfig.SSHKey
 			}
+			// check identity files flag
+			identityFiles, err := cmd.Flags().GetStringSlice("publickey-identityfile")
+			if err != nil {
+				return err
+			}
+			if identityFiles != nil {
+				lc.PublicKeyIdentities = identityFiles
+			}
 			lagoonCLIConfig.Lagoons[lagoonConfig.Lagoon] = lc
 			if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 				return fmt.Errorf("couldn't write config: %v", err)
@@ -314,6 +322,8 @@ func init() {
 		"Lagoon Kibana URL (https://logs.amazeeio.cloud)")
 	configAddCmd.Flags().StringVarP(&lagoonSSHKey, "ssh-key", "", "",
 		"SSH Key to use for this cluster for generating tokens")
+	configAddCmd.Flags().StringSliceP("publickey-identityfile", "", []string{},
+		"Specific public key identity files to use when doing ssh-agent checks (support multiple)")
 	configLagoonsCmd.Flags().BoolVarP(&fullConfigList, "show-full", "", false,
 		"Show full config output when listing Lagoon configurations")
 	configFeatureSwitch.Flags().StringVarP(&updateCheck, "disable-update-check", "", "",

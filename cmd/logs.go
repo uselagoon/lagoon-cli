@@ -112,7 +112,7 @@ func getSSHClientConfig(environmentName string) (*ssh.ClientConfig,
 		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
 	}
 	// configure an SSH client session
-	authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
+	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 	return &ssh.ClientConfig{
 		User:            cmdProjectName + "-" + environmentName,
 		Auth:            []ssh.AuthMethod{authMethod},
