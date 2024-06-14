@@ -362,6 +362,9 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
 		deployTargetInput := ls.AddDeployTargetToOrganizationInput{
 			DeployTarget: deploytarget,
@@ -422,6 +425,9 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
 		}
 
 		deployTargetInput := ls.RemoveDeployTargetFromOrganizationInput{

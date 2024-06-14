@@ -849,11 +849,14 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
-		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), org.ID, lc)
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
+		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), organization.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -908,11 +911,14 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
-		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), org.ID, lc)
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
+		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), organization.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -1030,6 +1036,9 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
 		if err != nil {
 			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
 		}
 		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
 		if err != nil {

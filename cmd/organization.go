@@ -128,6 +128,9 @@ var deleteOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 		if yesNo(fmt.Sprintf("You are attempting to delete organization '%s', are you sure?", organization.Name)) {
 			_, err := l.DeleteOrganization(context.TODO(), organization.ID, lc)
 			if err != nil {
@@ -159,9 +162,6 @@ var updateOrganizationCmd = &cobra.Command{
 			return err
 		}
 		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
-		}
-		if err != nil {
 			return err
 		}
 		organizationFriendlyName, err := cmd.Flags().GetString("friendly-name")
@@ -205,6 +205,9 @@ var updateOrganizationCmd = &cobra.Command{
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
 		}
 		organizationInput := s.UpdateOrganizationPatchInput{
 			Description:       nullStrCheck(organizationDescription),

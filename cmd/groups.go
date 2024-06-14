@@ -73,6 +73,9 @@ var addGroupCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+			if organization.Name == "" {
+				return fmt.Errorf("error querying organization by name")
+			}
 			groupInput := ls.AddGroupToOrganizationInput{
 				Name:         groupName,
 				Organization: organization.ID,

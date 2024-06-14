@@ -557,6 +557,9 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
 		userInput := ls.AddUserToOrganizationInput{
 			User:         ls.UserInput{Email: userEmail},
@@ -624,7 +627,12 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			debug)
 
 		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
 		userInput := ls.AddUserToOrganizationInput{
 			User:         ls.UserInput{Email: userEmail},
