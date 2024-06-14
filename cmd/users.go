@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -33,7 +33,7 @@ func parseUser(flags pflag.FlagSet) api.User {
 	return parsedFlags
 }
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (ls.AddSSHKeyInput, error) {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (schema.AddSSHKeyInput, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := os.ReadFile(sshPubKey) // just pass the file name
@@ -41,23 +41,23 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyValue = string(b)
 	}
 	splitKey := strings.Split(keyValue, " ")
-	var keyType ls.SSHKeyType
+	var keyType schema.SSHKeyType
 	var err error
 
 	// will fail if value is not right
 	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
-		keyType = ls.SSHRsa
+		keyType = schema.SSHRsa
 	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
-		keyType = ls.SSHEd25519
+		keyType = schema.SSHEd25519
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
-		keyType = ls.SSHECDSA256
+		keyType = schema.SSHECDSA256
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
-		keyType = ls.SSHECDSA384
+		keyType = schema.SSHECDSA384
 	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
-		keyType = ls.SSHECDSA521
+		keyType = schema.SSHECDSA521
 	} else {
 		// return error stating key type not supported
-		keyType = ls.SSHRsa
+		keyType = schema.SSHRsa
 		err = fmt.Errorf(fmt.Sprintf("SSH key type %s not supported", splitKey[0]))
 	}
 
@@ -69,8 +69,8 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyName = userEmail
 		output.RenderInfo("no name provided, using email address as key name", outputOptions)
 	}
-	SSHKeyInput := ls.AddSSHKeyInput{
-		SSHKey: ls.SSHKey{
+	SSHKeyInput := schema.AddSSHKeyInput{
+		SSHKey: schema.SSHKey{
 			KeyType:  keyType,
 			KeyValue: stripNewLines(splitKey[1]),
 			Name:     keyName,
@@ -122,13 +122,13 @@ var addUserCmd = &cobra.Command{
 			&token,
 			debug)
 
-		userInput := &ls.AddUserInput{
+		userInput := &schema.AddUserInput{
 			FirstName:     firstName,
 			LastName:      LastName,
 			Email:         email,
 			ResetPassword: resetPassword,
 		}
-		user, err := l.AddUser(context.TODO(), userInput, lc)
+		user, err := lagoon.AddUser(context.TODO(), userInput, lc)
 		if err != nil {
 			return err
 		}
@@ -206,7 +206,7 @@ Add key by defining key value, but not specifying a key name (will default to tr
 		if err != nil {
 			return err
 		}
-		result, err := l.AddSSHKey(context.TODO(), &userSSHKey, lc)
+		result, err := lagoon.AddSSHKey(context.TODO(), &userSSHKey, lc)
 		if err != nil {
 			return err
 		}
@@ -252,7 +252,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete SSH key ID:'%d', are you sure?", sshKeyID)) {
-			_, err := l.RemoveSSHKey(context.TODO(), sshKeyID, lc)
+			_, err := lagoon.RemoveSSHKey(context.TODO(), sshKeyID, lc)
 			if err != nil {
 				return err
 			}
@@ -294,11 +294,11 @@ var deleteUserCmd = &cobra.Command{
 			&token,
 			debug)
 
-		deleteUserInput := &ls.DeleteUserInput{
-			User: ls.UserInput{Email: emailAddress},
+		deleteUserInput := &schema.DeleteUserInput{
+			User: schema.UserInput{Email: emailAddress},
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete user with email address '%s', are you sure?", emailAddress)) {
-			_, err := l.DeleteUser(context.TODO(), deleteUserInput, lc)
+			_, err := lagoon.DeleteUser(context.TODO(), deleteUserInput, lc)
 			if err != nil {
 				return err
 			}
@@ -358,18 +358,18 @@ var updateUserCmd = &cobra.Command{
 			&token,
 			debug)
 
-		currentUser := &ls.UpdateUserInput{
-			User: ls.UserInput{
+		currentUser := &schema.UpdateUserInput{
+			User: schema.UserInput{
 				Email: strings.ToLower(currentEmail),
 			},
-			Patch: ls.UpdateUserPatchInput{
+			Patch: schema.UpdateUserPatchInput{
 				Email:     nullStrCheck(strings.ToLower(emailAddress)),
 				FirstName: nullStrCheck(firstName),
 				LastName:  nullStrCheck(lastName),
 			},
 		}
 
-		user, err := l.UpdateUser(context.TODO(), currentUser, lc)
+		user, err := lagoon.UpdateUser(context.TODO(), currentUser, lc)
 		if err != nil {
 			return err
 		}
@@ -415,7 +415,7 @@ var getUserKeysCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		userKeys, err := l.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
+		userKeys, err := lagoon.GetUserSSHKeysByEmail(context.TODO(), userEmail, lc)
 		if err != nil {
 			return err
 		}
@@ -472,16 +472,16 @@ var getAllUserKeysCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		groupMembers, err := l.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
+		groupMembers, err := lagoon.ListAllGroupMembersWithKeys(context.TODO(), groupName, lc)
 		if err != nil {
 			return err
 		}
 
-		var userGroups []ls.AddSSHKeyInput
+		var userGroups []schema.AddSSHKeyInput
 		for _, group := range *groupMembers {
 			for _, member := range group.Members {
 				for _, key := range member.User.SSHKeys {
-					userGroups = append(userGroups, ls.AddSSHKeyInput{SSHKey: key, UserEmail: member.User.Email})
+					userGroups = append(userGroups, schema.AddSSHKeyInput{SSHKey: key, UserEmail: member.User.Email})
 				}
 			}
 		}
@@ -553,7 +553,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -561,13 +561,13 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 
-		userInput := ls.AddUserToOrganizationInput{
-			User:         ls.UserInput{Email: userEmail},
+		userInput := schema.AddUserToOrganizationInput{
+			User:         schema.UserInput{Email: userEmail},
 			Organization: organization.ID,
 			Owner:        owner,
 		}
 
-		orgUser := ls.Organization{}
+		orgUser := schema.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
 		if err != nil {
 			return err
@@ -626,7 +626,7 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -634,13 +634,13 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 
-		userInput := ls.AddUserToOrganizationInput{
-			User:         ls.UserInput{Email: userEmail},
+		userInput := schema.AddUserToOrganizationInput{
+			User:         schema.UserInput{Email: userEmail},
 			Organization: organization.ID,
 			Owner:        owner,
 		}
 
-		orgUser := ls.Organization{}
+		orgUser := schema.Organization{}
 
 		if yesNo(fmt.Sprintf("You are attempting to remove user '%s' from organization '%s'. This removes the users ability to view or manage the organizations groups, projects, & notifications, are you sure?", userEmail, organization.Name)) {
 			err = lc.RemoveUserFromOrganization(context.TODO(), &userInput, &orgUser)
@@ -687,12 +687,12 @@ var resetPasswordCmd = &cobra.Command{
 			&token,
 			debug)
 
-		resetPasswordInput := ls.ResetUserPasswordInput{
-			User: ls.UserInput{Email: userEmail},
+		resetPasswordInput := schema.ResetUserPasswordInput{
+			User: schema.UserInput{Email: userEmail},
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to send a password reset email to '%s', are you sure?", userEmail)) {
-			_, err := l.ResetUserPassword(context.TODO(), &resetPasswordInput, lc)
+			_, err := lagoon.ResetUserPassword(context.TODO(), &resetPasswordInput, lc)
 			if err != nil {
 				return err
 			}

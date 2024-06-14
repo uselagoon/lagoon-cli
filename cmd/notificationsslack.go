@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -57,14 +57,14 @@ It does not configure a project to send notifications to Slack though, you need 
 				&token,
 				debug)
 
-			notification := ls.AddNotificationSlackInput{
+			notification := schema.AddNotificationSlackInput{
 				Name:         name,
 				Webhook:      webhook,
 				Channel:      channel,
 				Organization: &organizationID,
 			}
 
-			result, err := l.AddNotificationSlack(context.TODO(), &notification, lc)
+			result, err := lagoon.AddNotificationSlack(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ It does not configure a project to send notifications to Slack though, you need 
 				returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 			}
 			if result.Organization != nil {
-				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				organization, err := lagoon.GetOrganizationByID(context.TODO(), organizationID, lc)
 				if err != nil {
 					return err
 				}
@@ -130,12 +130,12 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.AddNotificationToProjectInput{
-				NotificationType: ls.SlackNotification,
+			notification := &schema.AddNotificationToProjectInput{
+				NotificationType: schema.SlackNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -173,7 +173,7 @@ var listProjectSlacksCmd = &cobra.Command{
 			&token,
 			debug)
 
-		result, err := l.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
+		result, err := lagoon.GetProjectNotificationSlack(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -225,7 +225,7 @@ var listAllSlacksCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.GetAllNotificationSlack(context.TODO(), lc)
+		result, err := lagoon.GetAllNotificationSlack(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -284,12 +284,12 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.RemoveNotificationFromProjectInput{
-				NotificationType: ls.SlackNotification,
+			notification := &schema.RemoveNotificationFromProjectInput{
+				NotificationType: schema.SlackNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -330,7 +330,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeleteNotificationSlack(context.TODO(), name, lc)
+			result, err := lagoon.DeleteNotificationSlack(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -374,12 +374,12 @@ var updateSlackNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
-		patch := ls.UpdateNotificationSlackPatchInput{
+		patch := schema.UpdateNotificationSlackPatchInput{
 			Name:    nullStrCheck(newname),
 			Webhook: nullStrCheck(webhook),
 			Channel: nullStrCheck(channel),
 		}
-		if patch == (ls.UpdateNotificationSlackPatchInput{}) {
+		if patch == (schema.UpdateNotificationSlackPatchInput{}) {
 			return fmt.Errorf("missing arguments: either channel, webhook, or newname must be defined")
 		}
 
@@ -393,11 +393,11 @@ var updateSlackNotificationCmd = &cobra.Command{
 				&token,
 				debug)
 
-			notification := &ls.UpdateNotificationSlackInput{
+			notification := &schema.UpdateNotificationSlackInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := l.UpdateNotificationSlack(context.TODO(), notification, lc)
+			result, err := lagoon.UpdateNotificationSlack(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}

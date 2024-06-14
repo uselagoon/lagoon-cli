@@ -13,9 +13,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var getTaskByID = &cobra.Command{
@@ -51,7 +51,7 @@ var getTaskByID = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.TaskByID(context.TODO(), taskID, lc)
+		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
 		if err != nil {
 			return err
 		}
@@ -111,7 +111,7 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
+			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
@@ -242,11 +242,11 @@ Direct:
 			&token,
 			debug)
 
-		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		environment, err := l.GetAdvancedTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		environment, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 		if err != nil {
 			return err
 		}
@@ -258,7 +258,7 @@ Direct:
 			}
 		}
 
-		taskResult, err := l.InvokeAdvancedTaskDefinition(context.TODO(), environment.ID, taskId, lc)
+		taskResult, err := lagoon.InvokeAdvancedTaskDefinition(context.TODO(), environment.ID, taskId, lc)
 		if err != nil {
 			return err
 		}
@@ -349,15 +349,15 @@ Path:
 			&token,
 			debug)
 
-		task := ls.Task{
+		task := schema.Task{
 			Name:    taskName,
 			Command: taskCommand,
 			Service: taskService,
 		}
 		fmt.Println(task.Name)
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		taskResult, err := l.AddTask(context.TODO(), environment.ID, task, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		taskResult, err := lagoon.AddTask(context.TODO(), environment.ID, task, lc)
 		if err != nil {
 			return err
 		}
@@ -405,7 +405,7 @@ var uploadFilesToTask = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.UploadFilesForTask(context.TODO(), taskID, files, lc)
+		result, err := lagoon.UploadFilesForTask(context.TODO(), taskID, files, lc)
 		if err != nil {
 			return err
 		}

@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var addOrganizationCmd = &cobra.Command{
@@ -68,7 +68,7 @@ var addOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organizationInput := s.AddOrganizationInput{
+		organizationInput := schema.AddOrganizationInput{
 			Name:              organizationName,
 			FriendlyName:      organizationFriendlyName,
 			Description:       organizationDescription,
@@ -78,7 +78,7 @@ var addOrganizationCmd = &cobra.Command{
 			QuotaEnvironment:  organizationQuotaEnvironment,
 			QuotaRoute:        organizationQuotaRoute,
 		}
-		org := s.Organization{}
+		org := schema.Organization{}
 		err = lc.AddOrganization(context.TODO(), &organizationInput, &org)
 		if err != nil {
 			return err
@@ -124,7 +124,7 @@ var deleteOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -132,7 +132,7 @@ var deleteOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete organization '%s', are you sure?", organization.Name)) {
-			_, err := l.DeleteOrganization(context.TODO(), organization.ID, lc)
+			_, err := lagoon.DeleteOrganization(context.TODO(), organization.ID, lc)
 			if err != nil {
 				return err
 			}
@@ -202,14 +202,14 @@ var updateOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
 		if organization.Name == "" {
 			return fmt.Errorf("error querying organization by name")
 		}
-		organizationInput := s.UpdateOrganizationPatchInput{
+		organizationInput := schema.UpdateOrganizationPatchInput{
 			Description:       nullStrCheck(organizationDescription),
 			FriendlyName:      nullStrCheck(organizationFriendlyName),
 			QuotaProject:      nullIntCheck(organizationQuotaProject),
@@ -218,7 +218,7 @@ var updateOrganizationCmd = &cobra.Command{
 			QuotaEnvironment:  nullIntCheck(organizationQuotaEnvironment),
 			QuotaRoute:        nullIntCheck(organizationQuotaRoute),
 		}
-		result, err := l.UpdateOrganization(context.TODO(), organization.ID, organizationInput, lc)
+		result, err := lagoon.UpdateOrganization(context.TODO(), organization.ID, organizationInput, lc)
 		if err != nil {
 			return err
 		}

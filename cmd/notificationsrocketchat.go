@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -57,14 +57,14 @@ It does not configure a project to send notifications to RocketChat though, you 
 				&token,
 				debug)
 
-			notification := ls.AddNotificationRocketChatInput{
+			notification := schema.AddNotificationRocketChatInput{
 				Name:         name,
 				Webhook:      webhook,
 				Channel:      channel,
 				Organization: &organizationID,
 			}
 
-			result, err := l.AddNotificationRocketChat(context.TODO(), &notification, lc)
+			result, err := lagoon.AddNotificationRocketChat(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 				returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 			}
 			if result.Organization != nil {
-				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				organization, err := lagoon.GetOrganizationByID(context.TODO(), organizationID, lc)
 				if err != nil {
 					return err
 				}
@@ -131,13 +131,13 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 				&token,
 				debug)
 
-			notification := &ls.AddNotificationToProjectInput{
-				NotificationType: ls.RocketChatNotification,
+			notification := &schema.AddNotificationToProjectInput{
+				NotificationType: schema.RocketChatNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
 
-			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -175,7 +175,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		result, err := l.GetProjectNotificationRocketChat(context.TODO(), cmdProjectName, lc)
+		result, err := lagoon.GetProjectNotificationRocketChat(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -227,7 +227,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.GetAllNotificationRocketChat(context.TODO(), lc)
+		result, err := lagoon.GetAllNotificationRocketChat(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -286,12 +286,12 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.RemoveNotificationFromProjectInput{
-				NotificationType: ls.RocketChatNotification,
+			notification := &schema.RemoveNotificationFromProjectInput{
+				NotificationType: schema.RocketChatNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -332,7 +332,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeleteNotificationRocketChat(context.TODO(), name, lc)
+			result, err := lagoon.DeleteNotificationRocketChat(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -376,12 +376,12 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
-		patch := ls.UpdateNotificationRocketChatPatchInput{
+		patch := schema.UpdateNotificationRocketChatPatchInput{
 			Name:    nullStrCheck(newname),
 			Webhook: nullStrCheck(webhook),
 			Channel: nullStrCheck(channel),
 		}
-		if patch == (ls.UpdateNotificationRocketChatPatchInput{}) {
+		if patch == (schema.UpdateNotificationRocketChatPatchInput{}) {
 			return fmt.Errorf("missing arguments: either channel, webhook, or newname must be defined")
 		}
 
@@ -395,11 +395,11 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 				&token,
 				debug)
 
-			notification := &ls.UpdateNotificationRocketChatInput{
+			notification := &schema.UpdateNotificationRocketChatInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := l.UpdateNotificationRocketChat(context.TODO(), notification, lc)
+			result, err := lagoon.UpdateNotificationRocketChat(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}

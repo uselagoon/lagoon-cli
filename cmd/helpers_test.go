@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	ls "github.com/uselagoon/machinery/api/schema"
 	"reflect"
 	"testing"
+
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/guregu/null"
 	"github.com/spf13/pflag"
@@ -173,7 +174,7 @@ func Test_buildVarsToMap(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []ls.EnvKeyValueInput
+		want    []schema.EnvKeyValueInput
 		wantErr bool
 	}{
 		{
@@ -181,7 +182,7 @@ func Test_buildVarsToMap(t *testing.T) {
 			args: args{
 				slice: []string{},
 			},
-			want:    []ls.EnvKeyValueInput{},
+			want:    []schema.EnvKeyValueInput{},
 			wantErr: false,
 		},
 		{
@@ -191,7 +192,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY1=VAL1",
 				},
 			},
-			want: []ls.EnvKeyValueInput{
+			want: []schema.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1",
@@ -206,7 +207,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"FAILKEY",
 				},
 			},
-			want:    []ls.EnvKeyValueInput{},
+			want:    []schema.EnvKeyValueInput{},
 			wantErr: true,
 		},
 		{
@@ -217,7 +218,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY2=VAL2",
 				},
 			},
-			want: []ls.EnvKeyValueInput{
+			want: []schema.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1",
@@ -236,7 +237,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					"KEY1=VAL1==",
 				},
 			},
-			want: []ls.EnvKeyValueInput{
+			want: []schema.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "VAL1==",
@@ -251,7 +252,7 @@ func Test_buildVarsToMap(t *testing.T) {
 					`KEY1=type:thistype,othertype:thisone`,
 				},
 			},
-			want: []ls.EnvKeyValueInput{
+			want: []schema.EnvKeyValueInput{
 				{
 					Name:  "KEY1",
 					Value: "type:thistype,othertype:thisone",

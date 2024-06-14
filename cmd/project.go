@@ -8,9 +8,9 @@ import (
 
 	"strings"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/guregu/null"
 	"github.com/spf13/cobra"
@@ -43,7 +43,7 @@ var deleteProjectCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s', are you sure?", cmdProjectName)) {
-			_, err := l.DeleteProject(context.TODO(), cmdProjectName, lc)
+			_, err := lagoon.DeleteProject(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
@@ -152,7 +152,7 @@ var addProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectInput := ls.AddProjectInput{
+		projectInput := schema.AddProjectInput{
 			Name:                         cmdProjectName,
 			AddOrgOwner:                  orgOwner,
 			GitURL:                       gitUrl,
@@ -176,7 +176,7 @@ var addProjectCmd = &cobra.Command{
 		}
 		// otherwise if name is provided use it
 		if organizationName != "" && organizationID == 0 {
-			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+			organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 			if err != nil {
 				return err
 			}
@@ -188,7 +188,7 @@ var addProjectCmd = &cobra.Command{
 			projectInput.Organization = organization.ID
 		}
 
-		project := ls.Project{}
+		project := schema.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
 		if err != nil {
 			return err
@@ -323,7 +323,7 @@ var updateProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectPatch := ls.UpdateProjectPatchInput{
+		projectPatch := schema.UpdateProjectPatchInput{
 			GitURL:                       nullStrCheck(gitUrl),
 			ProductionEnvironment:        nullStrCheck(productionEnvironment),
 			Openshift:                    nullUintCheck(openshift),
@@ -346,7 +346,7 @@ var updateProjectCmd = &cobra.Command{
 		}
 
 		if availability != "" {
-			ProjectAvailability := ls.ProjectAvailability(strings.ToUpper(availability))
+			ProjectAvailability := schema.ProjectAvailability(strings.ToUpper(availability))
 			projectPatch.Availability = &ProjectAvailability
 		}
 		if autoIdleProvided {
@@ -371,7 +371,7 @@ var updateProjectCmd = &cobra.Command{
 			}
 		}
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -380,7 +380,7 @@ var updateProjectCmd = &cobra.Command{
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
-		projectUpdate, err := l.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
+		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
 		if err != nil {
 			return err
 		}
@@ -431,7 +431,7 @@ var listProjectByMetadata = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		projects, err := l.GetProjectsByMetadata(context.TODO(), key, value, lc)
+		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
 		if err != nil {
 			return err
 		}
@@ -491,7 +491,7 @@ var getProjectMetadata = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		project, err := l.GetProjectMetadata(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetProjectMetadata(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -550,11 +550,11 @@ var updateProjectMetadata = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := l.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
+			projectResult, err := lagoon.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
 			if err != nil {
 				return err
 			}
@@ -606,11 +606,11 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := l.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
+			projectResult, err := lagoon.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
 			if err != nil {
 				return err
 			}
@@ -665,11 +665,11 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -677,13 +677,13 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 
-		projectInput := ls.RemoveProjectFromOrganizationInput{
+		projectInput := schema.RemoveProjectFromOrganizationInput{
 			Project:      project.ID,
 			Organization: organization.ID,
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
-			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
+			_, err := lagoon.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
 			if err != nil {
 				return err
 			}

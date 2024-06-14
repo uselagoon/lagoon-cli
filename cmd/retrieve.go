@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
@@ -51,7 +51,7 @@ You can check the status of the backup using the list backups or get backup comm
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.AddBackupRestore(context.TODO(), backupID, lc)
+			result, err := lagoon.AddBackupRestore(context.TODO(), backupID, lc)
 			if err != nil {
 				if strings.Contains(err.Error(), "Duplicate entry") {
 					// this error reports a lot about the sql backup, need to fix that in Lagoon upstream

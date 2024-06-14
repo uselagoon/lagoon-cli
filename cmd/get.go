@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
@@ -68,7 +68,7 @@ var getProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -163,7 +163,7 @@ This returns information about a deployment, the logs of this build can also be 
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		deployment, err := l.GetDeploymentByName(context.TODO(), cmdProjectName, cmdProjectEnvironment, buildName, showLogs, lc)
+		deployment, err := lagoon.GetDeploymentByName(context.TODO(), cmdProjectName, cmdProjectEnvironment, buildName, showLogs, lc)
 		if err != nil {
 			return err
 		}
@@ -228,11 +228,11 @@ var getEnvironmentCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -286,7 +286,7 @@ var getProjectKeyCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectKey, err := l.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
+		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
 		if err != nil {
 			return err
 		}
@@ -360,7 +360,7 @@ var getOrganizationCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}

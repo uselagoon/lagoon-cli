@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
 	"strconv"
+
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -56,11 +57,11 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		addDeployTargetConfig := &ls.AddDeployTargetConfigInput{
+		addDeployTargetConfig := &schema.AddDeployTargetConfigInput{
 			Project: project.ID,
 			Weight:  weight,
 		}
@@ -74,7 +75,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			addDeployTargetConfig.DeployTarget = deploytarget
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add a deploytarget configuration to project '%s', are you sure?", cmdProjectName)) {
-			deployTargetConfig, err := l.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
+			deployTargetConfig, err := lagoon.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
 			if err != nil {
 				return err
 			}
@@ -153,7 +154,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 			&token,
 			debug)
 
-		updateDeployTargetConfig := &ls.UpdateDeployTargetConfigInput{
+		updateDeployTargetConfig := &schema.UpdateDeployTargetConfigInput{
 			ID:     id,
 			Weight: weight,
 		}
@@ -168,7 +169,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update a deploytarget configuration with id '%d', are you sure?", id)) {
-			deployTargetConfig, err := l.UpdateDeployTargetConfiguration(context.TODO(), updateDeployTargetConfig, lc)
+			deployTargetConfig, err := lagoon.UpdateDeployTargetConfiguration(context.TODO(), updateDeployTargetConfig, lc)
 			if err != nil {
 				return err
 			}
@@ -231,7 +232,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -242,7 +243,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {
-			result, err := l.DeleteDeployTargetConfiguration(context.TODO(), int(id), int(project.ID), lc)
+			result, err := lagoon.DeleteDeployTargetConfiguration(context.TODO(), int(id), int(project.ID), lc)
 			if err != nil {
 				return err
 			}
@@ -279,7 +280,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -288,7 +289,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
-		deployTargetConfigs, err := l.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
+		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
 		if err != nil {
 			return err
 		}

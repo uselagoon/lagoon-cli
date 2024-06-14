@@ -3,9 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"os"
+
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
 	"github.com/spf13/cobra"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
@@ -52,7 +53,7 @@ var sshEnvCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		project, err := l.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}

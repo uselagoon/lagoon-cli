@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 // ListFlags .
@@ -48,7 +48,7 @@ var listProjectsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projects, err := l.ListAllProjects(context.TODO(), lc)
+		projects, err := lagoon.ListAllProjects(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -104,7 +104,7 @@ var listDeployTargetsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		deploytargets, err := l.ListDeployTargets(context.TODO(), lc)
+		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -169,7 +169,7 @@ var listGroupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		groups, err := l.ListAllGroups(context.TODO(), lc)
+		groups, err := lagoon.ListAllGroups(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -229,15 +229,15 @@ var listGroupProjectsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		var groupProjects *[]ls.Group
+		var groupProjects *[]schema.Group
 
 		if listAllProjects {
-			groupProjects, err = l.GetGroupProjects(context.TODO(), "", lc)
+			groupProjects, err = lagoon.GetGroupProjects(context.TODO(), "", lc)
 			if err != nil {
 				return err
 			}
 		} else {
-			groupProjects, err = l.GetGroupProjects(context.TODO(), groupName, lc)
+			groupProjects, err = lagoon.GetGroupProjects(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
@@ -300,7 +300,7 @@ var listEnvironmentsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		environments, err := l.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
+		environments, err := lagoon.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -361,11 +361,11 @@ var listVariablesCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		in := &ls.EnvVariableByProjectEnvironmentNameInput{
+		in := &schema.EnvVariableByProjectEnvironmentNameInput{
 			Project:     cmdProjectName,
 			Environment: cmdProjectEnvironment,
 		}
-		envvars, err := l.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
+		envvars, err := lagoon.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
 		if err != nil {
 			return err
 		}
@@ -437,12 +437,12 @@ var listDeploymentsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
 
-		deployments, err := l.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		deployments, err := lagoon.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 		if err != nil {
 			return err
 		}
@@ -497,12 +497,12 @@ var listTasksCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
 
-		tasks, err := l.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		tasks, err := lagoon.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 		if err != nil {
 			return err
 		}
@@ -539,7 +539,7 @@ var listUsersCmd = &cobra.Command{
 	Short:   "List all users in groups",
 	Long: `List all users in groups in lagoon, this only shows users that are in groups.
 If no group name is provided, all groups are queried.
-Without a group name, this query may time out in large Lagoon installs.`,
+Without a group name, this query may time out in large Lagoon instalschema.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -563,7 +563,7 @@ Without a group name, this query may time out in large Lagoon installs.`,
 		data := []output.Data{}
 		if groupName != "" {
 			// if a groupName is provided, use the groupbyname resolver
-			groupMembers, err := l.ListGroupMembers(context.TODO(), groupName, lc)
+			groupMembers, err := lagoon.ListGroupMembers(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
@@ -577,7 +577,7 @@ Without a group name, this query may time out in large Lagoon installs.`,
 			}
 		} else {
 			// otherwise allgroups query
-			groupMembers, err := l.ListAllGroupMembers(context.TODO(), groupName, lc)
+			groupMembers, err := lagoon.ListAllGroupMembers(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
@@ -627,7 +627,7 @@ This query can take a long time to run if there are a lot of users.`,
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		allUsers, err := l.AllUsers(context.TODO(), ls.AllUsersFilter{
+		allUsers, err := lagoon.AllUsers(context.TODO(), schema.AllUsersFilter{
 			Email: emailAddress,
 		}, lc)
 		if err != nil {
@@ -680,7 +680,7 @@ var listUsersGroupsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		allUsers, err := l.GetUserByEmail(context.TODO(), emailAddress, lc)
+		allUsers, err := lagoon.GetUserByEmail(context.TODO(), emailAddress, lc)
 		if err != nil {
 			return err
 		}
@@ -728,11 +728,11 @@ var listInvokableTasks = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		tasks, err := l.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 		if err != nil {
 			return err
 		}
@@ -790,7 +790,7 @@ var listProjectGroupsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
+		projectGroups, err := lagoon.GetProjectGroups(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -849,14 +849,14 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
 		if organization.Name == "" {
 			return fmt.Errorf("error querying organization by name")
 		}
-		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), organization.ID, lc)
+		orgProjects, err := lagoon.ListProjectsByOrganizationID(context.TODO(), organization.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -911,14 +911,14 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
 		if organization.Name == "" {
 			return fmt.Errorf("error querying organization by name")
 		}
-		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), organization.ID, lc)
+		orgGroups, err := lagoon.ListGroupsByOrganizationID(context.TODO(), organization.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -976,7 +976,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
+		deployTargets, err := lagoon.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
 		if err != nil {
 			return err
 		}
@@ -1033,14 +1033,14 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.Background(), organizationName, lc)
 		if err != nil {
 			return err
 		}
 		if organization.Name == "" {
 			return fmt.Errorf("error querying organization by name")
 		}
-		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
+		users, err := lagoon.UsersByOrganization(context.TODO(), organization.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -1087,7 +1087,7 @@ var listOrganizationsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organizations, err := l.AllOrganizations(context.TODO(), lc)
+		organizations, err := lagoon.AllOrganizations(context.TODO(), lc)
 		if err != nil {
 			return err
 		}

@@ -3,10 +3,11 @@ package cmd
 import (
 	"context"
 	"fmt"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
 	"strings"
+
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -49,14 +50,14 @@ var addVariableCmd = &cobra.Command{
 			&token,
 			debug)
 
-		in := &ls.EnvVariableByNameInput{
+		in := &schema.EnvVariableByNameInput{
 			Project:     cmdProjectName,
 			Environment: cmdProjectEnvironment,
-			Scope:       ls.EnvVariableScope(strings.ToUpper(varScope)),
+			Scope:       schema.EnvVariableScope(strings.ToUpper(varScope)),
 			Name:        varName,
 			Value:       varValue,
 		}
-		envvar, err := l.AddOrUpdateEnvVariableByName(context.TODO(), in, lc)
+		envvar, err := lagoon.AddOrUpdateEnvVariableByName(context.TODO(), in, lc)
 		if err != nil {
 			return err
 		}
@@ -129,12 +130,12 @@ var deleteVariableCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			in := &ls.DeleteEnvVariableByNameInput{
+			in := &schema.DeleteEnvVariableByNameInput{
 				Project:     cmdProjectName,
 				Environment: cmdProjectEnvironment,
 				Name:        varName,
 			}
-			deleteResult, err := l.DeleteEnvVariableByName(context.TODO(), in, lc)
+			deleteResult, err := lagoon.DeleteEnvVariableByName(context.TODO(), in, lc)
 			if err != nil {
 				return err
 			}

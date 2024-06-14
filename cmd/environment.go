@@ -3,13 +3,14 @@ package cmd
 import (
 	"context"
 	"fmt"
-	ls "github.com/uselagoon/machinery/api/schema"
 	"strings"
+
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
@@ -42,7 +43,7 @@ var deleteEnvCmd = &cobra.Command{
 			&token,
 			debug)
 		if yesNo(fmt.Sprintf("You are attempting to delete environment '%s' from project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
-			environment, err := l.DeleteEnvironment(context.TODO(), cmdProjectEnvironment, cmdProjectName, true, lc)
+			environment, err := lagoon.DeleteEnvironment(context.TODO(), cmdProjectEnvironment, cmdProjectName, true, lc)
 			if err != nil {
 				return err
 			}
@@ -118,14 +119,14 @@ var updateEnvironmentCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if project.Name == "" {
 			err = fmt.Errorf("project not found")
 		}
 		if err != nil {
 			return err
 		}
-		environment, err := l.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if environment.Name == "" {
 			err = fmt.Errorf("environment not found")
 		}
@@ -133,7 +134,7 @@ var updateEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		environmentFlags := ls.UpdateEnvironmentPatchInput{
+		environmentFlags := schema.UpdateEnvironmentPatchInput{
 			DeployBaseRef:        nullStrCheck(deployBaseRef),
 			DeployHeadRef:        nullStrCheck(deployHeadRef),
 			OpenshiftProjectName: nullStrCheck(namespace),
@@ -146,21 +147,21 @@ var updateEnvironmentCmd = &cobra.Command{
 			environmentFlags.AutoIdle = &environmentAutoIdle
 		}
 		if environmentType != "" {
-			envType := ls.EnvType(strings.ToUpper(environmentType))
-			if validationErr := ls.ValidateType(envType); validationErr != nil {
+			envType := schema.EnvType(strings.ToUpper(environmentType))
+			if validationErr := schema.ValidateType(envType); validationErr != nil {
 				handleError(validationErr)
 			}
 			environmentFlags.EnvironmentType = &envType
 		}
 		if deployT != "" {
-			deployType := ls.DeployType(strings.ToUpper(deployT))
-			if validationErr := ls.ValidateType(deployType); validationErr != nil {
+			deployType := schema.DeployType(strings.ToUpper(deployT))
+			if validationErr := schema.ValidateType(deployType); validationErr != nil {
 				handleError(validationErr)
 			}
 			environmentFlags.DeployType = &deployType
 		}
 
-		result, err := l.UpdateEnvironment(context.TODO(), environment.ID, environmentFlags, lc)
+		result, err := lagoon.UpdateEnvironment(context.TODO(), environment.ID, environmentFlags, lc)
 		if err != nil {
 			return err
 		}
@@ -207,11 +208,11 @@ var listBackupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		backupsResult, err := l.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if err != nil {
 			return err
 		}
@@ -277,11 +278,11 @@ This returns a direct URL to the backup, this is a signed download link with a l
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		backupsResult, err := l.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if err != nil {
 			return err
 		}

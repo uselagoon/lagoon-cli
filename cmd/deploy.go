@@ -3,12 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"strconv"
 
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+
 	"github.com/spf13/cobra"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var deployCmd = &cobra.Command{
@@ -66,7 +67,7 @@ use 'lagoon deploy latest' instead`,
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			depBranch := &ls.DeployEnvironmentBranchInput{
+			depBranch := &schema.DeployEnvironmentBranchInput{
 				Branch:         branch,
 				Project:        cmdProjectName,
 				ReturnData:     returnData,
@@ -75,7 +76,7 @@ use 'lagoon deploy latest' instead`,
 			if branchRef != "" {
 				depBranch.BranchRef = branchRef
 			}
-			result, err := l.DeployBranch(context.TODO(), depBranch, lc)
+			result, err := lagoon.DeployBranch(context.TODO(), depBranch, lc)
 			if err != nil {
 				return err
 			}
@@ -132,7 +133,7 @@ var deployPromoteCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeployPromote(context.TODO(), &ls.DeployEnvironmentPromoteInput{
+			result, err := lagoon.DeployPromote(context.TODO(), &schema.DeployEnvironmentPromoteInput{
 				SourceEnvironment:      sourceEnvironment,
 				DestinationEnvironment: destinationEnvironment,
 				Project:                cmdProjectName,
@@ -187,10 +188,10 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeployLatest(context.TODO(), &ls.DeployEnvironmentLatestInput{
-				Environment: ls.EnvironmentInput{
+			result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
+				Environment: schema.EnvironmentInput{
 					Name: cmdProjectEnvironment,
-					Project: ls.ProjectInput{
+					Project: schema.ProjectInput{
 						Name: cmdProjectName,
 					},
 				},
@@ -271,8 +272,8 @@ This pullrequest may not already exist as an environment in lagoon.`,
 				&token,
 				debug)
 
-			result, err := l.DeployPullRequest(context.TODO(), &ls.DeployEnvironmentPullrequestInput{
-				Project: ls.ProjectInput{
+			result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{
+				Project: schema.ProjectInput{
 					Name: cmdProjectName,
 				},
 				Title:          prTitle,

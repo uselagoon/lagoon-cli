@@ -3,9 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"strings"
+
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -40,7 +41,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			&token,
 			debug)
 
-		user, err := l.Me(context.TODO(), lc)
+		user, err := lagoon.Me(context.TODO(), lc)
 		if err != nil {
 			if strings.Contains(err.Error(), "Cannot read properties of null (reading 'access_token')") {
 				return fmt.Errorf("unable to get user information, you may be using an administration token")

@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var addDeployTargetCmd = &cobra.Command{
@@ -66,7 +66,7 @@ var addDeployTargetCmd = &cobra.Command{
 			return err
 		}
 
-		addDeployTarget := &ls.AddDeployTargetInput{
+		addDeployTarget := &schema.AddDeployTargetInput{
 			Name:          name,
 			FriendlyName:  friendlyName,
 			CloudProvider: cloudProvider,
@@ -99,7 +99,7 @@ var addDeployTargetCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to add '%s' DeployTarget, are you sure?", addDeployTarget.Name)) {
-			addDeployTargetResponse, err := l.AddDeployTarget(context.TODO(), addDeployTarget, lc)
+			addDeployTargetResponse, err := lagoon.AddDeployTarget(context.TODO(), addDeployTarget, lc)
 			if err != nil {
 				return err
 			}
@@ -216,8 +216,8 @@ var updateDeployTargetCmd = &cobra.Command{
 			&lagoonToken,
 			debug)
 
-		updateDeployTarget := &ls.UpdateDeployTargetInput{
-			AddDeployTargetInput: ls.AddDeployTargetInput{
+		updateDeployTarget := &schema.UpdateDeployTargetInput{
+			AddDeployTargetInput: schema.AddDeployTargetInput{
 				ID:            id,
 				Token:         token,
 				FriendlyName:  friendlyName,
@@ -231,7 +231,7 @@ var updateDeployTargetCmd = &cobra.Command{
 			BuildImage: buildImage,
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
-			updateDeployTargetResponse, err := l.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
+			updateDeployTargetResponse, err := lagoon.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
 			if err != nil {
 				return err
 			}
@@ -307,11 +307,11 @@ var deleteDeployTargetCmd = &cobra.Command{
 			&token,
 			debug)
 
-		deleteDeployTarget := &ls.DeleteDeployTargetInput{
+		deleteDeployTarget := &schema.DeleteDeployTargetInput{
 			Name: name,
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete DeployTarget '%s', are you sure?", deleteDeployTarget.Name)) {
-			deleteDeployTargetResponse, err := l.DeleteDeployTarget(context.TODO(), deleteDeployTarget, lc)
+			deleteDeployTargetResponse, err := lagoon.DeleteDeployTarget(context.TODO(), deleteDeployTarget, lc)
 			if err != nil {
 				return err
 			}
@@ -358,7 +358,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -366,12 +366,12 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 
-		deployTargetInput := ls.AddDeployTargetToOrganizationInput{
+		deployTargetInput := schema.AddDeployTargetToOrganizationInput{
 			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
-		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
+		deployTargetResponse, err := lagoon.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
 		if err != nil {
 			return err
 		}
@@ -422,7 +422,7 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -430,13 +430,13 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			return fmt.Errorf("error querying organization by name")
 		}
 
-		deployTargetInput := ls.RemoveDeployTargetFromOrganizationInput{
+		deployTargetInput := schema.RemoveDeployTargetFromOrganizationInput{
 			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
-			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
+			_, err := lagoon.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
 			if err != nil {
 				return err
 			}

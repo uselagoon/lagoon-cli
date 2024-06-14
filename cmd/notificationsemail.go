@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var addNotificationEmailCmd = &cobra.Command{
@@ -52,13 +52,13 @@ It does not configure a project to send notifications to email though, you need 
 				&token,
 				debug)
 
-			notification := ls.AddNotificationEmailInput{
+			notification := schema.AddNotificationEmailInput{
 				Name:         name,
 				EmailAddress: email,
 				Organization: &organizationID,
 			}
 
-			result, err := l.AddNotificationEmail(context.TODO(), &notification, lc)
+			result, err := lagoon.AddNotificationEmail(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ It does not configure a project to send notifications to email though, you need 
 				returnNonEmptyString(fmt.Sprintf("%v", result.EmailAddress)),
 			}
 			if result.Organization != nil {
-				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				organization, err := lagoon.GetOrganizationByID(context.TODO(), organizationID, lc)
 				if err != nil {
 					return err
 				}
@@ -123,12 +123,12 @@ This command is used to add an existing email notification in Lagoon to a projec
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.AddNotificationToProjectInput{
-				NotificationType: ls.EmailNotification,
+			notification := &schema.AddNotificationToProjectInput{
+				NotificationType: schema.EmailNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -166,7 +166,7 @@ var listProjectEmailsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		result, err := l.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
+		result, err := lagoon.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -216,7 +216,7 @@ var listAllEmailsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.GetAllNotificationEmail(context.TODO(), lc)
+		result, err := lagoon.GetAllNotificationEmail(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -273,12 +273,12 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.RemoveNotificationFromProjectInput{
-				NotificationType: ls.EmailNotification,
+			notification := &schema.RemoveNotificationFromProjectInput{
+				NotificationType: schema.EmailNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -319,7 +319,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeleteNotificationEmail(context.TODO(), name, lc)
+			result, err := lagoon.DeleteNotificationEmail(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -359,11 +359,11 @@ var updateEmailNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
-		patch := ls.UpdateNotificationEmailPatchInput{
+		patch := schema.UpdateNotificationEmailPatchInput{
 			Name:         nullStrCheck(newname),
 			EmailAddress: nullStrCheck(email),
 		}
-		if patch == (ls.UpdateNotificationEmailPatchInput{}) {
+		if patch == (schema.UpdateNotificationEmailPatchInput{}) {
 			return fmt.Errorf("missing arguments: either email or newname must be defined")
 		}
 
@@ -377,11 +377,11 @@ var updateEmailNotificationCmd = &cobra.Command{
 				&token,
 				debug)
 
-			notification := &ls.UpdateNotificationEmailInput{
+			notification := &schema.UpdateNotificationEmailInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := l.UpdateNotificationEmail(context.TODO(), notification, lc)
+			result, err := lagoon.UpdateNotificationEmail(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}

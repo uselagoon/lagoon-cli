@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -53,13 +53,13 @@ It does not configure a project to send notifications to Microsoft Teams though,
 				&token,
 				debug)
 
-			notification := ls.AddNotificationMicrosoftTeamsInput{
+			notification := schema.AddNotificationMicrosoftTeamsInput{
 				Name:         name,
 				Webhook:      webhook,
 				Organization: &organizationID,
 			}
 
-			result, err := l.AddNotificationMicrosoftTeams(context.TODO(), &notification, lc)
+			result, err := lagoon.AddNotificationMicrosoftTeams(context.TODO(), &notification, lc)
 			if err != nil {
 				return err
 			}
@@ -70,7 +70,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 				returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
 			}
 			if result.Organization != nil {
-				organization, err := l.GetOrganizationByID(context.TODO(), organizationID, lc)
+				organization, err := lagoon.GetOrganizationByID(context.TODO(), organizationID, lc)
 				if err != nil {
 					return err
 				}
@@ -123,12 +123,12 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.AddNotificationToProjectInput{
-				NotificationType: ls.MicrosoftTeamsNotification,
+			notification := &schema.AddNotificationToProjectInput{
+				NotificationType: schema.MicrosoftTeamsNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.AddNotificationToProject(context.TODO(), notification, lc)
+			_, err := lagoon.AddNotificationToProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -166,7 +166,7 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		result, err := l.GetProjectNotificationMicrosoftTeams(context.TODO(), cmdProjectName, lc)
+		result, err := lagoon.GetProjectNotificationMicrosoftTeams(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -216,7 +216,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.GetAllNotificationMicrosoftTeams(context.TODO(), lc)
+		result, err := lagoon.GetAllNotificationMicrosoftTeams(context.TODO(), lc)
 		if err != nil {
 			return err
 		}
@@ -273,12 +273,12 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			notification := &ls.RemoveNotificationFromProjectInput{
-				NotificationType: ls.MicrosoftTeamsNotification,
+			notification := &schema.RemoveNotificationFromProjectInput{
+				NotificationType: schema.MicrosoftTeamsNotification,
 				NotificationName: name,
 				Project:          cmdProjectName,
 			}
-			_, err := l.RemoveNotificationFromProject(context.TODO(), notification, lc)
+			_, err := lagoon.RemoveNotificationFromProject(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}
@@ -319,7 +319,7 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.DeleteNotificationMicrosoftTeams(context.TODO(), name, lc)
+			result, err := lagoon.DeleteNotificationMicrosoftTeams(context.TODO(), name, lc)
 			if err != nil {
 				return err
 			}
@@ -359,11 +359,11 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
-		patch := ls.UpdateNotificationMicrosoftTeamsPatchInput{
+		patch := schema.UpdateNotificationMicrosoftTeamsPatchInput{
 			Name:    nullStrCheck(newname),
 			Webhook: nullStrCheck(webhook),
 		}
-		if patch == (ls.UpdateNotificationMicrosoftTeamsPatchInput{}) {
+		if patch == (schema.UpdateNotificationMicrosoftTeamsPatchInput{}) {
 			return fmt.Errorf("missing arguments: either webhook or newname must be defined")
 		}
 
@@ -377,11 +377,11 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 				&token,
 				debug)
 
-			notification := &ls.UpdateNotificationMicrosoftTeamsInput{
+			notification := &schema.UpdateNotificationMicrosoftTeamsInput{
 				Name:  name,
 				Patch: patch,
 			}
-			result, err := l.UpdateNotificationMicrosoftTeams(context.TODO(), notification, lc)
+			result, err := lagoon.UpdateNotificationMicrosoftTeams(context.TODO(), notification, lc)
 			if err != nil {
 				return err
 			}

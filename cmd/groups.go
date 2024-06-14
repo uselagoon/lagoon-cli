@@ -7,9 +7,9 @@ import (
 	"slices"
 	"strings"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -69,27 +69,27 @@ var addGroupCmd = &cobra.Command{
 			debug)
 
 		if organizationName != "" {
-			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+			organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 			if err != nil {
 				return err
 			}
 			if organization.Name == "" {
 				return fmt.Errorf("error querying organization by name")
 			}
-			groupInput := ls.AddGroupToOrganizationInput{
+			groupInput := schema.AddGroupToOrganizationInput{
 				Name:         groupName,
 				Organization: organization.ID,
 				AddOrgOwner:  orgOwner,
 			}
-			_, err = l.AddGroupToOrganization(context.TODO(), &groupInput, lc)
+			_, err = lagoon.AddGroupToOrganization(context.TODO(), &groupInput, lc)
 			if err != nil {
 				return err
 			}
 		} else {
-			groupInput := ls.AddGroupInput{
+			groupInput := schema.AddGroupInput{
 				Name: groupName,
 			}
-			_, err = l.AddGroup(context.TODO(), &groupInput, lc)
+			_, err = lagoon.AddGroup(context.TODO(), &groupInput, lc)
 			if err != nil {
 				return err
 			}
@@ -164,12 +164,12 @@ var addUserToGroupCmd = &cobra.Command{
 			&token,
 			debug)
 
-		userGroupRole := &ls.UserGroupRoleInput{
+		userGroupRole := &schema.UserGroupRoleInput{
 			UserEmail: userEmail,
 			GroupName: groupName,
-			GroupRole: ls.GroupRole(groupRole),
+			GroupRole: schema.GroupRole(groupRole),
 		}
-		_, err = l.AddUserToGroup(context.TODO(), userGroupRole, lc)
+		_, err = lagoon.AddUserToGroup(context.TODO(), userGroupRole, lc)
 		if err != nil {
 			return err
 		}
@@ -199,11 +199,11 @@ var addProjectToGroupCmd = &cobra.Command{
 			return err
 		}
 
-		projectGroup := &ls.ProjectGroupsInput{
-			Project: ls.ProjectInput{
+		projectGroup := &schema.ProjectGroupsInput{
+			Project: schema.ProjectInput{
 				Name: cmdProjectName,
 			},
-			Groups: []ls.GroupInput{
+			Groups: []schema.GroupInput{
 				{
 					Name: groupName,
 				},
@@ -219,13 +219,13 @@ var addProjectToGroupCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
-		_, err = l.AddProjectToGroup(context.TODO(), projectGroup, lc)
+		_, err = lagoon.AddProjectToGroup(context.TODO(), projectGroup, lc)
 		if err != nil {
 			return err
 		}
@@ -260,7 +260,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 			return err
 		}
 
-		user := &ls.UserGroupInput{
+		user := &schema.UserGroupInput{
 			UserEmail: userEmail,
 			GroupName: groupName,
 		}
@@ -275,7 +275,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete user '%s' from group '%s', are you sure?", userEmail, groupName)) {
-			result, err := l.RemoveUserFromGroup(context.TODO(), user, lc)
+			result, err := lagoon.RemoveUserFromGroup(context.TODO(), user, lc)
 			if err != nil {
 				return err
 			}
@@ -309,11 +309,11 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			return err
 		}
 
-		projectGroup := &ls.ProjectGroupsInput{
-			Project: ls.ProjectInput{
+		projectGroup := &schema.ProjectGroupsInput{
+			Project: schema.ProjectInput{
 				Name: cmdProjectName,
 			},
-			Groups: []ls.GroupInput{
+			Groups: []schema.GroupInput{
 				{
 					Name: groupName,
 				},
@@ -329,7 +329,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
@@ -337,7 +337,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s' from group '%s', are you sure?", projectGroup.Project.Name, projectGroup.Groups[0].Name)) {
-			_, err = l.RemoveGroupsFromProject(context.TODO(), projectGroup, lc)
+			_, err = lagoon.RemoveGroupsFromProject(context.TODO(), projectGroup, lc)
 			if err != nil {
 				return err
 			}
@@ -374,7 +374,7 @@ var deleteGroupCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete group '%s', are you sure?", groupName)) {
-			_, err := l.DeleteGroup(context.TODO(), groupName, lc)
+			_, err := lagoon.DeleteGroup(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
