@@ -129,23 +129,62 @@ var runDrushArchiveDump = &cobra.Command{
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runArdTask ($environment: Int!) {
+			taskDrushArchiveDump(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
 		if err != nil {
 			return err
 		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		err = json.Unmarshal([]byte(r), &resultMap)
 		if err != nil {
 			return err
 		}
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		if resultMap["taskDrushArchiveDump"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushArchiveDump"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
 		}
-		output.RenderResult(resultData, outputOptions)
 		return nil
 	},
 }
@@ -158,23 +197,62 @@ var runDrushSQLDump = &cobra.Command{
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runSqlDump ($environment: Int!) {
+			taskDrushSqlDump(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
 		if err != nil {
 			return err
 		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		err = json.Unmarshal([]byte(r), &resultMap)
 		if err != nil {
 			return err
 		}
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		if resultMap["taskDrushSqlDump"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushSqlDump"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
 		}
-		output.RenderResult(resultData, outputOptions)
 		return nil
 	},
 }
@@ -187,23 +265,62 @@ var runDrushCacheClear = &cobra.Command{
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runCacheClear ($environment: Int!) {
+			taskDrushCacheClear(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
 		if err != nil {
 			return err
 		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
+		err = json.Unmarshal([]byte(r), &resultMap)
 		if err != nil {
 			return err
 		}
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		if resultMap["taskDrushCacheClear"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushCacheClear"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
 		}
-		output.RenderResult(resultData, outputOptions)
 		return nil
 	},
 }

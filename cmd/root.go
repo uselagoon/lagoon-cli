@@ -17,7 +17,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/app"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
 )
@@ -282,9 +281,6 @@ func Prompt(prompt string) string {
 	return GetInput()
 }
 
-// global the clients
-var eClient environments.Client
-
 // FormatType .
 type FormatType string
 
@@ -309,12 +305,6 @@ func validateToken(lagoon string) {
 			os.Exit(1)
 		}
 	}
-	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
 	outputOptions.Debug = debugEnable
 }
 
@@ -332,12 +322,6 @@ func validateTokenE(lagoon string) error {
 	}
 	if err = loginToken(); err != nil {
 		return fmt.Errorf("couldn't refresh token: %w", err)
-	}
-	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
 	}
 	outputOptions.Debug = debugEnable
 	// fallback if token is expired or there was no token to begin with
