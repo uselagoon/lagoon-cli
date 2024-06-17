@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
+	api "github.com/uselagoon/machinery/api/schema"
 )
 
 // ErrExist indicates that an attempt was made to create an object that already
