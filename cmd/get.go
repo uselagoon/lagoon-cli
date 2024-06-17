@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
 	"github.com/uselagoon/machinery/api/lagoon"
@@ -20,19 +18,6 @@ type GetFlags struct {
 	Project     string `json:"project,omitempty"`
 	Environment string `json:"environment,omitempty"`
 	RemoteID    string `json:"remoteid,omitempty"`
-}
-
-func parseGetFlags(flags pflag.FlagSet) GetFlags {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := GetFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
 }
 
 var getCmd = &cobra.Command{
@@ -216,6 +201,9 @@ var getEnvironmentCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}

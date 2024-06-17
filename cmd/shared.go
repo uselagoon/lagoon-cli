@@ -17,13 +17,6 @@ var lagoonUI string
 var lagoonKibana string
 var lagoonSSHKey string
 
-// user vars
-var userFirstName string
-var userLastName string
-var userEmail string
-var pubKeyFile string
-var sshKeyName string
-
 // group vars
 var groupName string
 

@@ -171,6 +171,9 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		}
 
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}

@@ -354,9 +354,14 @@ Path:
 			Command: taskCommand,
 			Service: taskService,
 		}
-		fmt.Println(task.Name)
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
 		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
 		taskResult, err := lagoon.AddTask(context.TODO(), environment.ID, task, lc)
 		if err != nil {
 			return err

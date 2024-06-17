@@ -18,8 +18,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/app"
 	"github.com/uselagoon/lagoon-cli/pkg/graphql"
 	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/projects"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
 )
@@ -286,8 +284,6 @@ func Prompt(prompt string) string {
 
 // global the clients
 var eClient environments.Client
-var uClient users.Client
-var pClient projects.Client
 
 // FormatType .
 type FormatType string
@@ -319,16 +315,6 @@ func validateToken(lagoon string) {
 		output.RenderError(err.Error(), outputOptions)
 		os.Exit(1)
 	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
 	outputOptions.Debug = debugEnable
 }
 
@@ -349,16 +335,6 @@ func validateTokenE(lagoon string) error {
 	}
 	// set up the clients
 	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
 	if err != nil {
 		output.RenderError(err.Error(), outputOptions)
 		return err

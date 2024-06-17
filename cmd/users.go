@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,25 +12,8 @@ import (
 	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-func parseUser(flags pflag.FlagSet) api.User {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.User{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	// lowercase user email address
-	parsedFlags.Email = strings.ToLower(parsedFlags.Email)
-	return parsedFlags
-}
 
 func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (schema.AddSSHKeyInput, error) {
 	// if we haven't got a keyvalue

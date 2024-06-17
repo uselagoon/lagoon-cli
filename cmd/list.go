@@ -248,10 +248,10 @@ var listGroupProjectsCmd = &cobra.Command{
 			for _, project := range group.Projects {
 				data = append(data, []string{
 					returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
-					returnNonEmptyString(fmt.Sprintf("%s", project.Name)),
+					returnNonEmptyString(project.Name),
 				})
 				if listAllProjects {
-					data[idx] = append(data[idx], returnNonEmptyString(fmt.Sprintf("%s", group.Name)))
+					data[idx] = append(data[idx], returnNonEmptyString(group.Name))
 				}
 				idx++
 			}
@@ -262,6 +262,8 @@ var listGroupProjectsCmd = &cobra.Command{
 			} else {
 				outputOptions.Error = "There are no projects in any groups\n"
 			}
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		dataMain := output.Table{
@@ -307,6 +309,8 @@ var listEnvironmentsCmd = &cobra.Command{
 
 		if len(*environments) == 0 {
 			outputOptions.Error = fmt.Sprintf("No environments found for project '%s'\n", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -403,6 +407,8 @@ var listVariablesCmd = &cobra.Command{
 			} else {
 				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
 			}
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 		output.RenderOutput(output.Table{
 			Header: header,
@@ -462,6 +468,8 @@ var listDeploymentsCmd = &cobra.Command{
 
 		if len(data) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no deployments for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
@@ -523,6 +531,8 @@ var listTasksCmd = &cobra.Command{
 
 		if len(data) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no tasks for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed", "Service"},
@@ -740,13 +750,15 @@ var listInvokableTasks = &cobra.Command{
 		data := []output.Data{}
 		for _, task := range tasks.AdvancedTasks {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", task.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", task.Description)),
+				returnNonEmptyString(task.Name),
+				returnNonEmptyString(task.Description),
 			})
 		}
 
 		if len(data) == 0 {
 			outputOptions.Error = "There are no user defined tasks for this environment\n"
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"Task Name", "Description"},
@@ -797,6 +809,8 @@ var listProjectGroupsCmd = &cobra.Command{
 
 		if len(projectGroups.Groups) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no groups for project '%s'\n", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -863,6 +877,8 @@ var listOrganizationProjectsCmd = &cobra.Command{
 
 		if len(*orgProjects) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated projects found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -924,6 +940,8 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		}
 		if len(*orgGroups) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated groups found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -982,6 +1000,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		}
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}

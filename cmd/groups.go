@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"slices"
 	"strings"
@@ -13,22 +12,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-func parseGroup(flags pflag.FlagSet) api.Group {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.Group{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var addGroupCmd = &cobra.Command{
 	Use:     "group",
@@ -191,6 +176,9 @@ var addProjectToGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -220,6 +208,9 @@ var addProjectToGroupCmd = &cobra.Command{
 			debug)
 
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
@@ -247,6 +238,9 @@ var deleteUserFromGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -301,6 +295,9 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
@@ -330,6 +327,9 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			debug)
 
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
@@ -356,6 +356,9 @@ var deleteGroupCmd = &cobra.Command{
 	Short:   "Delete a group from lagoon",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
 		groupName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
