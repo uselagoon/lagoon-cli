@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
 )
@@ -63,13 +63,14 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, error) 
 	// set the default ssh host and port to the core ssh endpoint
 	sshHost := lagoonCLIConfig.Lagoons[current].HostName
 	sshPort := lagoonCLIConfig.Lagoons[current].Port
+	token := lagoonCLIConfig.Lagoons[current].Token
 
 	// get SSH Portal endpoint if required
-	lc := client.New(
+	lc := lclient.New(
 		lagoonCLIConfig.Lagoons[current].GraphQL,
-		lagoonCLIConfig.Lagoons[current].Token,
-		lagoonCLIConfig.Lagoons[current].Version,
 		lagoonCLIVersion,
+		lagoonCLIConfig.Lagoons[current].Version,
+		&token,
 		debug)
 	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
 	defer cancel()
@@ -129,7 +130,7 @@ var logsCmd = &cobra.Command{
 		// validate and parse arguments
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			return fmt.Errorf(
-				"Missing arguments: Project name or environment name are not defined")
+				"missing arguments: Project name or environment name are not defined")
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
