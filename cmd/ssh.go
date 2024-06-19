@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"golang.org/x/crypto/ssh"
@@ -21,11 +22,12 @@ var sshEnvCmd = &cobra.Command{
 	Use:     "ssh",
 	Aliases: []string{"s"},
 	Short:   "Display the SSH command to access a specific environment in a project",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
-
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("missing arguments: Project name or environment name are not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
@@ -44,11 +46,12 @@ var sshEnvCmd = &cobra.Command{
 		isPortal := false
 
 		// if the config for this lagoon is set to use ssh portal support, handle that here
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
 		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
 		if err != nil {

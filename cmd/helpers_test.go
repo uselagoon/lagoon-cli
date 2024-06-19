@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/uselagoon/lagoon-cli/internal/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/guregu/null"
 	"github.com/spf13/pflag"

@@ -10,16 +10,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	lagooncli "github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/app"
-	"github.com/uselagoon/lagoon-cli/pkg/graphql"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/projects"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
 )
@@ -284,11 +281,6 @@ func Prompt(prompt string) string {
 	return GetInput()
 }
 
-// global the clients
-var eClient environments.Client
-var uClient users.Client
-var pClient projects.Client
-
 // FormatType .
 type FormatType string
 
@@ -305,29 +297,13 @@ func validateToken(lagoon string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	valid := graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon)
+	valid := VerifyTokenExpiry(&lagoonCLIConfig, lagoon)
 	if !valid {
 		loginErr := loginToken()
 		if loginErr != nil {
 			fmt.Println("couldn't refresh token:", loginErr.Error())
 			os.Exit(1)
 		}
-	}
-	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
 	}
 	outputOptions.Debug = debugEnable
 }
@@ -339,29 +315,13 @@ func validateTokenE(lagoon string) error {
 	if err = checkContextExists(&lagoonCLIConfig); err != nil {
 		return err
 	}
-	if graphql.VerifyTokenExpiry(&lagoonCLIConfig, lagoon) {
+	if VerifyTokenExpiry(&lagoonCLIConfig, lagoon) {
 		// check the API for the version of lagoon if we haven't got one set
 		// otherwise return nil, nothing to do
 		return nil
 	}
 	if err = loginToken(); err != nil {
 		return fmt.Errorf("couldn't refresh token: %w", err)
-	}
-	// set up the clients
-	eClient, err = environments.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	uClient, err = users.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	pClient, err = projects.New(&lagoonCLIConfig, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
 	}
 	outputOptions.Debug = debugEnable
 	// fallback if token is expired or there was no token to begin with
@@ -461,4 +421,18 @@ func checkContextExists(lagoonCLIConfig *lagooncli.Config) error {
 		return fmt.Errorf("chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current)
 	}
 	return nil
+}
+
+// VerifyTokenExpiry verfies if the current token is valid or not
+func VerifyTokenExpiry(lc *lagooncli.Config, lagoon string) bool {
+	var p jwt.Parser
+	token, _, err := p.ParseUnverified(
+		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
+	if err != nil {
+		return false
+	}
+	if token.Claims.Valid() != nil {
+		return false
+	}
+	return true
 }
