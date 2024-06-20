@@ -26,6 +26,11 @@ func Test_makeSafe(t *testing.T) {
 			in:   "Feature-Branch",
 			want: "feature-branch",
 		},
+		{
+			name: "space in name",
+			in:   "My Project",
+			want: "my-project",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
