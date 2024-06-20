@@ -17,12 +17,12 @@ lagoon add project [flags]
   -a, --auto-idle uint                          Auto idle setting of the project
   -b, --branches string                         Which branches should be deployed
       --build-image string                      Build Image for the project
+  -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) target this Project should be deployed to
+      --deploytarget-project-pattern string     Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated
   -L, --development-environments-limit uint     How many environments can be deployed at one time
   -g, --git-url string                          GitURL of the project
   -h, --help                                    help for project
   -j, --json string                             JSON string to patch
-  -S, --openshift uint                          Reference to OpenShift Object this Project should be deployed to
-  -o, --openshift-project-pattern string        Pattern of OpenShift Project/Namespace that should be generated
       --organization-id uint                    ID of the Organization to add the project to
   -O, --organization-name string                Name of the Organization to add the project to
       --owner                                   Add the user as an owner of the project

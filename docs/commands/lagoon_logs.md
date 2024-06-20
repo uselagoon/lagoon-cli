@@ -1,24 +1,19 @@
-## lagoon import
+## lagoon logs
 
-Import a config from a yaml file
-
-### Synopsis
-
-Import a config from a yaml file.
-By default this command will exit on encountering an error (such as an existing object).
-You can get it to continue anyway with --keep-going. To disable any prompts, use --force.
+Display logs for a service of an environment and project
 
 ```
-lagoon import [flags]
+lagoon logs [flags]
 ```
 
 ### Options
 
 ```
-      --deploytarget-id uint   ID of the deploytarget to target for import
-  -h, --help                   help for import
-  -I, --import-file string     path to the file to import
-      --keep-going             on error, just log and continue instead of aborting
+  -c, --container string   specify a specific container name
+  -f, --follow             continue outputting new lines as they are logged
+  -h, --help               help for logs
+  -n, --lines uint         the number of lines to return for each container (default 32)
+  -s, --service string     specify a specific service name
 ```
 
 ### Options inherited from parent commands

@@ -4,7 +4,7 @@ List all DeployTargets in Lagoon
 
 ### Synopsis
 
-List all DeployTargets (kubernetes or openshift) in lagoon, this requires admin level permissions
+List all Deploytargets(Kubernetes) in lagoon, this requires admin level permissions
 
 ```
 lagoon list deploytargets [flags]

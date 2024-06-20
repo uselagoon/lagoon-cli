@@ -6,7 +6,7 @@ List all users in groups
 
 List all users in groups in lagoon, this only shows users that are in groups.
 If no group name is provided, all groups are queried.
-Without a group name, this query may time out in large Lagoon installs.
+Without a group name, this query may time out in large Lagoon instalschema.
 
 ```
 lagoon list group-users [flags]

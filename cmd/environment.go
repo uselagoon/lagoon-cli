@@ -96,7 +96,7 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openShift, err := cmd.Flags().GetUint("deploytarget")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
@@ -141,7 +141,7 @@ var updateEnvironmentCmd = &cobra.Command{
 			Route:                nullStrCheck(route),
 			Routes:               nullStrCheck(routes),
 			DeployTitle:          nullStrCheck(deployTitle),
-			Openshift:            nullUintCheck(openShift),
+			Openshift:            nullUintCheck(deploytarget),
 		}
 		if environmentAutoIdleProvided {
 			environmentFlags.AutoIdle = &environmentAutoIdle
@@ -313,7 +313,7 @@ func init() {
 	updateEnvironmentCmd.Flags().String("route", "", "Update the route for the selected environment")
 	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes for the selected environment")
 	updateEnvironmentCmd.Flags().UintVarP(&environmentAutoIdle, "auto-idle", "a", 1, "Auto idle setting of the environment")
-	updateEnvironmentCmd.Flags().UintP("deploytarget", "d", 0, "Reference to OpenShift Object this Environment should be deployed to")
+	updateEnvironmentCmd.Flags().UintP("deploytarget", "d", 0, "Reference to Deploytarget(Kubernetes) this Environment should be deployed to")
 	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - production | development")
 	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - branch | pullrequest | promote")
 }

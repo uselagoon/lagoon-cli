@@ -86,7 +86,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshift, err := cmd.Flags().GetUint("openshift")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
@@ -102,7 +102,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
+		deploytargetProjectPattern, err := cmd.Flags().GetString("deploytarget-project-pattern")
 		if err != nil {
 			return err
 		}
@@ -139,7 +139,7 @@ var addProjectCmd = &cobra.Command{
 			return err
 		}
 
-		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Openshift", strconv.Itoa(int(openshift))); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
@@ -160,8 +160,8 @@ var addProjectCmd = &cobra.Command{
 			StandbyProductionEnvironment: standbyProductionEnvironment,
 			Branches:                     branches,
 			PullRequests:                 pullrequests,
-			OpenshiftProjectPattern:      openshiftProjectPattern,
-			Openshift:                    openshift,
+			OpenshiftProjectPattern:      deploytargetProjectPattern,
+			Openshift:                    deploytarget,
 			DevelopmentEnvironmentsLimit: developmentEnvironmentsLimit,
 			StorageCalc:                  storageCalc,
 			AutoIdle:                     autoIdle,
@@ -232,7 +232,7 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshift, err := cmd.Flags().GetUint("openshift")
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
 		if err != nil {
 			return err
 		}
@@ -248,7 +248,7 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
+		deploytargetProjectPattern, err := cmd.Flags().GetString("deploytarget-project-pattern")
 		if err != nil {
 			return err
 		}
@@ -326,11 +326,11 @@ var updateProjectCmd = &cobra.Command{
 		projectPatch := schema.UpdateProjectPatchInput{
 			GitURL:                       nullStrCheck(gitUrl),
 			ProductionEnvironment:        nullStrCheck(productionEnvironment),
-			Openshift:                    nullUintCheck(openshift),
+			Openshift:                    nullUintCheck(deploytarget),
 			StandbyProductionEnvironment: nullStrCheck(standbyProductionEnvironment),
 			Branches:                     nullStrCheck(branches),
 			Pullrequests:                 nullStrCheck(pullrequests),
-			OpenshiftProjectPattern:      nullStrCheck(openshiftProjectPattern),
+			OpenshiftProjectPattern:      nullStrCheck(deploytargetProjectPattern),
 			DevelopmentEnvironmentsLimit: nullUintCheck(developmentEnvironmentsLimit),
 			StorageCalc:                  nullUintCheck(storageCalc),
 			AutoIdle:                     nullUintCheck(autoIdle),
@@ -713,7 +713,7 @@ func init() {
 	updateProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
 	updateProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
 	updateProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
-	updateProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().StringP("deploytarget-project-pattern", "o", "", "Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated")
 	updateProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project. Set to 'null' to remove the build image")
 	updateProjectCmd.Flags().StringP("availability", "", "", "Availability of the project")
 
@@ -722,7 +722,7 @@ func init() {
 	updateProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
 	updateProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
 	updateProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
-	updateProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	updateProjectCmd.Flags().UintP("deploytarget", "S", 0, "Reference to Deploytarget(Kubernetes) this Project should be deployed to")
 	updateProjectCmd.Flags().UintP("deployments-disabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
 
 	updateProjectCmd.Flags().UintP("facts-ui", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
@@ -738,12 +738,12 @@ func init() {
 	addProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
 	addProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
 	addProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
-	addProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().StringP("deploytarget-project-pattern", "", "", "Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated")
 
 	addProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
 	addProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
 	addProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
-	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	addProjectCmd.Flags().UintP("deploytarget", "S", 0, "Reference to Deploytarget(Kubernetes) target this Project should be deployed to")
 	addProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
