@@ -154,6 +154,14 @@ func RenderOutput(data Table, opts Options) {
 		if !opts.MultiLine {
 			t.SuppressTrailingSpaces() // suppress the trailing spaces if not multiline
 		}
+		if opts.MultiLine {
+			// stops multiline values bleeding into other columns
+			t.SetColumnConfigs([]table.ColumnConfig{
+				{Name: "Value", WidthMax: 75}, // Set specific width for "Value" column if multiline
+				{Name: "Token", WidthMax: 50}, // Set specific width for "Token" column if multiline
+			})
+		}
+
 		if opts.CSV {
 			t.RenderCSV()
 			return

@@ -422,6 +422,7 @@ var getUserKeysCmd = &cobra.Command{
 			Data:   data,
 		}
 
+		outputOptions.MultiLine = true
 		output.RenderOutput(dataMain, outputOptions)
 		return nil
 	},
@@ -490,7 +491,7 @@ var getAllUserKeysCmd = &cobra.Command{
 			Header: []string{"ID", "Email", "Name", "Type", "Value"},
 			Data:   data,
 		}
-
+		outputOptions.MultiLine = true
 		output.RenderOutput(dataMain, outputOptions)
 		return nil
 	},

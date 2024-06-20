@@ -126,6 +126,7 @@ var listDeployTargetsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
 			})
 		}
+		outputOptions.MultiLine = true
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
@@ -386,6 +387,7 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
 				env = append(env, fmt.Sprintf("%v", envvar.Value))
+				outputOptions.MultiLine = true
 			}
 			data = append(data, env)
 		}
