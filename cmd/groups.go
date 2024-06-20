@@ -2,33 +2,18 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"os"
+	"slices"
 	"strings"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-func parseGroup(flags pflag.FlagSet) api.Group {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.Group{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var addGroupCmd = &cobra.Command{
 	Use:     "group",
@@ -69,24 +54,27 @@ var addGroupCmd = &cobra.Command{
 			debug)
 
 		if organizationName != "" {
-			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+			organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 			if err != nil {
 				return err
 			}
-			groupInput := s.AddGroupToOrganizationInput{
+			if organization.Name == "" {
+				return fmt.Errorf("error querying organization by name")
+			}
+			groupInput := schema.AddGroupToOrganizationInput{
 				Name:         groupName,
 				Organization: organization.ID,
 				AddOrgOwner:  orgOwner,
 			}
-			_, err = l.AddGroupToOrganization(context.TODO(), &groupInput, lc)
+			_, err = lagoon.AddGroupToOrganization(context.TODO(), &groupInput, lc)
 			if err != nil {
 				return err
 			}
 		} else {
-			groupInput := s.AddGroupInput{
+			groupInput := schema.AddGroupInput{
 				Name: groupName,
 			}
-			_, err = l.AddGroup(context.TODO(), &groupInput, lc)
+			_, err = lagoon.AddGroup(context.TODO(), &groupInput, lc)
 			if err != nil {
 				return err
 			}
@@ -110,46 +98,69 @@ var addUserToGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
 	Short:   "Add a user to a group in lagoon",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gRole, err := cmd.Flags().GetString("role")
+		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		groupRole, err := cmd.Flags().GetString("role")
+		if err != nil {
+			return err
+		}
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+
 		cmd.Flags().Visit(
 			func(f *pflag.Flag) {
 				if f.Name == "role" {
-					gRole = strings.ToUpper(f.Value.String())
+					groupRole = strings.ToUpper(f.Value.String())
 				}
 			},
 		)
-		if gRole == "" {
+
+		if groupRole == "" {
 			// if no role flag is provided, fallback to guest (previous behavior, could be removed though)
-			gRole = "GUEST"
+			groupRole = "GUEST"
 		}
-		userGroupRole := api.UserGroupRole{
-			User: api.User{
-				Email: strings.ToLower(userEmail),
-			},
-			Group: api.Group{
-				Name: groupName,
-			},
-			Role: api.GroupRole(gRole),
+
+		if groupRole != "" && !slices.Contains(groupRoles, strings.ToLower(groupRole)) {
+			return fmt.Errorf("role '%s' is not valid - valid roles include \"guest\", \"reporter\", \"developer\", \"maintainer\", \"owner\"", groupRole)
 		}
-		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" || userGroupRole.Role == "" {
-			return fmt.Errorf("missing arguments: Email address, group name, or role is not defined")
+
+		if err := requiredInputCheck("Group name", groupName, "Email address", userEmail); err != nil {
+			return err
 		}
-		var customReqResult []byte
-		customReqResult, err = uClient.AddUserToGroup(userGroupRole)
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		userGroupRole := &schema.UserGroupRoleInput{
+			UserEmail: userEmail,
+			GroupName: groupName,
+			GroupRole: schema.GroupRole(groupRole),
+		}
+		_, err = lagoon.AddUserToGroup(context.TODO(), userGroupRole, lc)
 		if err != nil {
 			return err
 		}
-		returnResultData := map[string]interface{}{}
-		if err = json.Unmarshal([]byte(customReqResult), &returnResultData); err != nil {
-			return err
-		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
 		}
 		output.RenderResult(resultData, outputOptions)
 		return nil
@@ -160,34 +171,61 @@ var addProjectToGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
 	Short:   "Add a project to a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		projectGroup := api.ProjectGroups{
-			Project: api.Project{
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName, "Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		projectGroup := &schema.ProjectGroupsInput{
+			Project: schema.ProjectInput{
 				Name: cmdProjectName,
 			},
-			Groups: []api.Group{
+			Groups: []schema.GroupInput{
 				{
 					Name: groupName,
 				},
 			},
 		}
-		if projectGroup.Project.Name == "" || len(projectGroup.Groups) == 0 {
-			output.RenderError("Missing arguments: Project name or group name is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		customReqResult, err = uClient.AddProjectToGroup(projectGroup)
-		handleError(err)
-		returnResultData := map[string]interface{}{}
-		err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-		handleError(err)
+		if len(project.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
+		}
+		_, err = lagoon.AddProjectToGroup(context.TODO(), projectGroup, lc)
+		if err != nil {
+			return err
+		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: returnResultData,
+			Result: "success",
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -195,34 +233,56 @@ var deleteUserFromGroupCmd = &cobra.Command{
 	Use:     "user-group",
 	Aliases: []string{"ug"},
 	Short:   "Delete a user from a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		userGroupRole := api.UserGroup{
-			User: api.User{
-				Email: strings.ToLower(userEmail),
-			},
-			Group: api.Group{
-				Name: groupName,
-			},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		if userGroupRole.User.Email == "" || userGroupRole.Group.Name == "" {
-			output.RenderError("Missing arguments: Email address or group name is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		if yesNo(fmt.Sprintf("You are attempting to delete user '%s' from group '%s', are you sure?", userGroupRole.User.Email, userGroupRole.Group.Name)) {
-			customReqResult, err = uClient.RemoveUserFromGroup(userGroupRole)
-			handleError(err)
-			returnResultData := map[string]interface{}{}
-			err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-			handleError(err)
+		userEmail, err := cmd.Flags().GetString("email")
+		if err != nil {
+			return err
+		}
+
+		if err := requiredInputCheck("Group name", groupName, "Email address", userEmail); err != nil {
+			return err
+		}
+
+		user := &schema.UserGroupInput{
+			UserEmail: userEmail,
+			GroupName: groupName,
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		if yesNo(fmt.Sprintf("You are attempting to delete user '%s' from group '%s', are you sure?", userEmail, groupName)) {
+			result, err := lagoon.RemoveUserFromGroup(context.TODO(), user, lc)
+			if err != nil {
+				return err
+			}
+
 			resultData := output.Result{
-				Result:     "success",
-				ResultData: returnResultData,
+				Result: "success",
+				ResultData: map[string]interface{}{
+					"id": result.ID,
+				},
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -230,59 +290,103 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 	Use:     "project-group",
 	Aliases: []string{"pg"},
 	Short:   "Delete a project from a group in lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		projectGroup := api.ProjectGroups{
-			Project: api.Project{
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName, "Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		projectGroup := &schema.ProjectGroupsInput{
+			Project: schema.ProjectInput{
 				Name: cmdProjectName,
 			},
-			Groups: []api.Group{
+			Groups: []schema.GroupInput{
 				{
 					Name: groupName,
 				},
 			},
 		}
-		if projectGroup.Project.Name == "" || len(projectGroup.Groups) == 0 {
-			output.RenderError("Missing arguments: Project name or group name is not defined", outputOptions)
-			cmd.Help()
-			os.Exit(1)
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
+		if len(project.Name) == 0 {
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s' from group '%s', are you sure?", projectGroup.Project.Name, projectGroup.Groups[0].Name)) {
-			customReqResult, err = uClient.RemoveGroupsFromProject(projectGroup)
-			handleError(err)
-			returnResultData := map[string]interface{}{}
-			err = json.Unmarshal([]byte(customReqResult), &returnResultData)
-			handleError(err)
+			_, err = lagoon.RemoveGroupsFromProject(context.TODO(), projectGroup, lc)
+			if err != nil {
+				return err
+			}
+
 			resultData := output.Result{
-				Result:     "success",
-				ResultData: returnResultData,
+				Result: "success",
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 var deleteGroupCmd = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"g"},
 	Short:   "Delete a group from lagoon",
-	Run: func(cmd *cobra.Command, args []string) {
-		groupFlags := parseGroup(*cmd.Flags())
-		if groupFlags.Name == "" {
-			fmt.Println("Missing arguments: Group name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		var customReqResult []byte
-		var err error
-		if yesNo(fmt.Sprintf("You are attempting to delete group '%s', are you sure?", groupFlags.Name)) {
-			customReqResult, err = uClient.DeleteGroup(groupFlags)
-			handleError(err)
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Group name", groupName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		if yesNo(fmt.Sprintf("You are attempting to delete group '%s', are you sure?", groupName)) {
+			_, err := lagoon.DeleteGroup(context.TODO(), groupName, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
-				Result: string(customReqResult),
+				Result: "success",
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -292,10 +396,10 @@ func init() {
 	addGroupCmd.Flags().Bool("owner", false, "Organization owner only: Flag to grant yourself ownership of this group")
 	addUserToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	addUserToGroupCmd.Flags().StringP("role", "R", "", "Role in the group [owner, maintainer, developer, reporter, guest]")
-	addUserToGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
-	addProjectToGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	deleteUserFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
-	deleteUserFromGroupCmd.Flags().StringVarP(&userEmail, "email", "E", "", "Email address of the user")
+	addUserToGroupCmd.Flags().StringP("email", "E", "", "Email address of the user")
+	addProjectToGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
+	deleteUserFromGroupCmd.Flags().StringP("name", "N", "", "Name of the group")
+	deleteUserFromGroupCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	deleteProjectFromGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 	deleteGroupCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group")
 

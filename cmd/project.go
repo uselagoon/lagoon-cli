@@ -4,62 +4,55 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	"strings"
 
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
+
+	"github.com/guregu/null"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
-
-var projectPatch api.ProjectPatch
-
-var projectAutoIdle int
-var projectStorageCalc int
-var projectDevelopmentEnvironmentsLimit int
-var projectOpenshift int
-var projectDeploymentsDisabled int
-var factsUi int
-var problemsUi int
-
-func parseProjectFlags(flags pflag.FlagSet) api.ProjectPatch {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = &f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := api.ProjectPatch{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
-}
 
 var deleteProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Delete a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s', are you sure?", cmdProjectName)) {
-			deleteResult, err := pClient.DeleteProject(cmdProjectName)
-			handleError(err)
+			_, err := lagoon.DeleteProject(context.TODO(), cmdProjectName, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
-				Result: string(deleteResult),
+				Result: "success",
 			}
 			output.RenderResult(resultData, outputOptions)
 		}
+		return nil
 	},
 }
 
@@ -81,11 +74,15 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		gitUrl, err := cmd.Flags().GetString("gitUrl")
+		organizationID, err := cmd.Flags().GetUint("organization-id")
 		if err != nil {
 			return err
 		}
-		productionEnvironment, err := cmd.Flags().GetString("productionEnvironment")
+		gitUrl, err := cmd.Flags().GetString("git-url")
+		if err != nil {
+			return err
+		}
+		productionEnvironment, err := cmd.Flags().GetString("production-environment")
 		if err != nil {
 			return err
 		}
@@ -93,7 +90,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		standbyProductionEnvironment, err := cmd.Flags().GetString("standbyProductionEnvironment")
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
 		if err != nil {
 			return err
 		}
@@ -105,19 +102,19 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		openshiftProjectPattern, err := cmd.Flags().GetString("openshiftProjectPattern")
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
 		if err != nil {
 			return err
 		}
-		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("developmentEnvironmentsLimit")
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storageCalc")
+		storageCalc, err := cmd.Flags().GetUint("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("autoIdle")
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
 		if err != nil {
 			return err
 		}
@@ -125,7 +122,11 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		privateKey, err := cmd.Flags().GetString("privateKey")
+		privateKey, err := cmd.Flags().GetString("private-key")
+		if err != nil {
+			return err
+		}
+		buildImage, err := cmd.Flags().GetString("build-image")
 		if err != nil {
 			return err
 		}
@@ -133,12 +134,12 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		routerPattern, err := cmd.Flags().GetString("routerPattern")
+		routerPattern, err := cmd.Flags().GetString("router-pattern")
 		if err != nil {
 			return err
 		}
 
-		if err := requiredInputCheck("Project name", cmdProjectName, "GitURL", gitUrl, "Production environment", productionEnvironment, "Openshift", strconv.Itoa(int(openshift))); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Openshift", strconv.Itoa(int(openshift))); err != nil {
 			return err
 		}
 
@@ -151,7 +152,7 @@ var addProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectInput := s.AddProjectInput{
+		projectInput := schema.AddProjectInput{
 			Name:                         cmdProjectName,
 			AddOrgOwner:                  orgOwner,
 			GitURL:                       gitUrl,
@@ -166,18 +167,28 @@ var addProjectCmd = &cobra.Command{
 			AutoIdle:                     autoIdle,
 			Subfolder:                    subfolder,
 			PrivateKey:                   privateKey,
+			BuildImage:                   buildImage,
 			RouterPattern:                routerPattern,
 		}
-
-		if organizationName != "" {
-			organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		// if organizationid is provided, use it over the name
+		if organizationID != 0 {
+			projectInput.Organization = organizationID
+		}
+		// otherwise if name is provided use it
+		if organizationName != "" && organizationID == 0 {
+			organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 			if err != nil {
 				return err
+			}
+			// since getorganizationbyname returns null response if an organization doesn't exist
+			// check if the result has a name
+			if organization.Name == "" {
+				return fmt.Errorf("error querying organization by name")
 			}
 			projectInput.Organization = organization.ID
 		}
 
-		project := s.Project{}
+		project := schema.Project{}
 		err = lc.AddProject(context.TODO(), &projectInput, &project)
 		if err != nil {
 			return err
@@ -201,34 +212,187 @@ var updateProjectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p"},
 	Short:   "Update a project",
-	Run: func(cmd *cobra.Command, args []string) {
-		projectFlags := parseProjectFlags(*cmd.Flags())
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		projectName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		gitUrl, err := cmd.Flags().GetString("git-url")
+		if err != nil {
+			return err
+		}
+		productionEnvironment, err := cmd.Flags().GetString("production-environment")
+		if err != nil {
+			return err
+		}
+		openshift, err := cmd.Flags().GetUint("openshift")
+		if err != nil {
+			return err
+		}
+		standbyProductionEnvironment, err := cmd.Flags().GetString("standby-production-environment")
+		if err != nil {
+			return err
+		}
+		branches, err := cmd.Flags().GetString("branches")
+		if err != nil {
+			return err
+		}
+		pullrequests, err := cmd.Flags().GetString("pullrequests")
+		if err != nil {
+			return err
+		}
+		openshiftProjectPattern, err := cmd.Flags().GetString("openshift-project-pattern")
+		if err != nil {
+			return err
+		}
+		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
+		if err != nil {
+			return err
+		}
+		storageCalc, err := cmd.Flags().GetUint("storage-calc")
+		if err != nil {
+			return err
+		}
+		autoIdle, err := cmd.Flags().GetUint("auto-idle")
+		if err != nil {
+			return err
+		}
+		autoIdleProvided := cmd.Flags().Lookup("auto-idle").Changed
+		subfolder, err := cmd.Flags().GetString("subfolder")
+		if err != nil {
+			return err
+		}
+		privateKey, err := cmd.Flags().GetString("private-key")
+		if err != nil {
+			return err
+		}
+		buildImage, err := cmd.Flags().GetString("build-image")
+		if err != nil {
+			return err
+		}
+		buildImageProvided := cmd.Flags().Lookup("build-image").Changed
+		availability, err := cmd.Flags().GetString("availability")
+		if err != nil {
+			return err
+		}
+		factsUi, err := cmd.Flags().GetUint("facts-ui")
+		if err != nil {
+			return err
+		}
+		factsUIProvided := cmd.Flags().Lookup("facts-ui").Changed
+		problemsUi, err := cmd.Flags().GetUint("problems-ui")
+		if err != nil {
+			return err
+		}
+		problemsUIProvided := cmd.Flags().Lookup("problems-ui").Changed
+		routerPattern, err := cmd.Flags().GetString("router-pattern")
+		if err != nil {
+			return err
+		}
+		deploymentsDisabled, err := cmd.Flags().GetUint("deployments-disabled")
+		if err != nil {
+			return err
+		}
+		deploymentsDisabledProvided := cmd.Flags().Lookup("deployments-disabled").Changed
+		ProductionBuildPriority, err := cmd.Flags().GetUint("production-build-priority")
+		if err != nil {
+			return err
+		}
+		DevelopmentBuildPriority, err := cmd.Flags().GetUint("development-build-priority")
+		if err != nil {
+			return err
 		}
 
-		var jsonPatchFromProjectFlags string
-		if string(jsonPatch) != "" {
-			jsonPatchFromProjectFlags = jsonPatch
-		} else {
-			jsonMarshalPatch, _ := json.Marshal(projectFlags)
-			jsonPatchFromProjectFlags = string(jsonMarshalPatch)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
-		projectUpdateID, err := pClient.UpdateProject(cmdProjectName, jsonPatchFromProjectFlags)
-		handleError(err)
-		var updatedProject api.Project
-		err = json.Unmarshal([]byte(projectUpdateID), &updatedProject)
-		handleError(err)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		projectPatch := schema.UpdateProjectPatchInput{
+			GitURL:                       nullStrCheck(gitUrl),
+			ProductionEnvironment:        nullStrCheck(productionEnvironment),
+			Openshift:                    nullUintCheck(openshift),
+			StandbyProductionEnvironment: nullStrCheck(standbyProductionEnvironment),
+			Branches:                     nullStrCheck(branches),
+			Pullrequests:                 nullStrCheck(pullrequests),
+			OpenshiftProjectPattern:      nullStrCheck(openshiftProjectPattern),
+			DevelopmentEnvironmentsLimit: nullUintCheck(developmentEnvironmentsLimit),
+			StorageCalc:                  nullUintCheck(storageCalc),
+			AutoIdle:                     nullUintCheck(autoIdle),
+			Subfolder:                    nullStrCheck(subfolder),
+			PrivateKey:                   nullStrCheck(privateKey),
+			FactsUI:                      nullUintCheck(factsUi),
+			ProblemsUI:                   nullUintCheck(problemsUi),
+			RouterPattern:                nullStrCheck(routerPattern),
+			DeploymentsDisabled:          nullUintCheck(deploymentsDisabled),
+			ProductionBuildPriority:      nullUintCheck(ProductionBuildPriority),
+			DevelopmentBuildPriority:     nullUintCheck(DevelopmentBuildPriority),
+			Name:                         nullStrCheck(projectName),
+		}
+
+		if availability != "" {
+			ProjectAvailability := schema.ProjectAvailability(strings.ToUpper(availability))
+			projectPatch.Availability = &ProjectAvailability
+		}
+		if autoIdleProvided {
+			projectPatch.AutoIdle = &autoIdle
+		}
+		if deploymentsDisabledProvided {
+			projectPatch.DeploymentsDisabled = &deploymentsDisabled
+		}
+		if factsUIProvided {
+			projectPatch.FactsUI = &factsUi
+		}
+		if problemsUIProvided {
+			projectPatch.ProblemsUI = &problemsUi
+		}
+		if buildImageProvided {
+			if buildImage == "null" {
+				nullBuildImage := null.String{}
+				projectPatch.BuildImage = &nullBuildImage
+			} else {
+				buildImg := null.StringFrom(buildImage)
+				projectPatch.BuildImage = &buildImg
+			}
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
+		}
+		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
+		if err != nil {
+			return err
+		}
+
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"Project Name": updatedProject.Name,
+				"Project Name": projectUpdate.Name,
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -256,8 +420,8 @@ var listProjectByMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" {
-			return fmt.Errorf("missing arguments: key is not defined")
+		if err := requiredInputCheck("Key", key); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -267,7 +431,7 @@ var listProjectByMetadata = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		projects, err := l.GetProjectsByMetadata(context.TODO(), key, value, lc)
+		projects, err := lagoon.GetProjectsByMetadata(context.TODO(), key, value, lc)
 		if err != nil {
 			return err
 		}
@@ -316,17 +480,16 @@ var getProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
 		project, err := lagoon.GetProjectMetadata(context.TODO(), cmdProjectName, lc)
 		if err != nil {
@@ -375,8 +538,8 @@ var updateProjectMetadata = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("missing arguments: Project name or key is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Key", key); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to update key '%s' for project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -387,11 +550,11 @@ var updateProjectMetadata = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := l.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
+			projectResult, err := lagoon.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
 			if err != nil {
 				return err
 			}
@@ -431,8 +594,8 @@ var deleteProjectMetadataByKey = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if key == "" || cmdProjectName == "" {
-			return fmt.Errorf("missing arguments: Project name or key is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Key", key); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete key '%s' from project '%s' metadata, are you sure?", key, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -443,11 +606,11 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			projectResult, err := l.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
+			projectResult, err := lagoon.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
 			if err != nil {
 				return err
 			}
@@ -502,22 +665,25 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
 		}
 
-		projectInput := s.RemoveProjectFromOrganizationInput{
+		projectInput := schema.RemoveProjectFromOrganizationInput{
 			Project:      project.ID,
 			Organization: organization.ID,
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to remove project '%s' from organization '%s'. This will return the project to a state where it has no groups or notifications associated, are you sure?", cmdProjectName, organization.Name)) {
-			_, err := l.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
+			_, err := lagoon.RemoveProjectFromOrganization(context.TODO(), &projectInput, lc)
 			if err != nil {
 				return err
 			}
@@ -538,44 +704,50 @@ func init() {
 	updateProjectCmd.Flags().StringVarP(&jsonPatch, "json", "j", "", "JSON string to patch")
 
 	// @TODO this seems needlessly busy, maybe see if cobra supports grouping flags and applying them to commands easier?
-	updateProjectCmd.Flags().StringVarP(&projectPatch.GitURL, "gitUrl", "g", "", "GitURL of the project")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.PrivateKey, "privateKey", "I", "", "Private key to use for the project")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.Subfolder, "subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.RouterPattern, "routerPattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.Branches, "branches", "b", "", "Which branches should be deployed")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.Name, "name", "N", "", "Change the name of the project by specifying a new name (careful!)")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.Pullrequests, "pullrequests", "m", "", "Which Pull Requests should be deployed")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.ProductionEnvironment, "productionEnvironment", "E", "", "Which environment(the name) should be marked as the production environment")
-	updateProjectCmd.Flags().StringVar(&projectPatch.StandbyProductionEnvironment, "standbyProductionEnvironment", "", "Which environment(the name) should be marked as the standby production environment")
-	updateProjectCmd.Flags().StringVarP(&projectPatch.OpenshiftProjectPattern, "openshiftProjectPattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().StringP("git-url", "g", "", "GitURL of the project")
+	updateProjectCmd.Flags().StringP("private-key", "I", "", "Private key to use for the project")
+	updateProjectCmd.Flags().StringP("subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
+	updateProjectCmd.Flags().StringP("router-pattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	updateProjectCmd.Flags().StringP("branches", "b", "", "Which branches should be deployed")
+	updateProjectCmd.Flags().StringP("name", "N", "", "Change the name of the project by specifying a new name (careful!)")
+	updateProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
+	updateProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
+	updateProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
+	updateProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	updateProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project. Set to 'null' to remove the build image")
+	updateProjectCmd.Flags().StringP("availability", "", "", "Availability of the project")
 
-	updateProjectCmd.Flags().IntVarP(&projectAutoIdle, "autoIdle", "a", 0, "Auto idle setting of the project")
-	updateProjectCmd.Flags().IntVarP(&projectStorageCalc, "storageCalc", "C", 0, "Should storage for this environment be calculated")
-	updateProjectCmd.Flags().IntVarP(&projectDevelopmentEnvironmentsLimit, "developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
-	updateProjectCmd.Flags().IntVarP(&projectOpenshift, "openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
-	updateProjectCmd.Flags().IntVarP(&projectDeploymentsDisabled, "deploymentsDisabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+	updateProjectCmd.Flags().Uint("production-build-priority", 0, "Set the priority of the production build")
+	updateProjectCmd.Flags().Uint("development-build-priority", 0, "Set the priority of the development build")
+	updateProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
+	updateProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	updateProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
+	updateProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	updateProjectCmd.Flags().UintP("deployments-disabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
 
-	updateProjectCmd.Flags().IntVarP(&factsUi, "factsUi", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
-	updateProjectCmd.Flags().IntVarP(&problemsUi, "problemsUi", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().UintP("facts-ui", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().UintP("problems-ui", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
 
 	addProjectCmd.Flags().StringP("json", "j", "", "JSON string to patch")
 
-	addProjectCmd.Flags().StringP("gitUrl", "g", "", "GitURL of the project")
-	addProjectCmd.Flags().StringP("privateKey", "I", "", "Private key to use for the project")
+	addProjectCmd.Flags().StringP("git-url", "g", "", "GitURL of the project")
+	addProjectCmd.Flags().StringP("private-key", "I", "", "Private key to use for the project")
 	addProjectCmd.Flags().StringP("subfolder", "s", "", "Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository")
-	addProjectCmd.Flags().StringP("routerPattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
+	addProjectCmd.Flags().StringP("router-pattern", "Z", "", "Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'")
 	addProjectCmd.Flags().StringP("branches", "b", "", "Which branches should be deployed")
 	addProjectCmd.Flags().StringP("pullrequests", "m", "", "Which Pull Requests should be deployed")
-	addProjectCmd.Flags().StringP("productionEnvironment", "E", "", "Which environment(the name) should be marked as the production environment")
-	addProjectCmd.Flags().String("standbyProductionEnvironment", "", "Which environment(the name) should be marked as the standby production environment")
-	addProjectCmd.Flags().StringP("openshiftProjectPattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
+	addProjectCmd.Flags().StringP("production-environment", "E", "", "Which environment(the name) should be marked as the production environment")
+	addProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
+	addProjectCmd.Flags().StringP("openshift-project-pattern", "o", "", "Pattern of OpenShift Project/Namespace that should be generated")
 
-	addProjectCmd.Flags().UintP("autoIdle", "a", 0, "Auto idle setting of the project")
-	addProjectCmd.Flags().UintP("storageCalc", "C", 0, "Should storage for this environment be calculated")
-	addProjectCmd.Flags().UintP("developmentEnvironmentsLimit", "L", 0, "How many environments can be deployed at one time")
+	addProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
+	addProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	addProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().UintP("openshift", "S", 0, "Reference to OpenShift Object this Project should be deployed to")
+	addProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project")
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
+	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")

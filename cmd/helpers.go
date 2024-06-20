@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/uselagoon/machinery/api/schema"
+
 	"github.com/guregu/null"
 	"github.com/spf13/pflag"
-
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
 
 // makeSafe ensures that any string is dns safe

@@ -17,14 +17,6 @@ var lagoonUI string
 var lagoonKibana string
 var lagoonSSHKey string
 
-// user vars
-var userFirstName string
-var userLastName string
-var userEmail string
-var resetPassword bool
-var pubKeyFile string
-var sshKeyName string
-
 // group vars
 var groupName string
 
@@ -43,6 +35,8 @@ var outputOptions = output.Options{
 	Pretty: false,
 	Debug:  false,
 }
+
+var groupRoles = []string{"guest", "reporter", "developer", "maintainer", "owner"}
 
 var debugEnable bool
 

@@ -11,7 +11,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/mock"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
+	api "github.com/uselagoon/machinery/api/schema"
 )
 
 // importCalls stores arrays of expected import calls associated with a given

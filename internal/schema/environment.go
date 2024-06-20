@@ -1,6 +1,8 @@
 package schema
 
-import "github.com/uselagoon/lagoon-cli/pkg/api"
+import (
+	api "github.com/uselagoon/machinery/api/schema"
+)
 
 // AddEnvironmentInput is based on the input to
 // addOrUpdateEnvironment.

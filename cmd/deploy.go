@@ -3,11 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strconv"
+
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
+	"github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var deployCmd = &cobra.Command{
@@ -43,8 +45,8 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || branch == "" {
-			return fmt.Errorf("missing arguments: Project name or branch name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Branch name", branch); err != nil {
+			return err
 		}
 
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
@@ -58,11 +60,12 @@ use 'lagoon deploy latest' instead`,
 
 		if yesNo(fmt.Sprintf("You are attempting to deploy branch '%s' for project '%s', are you sure?", branch, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
+				&token,
 				debug)
 			depBranch := &schema.DeployEnvironmentBranchInput{
 				Branch:         branch,
@@ -108,8 +111,8 @@ var deployPromoteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
-			return fmt.Errorf("missing arguments: Project name, source environment, or destination environment is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Source environment", sourceEnvironment, "Destination environment", destinationEnvironment); err != nil {
+			return err
 		}
 
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
@@ -123,11 +126,12 @@ var deployPromoteCmd = &cobra.Command{
 
 		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", sourceEnvironment, destinationEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
+				&token,
 				debug)
 			result, err := lagoon.DeployPromote(context.TODO(), &schema.DeployEnvironmentPromoteInput{
 				SourceEnvironment:      sourceEnvironment,
@@ -170,21 +174,22 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 		if err != nil {
 			return err
 		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
 		buildVarMap, err := buildVarsToMap(buildVarStrings)
 		if err != nil {
 			return err
 		}
 
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("missing arguments: Project name or environment name is not defined")
-		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy the latest environment '%s' for project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
+				&token,
 				debug)
 			result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
 				Environment: schema.EnvironmentInput{
@@ -244,9 +249,8 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || prTitle == "" || prNumber == 0 || baseBranchName == "" ||
-			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
-			return fmt.Errorf("missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Pullrequest title", prTitle, "Pullrequest number", strconv.Itoa(int(prNumber)), "baseBranchName", baseBranchName, "baseBranchRef", baseBranchRef, "headBranchName", headBranchName, "headBranchRef", headBranchRef); err != nil {
+			return err
 		}
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
@@ -263,11 +267,12 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
-			lc := client.New(
+			token := lagoonCLIConfig.Lagoons[current].Token
+			lc := lclient.New(
 				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIConfig.Lagoons[current].Token,
-				lagoonCLIConfig.Lagoons[current].Version,
 				lagoonCLIVersion,
+				lagoonCLIConfig.Lagoons[current].Version,
+				&token,
 				debug)
 
 			result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{

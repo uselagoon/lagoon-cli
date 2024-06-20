@@ -9,8 +9,9 @@ lagoon list group-projects [flags]
 ### Options
 
 ```
-  -h, --help          help for group-projects
-  -N, --name string   Name of the group to list projects in
+      --all-projects   All projects
+  -h, --help           help for group-projects
+  -N, --name string    Name of the group to list projects in
 ```
 
 ### Options inherited from parent commands

@@ -7,14 +7,15 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var getTaskByID = &cobra.Command{
@@ -39,8 +40,8 @@ var getTaskByID = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if taskID == 0 {
-			return fmt.Errorf("missing arguments: ID is not defined")
+		if err := requiredInputCheck("ID", strconv.Itoa(taskID)); err != nil {
+			return err
 		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -50,7 +51,7 @@ var getTaskByID = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.TaskByID(context.TODO(), taskID, lc)
+		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
 		if err != nil {
 			return err
 		}
@@ -98,8 +99,8 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			return fmt.Errorf("missing arguments: Project name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -110,13 +111,11 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			result, err := l.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
+			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			fmt.Printf(`Created a new task with ID %d
-You can use the following command to query the task status:
-lagoon -l %s get task-by-id --id %d --logs\n`, result.ID, current, result.ID)
+			fmt.Printf("Created a new task with ID %d \nYou can use the following command to query the task status: \nlagoon -l %s get task-by-id --id %d --logs \n", result.ID, current, result.ID)
 		}
 		return nil
 	},
@@ -126,22 +125,67 @@ var runDrushArchiveDump = &cobra.Command{
 	Use:     "drush-archivedump",
 	Aliases: []string{"dard"},
 	Short:   "Run a drush archive dump on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		taskResult, err := eClient.RunDrushArchiveDump(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runArdTask ($environment: Int!) {
+			taskDrushArchiveDump(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
+		if err != nil {
+			return err
+		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		err = json.Unmarshal([]byte(r), &resultMap)
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		if resultMap["taskDrushArchiveDump"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushArchiveDump"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
+		}
+		return nil
 	},
 }
 
@@ -149,22 +193,67 @@ var runDrushSQLDump = &cobra.Command{
 	Use:     "drush-sqldump",
 	Aliases: []string{"dsqld"},
 	Short:   "Run a drush sql dump on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		taskResult, err := eClient.RunDrushSQLDump(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runSqlDump ($environment: Int!) {
+			taskDrushSqlDump(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
+		if err != nil {
+			return err
+		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		err = json.Unmarshal([]byte(r), &resultMap)
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		if resultMap["taskDrushSqlDump"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushSqlDump"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
+		}
+		return nil
 	},
 }
 
@@ -172,51 +261,135 @@ var runDrushCacheClear = &cobra.Command{
 	Use:     "drush-cacheclear",
 	Aliases: []string{"dcc"},
 	Short:   "Run a drush cache clear on an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		taskResult, err := eClient.RunDrushCacheClear(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		if err != nil {
+			return err
+		}
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		raw := `mutation runCacheClear ($environment: Int!) {
+			taskDrushCacheClear(environment: $environment) {
+				id
+			}
+		}`
+		rawResp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{
+			"environment": environment.ID,
+		})
+		if err != nil {
+			return err
+		}
+		r, err := json.Marshal(rawResp)
+		if err != nil {
+			return err
+		}
 		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
-		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+		err = json.Unmarshal([]byte(r), &resultMap)
+		if err != nil {
+			return err
 		}
-		output.RenderResult(resultData, outputOptions)
+		if resultMap["taskDrushCacheClear"] != nil {
+			resultData := output.Result{
+				Result:     "success",
+				ResultData: resultMap["taskDrushCacheClear"].(map[string]interface{}),
+			}
+			output.RenderResult(resultData, outputOptions)
+		} else {
+			return fmt.Errorf("unable to determine status of task")
+		}
+		return nil
 	},
 }
 
 var invokeDefinedTask = &cobra.Command{
 	Use:     "invoke",
 	Aliases: []string{"i"},
-	Short:   "",
+	Short:   "Invoke a task registered against an environment",
 	Long: `Invoke a task registered against an environment
 The following are supported methods to use
 Direct:
  lagoon run invoke -p example -e main -N "advanced task name"
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" || invokedTaskName == "" {
-			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		invokedTaskName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", invokedTaskName); err != nil {
+			return err
 		}
 
-		taskResult, err := eClient.InvokeAdvancedTaskDefinition(cmdProjectName, cmdProjectEnvironment, invokedTaskName)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetAdvancedTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		if err != nil {
+			return err
+		}
+
+		var taskId uint
+		for _, task := range environment.AdvancedTasks {
+			if invokedTaskName == task.Name {
+				taskId = uint(task.ID)
+			}
+		}
+
+		taskResult, err := lagoon.InvokeAdvancedTaskDefinition(context.TODO(), environment.ID, taskId, lc)
+		if err != nil {
+			return err
+		}
+
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id":     taskResult.ID,
+				"name":   taskResult.Name,
+				"status": taskResult.Status,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -235,7 +408,30 @@ STDIN:
 Path:
   lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		taskName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		taskService, err := cmd.Flags().GetString("service")
+		if err != nil {
+			return err
+		}
+		taskCommand, err := cmd.Flags().GetString("command")
+		if err != nil {
+			return err
+		}
+		taskCommandFile, err := cmd.Flags().GetString("script")
+		if err != nil {
+			return err
+		}
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {
 			// check if we are getting data froms stdin
@@ -245,38 +441,56 @@ Path:
 				taskCommand = taskCommand + scanner.Text() + "\n"
 			}
 			if err := scanner.Err(); err != nil {
-				// fmt.Fprintln(os.Stderr, "reading standard input:", err)
 				handleError(errors.New("reading standard input:" + err.Error()))
 			}
 		} else {
 			// otherwise we can read from a file
 			if taskCommandFile != "" {
 				taskCommandBytes, err := os.ReadFile(taskCommandFile) // just pass the file name
-				handleError(err)
+				if err != nil {
+					return err
+				}
 				taskCommand = string(taskCommandBytes)
 			}
 		}
 
-		if cmdProjectName == "" || cmdProjectEnvironment == "" || taskCommand == "" {
-			fmt.Println("Missing arguments: Project name, environment name, or task command are not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", taskCommand, "Task name", taskName, "Task service", taskService); err != nil {
+			return err
 		}
-		task := api.Task{
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		task := schema.Task{
 			Name:    taskName,
 			Command: taskCommand,
 			Service: taskService,
 		}
-		taskResult, err := eClient.RunCustomTask(cmdProjectName, cmdProjectEnvironment, task)
-		handleError(err)
-		var resultMap map[string]interface{}
-		err = json.Unmarshal([]byte(taskResult), &resultMap)
-		handleError(err)
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+		taskResult, err := lagoon.AddTask(context.TODO(), environment.ID, task, lc)
+		if err != nil {
+			return err
+		}
 		resultData := output.Result{
-			Result:     "success",
-			ResultData: resultMap,
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id": taskResult.ID,
+			},
 		}
 		output.RenderResult(resultData, outputOptions)
+		return nil
 	},
 }
 
@@ -298,8 +512,8 @@ var uploadFilesToTask = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if taskID == 0 {
-			return fmt.Errorf("missing arguments: ID is not defined")
+		if err := requiredInputCheck("ID", strconv.Itoa(taskID)); err != nil {
+			return err
 		}
 		files, err := cmd.Flags().GetStringSlice("file")
 		if err != nil {
@@ -313,7 +527,7 @@ var uploadFilesToTask = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		result, err := l.UploadFilesForTask(context.TODO(), taskID, files, lc)
+		result, err := lagoon.UploadFilesForTask(context.TODO(), taskID, files, lc)
 		if err != nil {
 			return err
 		}
@@ -340,20 +554,12 @@ var uploadFilesToTask = &cobra.Command{
 	},
 }
 
-var (
-	taskName        string
-	invokedTaskName string
-	taskService     string
-	taskCommand     string
-	taskCommandFile string
-)
-
 func init() {
 	uploadFilesToTask.Flags().IntP("id", "I", 0, "ID of the task")
 	uploadFilesToTask.Flags().StringSliceP("file", "F", []string{}, "File to upload (add multiple flags to upload multiple files)")
-	invokeDefinedTask.Flags().StringVarP(&invokedTaskName, "name", "N", "", "Name of the task that will be invoked")
-	runCustomTask.Flags().StringVarP(&taskName, "name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
-	runCustomTask.Flags().StringVarP(&taskService, "service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
-	runCustomTask.Flags().StringVarP(&taskCommand, "command", "c", "", "The command to run in the task")
-	runCustomTask.Flags().StringVarP(&taskCommandFile, "script", "s", "", "Path to bash script to run (will use this before command(-c) if both are defined)")
+	invokeDefinedTask.Flags().StringP("name", "N", "", "Name of the task that will be invoked")
+	runCustomTask.Flags().StringP("name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
+	runCustomTask.Flags().StringP("service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
+	runCustomTask.Flags().StringP("command", "c", "", "The command to run in the task")
+	runCustomTask.Flags().StringP("script", "s", "", "Path to bash script to run (will use this before command(-c) if both are defined)")
 }

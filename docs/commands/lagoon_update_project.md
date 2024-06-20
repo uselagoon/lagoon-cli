@@ -9,25 +9,29 @@ lagoon update project [flags]
 ### Options
 
 ```
-  -a, --autoIdle int                          Auto idle setting of the project
-  -b, --branches string                       Which branches should be deployed
-      --deploymentsDisabled int               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
-  -L, --developmentEnvironmentsLimit int      How many environments can be deployed at one time
-      --factsUi int                           Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable
-  -g, --gitUrl string                         GitURL of the project
-  -h, --help                                  help for project
-  -j, --json string                           JSON string to patch
-  -N, --name string                           Change the name of the project by specifying a new name (careful!)
-  -S, --openshift int                         Reference to OpenShift Object this Project should be deployed to
-  -o, --openshiftProjectPattern string        Pattern of OpenShift Project/Namespace that should be generated
-  -I, --privateKey string                     Private key to use for the project
-      --problemsUi int                        Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable
-  -E, --productionEnvironment string          Which environment(the name) should be marked as the production environment
-  -m, --pullrequests string                   Which Pull Requests should be deployed
-  -Z, --routerPattern string                  Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
-      --standbyProductionEnvironment string   Which environment(the name) should be marked as the standby production environment
-  -C, --storageCalc int                       Should storage for this environment be calculated
-  -s, --subfolder string                      Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
+  -a, --auto-idle uint                          Auto idle setting of the project
+      --availability string                     Availability of the project
+  -b, --branches string                         Which branches should be deployed
+      --build-image string                      Build Image for the project. Set to 'null' to remove the build image
+      --deployments-disabled uint               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
+      --development-build-priority uint         Set the priority of the development build
+  -L, --development-environments-limit uint     How many environments can be deployed at one time
+      --facts-ui uint                           Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable
+  -g, --git-url string                          GitURL of the project
+  -h, --help                                    help for project
+  -j, --json string                             JSON string to patch
+  -N, --name string                             Change the name of the project by specifying a new name (careful!)
+  -S, --openshift uint                          Reference to OpenShift Object this Project should be deployed to
+  -o, --openshift-project-pattern string        Pattern of OpenShift Project/Namespace that should be generated
+  -I, --private-key string                      Private key to use for the project
+      --problems-ui uint                        Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable
+      --production-build-priority uint          Set the priority of the production build
+  -E, --production-environment string           Which environment(the name) should be marked as the production environment
+  -m, --pullrequests string                     Which Pull Requests should be deployed
+  -Z, --router-pattern string                   Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
+      --standby-production-environment string   Which environment(the name) should be marked as the standby production environment
+  -C, --storage-calc uint                       Should storage for this environment be calculated
+  -s, --subfolder string                        Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 
 ### Options inherited from parent commands
