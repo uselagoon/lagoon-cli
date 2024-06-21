@@ -90,7 +90,7 @@ var addOrganizationCmd = &cobra.Command{
 				"Organization Name": organizationName,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -139,7 +139,7 @@ var deleteOrganizationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: organization.Name,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -229,7 +229,7 @@ var updateOrganizationCmd = &cobra.Command{
 				"Organization Name": result.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }

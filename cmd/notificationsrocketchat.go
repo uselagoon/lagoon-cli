@@ -94,7 +94,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 					"Organization",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -144,7 +144,7 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -202,7 +202,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 				"Channel",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -253,7 +253,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 				"Channel",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -298,7 +298,7 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -339,7 +339,7 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -419,7 +419,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 					"Channel",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},

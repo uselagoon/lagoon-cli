@@ -102,7 +102,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 					"CloudRegion",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -196,7 +196,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 					"CloudRegion",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -238,7 +238,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
+			output.RenderError(outputOptions.Error, outputOptions, cmd)
 			return nil
 		}
 
@@ -247,7 +247,10 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeleteDeployTargetConfig)
+			resultData := output.Result{
+				Result: result.DeleteDeployTargetConfig,
+			}
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -286,7 +289,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
+			output.RenderError(outputOptions.Error, outputOptions, cmd)
 			return nil
 		}
 		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
@@ -318,7 +321,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 				"CloudRegion",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }

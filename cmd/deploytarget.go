@@ -137,7 +137,7 @@ var addDeployTargetCmd = &cobra.Command{
 					"MonitoringConfig",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -269,7 +269,7 @@ var updateDeployTargetCmd = &cobra.Command{
 					"MonitoringConfig",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -319,7 +319,7 @@ var deleteDeployTargetCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: deleteDeployTargetResponse.DeleteDeployTarget,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -383,7 +383,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 				"Organization Name": deployTargetResponse.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -447,7 +447,7 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 					"Organization Name": organizationName,
 				},
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},

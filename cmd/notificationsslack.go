@@ -94,7 +94,7 @@ It does not configure a project to send notifications to Slack though, you need 
 					"Organization",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -142,7 +142,7 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -200,7 +200,7 @@ var listProjectSlacksCmd = &cobra.Command{
 				"Channel",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -251,7 +251,7 @@ var listAllSlacksCmd = &cobra.Command{
 				"Channel",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -296,7 +296,7 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -337,7 +337,7 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -417,7 +417,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 					"Channel",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},

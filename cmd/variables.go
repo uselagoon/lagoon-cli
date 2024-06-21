@@ -88,9 +88,9 @@ var addVariableCmd = &cobra.Command{
 			output.RenderOutput(output.Table{
 				Header: header,
 				Data:   data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		} else {
-			output.RenderInfo(fmt.Sprintf("variable %s remained unchanged", varName), outputOptions)
+			output.RenderInfo(fmt.Sprintf("variable %s remained unchanged", varName), outputOptions, cmd)
 		}
 		return nil
 	},
@@ -142,7 +142,7 @@ var deleteVariableCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: deleteResult.DeleteEnvVar,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},

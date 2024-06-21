@@ -3,6 +3,7 @@ package output
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
 
@@ -56,13 +57,36 @@ func RenderJSON(data interface{}, opts Options) {
 	fmt.Println(string(jsonBytes))
 }
 
+// JSONTestData for use with api tests.
+func JSONTestData(data interface{}, opts Options, cmd *cobra.Command) {
+	var jsonBytes []byte
+	var err error
+	if opts.Pretty {
+		jsonBytes, err = json.MarshalIndent(data, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		jsonBytes, err = json.Marshal(data)
+		if err != nil {
+			panic(err)
+		}
+	}
+	// Allows output to be captured for tests
+	fmt.Fprintf(cmd.OutOrStdout(), string(jsonBytes))
+}
+
 // RenderError .
-func RenderError(errorMsg string, opts Options) {
+func RenderError(errorMsg string, opts Options, cmd ...*cobra.Command) {
 	if opts.JSON {
 		jsonData := Result{
 			Error: trimQuotes(errorMsg),
 		}
-		RenderJSON(jsonData, opts)
+		if cmd != nil {
+			JSONTestData(jsonData, opts, cmd[0])
+		} else {
+			RenderJSON(jsonData, opts)
+		}
 	} else {
 		//fmt.Println(fmt.Sprintf("Error: %s", aurora.Yellow(trimQuotes(errorMsg))))
 		fmt.Println("Error:", trimQuotes(errorMsg))
@@ -70,21 +94,29 @@ func RenderError(errorMsg string, opts Options) {
 }
 
 // RenderInfo .
-func RenderInfo(infoMsg string, opts Options) {
+func RenderInfo(infoMsg string, opts Options, cmd ...*cobra.Command) {
 	if opts.JSON {
 		jsonData := Result{
 			Info: trimQuotes(infoMsg),
 		}
-		RenderJSON(jsonData, opts)
+		if cmd != nil {
+			JSONTestData(jsonData, opts, cmd[0])
+		} else {
+			RenderJSON(jsonData, opts)
+		}
 	} else {
 		fmt.Println("Info:", trimQuotes(infoMsg))
 	}
 }
 
 // RenderResult .
-func RenderResult(result Result, opts Options) {
+func RenderResult(result Result, opts Options, cmd ...*cobra.Command) {
 	if opts.JSON {
-		RenderJSON(result, opts)
+		if cmd != nil {
+			JSONTestData(result, opts, cmd[0])
+		} else {
+			RenderJSON(result, opts)
+		}
 	} else {
 		if trimQuotes(result.Result) == "success" {
 			fmt.Printf("Result: %s\n", aurora.Green(trimQuotes(result.Result)))
@@ -106,7 +138,7 @@ func RenderResult(result Result, opts Options) {
 }
 
 // RenderOutput .
-func RenderOutput(data Table, opts Options) {
+func RenderOutput(data Table, opts Options, cmd ...*cobra.Command) {
 	if opts.Debug {
 		fmt.Printf("%s\n", aurora.Yellow("Final result:"))
 	}
@@ -124,7 +156,11 @@ func RenderOutput(data Table, opts Options) {
 		returnedData := map[string]interface{}{
 			"data": rawData,
 		}
-		RenderJSON(returnedData, opts)
+		if cmd != nil {
+			JSONTestData(returnedData, opts, cmd[0])
+		} else {
+			RenderJSON(returnedData, opts)
+		}
 	} else {
 		// otherwise render a table
 		if opts.Error != "" {
