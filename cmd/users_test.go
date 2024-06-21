@@ -32,7 +32,7 @@ func TestUserCommands(t *testing.T) {
 		},
 		{
 			name:    "Add User SSH Key",
-			cmdArgs: []string{"add", "user-sshkey", "--email=user@test.com", "--keyvalue 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/ my-computer@example'", "--output-json"},
+			cmdArgs: []string{"add", "user-sshkey", "--email=user@test.com", "--keyvalue=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINA0ITV2gbDc6noYeWaqfxTYpaEKq7HzU3+F71XGhSL/", "--output-json"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(addCmd)
 				addCmd.AddCommand(addUserSSHKeyCmd)
@@ -43,7 +43,7 @@ func TestUserCommands(t *testing.T) {
 		},
 		{
 			name:    "Delete User SSH Key",
-			cmdArgs: []string{"delete", "user-sshkey", "--id=2", "--output-json"},
+			cmdArgs: []string{"delete", "user-sshkey", "--id=2", "--output-json", "--force"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(deleteCmd)
 				deleteCmd.AddCommand(deleteSSHKeyCmd)
@@ -90,15 +90,15 @@ func TestUserCommands(t *testing.T) {
 			cmdArgs: []string{"get", "all-user-sshkeys", "--output-json"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(getCmd)
-				getCmd.AddCommand(getUserKeysCmd)
-				AddGenericFlags(getUserKeysCmd)
+				getCmd.AddCommand(getAllUserKeysCmd)
+				AddGenericFlags(getAllUserKeysCmd)
 			},
-			expectOut: []string{"default-user@lagoon-demo", "default-user@lagoon-demo-org", "ci-customer-user-rsa@example.com", "ci-customer-user-ecdsa@example.com"},
+			expectOut: []string{"default-user@lagoon-demo", "ci-customer-user-rsa@example.com", "ci-customer-user-ecdsa@example.com"},
 			expectErr: false,
 		},
 		{
 			name:    "Get All User SSK Keys in group",
-			cmdArgs: []string{"get", "all-user-sshkeys", "--email=ci-group", "--output-json"},
+			cmdArgs: []string{"get", "all-user-sshkeys", "--name=ci-group", "--output-json"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(getCmd)
 				getCmd.AddCommand(getAllUserKeysCmd)
