@@ -82,8 +82,8 @@ var listProjectsCmd = &cobra.Command{
 			Header: []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"},
 			Data:   data,
 		}
-
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -132,7 +132,7 @@ var listDeployTargetsCmd = &cobra.Command{
 			})
 		}
 		outputOptions.MultiLine = true
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
 				"Name",
@@ -150,6 +150,7 @@ var listDeployTargetsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -194,7 +195,8 @@ var listGroupsCmd = &cobra.Command{
 			Header: []string{"ID", "Name"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -268,7 +270,8 @@ var listGroupProjectsCmd = &cobra.Command{
 			} else {
 				outputOptions.Error = "There are no projects in any groups\n"
 			}
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -279,7 +282,8 @@ var listGroupProjectsCmd = &cobra.Command{
 		if listAllProjects {
 			dataMain.Header = append(dataMain.Header, "GroupName")
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -315,7 +319,8 @@ var listEnvironmentsCmd = &cobra.Command{
 
 		if len(*environments) == 0 {
 			outputOptions.Error = fmt.Sprintf("No environments found for project '%s'\n", cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -339,7 +344,8 @@ var listEnvironmentsCmd = &cobra.Command{
 			Header: []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -414,13 +420,15 @@ var listVariablesCmd = &cobra.Command{
 			} else {
 				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
 			}
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -475,14 +483,16 @@ var listDeploymentsCmd = &cobra.Command{
 
 		if len(data) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no deployments for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -538,14 +548,16 @@ var listTasksCmd = &cobra.Command{
 
 		if len(data) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no tasks for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed", "Service"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -613,7 +625,8 @@ Without a group name, this query may time out in large Lagoon instalschema.`,
 			Header: []string{"ID", "GroupName", "Email", "Role"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -664,7 +677,8 @@ This query can take a long time to run if there are a lot of users.`,
 			Header: []string{"ID", "Email", "FirstName", "LastName", "Comment"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -714,7 +728,8 @@ var listUsersGroupsCmd = &cobra.Command{
 			Header: []string{"ID", "Email", "GroupName", "GroupRole"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -764,14 +779,16 @@ var listInvokableTasks = &cobra.Command{
 
 		if len(data) == 0 {
 			outputOptions.Error = "There are no user defined tasks for this environment\n"
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 		dataMain := output.Table{
 			Header: []string{"Task Name", "Description"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -816,7 +833,8 @@ var listProjectGroupsCmd = &cobra.Command{
 
 		if len(projectGroups.Groups) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no groups for project '%s'\n", cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -836,7 +854,8 @@ var listProjectGroupsCmd = &cobra.Command{
 			Header: []string{"Group ID", "Group Name", "Organization"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -884,7 +903,8 @@ var listOrganizationProjectsCmd = &cobra.Command{
 
 		if len(*orgProjects) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated projects found for organization '%s'\n", organizationName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -900,7 +920,8 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			Header: []string{"ID", "Name", "Group Count"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -947,7 +968,8 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		}
 		if len(*orgGroups) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated groups found for organization '%s'\n", organizationName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -964,7 +986,8 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			Header: []string{"ID", "Name", "Type", "Member Count"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -1007,7 +1030,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		}
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -1027,7 +1051,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			Header: []string{"ID", "Name", "Router Pattern", "Cloud Region", "Cloud Provider", "SSH Host", "SSH Port"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -1135,7 +1160,8 @@ var ListOrganizationAdminsCmd = &cobra.Command{
 			Header: []string{"ID", "Email", "First Name", "LastName", "OrganizationRole"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -1184,7 +1210,8 @@ var listOrganizationsCmd = &cobra.Command{
 			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota", "Environment Quota", "Route Quota"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

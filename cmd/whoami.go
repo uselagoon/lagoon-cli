@@ -86,12 +86,13 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 				}
 				keys = append(keys, keyData)
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: header,
 				Data:   keys,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Email",
@@ -109,6 +110,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 					},
 				},
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 
 		return nil

@@ -85,7 +85,7 @@ It does not configure a project to send notifications to Slack though, you need 
 				notificationData = append(notificationData, "-")
 			}
 			data = append(data, notificationData)
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -95,6 +95,7 @@ It does not configure a project to send notifications to Slack though, you need 
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -142,7 +143,8 @@ This command is used to add an existing Slack notification in Lagoon to a projec
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -193,7 +195,7 @@ var listProjectSlacksCmd = &cobra.Command{
 				})
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Name",
 				"Webhook",
@@ -201,6 +203,7 @@ var listProjectSlacksCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -243,7 +246,7 @@ var listAllSlacksCmd = &cobra.Command{
 				}
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Project",
 				"Name",
@@ -252,6 +255,7 @@ var listAllSlacksCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -296,7 +300,8 @@ var deleteProjectSlackNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -337,7 +342,8 @@ var deleteSlackNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -409,7 +415,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 				},
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -418,6 +424,7 @@ var updateSlackNotificationCmd = &cobra.Command{
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

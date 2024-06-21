@@ -79,7 +79,8 @@ var getTaskByID = &cobra.Command{
 			dataMain.Header = append(dataMain.Header, "Logs")
 			dataMain.Data[0] = append(dataMain.Data[0], returnNonEmptyString(result.Logs))
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -181,7 +182,8 @@ var runDrushArchiveDump = &cobra.Command{
 				Result:     "success",
 				ResultData: resultMap["taskDrushArchiveDump"].(map[string]interface{}),
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
 			return fmt.Errorf("unable to determine status of task")
 		}
@@ -249,7 +251,8 @@ var runDrushSQLDump = &cobra.Command{
 				Result:     "success",
 				ResultData: resultMap["taskDrushSqlDump"].(map[string]interface{}),
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
 			return fmt.Errorf("unable to determine status of task")
 		}
@@ -317,7 +320,8 @@ var runDrushCacheClear = &cobra.Command{
 				Result:     "success",
 				ResultData: resultMap["taskDrushCacheClear"].(map[string]interface{}),
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
 			return fmt.Errorf("unable to determine status of task")
 		}
@@ -388,7 +392,8 @@ Direct:
 				"status": taskResult.Status,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -489,7 +494,8 @@ Path:
 				"id": taskResult.ID,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -549,7 +555,8 @@ var uploadFilesToTask = &cobra.Command{
 				},
 			},
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
