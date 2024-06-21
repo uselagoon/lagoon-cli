@@ -50,7 +50,7 @@ var deleteEnvCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: environment.DeleteEnvironment,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -172,7 +172,7 @@ var updateEnvironmentCmd = &cobra.Command{
 				"Environment Name": result.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -242,7 +242,7 @@ var listBackupsCmd = &cobra.Command{
 				"RestoreStatus",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }

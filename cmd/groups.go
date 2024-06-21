@@ -89,7 +89,7 @@ var addGroupCmd = &cobra.Command{
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -162,7 +162,7 @@ var addUserToGroupCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -213,7 +213,7 @@ var addProjectToGroupCmd = &cobra.Command{
 		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
+			output.RenderError(outputOptions.Error, outputOptions, cmd)
 			return nil
 		}
 		_, err = lagoon.AddProjectToGroup(context.TODO(), projectGroup, lc)
@@ -224,7 +224,7 @@ var addProjectToGroupCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -280,7 +280,7 @@ var deleteUserFromGroupCmd = &cobra.Command{
 					"id": result.ID,
 				},
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -332,7 +332,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
+			output.RenderError(outputOptions.Error, outputOptions, cmd)
 			return nil
 		}
 
@@ -345,7 +345,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -384,7 +384,7 @@ var deleteGroupCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},

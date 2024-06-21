@@ -87,7 +87,7 @@ It does not configure a project to send notifications to webhook though, you nee
 					"Organization",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -135,7 +135,7 @@ This command is used to add an existing webhook notification in Lagoon to a proj
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -191,7 +191,7 @@ var listProjectWebhooksCmd = &cobra.Command{
 				"Webhook",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -240,7 +240,7 @@ var listAllWebhooksCmd = &cobra.Command{
 				"Webhook",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -285,7 +285,7 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -326,7 +326,7 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -399,7 +399,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 					"Webhook",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},

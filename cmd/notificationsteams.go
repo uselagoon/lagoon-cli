@@ -87,7 +87,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 					"Organization",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -135,7 +135,7 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -191,7 +191,7 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 				"Webhook",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -240,7 +240,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 				"Webhook",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -285,7 +285,7 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -326,7 +326,7 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -399,7 +399,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 					"Webhook",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},

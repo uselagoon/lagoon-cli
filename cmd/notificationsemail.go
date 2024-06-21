@@ -86,7 +86,7 @@ It does not configure a project to send notifications to email though, you need 
 					"Organization",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -135,7 +135,7 @@ This command is used to add an existing email notification in Lagoon to a projec
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -191,7 +191,7 @@ var listProjectEmailsCmd = &cobra.Command{
 				"EmailAddress",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -240,7 +240,7 @@ var listAllEmailsCmd = &cobra.Command{
 				"EmailAddress",
 			},
 			Data: data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -285,7 +285,7 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -326,7 +326,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -399,7 +399,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 					"EmailAddress",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},

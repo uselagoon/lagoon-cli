@@ -50,7 +50,7 @@ var deleteProjectCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -203,7 +203,7 @@ var addProjectCmd = &cobra.Command{
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -377,7 +377,7 @@ var updateProjectCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
+			output.RenderError(outputOptions.Error, outputOptions, cmd)
 			return nil
 		}
 		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
@@ -391,7 +391,7 @@ var updateProjectCmd = &cobra.Command{
 				"Project Name": projectUpdate.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		output.RenderResult(resultData, outputOptions, cmd)
 		return nil
 	},
 }
@@ -463,7 +463,7 @@ var listProjectByMetadata = &cobra.Command{
 		output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -513,7 +513,7 @@ var getProjectMetadata = &cobra.Command{
 		output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
-		}, outputOptions)
+		}, outputOptions, cmd)
 		return nil
 	},
 }
@@ -572,7 +572,7 @@ var updateProjectMetadata = &cobra.Command{
 					"Metadata",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -628,7 +628,7 @@ var deleteProjectMetadataByKey = &cobra.Command{
 					"Metadata",
 				},
 				Data: data,
-			}, outputOptions)
+			}, outputOptions, cmd)
 		}
 		return nil
 	},
@@ -694,7 +694,7 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 					"Organization Name": organizationName,
 				},
 			}
-			output.RenderResult(resultData, outputOptions)
+			output.RenderResult(resultData, outputOptions, cmd)
 		}
 		return nil
 	},

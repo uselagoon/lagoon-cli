@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"os"
 	"strings"
 
@@ -98,4 +100,22 @@ func requiredInputCheck(fieldsAndValues ...string) error {
 		}
 	}
 	return nil
+}
+
+// SetUpRootCmdFlags sets up the flags for the root command
+func SetUpRootCmdFlags() {
+	rootCmd.Flags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
+	rootCmd.Flags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The Lagoon instance to interact with")
+}
+
+// AddGenericFlags adds the generic flags to the command being executed. --debug, --output-json, --project, --environment, --force
+// Instantiates an explicit flagset for each command to avoid 'flag redefined' errors on multiple tests containing the same command
+func AddGenericFlags(cmd *cobra.Command) {
+	flags := pflag.FlagSet{}
+	flags.BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
+	flags.BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
+	flags.StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
+	flags.StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
+	flags.BoolVarP(&forceAction, "force", "", false, "Force yes on prompts (if supported)")
+	cmd.Flags().AddFlagSet(&flags)
 }
