@@ -85,7 +85,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 				notificationData = append(notificationData, "-")
 			}
 			data = append(data, notificationData)
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -95,6 +95,7 @@ It does not configure a project to send notifications to RocketChat though, you 
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -144,7 +145,8 @@ This command is used to add an existing RocketChat notification in Lagoon to a p
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -195,7 +197,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 				})
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Name",
 				"Webhook",
@@ -203,6 +205,7 @@ var listProjectRocketChatsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -245,7 +248,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 				}
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Project",
 				"Name",
@@ -254,6 +257,7 @@ var listAllRocketChatsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -298,7 +302,8 @@ var deleteProjectRocketChatNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -339,7 +344,8 @@ var deleteRocketChatNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -411,7 +417,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 					returnNonEmptyString(fmt.Sprintf("%v", result.Channel)),
 				},
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -420,6 +426,7 @@ var updateRocketChatNotificationCmd = &cobra.Command{
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

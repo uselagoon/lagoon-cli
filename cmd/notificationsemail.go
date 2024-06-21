@@ -78,7 +78,7 @@ It does not configure a project to send notifications to email though, you need 
 				notificationData = append(notificationData, "-")
 			}
 			data = append(data, notificationData)
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -87,6 +87,7 @@ It does not configure a project to send notifications to email though, you need 
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -135,7 +136,8 @@ This command is used to add an existing email notification in Lagoon to a projec
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -185,13 +187,14 @@ var listProjectEmailsCmd = &cobra.Command{
 				})
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Name",
 				"EmailAddress",
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -233,7 +236,7 @@ var listAllEmailsCmd = &cobra.Command{
 				}
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Project",
 				"Name",
@@ -241,6 +244,7 @@ var listAllEmailsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -285,7 +289,8 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -326,7 +331,8 @@ var deleteEmailNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -392,7 +398,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 					returnNonEmptyString(fmt.Sprintf("%v", result.EmailAddress)),
 				},
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -400,6 +406,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
