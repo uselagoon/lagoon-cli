@@ -49,6 +49,7 @@ func TestOrganizationCommands(t *testing.T) {
 			expectOut: []string{"result", "test-organization"},
 			expectErr: false,
 		},
+		// TODO: Remaining Organization commands
 	}
 	SetUpRootCmdFlags()
 	for _, tt := range tests {
