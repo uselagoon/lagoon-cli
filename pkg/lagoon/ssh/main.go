@@ -1,26 +1,51 @@
+// Package ssh implements an SSH client for Lagoon.
 package ssh
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
+
+// LogStream connects to host:port using the given config, and executes the
+// argv command. It does not request a PTY, and instead just streams the
+// response to the attached terminal. argv should contain a logs=... argument.
+func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error {
+	// https://stackoverflow.com/a/37088088
+	client, err := ssh.Dial("tcp", host+":"+port, config)
+	if err != nil {
+		return fmt.Errorf("couldn't dial SSH (maybe this service doesn't support logs?): %v", err)
+	}
+	session, err := client.NewSession()
+	if err != nil {
+		return fmt.Errorf("couldn't create SSH session: %v", err)
+	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	session.Stdin = os.Stdin
+	err = session.Start(strings.Join(argv, " "))
+	if err != nil {
+		return fmt.Errorf("couldn't start SSH session: %v", err)
+	}
+	return session.Wait()
+}
 
 // InteractiveSSH .
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return errors.New("Failed to create session: " + err.Error())
+		return fmt.Errorf("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -32,13 +57,13 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 	fileDescriptor := int(os.Stdin.Fd())
-	if terminal.IsTerminal(fileDescriptor) {
-		originalState, err := terminal.MakeRaw(fileDescriptor)
+	if term.IsTerminal(fileDescriptor) {
+		originalState, err := term.MakeRaw(fileDescriptor)
 		if err != nil {
 			return err
 		}
-		defer terminal.Restore(fileDescriptor, originalState)
-		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		defer term.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
 		}
@@ -56,7 +81,7 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	err = session.Start(connString)
 	if err != nil {
-		return errors.New("Failed to start shell: " + err.Error())
+		return fmt.Errorf("Failed to start shell: " + err.Error())
 	}
 	session.Wait()
 	return nil
@@ -66,13 +91,13 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return errors.New("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return errors.New("Failed to create session: " + err.Error())
+		return fmt.Errorf("Failed to create session: " + err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -84,13 +109,13 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 	fileDescriptor := int(os.Stdin.Fd())
-	if terminal.IsTerminal(fileDescriptor) {
-		originalState, err := terminal.MakeRaw(fileDescriptor)
+	if term.IsTerminal(fileDescriptor) {
+		originalState, err := term.MakeRaw(fileDescriptor)
 		if err != nil {
 			return err
 		}
-		defer terminal.Restore(fileDescriptor, originalState)
-		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		defer term.Restore(fileDescriptor, originalState)
+		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
 		}

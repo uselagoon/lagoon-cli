@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -31,17 +32,18 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 			return err
 		}
 
-		lc := client.New(
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		user, err := lagoon.GetMeInfo(context.TODO(), lc)
+		user, err := lagoon.Me(context.TODO(), lc)
 		if err != nil {
-			if strings.Contains(err.Error(), "Cannot read property 'access_token' of null") {
-				return fmt.Errorf("Unable to get user information, you may be using an administration token")
+			if strings.Contains(err.Error(), "Cannot read properties of null (reading 'access_token')") {
+				return fmt.Errorf("unable to get user information, you may be using an administration token")
 			}
 			return err
 		}
@@ -73,7 +75,7 @@ This is useful if you have multiple keys or accounts in multiple lagoons and nee
 					keyData = append(keyData, key.Created)
 				}
 				if opts["type"] {
-					keyData = append(keyData, fmt.Sprintf("%s", key.KeyType))
+					keyData = append(keyData, string(key.KeyType))
 				}
 				if opts["key"] {
 					keyData = append(keyData, key.KeyValue)

@@ -1,6 +1,8 @@
 package schema
 
-import "github.com/uselagoon/lagoon-cli/pkg/api"
+import (
+	api "github.com/uselagoon/machinery/api/schema"
+)
 
 // AddProjectInput is based on the Lagoon API type.
 type AddProjectInput struct {

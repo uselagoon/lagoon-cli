@@ -33,7 +33,10 @@ Delete a project, or delete notifications and variables from projects or environ
 * [lagoon delete environment](lagoon_delete_environment.md)	 - Delete an environment
 * [lagoon delete group](lagoon_delete_group.md)	 - Delete a group from lagoon
 * [lagoon delete notification](lagoon_delete_notification.md)	 - Delete notifications or delete notifications from projects
-* [lagoon delete organization](lagoon_delete_organization.md)	 - Add an organization, or add a group/project to an organization
+* [lagoon delete organization](lagoon_delete_organization.md)	 - Delete an organization
+* [lagoon delete organization-administrator](lagoon_delete_organization-administrator.md)	 - Remove an administrator from an Organization
+* [lagoon delete organization-deploytarget](lagoon_delete_organization-deploytarget.md)	 - Remove a deploy target from an Organization
+* [lagoon delete organization-project](lagoon_delete_organization-project.md)	 - Remove a project from an Organization
 * [lagoon delete project](lagoon_delete_project.md)	 - Delete a project
 * [lagoon delete project-group](lagoon_delete_project-group.md)	 - Delete a project from a group in lagoon
 * [lagoon delete project-metadata](lagoon_delete_project-metadata.md)	 - Delete a key from a projects metadata

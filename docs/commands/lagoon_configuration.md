@@ -33,6 +33,7 @@ Manage or view the contexts and users for interacting with Lagoon
 * [lagoon configuration config-path](lagoon_configuration_config-path.md)	 - Get the path of where the config file lives
 * [lagoon configuration convert-config](lagoon_configuration_convert-config.md)	 - Convert legacy .lagoon.yml config to the new configuration format
 * [lagoon configuration default-context](lagoon_configuration_default-context.md)	 - Change which context is the default
+* [lagoon configuration feature](lagoon_configuration_feature.md)	 - Enable or disable a feature for all contexts or a specific context
 * [lagoon configuration list-contexts](lagoon_configuration_list-contexts.md)	 - View all configured Lagoon contexts
 * [lagoon configuration list-users](lagoon_configuration_list-users.md)	 - View all configured Lagoon context users
 * [lagoon configuration update-context](lagoon_configuration_update-context.md)	 - Update a Lagoon context

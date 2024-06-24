@@ -15,9 +15,9 @@ lagoon update user [flags]
 ```
   -C, --current-email string   Current email address of the user
   -E, --email string           New email address of the user
-  -F, --firstName string       New first name of the user
+  -F, --first-name string      New first name of the user
   -h, --help                   help for user
-  -L, --lastName string        New last name of the user
+  -L, --last-name string       New last name of the user
 ```
 
 ### Options inherited from parent commands

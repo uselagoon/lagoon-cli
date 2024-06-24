@@ -1,6 +1,8 @@
 package schema
 
-import "github.com/uselagoon/lagoon-cli/pkg/api"
+import (
+	api "github.com/uselagoon/machinery/api/schema"
+)
 
 // SSHKey is the basic SSH key information, used by both config and API data.
 // @TODO: once Lagoon API returns proper TZ, fix up `Created` to time.Time.

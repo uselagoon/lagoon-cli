@@ -3,10 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var deployCmd = &cobra.Command{
@@ -38,15 +40,15 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || branch == "" {
-			return fmt.Errorf("Missing arguments: Project name or branch name is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Branch name", branch); err != nil {
+			return err
 		}
 
-		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
 			return err
 		}
@@ -56,11 +58,12 @@ use 'lagoon deploy latest' instead`,
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to deploy branch '%s' for project '%s', are you sure?", branch, cmdProjectName)) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			depBranch := &schema.DeployEnvironmentBranchInput{
 				Branch:         branch,
@@ -102,15 +105,15 @@ var deployPromoteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || sourceEnvironment == "" || destinationEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name, source environment, or destination environment is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Source environment", sourceEnvironment, "Destination environment", destinationEnvironment); err != nil {
+			return err
 		}
 
-		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
 			return err
 		}
@@ -120,11 +123,12 @@ var deployPromoteCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to promote environment '%s' to '%s' for project '%s', are you sure?", sourceEnvironment, destinationEnvironment, cmdProjectName)) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.DeployPromote(context.TODO(), &schema.DeployEnvironmentPromoteInput{
 				SourceEnvironment:      sourceEnvironment,
@@ -154,7 +158,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
@@ -163,8 +167,11 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			return err
 		}
 
-		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
 		buildVarMap, err := buildVarsToMap(buildVarStrings)
@@ -172,15 +179,13 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			return err
 		}
 
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			return fmt.Errorf("Missing arguments: Project name or environment name is not defined")
-		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy the latest environment '%s' for project '%s', are you sure?", cmdProjectEnvironment, cmdProjectName)) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.DeployLatest(context.TODO(), &schema.DeployEnvironmentLatestInput{
 				Environment: schema.EnvironmentInput{
@@ -224,27 +229,26 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err != nil {
 			return err
 		}
-		baseBranchName, err := cmd.Flags().GetString("baseBranchName")
+		baseBranchName, err := cmd.Flags().GetString("base-branch-name")
 		if err != nil {
 			return err
 		}
-		baseBranchRef, err := cmd.Flags().GetString("baseBranchRef")
+		baseBranchRef, err := cmd.Flags().GetString("base-branch-ref")
 		if err != nil {
 			return err
 		}
-		headBranchName, err := cmd.Flags().GetString("headBranchName")
+		headBranchName, err := cmd.Flags().GetString("head-branch-name")
 		if err != nil {
 			return err
 		}
-		headBranchRef, err := cmd.Flags().GetString("headBranchRef")
+		headBranchRef, err := cmd.Flags().GetString("head-branch-ref")
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" || prTitle == "" || prNumber == 0 || baseBranchName == "" ||
-			baseBranchRef == "" || headBranchName == "" || headBranchRef == "" {
-			return fmt.Errorf("Missing arguments: Project name, title, number, baseBranchName, baseBranchRef, headBranchName, or headBranchRef is not defined")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Pullrequest title", prTitle, "Pullrequest number", strconv.Itoa(int(prNumber)), "Base branch name", baseBranchName, "Base branch ref", baseBranchRef, "Head branch name", headBranchName, "Head branch ref", headBranchRef); err != nil {
+			return err
 		}
-		buildVarStrings, err := cmd.Flags().GetStringSlice("buildvar")
+		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
 		if err != nil {
 			return err
 		}
@@ -253,18 +257,18 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			return err
 		}
 
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
-
 			result, err := lagoon.DeployPullRequest(context.TODO(), &schema.DeployEnvironmentPullrequestInput{
 				Project: schema.ProjectInput{
 					Name: cmdProjectName,
@@ -287,11 +291,6 @@ This pullrequest may not already exist as an environment in lagoon.`,
 	},
 }
 
-var (
-	promoteSourceEnv string
-	promoteDestEnv   string
-)
-
 func init() {
 	deployCmd.AddCommand(deployBranchCmd)
 	deployCmd.AddCommand(deployPromoteCmd)
@@ -299,25 +298,25 @@ func init() {
 	deployCmd.AddCommand(deployPullrequestCmd)
 
 	const returnDataUsageText = "Returns the build name instead of success text"
-	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployLatestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+	deployLatestCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployLatestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
-	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
-	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployBranchCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+	deployBranchCmd.Flags().StringP("branch-ref", "r", "", "Branch ref to deploy")
+	deployBranchCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployBranchCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
-	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployPromoteCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+	deployPromoteCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployPromoteCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
-	deployPullrequestCmd.Flags().StringP("baseBranchName", "N", "", "Pullrequest base branch name")
-	deployPullrequestCmd.Flags().StringP("baseBranchRef", "R", "", "Pullrequest base branch reference hash")
-	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
-	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
-	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
-	deployPullrequestCmd.Flags().StringSlice("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+	deployPullrequestCmd.Flags().StringP("base-branch-name", "N", "", "Pullrequest base branch name")
+	deployPullrequestCmd.Flags().StringP("base-branch-ref", "R", "", "Pullrequest base branch reference hash")
+	deployPullrequestCmd.Flags().StringP("head-branch-name", "H", "", "Pullrequest head branch name")
+	deployPullrequestCmd.Flags().StringP("head-branch-ref", "M", "", "Pullrequest head branch reference hash")
+	deployPullrequestCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployPullrequestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 }

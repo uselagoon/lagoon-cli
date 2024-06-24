@@ -7,19 +7,17 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/uselagoon/machinery/api/schema"
+
 	"github.com/guregu/null"
 	"github.com/spf13/pflag"
-
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 )
+
+var unsafeRegex = regexp.MustCompile(`[^0-9a-z-]`)
 
 // makeSafe ensures that any string is dns safe
 func makeSafe(in string) string {
-	out := regexp.MustCompile(`[^0-9a-z-]`).ReplaceAllString(
-		strings.ToLower(in),
-		"$1-$2",
-	)
-	return out
+	return unsafeRegex.ReplaceAllString(strings.ToLower(in), "$1-$2")
 }
 
 // shortenEnvironment shortens the environment name down the same way that Lagoon does

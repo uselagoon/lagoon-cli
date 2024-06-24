@@ -55,7 +55,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          version: latest
+          version: v1.25.1
           args: release --debug --skip-validate
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}

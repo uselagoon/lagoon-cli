@@ -30,11 +30,12 @@ The output of this command will be the JSON response from the API`,
 		if err := requiredInputCheck("Raw query or mutation", raw); err != nil {
 			return err
 		}
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		if err != nil {
 			return err

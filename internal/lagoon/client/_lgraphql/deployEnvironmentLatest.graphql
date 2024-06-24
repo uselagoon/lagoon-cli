@@ -1,9 +1,0 @@
-mutation (
-  $environment: EnvironmentInput!, $returnData: Boolean!, $buildVariables: [EnvKeyValueInput]) {
-    deployEnvironmentLatest(input: {
-      environment: $environment
-      returnData: $returnData
-      buildVariables: $buildVariables
-    }
-  )
-}

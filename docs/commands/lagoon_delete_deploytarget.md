@@ -4,7 +4,7 @@ Delete a DeployTarget from lagoon
 
 ### Synopsis
 
-Delete a DeployTarget (kubernetes or openshift) from lagoon, this requires admin level permissions
+Delete a Deploytarget(Kubernetes) from lagoon, this requires admin level permissions
 
 ```
 lagoon delete deploytarget [flags]

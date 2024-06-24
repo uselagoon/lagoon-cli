@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
+	api "github.com/uselagoon/machinery/api/schema"
 )
 
 // AddGroupInput is based on the input to addGroup.

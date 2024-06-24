@@ -20,7 +20,6 @@ var lgraphql embed.FS
 
 // Client implements the lagoon package interfaces for the Lagoon GraphQL API.
 type Client struct {
-	userAgent  string
 	token      string
 	apiVersion string
 	cliVersion string

@@ -1,6 +1,11 @@
 ## lagoon add project
 
-Add a new project to Lagoon
+Add a new project to Lagoon, or add a project to an organization
+
+### Synopsis
+
+To add a project to an organization, you'll need to include the `organization` flag and provide the name of the organization. You need to be an owner of this organization to do this.
+If you're the organization owner and want to grant yourself ownership to this project to be able to deploy environments, specify the `owner` flag.
 
 ```
 lagoon add project [flags]
@@ -9,21 +14,25 @@ lagoon add project [flags]
 ### Options
 
 ```
-  -a, --autoIdle int                          Auto idle setting of the project
-  -b, --branches string                       Which branches should be deployed
-  -L, --developmentEnvironmentsLimit int      How many environments can be deployed at one time
-  -g, --gitUrl string                         GitURL of the project
-  -h, --help                                  help for project
-  -j, --json string                           JSON string to patch
-  -S, --openshift int                         Reference to OpenShift Object this Project should be deployed to
-  -o, --openshiftProjectPattern string        Pattern of OpenShift Project/Namespace that should be generated
-  -I, --privateKey string                     Private key to use for the project
-  -E, --productionEnvironment string          Which environment(the name) should be marked as the production environment
-  -m, --pullrequests string                   Which Pull Requests should be deployed
-  -Z, --routerPattern string                  Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
-      --standbyProductionEnvironment string   Which environment(the name) should be marked as the standby production environment
-  -C, --storageCalc int                       Should storage for this environment be calculated
-  -s, --subfolder string                      Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
+  -a, --auto-idle uint                          Auto idle setting of the project
+  -b, --branches string                         Which branches should be deployed
+      --build-image string                      Build Image for the project
+  -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) target this Project should be deployed to
+      --deploytarget-project-pattern string     Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated
+  -L, --development-environments-limit uint     How many environments can be deployed at one time
+  -g, --git-url string                          GitURL of the project
+  -h, --help                                    help for project
+  -j, --json string                             JSON string to patch
+      --organization-id uint                    ID of the Organization to add the project to
+  -O, --organization-name string                Name of the Organization to add the project to
+      --owner                                   Add the user as an owner of the project
+  -I, --private-key string                      Private key to use for the project
+  -E, --production-environment string           Which environment(the name) should be marked as the production environment
+  -m, --pullrequests string                     Which Pull Requests should be deployed
+  -Z, --router-pattern string                   Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
+      --standby-production-environment string   Which environment(the name) should be marked as the standby production environment
+  -C, --storage-calc uint                       Should storage for this environment be calculated
+  -s, --subfolder string                        Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 
 ### Options inherited from parent commands

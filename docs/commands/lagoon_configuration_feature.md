@@ -1,0 +1,38 @@
+## lagoon configuration feature
+
+Enable or disable a feature for all contexts or a specific context
+
+```
+lagoon configuration feature [flags]
+```
+
+### Options
+
+```
+      --context string   If provided the feature will be enabled for this context, otherwise globally
+      --feature string   The name of the feature to enable or disable [environment-from-directory,disable-update-check,ssh-token]
+  -h, --help             help for feature
+      --state            The state of the feature (--state=true or --state=false)
+```
+
+### Options inherited from parent commands
+
+```
+      --config-file string   Path to the config file to use (must be *.yml or *.yaml)
+      --debug                Enable debugging output (if supported)
+  -e, --environment string   Specify an environment to use
+      --force                Force yes on prompts (if supported)
+  -l, --lagoon string        The Lagoon instance to interact with
+      --no-header            No header on table (if supported)
+      --output-csv           Output as CSV (if supported)
+      --output-json          Output as JSON (if supported)
+      --pretty               Make JSON pretty (if supported)
+  -p, --project string       Specify a project to use
+      --skip-update-check    Skip checking for updates
+  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+```
+
+### SEE ALSO
+
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
+

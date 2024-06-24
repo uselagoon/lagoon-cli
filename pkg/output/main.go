@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/logrusorgru/aurora"
 )
 
@@ -22,12 +21,13 @@ type Data []string
 
 // Options .
 type Options struct {
-	Header bool
-	CSV    bool
-	JSON   bool
-	Pretty bool
-	Debug  bool
-	Error  string
+	Header    bool
+	CSV       bool
+	JSON      bool
+	Pretty    bool
+	Debug     bool
+	Error     string
+	MultiLine bool
 }
 
 // Result .
@@ -87,17 +87,17 @@ func RenderResult(result Result, opts Options) {
 		RenderJSON(result, opts)
 	} else {
 		if trimQuotes(result.Result) == "success" {
-			fmt.Println(fmt.Sprintf("Result: %s", aurora.Green(trimQuotes(result.Result))))
+			fmt.Printf("Result: %s\n", aurora.Green(trimQuotes(result.Result)))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Println(fmt.Sprintf("%s: %v", k, v))
+					fmt.Printf("%s: %v\n", k, v)
 				}
 			}
 		} else {
-			fmt.Println(fmt.Sprintf("Result: %s", aurora.Yellow(trimQuotes(result.Result))))
+			fmt.Printf("Result: %s\n", aurora.Yellow(trimQuotes(result.Result)))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Println(fmt.Sprintf("%s: %v", k, v))
+					fmt.Printf("%s: %v\n", k, v)
 				}
 			}
 		}
@@ -108,7 +108,7 @@ func RenderResult(result Result, opts Options) {
 // RenderOutput .
 func RenderOutput(data Table, opts Options) {
 	if opts.Debug {
-		fmt.Println(fmt.Sprintf("%s", aurora.Yellow("Final result:")))
+		fmt.Printf("%s\n", aurora.Yellow("Final result:"))
 	}
 	if opts.JSON {
 		// really basic tabledata to json implementation
@@ -151,8 +151,17 @@ func RenderOutput(data Table, opts Options) {
 		t.Style().Options = table.OptionsNoBordersAndSeparators
 		t.Style().Box.PaddingLeft = ""    // trim left space
 		t.Style().Box.PaddingRight = "\t" // pad right with tab
-		t.SuppressTrailingSpaces()        // suppress the trailing spaces
-		t.SetColumnConfigs([]table.ColumnConfig{{Align: text.AlignLeft}})
+		if !opts.MultiLine {
+			t.SuppressTrailingSpaces() // suppress the trailing spaces if not multiline
+		}
+		if opts.MultiLine {
+			// stops multiline values bleeding into other columns
+			t.SetColumnConfigs([]table.ColumnConfig{
+				{Name: "Value", WidthMax: 75}, // Set specific width for "Value" column if multiline
+				{Name: "Token", WidthMax: 50}, // Set specific width for "Token" column if multiline
+			})
+		}
+
 		if opts.CSV {
 			t.RenderCSV()
 			return

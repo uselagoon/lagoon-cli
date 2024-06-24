@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"reflect"
 	"testing"
+
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/guregu/null"
 	"github.com/spf13/pflag"
@@ -24,6 +25,11 @@ func Test_makeSafe(t *testing.T) {
 			name: "noslash in name",
 			in:   "Feature-Branch",
 			want: "feature-branch",
+		},
+		{
+			name: "space in name",
+			in:   "My Project",
+			want: "my-project",
 		},
 	}
 	for _, tt := range tests {
@@ -240,6 +246,21 @@ func Test_buildVarsToMap(t *testing.T) {
 				{
 					Name:  "KEY1",
 					Value: "VAL1==",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Valid case - entry with comma separated items",
+			args: args{
+				slice: []string{
+					`KEY1=type:thistype,othertype:thisone`,
+				},
+			},
+			want: []schema.EnvKeyValueInput{
+				{
+					Name:  "KEY1",
+					Value: "type:thistype,othertype:thisone",
 				},
 			},
 			wantErr: false,

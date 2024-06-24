@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/uselagoon/lagoon-cli/pkg/api"
+	api "github.com/uselagoon/machinery/api/schema"
 	"sigs.k8s.io/yaml"
 )
 

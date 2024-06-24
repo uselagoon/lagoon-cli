@@ -15,10 +15,10 @@ lagoon import [flags]
 ### Options
 
 ```
-  -h, --help                 help for import
-  -I, --import-file string   path to the file to import
-      --keep-going           on error, just log and continue instead of aborting
-      --openshiftID uint     ID of the openshift to target for import
+      --deploytarget-id uint   ID of the deploytarget to target for import
+  -h, --help                   help for import
+  -I, --import-file string     path to the file to import
+      --keep-going             on error, just log and continue instead of aborting
 ```
 
 ### Options inherited from parent commands

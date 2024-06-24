@@ -121,18 +121,18 @@ func retrieveTokenViaSsh() (*oauth2.Token, error) {
 		lContext.ContextConfig.TokenPort)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't connect to %s: %v", sshHost, err)
+		return nil, fmt.Errorf("unable to authenticate or connect to host %s\nthere may be an issue determining which ssh-key to use, or there may be an issue establishing a connection to the host\nthe error returned was: %v", sshHost, err)
 	}
 	defer conn.Close()
 
 	session, err := conn.NewSession()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't open session: %v", err)
+		return nil, fmt.Errorf("unable to establish ssh session, error from attempt is: %v", err)
 	}
 
 	out, err := session.CombinedOutput("grant")
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get token: %v", err)
+		return nil, fmt.Errorf("unable to get token: %v", err)
 	}
 	token := &oauth2.Token{}
 	json.Unmarshal(out, token)

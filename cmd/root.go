@@ -1,3 +1,4 @@
+// Package cmd implements the lagoon-cli command line interface.
 package cmd
 
 import (
@@ -10,14 +11,11 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/golang-jwt/jwt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/uselagoon/lagoon-cli/pkg/app"
-	"github.com/uselagoon/lagoon-cli/pkg/graphql"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/environments"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/projects"
-	"github.com/uselagoon/lagoon-cli/pkg/lagoon/users"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
 	l "github.com/uselagoon/machinery/api/lagoon"
@@ -39,7 +37,6 @@ var configExtension = ".yml"
 var createConfig bool
 var userPath string
 var configFilePath string
-var commandsFilePath = ".lagoon-cli/commands"
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
 
 var skipUpdateCheck bool
@@ -205,6 +202,8 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(uploadCmd)
 	rootCmd.AddCommand(rawCmd)
 	rootCmd.AddCommand(configCmd)
+	rootCmd.AddCommand(resetPasswordCmd)
+	rootCmd.AddCommand(logsCmd)
 }
 
 // version/build information command
@@ -217,8 +216,8 @@ var versionCmd = &cobra.Command{
 }
 
 func displayVersionInfo() {
-	fmt.Println(fmt.Sprintf("lagoon %s (%s)", lagoonCLIVersion, lagoonCLIBuildGoVersion))
-	fmt.Println(fmt.Sprintf("built %s", lagoonCLIBuild))
+	fmt.Printf("lagoon %s (%s)\n", lagoonCLIVersion, lagoonCLIBuildGoVersion)
+	fmt.Printf("built %s\n", lagoonCLIBuild)
 }
 
 func initConfig() {
@@ -347,15 +346,10 @@ func GetInput() string {
 
 // Prompt gets input with a prompt and returns the input
 func Prompt(prompt string) string {
-	fullPrompt := fmt.Sprintf("%s", prompt)
+	fullPrompt := prompt
 	fmt.Print(fullPrompt + ": ")
 	return GetInput()
 }
-
-// global the clients
-var eClient environments.Client
-var uClient users.Client
-var pClient projects.Client
 
 // FormatType .
 type FormatType string
@@ -368,72 +362,32 @@ const (
 )
 
 func validateToken(lagoon string) {
-	var err error
-	valid := graphql.VerifyTokenExpiry2(lUser.UserConfig.Grant.AccessToken, lagoon)
+	valid := VerifyTokenExpiry(lUser.UserConfig.Grant.AccessToken, lagoon)
 	if valid == false {
 		loginErr := loginToken()
 		if loginErr != nil {
-			fmt.Println("Unable to refresh token, you may need to run `lagoon login` first, error was", loginErr.Error())
+			fmt.Println("couldn't refresh token:", loginErr.Error())
 			os.Exit(1)
 		}
 	}
-	// set up the clients
-	eClient, err = environments.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	uClient, err = users.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	pClient, err = projects.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
 	outputOptions.Debug = debugEnable
-	// check the API for the version of lagoon if we haven't got one set
-	// otherwise return nil, nothing to do
-	err = versionCheck(lagoon)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
 }
 
 // validateTokenE does the same thing as validateToken, it just returns an
 // error instead of exiting on error.
 func validateTokenE(lagoon string) error {
 	var err error
-	if graphql.VerifyTokenExpiry2(lUser.UserConfig.Grant.AccessToken, lagoon) {
+	if VerifyTokenExpiry(lUser.UserConfig.Grant.AccessToken, lagoon) {
 		// check the API for the version of lagoon if we haven't got one set
 		// otherwise return nil, nothing to do
-		return versionCheck(lagoon)
+		return nil
 	}
 	if err = loginToken(); err != nil {
-		return fmt.Errorf("Couldn't refresh token, try `lagoon login`: %w", err)
-	}
-	// set up the clients
-	eClient, err = environments.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	uClient, err = users.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
-	}
-	pClient, err = projects.New(lContext, lUser, debugEnable)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		return err
+		return fmt.Errorf("couldn't refresh token: %w", err)
 	}
 	outputOptions.Debug = debugEnable
 	// fallback if token is expired or there was no token to begin with
-	return versionCheck(lagoon)
+	return nil
 }
 
 func versionCheck(lagoon string) error {
@@ -447,11 +401,12 @@ func versionCheck(lagoon string) error {
 		output.RenderInfo(fmt.Sprintf("Could not perform update check %v", err), outputOptions)
 	}
 	if timeToCheckForUpdates && isInternetActive() {
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debugEnable)
 		lagoonVersion, err := l.GetLagoonAPIVersion(context.TODO(), lc)
 		if err != nil {
@@ -464,4 +419,18 @@ func versionCheck(lagoon string) error {
 		return lConfig.WriteConfig()
 	}
 	return nil
+}
+
+// VerifyTokenExpiry verfies if the current token is valid or not
+func VerifyTokenExpiry(token, lagoon string) bool {
+	var p jwt.Parser
+	token2, _, err := p.ParseUnverified(
+		token, &jwt.StandardClaims{})
+	if err != nil {
+		return false
+	}
+	if token2.Claims.Valid() != nil {
+		return false
+	}
+	return true
 }

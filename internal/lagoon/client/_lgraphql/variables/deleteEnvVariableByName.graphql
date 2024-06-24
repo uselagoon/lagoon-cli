@@ -1,5 +1,0 @@
-mutation (
-  $input: DeleteEnvVariableByNameInput!
-) {
-    deleteEnvVariableByName(input: $input)
-}

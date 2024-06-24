@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 var retrieveCmd = &cobra.Command{
@@ -39,15 +39,16 @@ You can check the status of the backup using the list backups or get backup comm
 		if err != nil {
 			return err
 		}
-		if backupID == "" {
-			return fmt.Errorf("Missing arguments: backup-id is not defined")
+		if err := requiredInputCheck("Backup ID", backupID); err != nil {
+			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to trigger a retrieval for backup ID '%s', are you sure?", backupID)) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.AddBackupRestore(context.TODO(), backupID, lc)
 			if err != nil {

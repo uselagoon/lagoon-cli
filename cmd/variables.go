@@ -3,13 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
+
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -21,19 +21,13 @@ var addVariableCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
 		varName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
-		}
-		if varName == "" {
-			fmt.Println("Missing arguments: variable name is not defined")
-			cmd.Help()
-			os.Exit(1)
 		}
 		varValue, err := cmd.Flags().GetString("value")
 		if err != nil {
@@ -43,17 +37,18 @@ var addVariableCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Variable name", varName); err != nil {
 			return err
 		}
 
-		lc := client.New(
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
+
 		in := &schema.EnvVariableByNameInput{
 			Project:     cmdProjectName,
 			Environment: cmdProjectEnvironment,
@@ -109,29 +104,29 @@ var deleteVariableCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
 		varName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		debug, err := cmd.Flags().GetBool("debug")
-		if err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Variable name", varName); err != nil {
 			return err
 		}
+
 		deleteMsg := fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
 		if cmdProjectEnvironment != "" {
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
-			lc := client.New(
+			utoken := lUser.UserConfig.Grant.AccessToken
+			lc := lclient.New(
 				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-				lUser.UserConfig.Grant.AccessToken,
-				lContext.ContextConfig.Version,
 				lagoonCLIVersion,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			in := &schema.DeleteEnvVariableByNameInput{
 				Project:     cmdProjectName,
@@ -143,7 +138,7 @@ var deleteVariableCmd = &cobra.Command{
 				return err
 			}
 			resultData := output.Result{
-				Result: string(deleteResult.DeleteEnvVar),
+				Result: deleteResult.DeleteEnvVar,
 			}
 			output.RenderResult(resultData, outputOptions)
 		}

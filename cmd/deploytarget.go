@@ -6,20 +6,17 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 var addDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Add a DeployTarget to lagoon",
-	Long:    "Add a DeployTarget (kubernetes or openshift) to lagoon, this requires admin level permissions",
+	Long:    "Add a Deploytarget(Kubernetes) to lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -65,14 +62,8 @@ var addDeployTargetCmd = &cobra.Command{
 			return err
 		}
 
-		if name == "" {
-			return fmt.Errorf("Missing arguments: name is not defined")
-		}
-		if token == "" {
-			return fmt.Errorf("Missing arguments: token is not defined")
-		}
-		if consoleURL == "" {
-			return fmt.Errorf("Missing arguments: console-url is not defined")
+		if err := requiredInputCheck("Name", name, "Token", token, "Console-url", consoleURL); err != nil {
+			return err
 		}
 
 		addDeployTarget := &schema.AddDeployTargetInput{
@@ -96,19 +87,21 @@ var addDeployTargetCmd = &cobra.Command{
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			handleError(err)
+			return err
 		}
-		lc := client.New(
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to add '%s' DeployTarget, are you sure?", addDeployTarget.Name)) {
 			addDeployTargetResponse, err := lagoon.AddDeployTarget(context.TODO(), addDeployTarget, lc)
 			if err != nil {
-				handleError(err)
+				return err
 			}
 
 			data := []output.Data{}
@@ -154,7 +147,7 @@ var updateDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Update a DeployTarget in lagoon",
-	Long:    "Update a DeployTarget (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	Long:    "Update a Deploytarget(Kubernetes) in lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -207,15 +200,21 @@ var updateDeployTargetCmd = &cobra.Command{
 
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			handleError(err)
+			return err
 		}
-		lc := client.New(
+
+		if err := requiredInputCheck("Deploytarget ID", strconv.Itoa(int(id))); err != nil {
+			return err
+		}
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
-			debug,
-		)
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
 		updateDeployTarget := &schema.UpdateDeployTargetInput{
 			AddDeployTargetInput: schema.AddDeployTargetInput{
 				ID:            id,
@@ -233,7 +232,7 @@ var updateDeployTargetCmd = &cobra.Command{
 		if yesNo(fmt.Sprintf("You are attempting to update '%d' DeployTarget, are you sure?", updateDeployTarget.ID)) {
 			updateDeployTargetResponse, err := lagoon.UpdateDeployTarget(context.TODO(), updateDeployTarget, lc)
 			if err != nil {
-				handleError(err)
+				return err
 			}
 
 			data := []output.Data{}
@@ -279,7 +278,7 @@ var deleteDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Delete a DeployTarget from lagoon",
-	Long:    "Delete a DeployTarget (kubernetes or openshift) from lagoon, this requires admin level permissions",
+	Long:    "Delete a Deploytarget(Kubernetes) from lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -291,15 +290,20 @@ var deleteDeployTargetCmd = &cobra.Command{
 
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			handleError(err)
+			return err
 		}
-		lc := client.New(
+
+		if err := requiredInputCheck("Deploytarget name", name); err != nil {
+			return err
+		}
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
-			debug,
-		)
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
 
 		deleteDeployTarget := &schema.DeleteDeployTargetInput{
 			Name: name,
@@ -307,10 +311,9 @@ var deleteDeployTargetCmd = &cobra.Command{
 		if yesNo(fmt.Sprintf("You are attempting to delete DeployTarget '%s', are you sure?", deleteDeployTarget.Name)) {
 			deleteDeployTargetResponse, err := lagoon.DeleteDeployTarget(context.TODO(), deleteDeployTarget, lc)
 			if err != nil {
-				handleError(err)
+				return err
 			}
 
-			handleError(err)
 			resultData := output.Result{
 				Result: deleteDeployTargetResponse.DeleteDeployTarget,
 			}
@@ -321,54 +324,61 @@ var deleteDeployTargetCmd = &cobra.Command{
 }
 
 var addDeployTargetToOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Add a deploy target to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
-
-		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
-		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
+		if err != nil {
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
+			return err
+		}
+
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
-		deployTargetInput := s.AddDeployTargetToOrganizationInput{
-			DeployTarget: deployTarget,
+		deployTargetInput := schema.AddDeployTargetToOrganizationInput{
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
-		deployTargetResponse, err := l.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
-		handleError(err)
+		deployTargetResponse, err := lagoon.AddDeployTargetToOrganization(context.TODO(), &deployTargetInput, lc)
+		if err != nil {
+			return err
+		}
 
 		resultData := output.Result{
 			Result: "success",
 			ResultData: map[string]interface{}{
-				"Deploy Target":     deployTargetResponse.Name,
-				"Organization Name": organizationName,
+				"Deploy Target":     deploytarget,
+				"Organization Name": deployTargetResponse.Name,
 			},
 		}
 		output.RenderResult(resultData, outputOptions)
@@ -376,54 +386,61 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	},
 }
 
-var RemoveDeployTargetFromOrganizationCmd = &cobra.Command{
-	Use:     "deploytarget",
-	Aliases: []string{"dt"},
+var removeDeployTargetFromOrganizationCmd = &cobra.Command{
+	Use:     "organization-deploytarget",
+	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
-		handleError(err)
-
-		organizationName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			return err
-		}
-		deployTarget, err := cmd.Flags().GetUint("deploy-target")
+
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Deploy Target", strconv.Itoa(int(deployTarget))); err != nil {
+		deploytarget, err := cmd.Flags().GetUint("deploytarget")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		organization, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		handleError(err)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
 
-		deployTargetInput := s.RemoveDeployTargetFromOrganizationInput{
-			DeployTarget: deployTarget,
+		deployTargetInput := schema.RemoveDeployTargetFromOrganizationInput{
+			DeployTarget: deploytarget,
 			Organization: organization.ID,
 		}
 
-		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deployTarget, organization.Name)) {
-			_, err := l.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
-			handleError(err)
+		if yesNo(fmt.Sprintf("You are attempting to remove deploy target '%d' from organization '%s', are you sure?", deploytarget, organization.Name)) {
+			_, err := lagoon.RemoveDeployTargetFromOrganization(context.TODO(), &deployTargetInput, lc)
+			if err != nil {
+				return err
+			}
 			resultData := output.Result{
 				Result: "success",
 				ResultData: map[string]interface{}{
-					"Deploy Target":     deployTarget,
+					"Deploy Target":     deploytarget,
 					"Organization Name": organizationName,
 				},
 			}
@@ -446,14 +463,14 @@ func init() {
 	addDeployTargetCmd.Flags().StringP("ssh-port", "", "", "DeployTarget ssh port")
 	addDeployTargetCmd.Flags().StringP("build-image", "", "", "DeployTarget build image to use (if different to the default)")
 
-	addDeployTargetToOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	addDeployTargetToOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	addDeployTargetToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
+	addDeployTargetToOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	deleteDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	deleteDeployTargetCmd.Flags().StringP("name", "", "", "Name of DeployTarget")
 
-	RemoveDeployTargetFromOrganizationCmd.Flags().StringP("name", "O", "", "Name of Organization")
-	RemoveDeployTargetFromOrganizationCmd.Flags().UintP("deploy-target", "D", 0, "ID of DeployTarget")
+	removeDeployTargetFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of Organization")
+	removeDeployTargetFromOrganizationCmd.Flags().UintP("deploytarget", "D", 0, "ID of DeployTarget")
 
 	updateDeployTargetCmd.Flags().UintP("id", "", 0, "ID of the DeployTarget")
 	updateDeployTargetCmd.Flags().StringP("console-url", "", "", "DeployTarget console URL")

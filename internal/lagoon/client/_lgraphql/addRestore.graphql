@@ -1,6 +1,0 @@
-mutation (
-  $backupid: String!) {
-    addRestore(input: {backupId: $backupid}) {
-      id
-    }
-  }

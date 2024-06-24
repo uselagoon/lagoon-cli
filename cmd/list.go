@@ -2,21 +2,14 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
-	"github.com/uselagoon/lagoon-cli/pkg/api"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	ls "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 // ListFlags .
@@ -24,19 +17,6 @@ type ListFlags struct {
 	Project     string `json:"project,omitempty"`
 	Environment string `json:"environment,omitempty"`
 	Reveal      bool   `json:"reveal,omitempty"`
-}
-
-func parseListFlags(flags pflag.FlagSet) ListFlags {
-	configMap := make(map[string]interface{})
-	flags.VisitAll(func(f *pflag.Flag) {
-		if flags.Changed(f.Name) {
-			configMap[f.Name] = f.Value
-		}
-	})
-	jsonStr, _ := json.Marshal(configMap)
-	parsedFlags := ListFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
-	return parsedFlags
 }
 
 var listCmd = &cobra.Command{
@@ -51,26 +31,6 @@ var listProjectsCmd = &cobra.Command{
 	Use:     "projects",
 	Aliases: []string{"p"},
 	Short:   "List all projects you have access to (alias: p)",
-	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := pClient.ListAllProjects()
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo("No access to any projects in Lagoon", outputOptions)
-			os.Exit(0)
-		}
-		output.RenderOutput(dataMain, outputOptions)
-
-	},
-}
-
-var listDeployTargetsCmd = &cobra.Command{
-	Use:     "deploytargets",
-	Aliases: []string{"deploytarget", "dt"},
-	Short:   "List all DeployTargets in Lagoon",
-	Long:    "List all DeployTargets (kubernetes or openshift) in lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -79,12 +39,68 @@ var listDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		// current := lContext.Name
-		lc := client.New(
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		projects, err := lagoon.ListAllProjects(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, project := range *projects {
+			var devEnvironments = 0
+			for _, environment := range project.Environments {
+				if environment.EnvironmentType == "development" {
+					devEnvironments++
+				}
+			}
+
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
+				returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
+				returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, project.DevelopmentEnvironmentsLimit)),
+			})
+		}
+		if len(data) == 0 {
+			outputOptions.Error = "No access to any projects in Lagoon\n"
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "DevEnvironments"},
+			Data:   data,
+		}
+
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
+var listDeployTargetsCmd = &cobra.Command{
+	Use:     "deploytargets",
+	Aliases: []string{"deploytarget", "dt"},
+	Short:   "List all DeployTargets in Lagoon",
+	Long:    "List all Deploytargets(Kubernetes) in lagoon, this requires admin level permissions",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
 		if err != nil {
@@ -108,6 +124,7 @@ var listDeployTargetsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
 			})
 		}
+		outputOptions.MultiLine = true
 		output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
@@ -134,18 +151,43 @@ var listGroupsCmd = &cobra.Command{
 	Use:     "groups",
 	Aliases: []string{"g"},
 	Short:   "List groups you have access to (alias: g)",
-	Run: func(cmd *cobra.Command, args []string) {
-		returnedJSON, err := uClient.ListGroups("")
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo("This account is not in any groups", outputOptions)
-			os.Exit(0)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		groups, err := lagoon.ListAllGroups(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, group := range *groups {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%v", group.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", group.Name)),
+			})
+		}
+		if len(data) == 0 {
+			outputOptions.Error = "This account is not in any groups\n"
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Name"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
@@ -153,35 +195,83 @@ var listGroupProjectsCmd = &cobra.Command{
 	Use:     "group-projects",
 	Aliases: []string{"gp"},
 	Short:   "List projects in a group (alias: gp)",
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		groupName, err := cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
+		listAllProjects, err := cmd.Flags().GetBool("all-projects")
+		if err != nil {
+			return err
+		}
+
 		if !listAllProjects {
-			if groupName == "" {
-				fmt.Println("Missing arguments: Group name is not defined")
-				cmd.Help()
-				os.Exit(1)
+			if err := requiredInputCheck("Group name", groupName); err != nil {
+				return err
 			}
 		}
-		var returnedJSON []byte
-		var err error
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		var groupProjects *[]schema.Group
+
 		if listAllProjects {
-			returnedJSON, err = uClient.ListGroupProjects("", listAllProjects)
-		} else {
-			returnedJSON, err = uClient.ListGroupProjects(groupName, listAllProjects)
-		}
-		handleError(err)
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			if !listAllProjects {
-				output.RenderInfo(fmt.Sprintf("There are no projects in group '%s'", groupName), outputOptions)
-			} else {
-				output.RenderInfo("There are no projects in any groups", outputOptions)
+			groupProjects, err = lagoon.GetGroupProjects(context.TODO(), "", lc)
+			if err != nil {
+				return err
 			}
-			os.Exit(0)
+		} else {
+			groupProjects, err = lagoon.GetGroupProjects(context.TODO(), groupName, lc)
+			if err != nil {
+				return err
+			}
+		}
+		var data []output.Data
+		idx := 0
+		for _, group := range *groupProjects {
+			for _, project := range group.Projects {
+				data = append(data, []string{
+					returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
+					returnNonEmptyString(project.Name),
+				})
+				if listAllProjects {
+					data[idx] = append(data[idx], returnNonEmptyString(group.Name))
+				}
+				idx++
+			}
+		}
+		if len(data) == 0 {
+			if !listAllProjects {
+				outputOptions.Error = fmt.Sprintf("There are no projects in group '%s'\n", groupName)
+			} else {
+				outputOptions.Error = "There are no projects in any groups\n"
+			}
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
+		}
+
+		dataMain := output.Table{
+			Header: []string{"ID", "ProjectName"},
+			Data:   data,
+		}
+		if listAllProjects {
+			dataMain.Header = append(dataMain.Header, "GroupName")
 		}
 		output.RenderOutput(dataMain, outputOptions)
-
+		return nil
 	},
 }
 
@@ -197,25 +287,26 @@ var listEnvironmentsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		environments, err := l.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
+		environments, err := lagoon.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
 
 		if len(*environments) == 0 {
 			outputOptions.Error = fmt.Sprintf("No environments found for project '%s'\n", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -251,10 +342,8 @@ var listVariablesCmd = &cobra.Command{
 		return validateTokenE(cmdLagoon)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmdProjectName == "" {
-			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
-			os.Exit(1)
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
 		}
 		reveal, err := cmd.Flags().GetBool("reveal")
 		if err != nil {
@@ -264,11 +353,12 @@ var listVariablesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		lc := client.New(
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		in := &schema.EnvVariableByProjectEnvironmentNameInput{
 			Project:     cmdProjectName,
@@ -291,6 +381,7 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
 				env = append(env, fmt.Sprintf("%v", envvar.Value))
+				outputOptions.MultiLine = true
 			}
 			data = append(data, env)
 		}
@@ -308,10 +399,12 @@ var listVariablesCmd = &cobra.Command{
 		}
 		if len(data) == 0 {
 			if cmdProjectEnvironment != "" {
-				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName)
+				outputOptions.Error = fmt.Sprintf("There are no variables for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
 			} else {
 				outputOptions.Error = fmt.Sprintf("There are no variables for project '%s'\n", cmdProjectName)
 			}
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 		output.RenderOutput(output.Table{
 			Header: header,
@@ -325,23 +418,60 @@ var listDeploymentsCmd = &cobra.Command{
 	Use:     "deployments",
 	Aliases: []string{"d"},
 	Short:   "List deployments for an environment (alias: d)",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		returnedJSON, err := eClient.GetEnvironmentDeployments(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
 
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("There are no deployments for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
-			os.Exit(0)
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+
+		deployments, err := lagoon.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, deployment := range deployments.Deployments {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", deployment.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
+			})
+		}
+
+		if len(data) == 0 {
+			outputOptions.Error = fmt.Sprintf("There are no deployments for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -349,23 +479,61 @@ var listTasksCmd = &cobra.Command{
 	Use:     "tasks",
 	Aliases: []string{"t"},
 	Short:   "List tasks for an environment (alias: t)",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name is not defined")
-			cmd.Help()
-			os.Exit(1)
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
 		}
-		returnedJSON, err := eClient.GetEnvironmentTasks(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
 
-		var dataMain output.Table
-		err = json.Unmarshal([]byte(returnedJSON), &dataMain)
-		handleError(err)
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo(fmt.Sprintf("There are no tasks for environment '%s' in project '%s'", cmdProjectEnvironment, cmdProjectName), outputOptions)
-			os.Exit(0)
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+
+		tasks, err := lagoon.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, task := range tasks.Tasks {
+			data = append(data, []string{
+				returnNonEmptyString(fmt.Sprintf("%d", task.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.RemoteID)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Status)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Started)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Completed)),
+				returnNonEmptyString(fmt.Sprintf("%v", task.Service)),
+			})
+		}
+
+		if len(data) == 0 {
+			outputOptions.Error = fmt.Sprintf("There are no tasks for environment '%s' in project '%s'\n", cmdProjectEnvironment, cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed", "Service"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -375,7 +543,7 @@ var listUsersCmd = &cobra.Command{
 	Short:   "List all users in groups",
 	Long: `List all users in groups in lagoon, this only shows users that are in groups.
 If no group name is provided, all groups are queried.
-Without a group name, this query may time out in large Lagoon installs.`,
+Without a group name, this query may time out in large Lagoon instalschema.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -388,40 +556,41 @@ Without a group name, this query may time out in large Lagoon installs.`,
 		if err != nil {
 			return err
 		}
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		data := []output.Data{}
 		if groupName != "" {
 			// if a groupName is provided, use the groupbyname resolver
-			groupMembers, err := l.ListGroupMembers(context.TODO(), groupName, lc)
+			groupMembers, err := lagoon.ListGroupMembers(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
 			for _, member := range groupMembers.Members {
 				data = append(data, []string{
-					returnNonEmptyString(fmt.Sprintf("%s", groupMembers.ID)),
-					returnNonEmptyString(fmt.Sprintf("%s", groupMembers.Name)),
-					returnNonEmptyString(fmt.Sprintf("%s", member.User.Email)),
-					returnNonEmptyString(fmt.Sprintf("%s", member.Role)),
+					returnNonEmptyString(groupMembers.ID.String()),
+					returnNonEmptyString(groupMembers.Name),
+					returnNonEmptyString(member.User.Email),
+					returnNonEmptyString(string(member.Role)),
 				})
 			}
 		} else {
 			// otherwise allgroups query
-			groupMembers, err := l.ListAllGroupMembers(context.TODO(), groupName, lc)
+			groupMembers, err := lagoon.ListAllGroupMembers(context.TODO(), groupName, lc)
 			if err != nil {
 				return err
 			}
 			for _, group := range *groupMembers {
 				for _, member := range group.Members {
 					data = append(data, []string{
-						returnNonEmptyString(fmt.Sprintf("%s", group.ID)),
-						returnNonEmptyString(fmt.Sprintf("%s", group.Name)),
-						returnNonEmptyString(fmt.Sprintf("%s", member.User.Email)),
-						returnNonEmptyString(fmt.Sprintf("%s", member.Role)),
+						returnNonEmptyString(group.ID.String()),
+						returnNonEmptyString(group.Name),
+						returnNonEmptyString(member.User.Email),
+						returnNonEmptyString(string(member.Role)),
 					})
 				}
 			}
@@ -453,13 +622,14 @@ This query can take a long time to run if there are a lot of users.`,
 		if err != nil {
 			return err
 		}
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		allUsers, err := l.AllUsers(context.TODO(), ls.AllUsersFilter{
+		allUsers, err := lagoon.AllUsers(context.TODO(), schema.AllUsersFilter{
 			Email: emailAddress,
 		}, lc)
 		if err != nil {
@@ -468,11 +638,11 @@ This query can take a long time to run if there are a lot of users.`,
 		data := []output.Data{}
 		for _, user := range *allUsers {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", user.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.FirstName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.LastName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Comment)),
+				returnNonEmptyString(user.ID.String()),
+				returnNonEmptyString(user.Email),
+				returnNonEmptyString(user.FirstName),
+				returnNonEmptyString(user.LastName),
+				returnNonEmptyString(user.Comment),
 			})
 		}
 		dataMain := output.Table{
@@ -501,26 +671,27 @@ var listUsersGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if emailAddress == "" {
-			return fmt.Errorf("Missing arguments: email address is not defined")
+		if err := requiredInputCheck("Email Address", emailAddress); err != nil {
+			return err
 		}
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		allUsers, err := l.GetUserByEmail(context.TODO(), emailAddress, lc)
+		allUsers, err := lagoon.GetUserByEmail(context.TODO(), emailAddress, lc)
 		if err != nil {
 			return err
 		}
 		data := []output.Data{}
 		for _, grouprole := range allUsers.GroupRoles {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", allUsers.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", allUsers.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", grouprole.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", grouprole.Role)),
+				returnNonEmptyString(allUsers.ID.String()),
+				returnNonEmptyString(allUsers.Email),
+				returnNonEmptyString(grouprole.Name),
+				returnNonEmptyString(grouprole.Role),
 			})
 		}
 		dataMain := output.Table{
@@ -537,38 +708,54 @@ var listInvokableTasks = &cobra.Command{
 	Aliases: []string{"dcc"},
 	Short:   "Print a list of invokable tasks",
 	Long:    "Print a list of invokable user defined tasks registered against an environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		if cmdProjectName == "" || cmdProjectEnvironment == "" {
-			fmt.Println("Missing arguments: Project name or environment name are not defined")
-			cmd.Help()
-			os.Exit(1)
-		}
-		taskResult, err := eClient.ListInvokableAdvancedTaskDefinitions(cmdProjectName, cmdProjectEnvironment)
-		handleError(err)
-
-		var taskList []api.AdvancedTask
-		err = json.Unmarshal([]byte(taskResult), &taskList)
-
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return err
+		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
 		}
 
-		var taskListData []output.Data
-		for _, task := range taskList {
-			taskListData = append(taskListData, []string{task.Name, task.Description})
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
+			debug)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
+		if err != nil {
+			return err
 		}
 
-		var dataMain output.Table
-		dataMain.Header = []string{"Task Name", "Description"}
+		data := []output.Data{}
+		for _, task := range tasks.AdvancedTasks {
+			data = append(data, []string{
+				returnNonEmptyString(task.Name),
+				returnNonEmptyString(task.Description),
+			})
+		}
 
-		dataMain.Data = taskListData
-
-		if len(dataMain.Data) == 0 {
-			output.RenderInfo("There are no user defined tasks for this environment", outputOptions)
-			os.Exit(0)
+		if len(data) == 0 {
+			outputOptions.Error = "There are no user defined tasks for this environment\n"
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
+		}
+		dataMain := output.Table{
+			Header: []string{"Task Name", "Description"},
+			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
+		return nil
 	},
 }
 
@@ -597,17 +784,22 @@ var listProjectGroupsCmd = &cobra.Command{
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		projectGroups, err := l.GetProjectGroups(context.TODO(), cmdProjectName, lc)
-		handleError(err)
+		projectGroups, err := lagoon.GetProjectGroups(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
 
 		if len(projectGroups.Groups) == 0 {
 			outputOptions.Error = fmt.Sprintf("There are no groups for project '%s'\n", cmdProjectName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
@@ -631,18 +823,9 @@ var listProjectGroupsCmd = &cobra.Command{
 	},
 }
 
-var listOrganizationCmd = &cobra.Command{
-	Use:     "organization",
-	Aliases: []string{"o"},
-	Short:   "List all organizations projects, groups, deploy targets or users",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lContext.Name)
-	},
-}
-
 var listOrganizationProjectsCmd = &cobra.Command{
-	Use:     "projects",
-	Aliases: []string{"p"},
+	Use:     "organization-projects",
+	Aliases: []string{"org-p"},
 	Short:   "List projects in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -652,7 +835,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -660,26 +843,37 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		orgProjects, err := l.ListProjectsByOrganizationID(context.TODO(), org.ID, lc)
-		handleError(err)
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
+		orgProjects, err := lagoon.ListProjectsByOrganizationID(context.TODO(), organization.ID, lc)
+		if err != nil {
+			return err
+		}
 
 		if len(*orgProjects) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated projects found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
 		for _, project := range *orgProjects {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", project.Name)),
+				returnNonEmptyString(project.Name),
 				returnNonEmptyString(fmt.Sprintf("%d", project.GroupCount)),
 			})
 		}
@@ -693,8 +887,8 @@ var listOrganizationProjectsCmd = &cobra.Command{
 }
 
 var listOrganizationGroupsCmd = &cobra.Command{
-	Use:     "groups",
-	Aliases: []string{"g"},
+	Use:     "organization-groups",
+	Aliases: []string{"org-g"},
 	Short:   "List groups in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -704,7 +898,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -712,27 +906,37 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		org, err := l.GetOrganizationByName(context.TODO(), organizationName, lc)
-		orgGroups, err := l.ListGroupsByOrganizationID(context.TODO(), org.ID, lc)
-		handleError(err)
-
+		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
+		orgGroups, err := lagoon.ListGroupsByOrganizationID(context.TODO(), organization.ID, lc)
+		if err != nil {
+			return err
+		}
 		if len(*orgGroups) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated groups found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
 		for _, group := range *orgGroups {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", group.ID.String())),
-				returnNonEmptyString(fmt.Sprintf("%s", group.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", group.Type)),
+				returnNonEmptyString(group.ID.String()),
+				returnNonEmptyString(group.Name),
+				returnNonEmptyString(group.Type),
 				returnNonEmptyString(fmt.Sprintf("%d", group.MemberCount)),
 			})
 		}
@@ -746,8 +950,8 @@ var listOrganizationGroupsCmd = &cobra.Command{
 }
 
 var listOrganizationDeployTargetsCmd = &cobra.Command{
-	Use:     "deploytargets",
-	Aliases: []string{"d"},
+	Use:     "organization-deploytargets",
+	Aliases: []string{"org-dt"},
 	Short:   "List deploy targets in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -757,7 +961,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -765,35 +969,37 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Organization name", organizationName); err != nil {
-			if err := requiredInputCheck("Organization ID", strconv.Itoa(int(organizationID))); err != nil {
-				return err
-			}
+		if organizationName == "" && organizationID == 0 {
+			return fmt.Errorf("missing arguments: Organization name or ID is not defined")
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		deployTargets, err := l.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
-		handleError(err)
-
+		deployTargets, err := lagoon.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
+		if err != nil {
+			return err
+		}
 		if len(*deployTargets) == 0 {
 			outputOptions.Error = fmt.Sprintf("No associated deploy targets found for organization '%s'\n", organizationName)
+			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			return nil
 		}
 
 		data := []output.Data{}
 		for _, dt := range *deployTargets {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", dt.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.RouterPattern)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudRegion)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.CloudProvider)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.SSHHost)),
-				returnNonEmptyString(fmt.Sprintf("%s", dt.SSHPort)),
+				returnNonEmptyString(dt.Name),
+				returnNonEmptyString(dt.RouterPattern),
+				returnNonEmptyString(dt.CloudRegion),
+				returnNonEmptyString(dt.CloudProvider),
+				returnNonEmptyString(dt.SSHHost),
+				returnNonEmptyString(dt.SSHPort),
 			})
 		}
 		dataMain := output.Table{
@@ -806,8 +1012,8 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 }
 
 var ListOrganizationUsersCmd = &cobra.Command{
-	Use:     "users",
-	Aliases: []string{"u"},
+	Use:     "organization-users",
+	Aliases: []string{"org-u"},
 	Short:   "List users in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -817,7 +1023,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		organizationName, err := cmd.Flags().GetString("name")
+		organizationName, err := cmd.Flags().GetString("organization-name")
 		if err != nil {
 			return err
 		}
@@ -825,25 +1031,33 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		organization, err := l.GetOrganizationByName(context.Background(), organizationName, lc)
-		handleError(err)
-		users, err := l.UsersByOrganization(context.TODO(), organization.ID, lc)
-		handleError(err)
+		organization, err := lagoon.GetOrganizationByName(context.Background(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		if organization.Name == "" {
+			return fmt.Errorf("error querying organization by name")
+		}
+		users, err := lagoon.UsersByOrganization(context.TODO(), organization.ID, lc)
+		if err != nil {
+			return err
+		}
 
 		data := []output.Data{}
 		for _, user := range *users {
 			data = append(data, []string{
-				returnNonEmptyString(fmt.Sprintf("%s", user.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Email)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.FirstName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.LastName)),
-				returnNonEmptyString(fmt.Sprintf("%s", user.Comment)),
+				returnNonEmptyString(user.ID),
+				returnNonEmptyString(user.Email),
+				returnNonEmptyString(user.FirstName),
+				returnNonEmptyString(user.LastName),
+				returnNonEmptyString(user.Comment),
 				returnNonEmptyString(fmt.Sprintf("%v", user.Owner)),
 			})
 		}
@@ -869,21 +1083,25 @@ var listOrganizationsCmd = &cobra.Command{
 			return err
 		}
 
-		token := lUser.UserConfig.Grant.AccessToken
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
-		organizations, err := l.AllOrganizations(context.TODO(), lc)
+		organizations, err := lagoon.AllOrganizations(context.TODO(), lc)
+		if err != nil {
+			return err
+		}
 
 		data := []output.Data{}
 		for _, organization := range *organizations {
 			data = append(data, []string{
 				returnNonEmptyString(fmt.Sprintf("%d", organization.ID)),
-				returnNonEmptyString(fmt.Sprintf("%s", organization.Name)),
-				returnNonEmptyString(fmt.Sprintf("%s", organization.Description)),
+				returnNonEmptyString(organization.Name),
+				returnNonEmptyString(organization.Description),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaProject)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaGroup)),
 				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaNotification)),
@@ -917,21 +1135,21 @@ func init() {
 	listCmd.AddCommand(listDeployTargetConfigsCmd)
 	listCmd.AddCommand(listAllUsersCmd)
 	listCmd.AddCommand(listUsersGroupsCmd)
+	listCmd.AddCommand(listOrganizationProjectsCmd)
+	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(listOrganizationGroupsCmd)
+	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
+	listCmd.AddCommand(listOrganizationsCmd)
 	listAllUsersCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
 	listUsersGroupsCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
-	listCmd.AddCommand(listOrganizationCmd)
-	listOrganizationCmd.AddCommand(listOrganizationProjectsCmd)
-	listOrganizationCmd.AddCommand(ListOrganizationUsersCmd)
-	listOrganizationCmd.AddCommand(listOrganizationGroupsCmd)
-	listOrganizationCmd.AddCommand(listOrganizationDeployTargetsCmd)
-	listOrganizationCmd.AddCommand(listOrganizationsCmd)
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in")
-	listGroupProjectsCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list projects in")
+	listGroupProjectsCmd.Flags().StringP("name", "N", "", "Name of the group to list projects in")
+	listGroupProjectsCmd.Flags().BoolP("all-projects", "", false, "All projects")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
-	listOrganizationProjectsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated users for")
-	listOrganizationGroupsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated groups for")
-	listOrganizationDeployTargetsCmd.Flags().StringP("name", "O", "", "Name of the organization to list associated deploy targets for")
+	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
+	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
+	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
 }

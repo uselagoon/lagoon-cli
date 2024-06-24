@@ -41,7 +41,9 @@ lagoon [flags]
 * [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
 * [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
+* [lagoon logs](lagoon_logs.md)	 - Display logs for a service of an environment and project
 * [lagoon raw](lagoon_raw.md)	 - Run a custom query or mutation
+* [lagoon reset-password](lagoon_reset-password.md)	 - Send a password reset email
 * [lagoon retrieve](lagoon_retrieve.md)	 - Trigger a retrieval operation on backups
 * [lagoon run](lagoon_run.md)	 - Run a task against an environment
 * [lagoon ssh](lagoon_ssh.md)	 - Display the SSH command to access a specific environment in a project

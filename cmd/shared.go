@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"os"
 	"strings"
+
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 // config vars
@@ -16,45 +17,16 @@ var lagoonUI string
 var lagoonKibana string
 var lagoonSSHKey string
 
-// variable vars
-var variableValue string
-var variableName string
-var variableScope string
-
-// user vars
-var userFirstName string
-var userLastName string
-var userEmail string
-var pubKeyFile string
-var nameInPubKeyFile bool
-var sshKeyName string
-
-// openshift vars
-var osName string
-var osConsoleUrl string
-var osToken string
-
 // group vars
 var groupName string
-var groupRole string
 
 var jsonPatch string
 var revealValue bool
 var listAllProjects bool
-var noHeader bool
 
 // These are available to all cmds and are set either by flags (-p and -e) or via `lagoon-cli/app` when entering a directory that has a valid lagoon project
 var cmdProjectName string
 var cmdProjectEnvironment string
-
-var remoteID string
-
-var notificationName string
-var notificationNewName string
-var notificationWebhook string
-var notificationChannel string
-
-var deployBranchName string
 
 var outputOptions = output.Options{
 	Header: false,
@@ -63,6 +35,8 @@ var outputOptions = output.Options{
 	Pretty: false,
 	Debug:  false,
 }
+
+var groupRoles = []string{"guest", "reporter", "developer", "maintainer", "owner"}
 
 var debugEnable bool
 
@@ -113,9 +87,15 @@ func nullIntCheck(i int) *int {
 	return &i
 }
 
-func requiredInputCheck(field string, value string) error {
-	if value == "" || value == "0" {
-		return fmt.Errorf(fmt.Sprintf("Missing argument: %s is not defined", field))
+// Specify the fields and values to check for required input e.g. requiredInputCheck("field1", value1, "field2", value2)
+func requiredInputCheck(fieldsAndValues ...string) error {
+	for i := 0; i < len(fieldsAndValues); i += 2 {
+		field := fieldsAndValues[i]
+		value := fieldsAndValues[i+1]
+
+		if value == "" || value == "0" {
+			return fmt.Errorf("missing argument: %s is not defined", field)
+		}
 	}
 	return nil
 }

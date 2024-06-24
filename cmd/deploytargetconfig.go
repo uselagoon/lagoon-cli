@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	l "github.com/uselagoon/machinery/api/lagoon"
+	"strconv"
+
+	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	s "github.com/uselagoon/machinery/api/schema"
+	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
-	"github.com/uselagoon/lagoon-cli/internal/schema"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
@@ -45,30 +44,24 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 
-		if cmdProjectName == "" {
-			return fmt.Errorf("Missing arguments: project is a required flag")
+		if err := requiredInputCheck("Project name", cmdProjectName, "Deploytarget", strconv.Itoa(int(deploytarget)), "Pullrequests", pullrequests, "Branches", branches); err != nil {
+			return err
 		}
-		if deploytarget == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget id is a required flag")
-		}
-		if pullrequests == "" {
-			return fmt.Errorf("Missing arguments: pullrequests is a required flag")
-		}
-		if branches == "" {
-			return fmt.Errorf("Missing arguments: branches is a required flag")
-		}
-		token := lUser.UserConfig.Grant.AccessToken
+
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
-		project, err := l.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
-		addDeployTargetConfig := &s.AddDeployTargetConfigInput{
-			Project: uint(project.ID),
+		addDeployTargetConfig := &schema.AddDeployTargetConfigInput{
+			Project: project.ID,
 			Weight:  weight,
 		}
 		if branches != "" {
@@ -81,7 +74,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			addDeployTargetConfig.DeployTarget = deploytarget
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add a deploytarget configuration to project '%s', are you sure?", cmdProjectName)) {
-			deployTargetConfig, err := l.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
+			deployTargetConfig, err := lagoon.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
 			if err != nil {
 				return err
 			}
@@ -147,14 +140,16 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id))); err != nil {
+			return err
 		}
-		lc := client.New(
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		updateDeployTargetConfig := &schema.UpdateDeployTargetConfigInput{
@@ -222,18 +217,26 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if id == 0 {
-			return fmt.Errorf("Missing arguments: deploytarget config id is not defined")
+		if err := requiredInputCheck("Deploytarget config id", strconv.Itoa(int(id)), "Project name", cmdProjectName); err != nil {
+			return err
 		}
-		lc := client.New(
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
+
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
+		}
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {
@@ -260,15 +263,27 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		lc := client.New(
+
+		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
+			return err
+		}
+
+		utoken := lUser.UserConfig.Grant.AccessToken
+		lc := lclient.New(
 			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
-			lUser.UserConfig.Grant.AccessToken,
-			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
+
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err
+		}
+		if project.Name == "" {
+			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
+			output.RenderError(outputOptions.Error, outputOptions)
+			return nil
 		}
 		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
 		if err != nil {
