@@ -121,7 +121,8 @@ var addUserCmd = &cobra.Command{
 				"id": user.ID,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -199,7 +200,8 @@ Add key by defining key value, but not specifying a key name (will default to tr
 				"ID": result.ID,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -241,7 +243,8 @@ var deleteSSHKeyCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -287,7 +290,8 @@ var deleteUserCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -362,7 +366,8 @@ var updateUserCmd = &cobra.Command{
 				"ID": user.ID,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -423,7 +428,8 @@ var getUserKeysCmd = &cobra.Command{
 		}
 
 		outputOptions.MultiLine = true
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -492,7 +498,8 @@ var getAllUserKeysCmd = &cobra.Command{
 			Data:   data,
 		}
 		outputOptions.MultiLine = true
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -563,7 +570,8 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 				"Organization Name": organizationName,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -635,7 +643,8 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 					"Organization Name": organizationName,
 				},
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -682,7 +691,8 @@ var resetPasswordCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

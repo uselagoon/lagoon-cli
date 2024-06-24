@@ -13,3 +13,4 @@
 site/
 
 /builds/lagoon-cli-*
+./temp_config.yaml

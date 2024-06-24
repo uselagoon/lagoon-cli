@@ -50,7 +50,8 @@ var deleteProjectCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -203,7 +204,8 @@ var addProjectCmd = &cobra.Command{
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -377,7 +379,7 @@ var updateProjectCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions, cmd)
+			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
@@ -391,7 +393,8 @@ var updateProjectCmd = &cobra.Command{
 				"Project Name": projectUpdate.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -460,10 +463,11 @@ var listProjectByMetadata = &cobra.Command{
 		if showMetadata {
 			header = append(header, "Metadata")
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
-		}, outputOptions, cmd)
+		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -510,10 +514,11 @@ var getProjectMetadata = &cobra.Command{
 			"Key",
 			"Value",
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
-		}, outputOptions, cmd)
+		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -565,14 +570,15 @@ var updateProjectMetadata = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Metadata",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -621,14 +627,15 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", projectResult.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", string(metaData))),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
 					"Metadata",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -694,7 +701,8 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 					"Organization Name": organizationName,
 				},
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

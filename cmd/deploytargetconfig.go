@@ -90,7 +90,7 @@ var addDeployTargetConfigCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudRegion)),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Weight",
@@ -102,7 +102,8 @@ var addDeployTargetConfigCmd = &cobra.Command{
 					"CloudRegion",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -184,7 +185,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudProvider)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudRegion)),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Weight",
@@ -196,7 +197,8 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 					"CloudRegion",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -238,7 +240,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions, cmd)
+			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 
@@ -250,7 +252,8 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteDeployTargetConfig,
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -289,7 +292,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 		}
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions, cmd)
+			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
@@ -309,7 +312,7 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", deployTargetConfig.DeployTarget.CloudRegion)),
 			})
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"ID",
 				"Weight",
@@ -321,7 +324,8 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 				"CloudRegion",
 			},
 			Data: data,
-		}, outputOptions, cmd)
+		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

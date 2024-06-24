@@ -36,7 +36,6 @@ var createConfig bool
 var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
-
 var skipUpdateCheck bool
 
 // global for the lagoon config that the cli uses
@@ -354,7 +353,6 @@ func versionCheck(lagoon string) error {
 
 func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our confg file
-	var configFilePath string
 	configFilePath, err := cmd.Flags().GetString("config-file")
 	if err != nil {
 		return fmt.Errorf("error reading flag `config-file`: %v", err)
