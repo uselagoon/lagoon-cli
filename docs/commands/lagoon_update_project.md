@@ -14,6 +14,8 @@ lagoon update project [flags]
   -b, --branches string                         Which branches should be deployed
       --build-image string                      Build Image for the project. Set to 'null' to remove the build image
       --deployments-disabled uint               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
+  -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) this Project should be deployed to
+  -o, --deploytarget-project-pattern string     Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated
       --development-build-priority uint         Set the priority of the development build
   -L, --development-environments-limit uint     How many environments can be deployed at one time
       --facts-ui uint                           Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable
@@ -21,8 +23,6 @@ lagoon update project [flags]
   -h, --help                                    help for project
   -j, --json string                             JSON string to patch
   -N, --name string                             Change the name of the project by specifying a new name (careful!)
-  -S, --openshift uint                          Reference to OpenShift Object this Project should be deployed to
-  -o, --openshift-project-pattern string        Pattern of OpenShift Project/Namespace that should be generated
   -I, --private-key string                      Private key to use for the project
       --problems-ui uint                        Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable
       --production-build-priority uint          Set the priority of the production build

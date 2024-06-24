@@ -4,7 +4,7 @@ Add a DeployTarget to lagoon
 
 ### Synopsis
 
-Add a DeployTarget (kubernetes or openshift) to lagoon, this requires admin level permissions
+Add a Deploytarget(Kubernetes) to lagoon, this requires admin level permissions
 
 ```
 lagoon add deploytarget [flags]

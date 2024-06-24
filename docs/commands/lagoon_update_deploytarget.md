@@ -4,7 +4,7 @@ Update a DeployTarget in lagoon
 
 ### Synopsis
 
-Update a DeployTarget (kubernetes or openshift) in lagoon, this requires admin level permissions
+Update a Deploytarget(Kubernetes) in lagoon, this requires admin level permissions
 
 ```
 lagoon update deploytarget [flags]

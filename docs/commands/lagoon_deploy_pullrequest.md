@@ -14,15 +14,15 @@ lagoon deploy pullrequest [flags]
 ### Options
 
 ```
-  -N, --baseBranchName string   Pullrequest base branch name
-  -R, --baseBranchRef string    Pullrequest base branch reference hash
-      --buildvar stringArray    Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
-  -H, --headBranchName string   Pullrequest head branch name
-  -M, --headBranchRef string    Pullrequest head branch reference hash
-  -h, --help                    help for pullrequest
-  -n, --number uint             Pullrequest number
-      --returnData              Returns the build name instead of success text
-  -t, --title string            Pullrequest title
+  -N, --base-branch-name string   Pullrequest base branch name
+  -R, --base-branch-ref string    Pullrequest base branch reference hash
+      --buildvar stringArray      Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
+  -H, --head-branch-name string   Pullrequest head branch name
+  -M, --head-branch-ref string    Pullrequest head branch reference hash
+  -h, --help                      help for pullrequest
+  -n, --number uint               Pullrequest number
+      --returndata                Returns the build name instead of success text
+  -t, --title string              Pullrequest title
 ```
 
 ### Options inherited from parent commands

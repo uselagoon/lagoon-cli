@@ -16,7 +16,7 @@ var addDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Add a DeployTarget to lagoon",
-	Long:    "Add a DeployTarget (kubernetes or openshift) to lagoon, this requires admin level permissions",
+	Long:    "Add a Deploytarget(Kubernetes) to lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -147,7 +147,7 @@ var updateDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Update a DeployTarget in lagoon",
-	Long:    "Update a DeployTarget (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	Long:    "Update a Deploytarget(Kubernetes) in lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
@@ -279,7 +279,7 @@ var deleteDeployTargetCmd = &cobra.Command{
 	Use:     "deploytarget",
 	Aliases: []string{"dt"},
 	Short:   "Delete a DeployTarget from lagoon",
-	Long:    "Delete a DeployTarget (kubernetes or openshift) from lagoon, this requires admin level permissions",
+	Long:    "Delete a Deploytarget(Kubernetes) from lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},

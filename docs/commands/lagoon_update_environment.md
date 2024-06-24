@@ -14,7 +14,7 @@ lagoon update environment [flags]
       --deploy-head-ref string    Updates the deploy head ref for the selected environment
       --deploy-title string       Updates the deploy title for the selected environment
       --deploy-type string        Update the deploy type - branch | pullrequest | promote
-  -d, --deploytarget uint         Reference to OpenShift Object this Environment should be deployed to
+  -d, --deploytarget uint         Reference to Deploytarget(Kubernetes) this Environment should be deployed to
       --environment-type string   Update the environment type - production | development
   -h, --help                      help for environment
       --namespace string          Update the namespace for the selected environment
