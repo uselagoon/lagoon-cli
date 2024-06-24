@@ -1,15 +1,15 @@
-## lagoon config lagoon-version
+## lagoon configuration config-path
 
-Checks the current Lagoon for its version and sets it in the config file
+Get the path of where the config file lives
 
 ```
-lagoon config lagoon-version [flags]
+lagoon configuration config-path [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for lagoon-version
+  -h, --help   help for config-path
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +31,5 @@ lagoon config lagoon-version [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

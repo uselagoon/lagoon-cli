@@ -1,0 +1,43 @@
+## lagoon configuration update-context
+
+Update a Lagoon context
+
+```
+lagoon configuration update-context [flags]
+```
+
+### Options
+
+```
+      --api-hostname string              Lagoon API hostname (eg: https://api.lagoon.sh)
+      --authentication-hostname string   Lagoon authentication hostname (eg: https://keycloak.lagoon.sh)
+  -h, --help                             help for update-context
+      --name string                      The name to reference this context as
+      --token-hostname string            Lagoon Token endpoint hostname (eg: token.lagoon.sh)
+      --token-port int                   Lagoon Token endpoint port (eg: 22)
+      --ui-hostname string               Lagoon UI hostname (eg: https://ui.lagoon.sh)
+      --user string                      The user to associate to this context
+      --webhook-hostname string          Lagoon webhook hostname (eg: https://webhook.lagoon.sh)
+```
+
+### Options inherited from parent commands
+
+```
+      --config-file string   Path to the config file to use (must be *.yml or *.yaml)
+      --debug                Enable debugging output (if supported)
+  -e, --environment string   Specify an environment to use
+      --force                Force yes on prompts (if supported)
+  -l, --lagoon string        The Lagoon instance to interact with
+      --no-header            No header on table (if supported)
+      --output-csv           Output as CSV (if supported)
+      --output-json          Output as JSON (if supported)
+      --pretty               Make JSON pretty (if supported)
+  -p, --project string       Specify a project to use
+      --skip-update-check    Skip checking for updates
+  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+```
+
+### SEE ALSO
+
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
+

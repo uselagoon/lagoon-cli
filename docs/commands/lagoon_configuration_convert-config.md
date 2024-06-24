@@ -1,19 +1,23 @@
-## lagoon list rocketchat
+## lagoon configuration convert-config
 
-List Rocket.Chat details about a project (alias: r)
+Convert legacy .lagoon.yml config to the new configuration format
 
 ### Synopsis
 
-List Rocket.Chat details about a project (alias: r)
+Convert legacy .lagoon.yml config to the new configuration format.
+This will prompt you to provide any required information if it is missing from your legacy configuration.
+Running this command initially will run in dry-run mode, if you're happy with the result you can run it again
+with the --write-config flag to save the new configuration.
 
 ```
-lagoon list rocketchat [flags]
+lagoon configuration convert-config [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for rocketchat
+  -h, --help           help for convert-config
+      --write-config   Whether the config should be written to the config file or not
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +39,5 @@ lagoon list rocketchat [flags]
 
 ### SEE ALSO
 
-* [lagoon list](lagoon_list.md)	 - List projects, deployments, variables or notifications
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

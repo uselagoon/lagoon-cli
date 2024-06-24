@@ -1,15 +1,15 @@
-## lagoon kibana
+## lagoon configuration list-users
 
-Launch the kibana interface
+View all configured Lagoon context users
 
 ```
-lagoon kibana [flags]
+lagoon configuration list-users [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for kibana
+  -h, --help   help for list-users
 ```
 
 ### Options inherited from parent commands
@@ -31,5 +31,5 @@ lagoon kibana [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 
