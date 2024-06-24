@@ -120,7 +120,7 @@ var addDeployTargetCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.Created)),
 				returnNonEmptyString(fmt.Sprintf("%v", addDeployTargetResponse.MonitoringConfig)),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -137,7 +137,8 @@ var addDeployTargetCmd = &cobra.Command{
 					"MonitoringConfig",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -252,7 +253,7 @@ var updateDeployTargetCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.Created)),
 				returnNonEmptyString(fmt.Sprintf("%v", updateDeployTargetResponse.MonitoringConfig)),
 			})
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -269,7 +270,8 @@ var updateDeployTargetCmd = &cobra.Command{
 					"MonitoringConfig",
 				},
 				Data: data,
-			}, outputOptions, cmd)
+			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -319,7 +321,8 @@ var deleteDeployTargetCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: deleteDeployTargetResponse.DeleteDeployTarget,
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -383,7 +386,8 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 				"Organization Name": deployTargetResponse.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -447,7 +451,8 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 					"Organization Name": organizationName,
 				},
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

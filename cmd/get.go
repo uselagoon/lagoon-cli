@@ -60,7 +60,8 @@ var getProjectCmd = &cobra.Command{
 
 		if project.Name == "" {
 			outputOptions.Error = fmt.Sprintf("No details for project '%s'\n", cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions, cmd)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
@@ -112,7 +113,8 @@ var getProjectCmd = &cobra.Command{
 			Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle", "FactsUI", "ProblemsUI", "DeploymentsDisabled"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions, cmd)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -163,7 +165,8 @@ This returns information about a deployment, the logs of this build can also be 
 					},
 				},
 			}
-			output.RenderOutput(dataMain, outputOptions, cmd)
+			r := output.RenderOutput(dataMain, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 		dataMain := output.Table{
@@ -188,7 +191,8 @@ This returns information about a deployment, the logs of this build can also be 
 				},
 			},
 		}
-		output.RenderOutput(dataMain, outputOptions, cmd)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -244,7 +248,8 @@ var getEnvironmentCmd = &cobra.Command{
 			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions, cmd)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -294,14 +299,16 @@ var getProjectKeyCmd = &cobra.Command{
 
 		if len(dataMain.Data) == 0 {
 			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
-			output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions, cmd)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
 
 		if projectKey.PrivateKey != "" {
 			dataMain.Header = append(dataMain.Header, "PrivateKey")
 		}
-		output.RenderOutput(dataMain, outputOptions, cmd)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -371,7 +378,8 @@ var getOrganizationCmd = &cobra.Command{
 			Data:   data,
 		}
 
-		output.RenderOutput(dataMain, outputOptions, cmd)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

@@ -50,7 +50,8 @@ var deleteEnvCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: environment.DeleteEnvironment,
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -172,7 +173,8 @@ var updateEnvironmentCmd = &cobra.Command{
 				"Environment Name": result.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -233,7 +235,7 @@ var listBackupsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", backup.Restore.Status)),
 			})
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"BackupID",
 				"Source",
@@ -242,7 +244,8 @@ var listBackupsCmd = &cobra.Command{
 				"RestoreStatus",
 			},
 			Data: data,
-		}, outputOptions, cmd)
+		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

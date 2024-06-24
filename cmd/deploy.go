@@ -82,7 +82,8 @@ use 'lagoon deploy latest' instead`,
 				return err
 			}
 			resultData := output.Result{Result: result.DeployEnvironmentBranch}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -146,7 +147,8 @@ var deployPromoteCmd = &cobra.Command{
 				return err
 			}
 			resultData := output.Result{Result: result.DeployEnvironmentPromote}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -208,7 +210,8 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 				return err
 			}
 			resultData := output.Result{Result: result.DeployEnvironmentLatest}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -296,7 +299,8 @@ This pullrequest may not already exist as an environment in lagoon.`,
 				return err
 			}
 			resultData := output.Result{Result: result.DeployEnvironmentPullrequest}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

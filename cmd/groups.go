@@ -89,7 +89,8 @@ var addGroupCmd = &cobra.Command{
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -162,7 +163,8 @@ var addUserToGroupCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -213,7 +215,7 @@ var addProjectToGroupCmd = &cobra.Command{
 		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions, cmd)
+			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 		_, err = lagoon.AddProjectToGroup(context.TODO(), projectGroup, lc)
@@ -224,7 +226,8 @@ var addProjectToGroupCmd = &cobra.Command{
 		resultData := output.Result{
 			Result: "success",
 		}
-		output.RenderResult(resultData, outputOptions, cmd)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -280,7 +283,8 @@ var deleteUserFromGroupCmd = &cobra.Command{
 					"id": result.ID,
 				},
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -332,7 +336,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 		}
 		if len(project.Name) == 0 {
 			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions, cmd)
+			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
 
@@ -345,7 +349,8 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -384,7 +389,8 @@ var deleteGroupCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions, cmd)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
