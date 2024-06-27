@@ -95,7 +95,7 @@ var sshEnvCmd = &cobra.Command{
 		} else {
 
 			// start an interactive ssh session
-			authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
+			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 			config := &ssh.ClientConfig{
 				User: sshConfig["username"],
 				Auth: []ssh.AuthMethod{

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
-	"golang.org/x/crypto/ssh/terminal"
+	terminal "golang.org/x/term"
 )
 
 var loginCmd = &cobra.Command{
@@ -23,29 +24,71 @@ var loginCmd = &cobra.Command{
 	},
 }
 
-func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
+func publicKey(path, publicKeyOverride string, publicKeyIdentities []string, skipAgent bool) (ssh.AuthMethod, func() error) {
 	noopCloseFunc := func() error { return nil }
 
 	if !skipAgent {
 		// Connect to SSH agent to ask for unencrypted private keys
 		if sshAgentConn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
 			sshAgent := agent.NewClient(sshAgentConn)
-
-			keys, _ := sshAgent.List()
-			if len(keys) > 0 {
-				// There are key(s) in the agent
-				//defer sshAgentConn.Close()
-				return ssh.PublicKeysCallback(sshAgent.Signers), sshAgentConn.Close
+			agentSigners, err := sshAgent.Signers()
+			handleError(err)
+			// There are key(s) in the agent
+			if len(agentSigners) > 0 {
+				identities := make(map[string]ssh.PublicKey)
+				if publicKeyOverride == "" {
+					// check for identify files in the current lagoon config context
+					for _, identityFile := range publicKeyIdentities {
+						// append to identityfiles
+						keybytes, err := os.ReadFile(identityFile)
+						handleError(err)
+						pubkey, _, _, _, err := ssh.ParseAuthorizedKey(keybytes)
+						handleError(err)
+						identities[identityFile] = pubkey
+					}
+				} else {
+					// append to identityfiles
+					keybytes, err := os.ReadFile(publicKeyOverride)
+					handleError(err)
+					pubkey, _, _, _, err := ssh.ParseAuthorizedKey(keybytes)
+					handleError(err)
+					identities[publicKeyOverride] = pubkey
+				}
+				// check all keys in the agent to see if there is a matching identity file
+				for _, signer := range agentSigners {
+					for file, identity := range identities {
+						if bytes.Equal(signer.PublicKey().Marshal(), identity.Marshal()) {
+							if verboseOutput {
+								fmt.Fprintf(os.Stderr, "ssh: attempting connection using identity file public key: %s\n", file)
+							}
+							// only provide this matching key back to the ssh client to use
+							return ssh.PublicKeys(signer), noopCloseFunc
+						}
+					}
+				}
+				if publicKeyOverride != "" {
+					handleError(fmt.Errorf("ssh: no key matching %s in agent", publicKeyOverride))
+				}
+				// if no matching identity files, just return all agent keys like previous behaviour
+				if verboseOutput {
+					fmt.Fprintf(os.Stderr, "ssh: attempting connection using any keys in ssh-agent\n")
+				}
+				return ssh.PublicKeysCallback(sshAgent.Signers), noopCloseFunc
 			}
 		}
 	}
 
+	// if no keys in the agent, and a specific private key has been defined, then check the key and use it if possible
+	if verboseOutput {
+		fmt.Fprintf(os.Stderr, "ssh: attempting connection using private key: %s\n", path)
+	}
 	key, err := os.ReadFile(path)
 	handleError(err)
 
 	// Try to look for an unencrypted private key
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
+		// if encrypted, prompt for passphrase or error and ask user to add to their agent
 		fmt.Printf("Enter passphrase for %s:", path)
 		bytePassword, err := terminal.ReadPassword(int(os.Stdin.Fd()))
 		if err != nil {
@@ -60,9 +103,7 @@ func publicKey(path string, skipAgent bool) (ssh.AuthMethod, func() error) {
 			fmt.Println("Lagoon CLI could not decode private key, you will need to add your private key to your ssh-agent.")
 			os.Exit(1)
 		}
-		return ssh.PublicKeys(signer), noopCloseFunc
 	}
-	// return unencrypted private key
 	return ssh.PublicKeys(signer), noopCloseFunc
 }
 
@@ -98,7 +139,7 @@ func retrieveTokenViaSsh() (string, error) {
 		privateKey = cmdSSHKey
 		skipAgent = true
 	}
-	authMethod, closeSSHAgent := publicKey(privateKey, skipAgent)
+	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 	config := &ssh.ClientConfig{
 		User: "lagoon",
 		Auth: []ssh.AuthMethod{
