@@ -97,7 +97,7 @@ func TestGroupCommands(t *testing.T) {
 			expectErr: false,
 		},
 	}
-	SetUpRootCmdFlags()
+	//SetUpRootCmdFlags()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := &cobra.Command{Use: "root"}

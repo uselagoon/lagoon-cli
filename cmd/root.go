@@ -36,7 +36,7 @@ var createConfig bool
 var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
-
+var configFilePathFlag string
 var skipUpdateCheck bool
 
 // global for the lagoon config that the cli uses
@@ -139,7 +139,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 
 	// get config-file from flag
-	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&configFilePathFlag, "config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
 
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
@@ -355,7 +355,10 @@ func versionCheck(lagoon string) error {
 func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our confg file
 	var configFilePath string
-	configFilePath, err := cmd.Flags().GetString("config-file")
+	var err error
+	configFilePathFlag, err = cmd.Flags().GetString("config-file")
+	fmt.Println("******configFilePath******", configFilePathFlag)
+	fmt.Printf("%+v\n", cmd.Flags())
 	if err != nil {
 		return fmt.Errorf("error reading flag `config-file`: %v", err)
 	}

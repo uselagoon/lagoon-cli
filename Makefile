@@ -114,10 +114,37 @@ release-major:
 	mkdocs gh-deploy
 	git push $(GIT_ORIGIN) main --tags
 
+api-tests: gen
+	GO111MODULE=on $(GOCMD) fmt ./...
+	GO111MODULE=on $(GOCMD) vet ./...
+	GO111MODULE=on $(GOCMD) test -v -run '(TestEnvironmentCommands|TestProjectCommands)' ./...
+
 # upstream
 CI_BUILD_TAG ?= lagoon-cli
 CORE_REPO=https://github.com/uselagoon/lagoon.git
 CORE_TREEISH=main
+
+TEMP_CONFIG_FILE := temp_config.yaml
+
+generate-config:
+	@printf "%s\n" \
+"current: test" \
+"default: test" \
+"lagoons:" \
+"  test:" \
+"    graphql: http://localhost:3000/graphql" \
+"    hostname: localhost" \
+"    ui: \"\"" \
+"    kibana: \"\"" \
+"    port: \"2020\"" \
+"    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJsb2NhbC1kZXYiLCJhdWQiOiJhcGkuZGV2Iiwic3ViIjoibG9jYWwtZGV2In0.OmZ71d-l5aApdewfeVbrvjQ__kPxCO-UtiA-wmYKjks" \
+"    version: v1.9.0" \
+"    sshkey: \"\"" \
+"    sshportal: false" \
+> $(TEMP_CONFIG_FILE)
+
+clean-config:
+	@rm -f $(TEMP_CONFIG_FILE)
 
 .PHONY: test-with-api
 test-with-api:
@@ -128,7 +155,8 @@ test-with-api:
 		&& IMAGE_REPO=uselagoon docker compose -p $(CI_BUILD_TAG) --compatibility up -d api api-db actions-handler local-api-data-watcher-pusher keycloak keycloak-db broker api-redis logs2notifications local-minio mailhog \
 		&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) wait-for-keycloak \
 		&& cd .. \
-		&& echo "DO TESTS STUFF HERE" \
-		&& $(MAKE) test \
+		&& $(MAKE) generate-config \
+		&& $(MAKE) api-tests \
+		&& $(MAKE) clean-config \
 		&& cd "$$LAGOON_CORE" \
 		&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) down

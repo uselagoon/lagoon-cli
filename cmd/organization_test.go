@@ -51,7 +51,7 @@ func TestOrganizationCommands(t *testing.T) {
 		},
 		// TODO: Remaining Organization commands
 	}
-	SetUpRootCmdFlags()
+	//SetUpRootCmdFlags()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := &cobra.Command{Use: "root"}

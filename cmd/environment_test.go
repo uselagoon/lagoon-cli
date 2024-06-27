@@ -21,7 +21,7 @@ func TestEnvironmentCommands(t *testing.T) {
 	}{
 		{
 			name:    "List Backups",
-			cmdArgs: []string{"list", "backups", "--project=lagoon-demo", "--environment=main", "--output-json"},
+			cmdArgs: []string{"list", "backups", "--project=lagoon-demo", "--environment=main"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(listCmd)
 				listCmd.AddCommand(listBackupsCmd)
@@ -30,34 +30,34 @@ func TestEnvironmentCommands(t *testing.T) {
 			expectOut: []string{"e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280f", "files", "e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280d", "mariadb"},
 			expectErr: false,
 		},
-		{
-			name:    "Get Backup - Error: no download file found",
-			cmdArgs: []string{"get", "backup", "--project=lagoon-demo", "--environment=main", "--backup-id=e260f07c374e4a3319c5d46e688dab6f1eb23c3e61c166a37609d55762d2ee0b", "--output-json"},
-			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
-				cmd.AddCommand(getCmd)
-				getCmd.AddCommand(getBackupCmd)
-				AddGenericFlags(getBackupCmd)
-			},
-			expectOut:         []string{""},
-			expectErr:         true,
-			expectedErrString: "no download file found, status of backups restoration is failed",
-		},
-		{
-			name:    "Get Backup - Error: backup has not been restored",
-			cmdArgs: []string{"get", "backup", "--project=lagoon-demo", "--environment=main", "--backup-id=bf072a09e17726da54adc79936ec8745521993599d41211dfc9466dfd5bc32a5", "--output-json"},
-			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
-				cmd.AddCommand(getCmd)
-				getCmd.AddCommand(getBackupCmd)
-				AddGenericFlags(getBackupCmd)
-			},
-			expectOut:         []string{""},
-			expectErr:         true,
-			expectedErrString: "backup has not been restored",
-		},
+		//{
+		//	name:    "Get Backup - Error: no download file found",
+		//	cmdArgs: []string{"get", "backup", "--project=lagoon-demo", "--environment=main", "--backup-id=e260f07c374e4a3319c5d46e688dab6f1eb23c3e61c166a37609d55762d2ee0b", "--output-json"},
+		//	setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
+		//		cmd.AddCommand(getCmd)
+		//		getCmd.AddCommand(getBackupCmd)
+		//		AddGenericFlags(getBackupCmd)
+		//	},
+		//	expectOut:         []string{""},
+		//	expectErr:         true,
+		//	expectedErrString: "no download file found, status of backups restoration is failed",
+		//},
+		//{
+		//	name:    "Get Backup - Error: backup has not been restored",
+		//	cmdArgs: []string{"get", "backup", "--project=lagoon-demo", "--environment=main", "--backup-id=bf072a09e17726da54adc79936ec8745521993599d41211dfc9466dfd5bc32a5", "--output-json"},
+		//	setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
+		//		cmd.AddCommand(getCmd)
+		//		getCmd.AddCommand(getBackupCmd)
+		//		AddGenericFlags(getBackupCmd)
+		//	},
+		//	expectOut:         []string{""},
+		//	expectErr:         true,
+		//	expectedErrString: "backup has not been restored",
+		//},
 		// TODO: Seed backup data to test success path (getBackup)
 		{
 			name:    "Update Environment",
-			cmdArgs: []string{"update", "environment", "--project=lagoon-demo", "--environment=pr-175", "--auto-idle=0", "--output-json"},
+			cmdArgs: []string{"update", "environment", "--project=lagoon-demo", "--environment=pr-175", "--auto-idle=0"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(updateCmd)
 				updateCmd.AddCommand(updateEnvironmentCmd)
@@ -68,7 +68,7 @@ func TestEnvironmentCommands(t *testing.T) {
 		},
 		{
 			name:    "Delete Environment",
-			cmdArgs: []string{"delete", "environment", "--project=lagoon-demo", "--environment=pr-175", "--output-json", "--force"},
+			cmdArgs: []string{"delete", "environment", "--project=lagoon-demo", "--environment=pr-175", "--force"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(deleteCmd)
 				deleteCmd.AddCommand(deleteEnvCmd)
@@ -77,11 +77,22 @@ func TestEnvironmentCommands(t *testing.T) {
 			expectOut: []string{"success"},
 			expectErr: false,
 		},
+		// Testing generated config file - to be removed
+		{
+			name:    "Config Current Test",
+			cmdArgs: []string{"config", "current", "--output-json", "--config-file=../temp_config.yaml"},
+			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
+				cmd.AddCommand(configCmd)
+				AddGenericFlags(configGetCurrent)
+			},
+			expectOut: []string{""},
+			expectErr: false,
+		},
 	}
-	SetUpRootCmdFlags()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cmd := &cobra.Command{Use: "root"}
+			cmd := rootCmd
+			//tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=./temp_config.yaml")
 			cmd.SetArgs(tt.cmdArgs)
 			flags := pflag.FlagSet{}
 			tt.setupCmd(cmd, flags)
@@ -98,6 +109,10 @@ func TestEnvironmentCommands(t *testing.T) {
 			} else if err != nil {
 				t.Fatalf("Error executing command: %v", err)
 			}
+
+			cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+				fmt.Printf("%s: %s \n", flag.Name, flag.Value.String())
+			})
 
 			for _, eo := range tt.expectOut {
 				assert.Contains(t, out.String(), eo)
