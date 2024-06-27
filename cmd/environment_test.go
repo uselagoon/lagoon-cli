@@ -25,7 +25,7 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(listCmd)
 				listCmd.AddCommand(listBackupsCmd)
-				AddGenericFlags(listBackupsCmd)
+				//AddGenericFlags(listBackupsCmd)
 			},
 			expectOut: []string{"e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280f", "files", "e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280d", "mariadb"},
 			expectErr: false,
@@ -61,7 +61,7 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(updateCmd)
 				updateCmd.AddCommand(updateEnvironmentCmd)
-				AddGenericFlags(updateEnvironmentCmd)
+				//AddGenericFlags(updateEnvironmentCmd)
 			},
 			expectOut: []string{"success", "pr-175"},
 			expectErr: false,
@@ -72,7 +72,7 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(deleteCmd)
 				deleteCmd.AddCommand(deleteEnvCmd)
-				AddGenericFlags(deleteEnvCmd)
+				//AddGenericFlags(deleteEnvCmd)
 			},
 			expectOut: []string{"success"},
 			expectErr: false,
@@ -80,10 +80,10 @@ func TestEnvironmentCommands(t *testing.T) {
 		// Testing generated config file - to be removed
 		{
 			name:    "Config Current Test",
-			cmdArgs: []string{"config", "current", "--output-json", "--config-file=../temp_config.yaml"},
+			cmdArgs: []string{"config", "current"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(configCmd)
-				AddGenericFlags(configGetCurrent)
+				//AddGenericFlags(configGetCurrent)
 			},
 			expectOut: []string{""},
 			expectErr: false,
@@ -92,7 +92,7 @@ func TestEnvironmentCommands(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := rootCmd
-			//tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=./temp_config.yaml")
+			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 			cmd.SetArgs(tt.cmdArgs)
 			flags := pflag.FlagSet{}
 			tt.setupCmd(cmd, flags)

@@ -117,7 +117,7 @@ func requiredInputCheck(fieldsAndValues ...string) error {
 // Instantiates an explicit flagset for each command to avoid 'flag redefined' errors on multiple tests containing the same command
 func AddGenericFlags(cmd *cobra.Command) {
 	flags := pflag.FlagSet{}
-	flags.StringVarP(&configFilePathFlag, "config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
+	flags.StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
 	flags.BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 	flags.BoolVarP(&outputOptions.JSON, "output-json", "", false, "Output as JSON (if supported)")
 	flags.StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")

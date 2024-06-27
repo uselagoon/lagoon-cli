@@ -137,7 +137,7 @@ generate-config:
 "    ui: \"\"" \
 "    kibana: \"\"" \
 "    port: \"2020\"" \
-"    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJsb2NhbC1kZXYiLCJhdWQiOiJhcGkuZGV2Iiwic3ViIjoibG9jYWwtZGV2In0.OmZ71d-l5aApdewfeVbrvjQ__kPxCO-UtiA-wmYKjks" \
+"    token: \"\"" \
 "    version: v1.9.0" \
 "    sshkey: \"\"" \
 "    sshportal: false" \
