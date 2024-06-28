@@ -1,6 +1,5 @@
 package cmd
 
-//
 //import (
 //	"bytes"
 //	"fmt"
@@ -21,44 +20,40 @@ package cmd
 //	}{
 //		{
 //			name:    "Add Email Notification",
-//			cmdArgs: []string{"add", "notification", "email", "--name=email-notification", "--email=test@test.com", "--output-json", "--force"},
+//			cmdArgs: []string{"add", "notification", "email", "--name=email-notification", "--email=test@test.com", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(addCmd)
 //				addCmd.AddCommand(addNotificationEmailCmd)
-//				AddGenericFlags(addNotificationEmailCmd)
 //			},
 //			expectOut: []string{"email-notification", "test@test.com"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Add Email Notification to Project",
-//			cmdArgs: []string{"add", "notification", "project-email", "--name=email-notification", "--project=lagoon-demo", "--output-json", "--force"},
+//			cmdArgs: []string{"add", "notification", "project-email", "--name=email-notification", "--project=lagoon-demo", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(addCmd)
 //				addCmd.AddCommand(addProjectNotificationEmailCmd)
-//				AddGenericFlags(addProjectNotificationEmailCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "List Project Email Notifications",
-//			cmdArgs: []string{"list", "notification", "project-email", "--project=lagoon-demo", "--output-json"},
+//			cmdArgs: []string{"list", "notification", "project-email", "--project=lagoon-demo"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(listCmd)
 //				listCmd.AddCommand(listProjectEmailsCmd)
-//				AddGenericFlags(listProjectEmailsCmd)
 //			},
 //			expectOut: []string{"email-notification", "test@test.com"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "List all Email Notifications",
-//			cmdArgs: []string{"list", "notification", "email", "--output-json"},
+//			cmdArgs: []string{"list", "notification", "email"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(listCmd)
 //				listCmd.AddCommand(listAllEmailsCmd)
-//				AddGenericFlags(listAllEmailsCmd)
 //			},
 //			expectOut: []string{"lagoon-demo", "email-notification", "test@test.com"},
 //			expectErr: false,
@@ -66,42 +61,39 @@ package cmd
 //		// Unable test newname as incorrect data is returned via the API (fixed in PR#3706)
 //		{
 //			name:    "Update an Email Notification",
-//			cmdArgs: []string{"update", "notification", "email", "--name=email-notification", "--email=newemail@test.com", "--output-json", "--force"},
+//			cmdArgs: []string{"update", "notification", "email", "--name=email-notification", "--email=newemail@test.com", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(updateCmd)
 //				updateCmd.AddCommand(updateEmailNotificationCmd)
-//				AddGenericFlags(updateEmailNotificationCmd)
 //			},
 //			expectOut: []string{"email-notification", "newemail@test.com"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Delete an Email Notification from a Project",
-//			cmdArgs: []string{"delete", "notification", "project-email", "--name=email-notification", "--project=lagoon-demo", "--output-json", "--force"},
+//			cmdArgs: []string{"delete", "notification", "project-email", "--name=email-notification", "--project=lagoon-demo", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(deleteCmd)
 //				deleteCmd.AddCommand(deleteProjectEmailNotificationCmd)
-//				AddGenericFlags(deleteProjectEmailNotificationCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Delete an Email Notification",
-//			cmdArgs: []string{"delete", "notification", "email", "--name=email-notification", "--output-json", "--force"},
+//			cmdArgs: []string{"delete", "notification", "email", "--name=email-notification", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(deleteCmd)
 //				deleteCmd.AddCommand(deleteEmailNotificationCmd)
-//				AddGenericFlags(deleteEmailNotificationCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //	}
-//	SetUpRootCmdFlags()
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
-//			cmd := &cobra.Command{Use: "root"}
+//			cmd := rootCmd
+//			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 //			cmd.SetArgs(tt.cmdArgs)
 //			flags := pflag.FlagSet{}
 //			tt.setupCmd(cmd, flags)

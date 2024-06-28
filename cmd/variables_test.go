@@ -1,6 +1,5 @@
 package cmd
 
-//
 //import (
 //	"bytes"
 //	"fmt"
@@ -22,54 +21,49 @@ package cmd
 //	}{
 //		{
 //			name:    "Add Variable to project",
-//			cmdArgs: []string{"add", "variable", "--project=lagoon-demo", "--name=testProjectVariable", "--value=testProjectValue", "--scope=build", "--output-json"},
+//			cmdArgs: []string{"add", "variable", "--project=lagoon-demo", "--name=testProjectVariable", "--value=testProjectValue", "--scope=build"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(addCmd)
 //				addCmd.AddCommand(addVariableCmd)
-//				AddGenericFlags(addVariableCmd)
 //			},
 //			expectOut: []string{"testProjectVariable", "testProjectValue", "build"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Add Variable to environment",
-//			cmdArgs: []string{"add", "variable", "--project=lagoon-demo", "--environment=dev", "--name=testEnvironmentVariable", "--value=testEnvironmentValue", "--scope=runtime", "--output-json"},
+//			cmdArgs: []string{"add", "variable", "--project=lagoon-demo", "--environment=dev", "--name=testEnvironmentVariable", "--value=testEnvironmentValue", "--scope=runtime"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(addCmd)
 //				addCmd.AddCommand(addVariableCmd)
-//				AddGenericFlags(addVariableCmd)
 //			},
 //			expectOut: []string{"testEnvironmentVariable", "testEnvironmentValue", "runtime"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Delete Variable from project",
-//			cmdArgs: []string{"delete", "variable", "--project=lagoon-demo", "--name=testProjectVariable", "--output-json", "--force"},
+//			cmdArgs: []string{"delete", "variable", "--project=lagoon-demo", "--name=testProjectVariable", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(deleteCmd)
 //				deleteCmd.AddCommand(deleteVariableCmd)
-//				AddGenericFlags(deleteVariableCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Delete Variable from environment",
-//			cmdArgs: []string{"delete", "variable", "--project=lagoon-demo", "--environment=dev", "--name=testEnvironmentVariable", "--output-json", "--force"},
+//			cmdArgs: []string{"delete", "variable", "--project=lagoon-demo", "--environment=dev", "--name=testEnvironmentVariable", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(deleteCmd)
 //				deleteCmd.AddCommand(deleteVariableCmd)
-//				AddGenericFlags(deleteVariableCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //	}
-//
-//	SetUpRootCmdFlags()
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
-//			cmd := &cobra.Command{Use: "root"}
+//			cmd := rootCmd
+//			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 //			cmd.SetArgs(tt.cmdArgs)
 //			flags := pflag.FlagSet{}
 //			tt.setupCmd(cmd, flags)

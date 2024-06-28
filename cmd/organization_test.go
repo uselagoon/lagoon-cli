@@ -25,12 +25,10 @@ func TestOrganizationCommands(t *testing.T) {
 				"--friendly-name=Test Organization",
 				"--description=A test organization",
 				"--project-quota=10",
-				"--environment-quota=20",
-				"--output-json"},
+				"--environment-quota=20"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(addCmd)
 				addCmd.AddCommand(addOrganizationCmd)
-				AddGenericFlags(addOrganizationCmd)
 			},
 			expectOut: []string{"success", "test-organization"},
 			expectErr: false,
@@ -39,22 +37,20 @@ func TestOrganizationCommands(t *testing.T) {
 			name: "Delete Organization",
 			cmdArgs: []string{"delete", "organization",
 				"--organization-name=test-organization",
-				"--force",
-				"--output-json"},
+				"--force"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(deleteCmd)
 				deleteCmd.AddCommand(deleteOrganizationCmd)
-				AddGenericFlags(deleteOrganizationCmd)
 			},
 			expectOut: []string{"result", "test-organization"},
 			expectErr: false,
 		},
 		// TODO: Remaining Organization commands
 	}
-	//SetUpRootCmdFlags()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cmd := &cobra.Command{Use: "root"}
+			cmd := rootCmd
+			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 			cmd.SetArgs(tt.cmdArgs)
 			flags := pflag.FlagSet{}
 			tt.setupCmd(cmd, flags)

@@ -126,22 +126,20 @@ CORE_TREEISH=main
 
 TEMP_CONFIG_FILE := temp_config.yaml
 
+# TODO - update to use token generation
 generate-config:
-	@printf "%s\n" \
-"current: test" \
-"default: test" \
-"lagoons:" \
-"  test:" \
-"    graphql: http://localhost:3000/graphql" \
-"    hostname: localhost" \
-"    ui: \"\"" \
-"    kibana: \"\"" \
-"    port: \"2020\"" \
-"    token: \"\"" \
-"    version: v1.9.0" \
-"    sshkey: \"\"" \
-"    sshportal: false" \
-> $(TEMP_CONFIG_FILE)
+	@CURRENT="test" \
+	DEFAULT="test" \
+	LAGOON_NAME="test" \
+	GRAPHQL="http://localhost:3000/graphql" \
+	HOSTNAME="localhost" \
+	KIBANA="" \
+	PORT="2020" \
+	SSHKEY="" \
+	TOKEN="token" \
+	UI="" \
+	VERSION="v1.4.0" \
+	envsubst < local-dev/config.tpl > $(TEMP_CONFIG_FILE)
 
 clean-config:
 	@rm -f $(TEMP_CONFIG_FILE)

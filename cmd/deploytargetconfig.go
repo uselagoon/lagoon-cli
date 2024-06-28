@@ -249,7 +249,11 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			fmt.Println(result.DeleteDeployTargetConfig)
+			resultData := output.Result{
+				Result: result.DeleteDeployTargetConfig,
+			}
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

@@ -1,6 +1,5 @@
 package cmd
 
-//
 //import (
 //	"bytes"
 //	"fmt"
@@ -23,21 +22,20 @@ package cmd
 //		// TODO: Seed task data & include cli service for envs
 //		{
 //			name:    "Get Task",
-//			cmdArgs: []string{"get", "task-by-id", "--id=1", "--output-json"},
+//			cmdArgs: []string{"get", "task-by-id", "--id=1"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(getCmd)
 //				getCmd.AddCommand(getTaskByID)
-//				AddGenericFlags(getTaskByID)
 //			},
 //			expectOut: []string{""},
 //			expectErr: false,
 //		},
 //	}
 //
-//	SetUpRootCmdFlags()
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
-//			cmd := &cobra.Command{Use: "root"}
+//			cmd := rootCmd
+//			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 //			cmd.SetArgs(tt.cmdArgs)
 //			flags := pflag.FlagSet{}
 //			tt.setupCmd(cmd, flags)

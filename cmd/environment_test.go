@@ -25,7 +25,6 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(listCmd)
 				listCmd.AddCommand(listBackupsCmd)
-				//AddGenericFlags(listBackupsCmd)
 			},
 			expectOut: []string{"e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280f", "files", "e2e1d31b4a7dfc1687f469b6673f6bf2c0aabee0cc6b3f1bdbde710a9bc6280d", "mariadb"},
 			expectErr: false,
@@ -61,7 +60,6 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(updateCmd)
 				updateCmd.AddCommand(updateEnvironmentCmd)
-				//AddGenericFlags(updateEnvironmentCmd)
 			},
 			expectOut: []string{"success", "pr-175"},
 			expectErr: false,
@@ -72,7 +70,6 @@ func TestEnvironmentCommands(t *testing.T) {
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(deleteCmd)
 				deleteCmd.AddCommand(deleteEnvCmd)
-				//AddGenericFlags(deleteEnvCmd)
 			},
 			expectOut: []string{"success"},
 			expectErr: false,
@@ -83,7 +80,6 @@ func TestEnvironmentCommands(t *testing.T) {
 			cmdArgs: []string{"config", "current"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(configCmd)
-				//AddGenericFlags(configGetCurrent)
 			},
 			expectOut: []string{""},
 			expectErr: false,
@@ -109,10 +105,6 @@ func TestEnvironmentCommands(t *testing.T) {
 			} else if err != nil {
 				t.Fatalf("Error executing command: %v", err)
 			}
-
-			cmd.Flags().VisitAll(func(flag *pflag.Flag) {
-				fmt.Printf("%s: %s \n", flag.Name, flag.Value.String())
-			})
 
 			for _, eo := range tt.expectOut {
 				assert.Contains(t, out.String(), eo)

@@ -1,6 +1,5 @@
 package cmd
 
-//
 //import (
 //	"bytes"
 //	"fmt"
@@ -21,11 +20,10 @@ package cmd
 //	}{
 //		{
 //			name:    "Add Deploytarget-config",
-//			cmdArgs: []string{"add", "deploytarget-config", "--project=lagoon-demo", "--deploytarget=2001", "--pullrequests=true", "--branches=false", "--output-json", "--force"},
+//			cmdArgs: []string{"add", "deploytarget-config", "--project=lagoon-demo", "--deploytarget=2001", "--pullrequests=true", "--branches=false", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(addCmd)
 //				addCmd.AddCommand(addDeployTargetConfigCmd)
-//				AddGenericFlags(addDeployTargetConfigCmd)
 //			},
 //			expectOut: []string{"true", "false", "ci-local-control-k8s"},
 //			expectErr: false,
@@ -33,42 +31,39 @@ package cmd
 //		// TODO: Seed deploytarget-config data
 //		{
 //			name:    "List Deploytarget-configs",
-//			cmdArgs: []string{"list", "deploytarget-configs", "--project=lagoon-demo", "--output-json"},
+//			cmdArgs: []string{"list", "deploytarget-configs", "--project=lagoon-demo"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(listCmd)
 //				listCmd.AddCommand(listDeployTargetConfigsCmd)
-//				AddGenericFlags(listDeployTargetConfigsCmd)
 //			},
 //			expectOut: []string{"true", "false", "ci-local-control-k8s"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Update Deploytarget-config",
-//			cmdArgs: []string{"update", "deploytarget-config", "--id=1", "--weight=2", "--output-json", "--force"},
+//			cmdArgs: []string{"update", "deploytarget-config", "--id=1", "--weight=2", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(updateCmd)
 //				updateCmd.AddCommand(updateDeployTargetConfigCmd)
-//				AddGenericFlags(updateDeployTargetConfigCmd)
 //			},
 //			expectOut: []string{"2", "ci-local-control-k8s"},
 //			expectErr: false,
 //		},
 //		{
 //			name:    "Delete Deploytarget-config",
-//			cmdArgs: []string{"delete", "deploytarget-config", "--project=lagoon-demo", "--id=1", "--output-json", "--force"},
+//			cmdArgs: []string{"delete", "deploytarget-config", "--project=lagoon-demo", "--id=1", "--force"},
 //			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 //				cmd.AddCommand(deleteCmd)
 //				deleteCmd.AddCommand(deleteDeployTargetConfigCmd)
-//				AddGenericFlags(deleteDeployTargetConfigCmd)
 //			},
 //			expectOut: []string{"success"},
 //			expectErr: false,
 //		},
 //	}
-//	SetUpRootCmdFlags()
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
-//			cmd := &cobra.Command{Use: "root"}
+//			cmd := rootCmd
+//			tt.cmdArgs = append(tt.cmdArgs, "--output-json", "--config-file=../temp_config.yaml")
 //			cmd.SetArgs(tt.cmdArgs)
 //			flags := pflag.FlagSet{}
 //			tt.setupCmd(cmd, flags)
