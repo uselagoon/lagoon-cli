@@ -126,34 +126,29 @@ CORE_TREEISH=main
 
 TEMP_CONFIG_FILE := temp_config.yaml
 
-# TODO - update to use token generation
 generate-config:
-	@CURRENT="test" \
-	DEFAULT="test" \
-	LAGOON_NAME="test" \
-	GRAPHQL="http://localhost:3000/graphql" \
-	HOSTNAME="localhost" \
-	KIBANA="" \
-	PORT="2020" \
-	SSHKEY="" \
-	TOKEN="token" \
-	UI="" \
-	VERSION="v1.4.0" \
+	TOKEN=$(TOKEN) \
 	envsubst < local-dev/config.tpl > $(TEMP_CONFIG_FILE)
 
 clean-config:
 	@rm -f $(TEMP_CONFIG_FILE)
 
+# TODO - Update with UI-PR#266
 .PHONY: test-with-api
 test-with-api:
 	export LAGOON_CORE=$$(mktemp -d ./lagoon-core.XXX) \
 		&& git clone $(CORE_REPO) "$$LAGOON_CORE" \
 		&& cd "$$LAGOON_CORE" \
 		&& git checkout $(CORE_TREEISH) \
+		&& TOKEN=$$(docker run -e JWTSECRET=super-secret-string \
+	                             -e JWTAUDIENCE=api.dev \
+	                             -e JWTUSER=localadmin \
+	                             uselagoon/tests \
+	                             python3 /ansible/tasks/api/admin_token.py) \
 		&& IMAGE_REPO=uselagoon docker compose -p $(CI_BUILD_TAG) --compatibility up -d api api-db actions-handler local-api-data-watcher-pusher keycloak keycloak-db broker api-redis logs2notifications local-minio mailhog \
 		&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) wait-for-keycloak \
 		&& cd .. \
-		&& $(MAKE) generate-config \
+		&& $(MAKE) generate-config TOKEN=$$TOKEN \
 		&& $(MAKE) api-tests \
 		&& $(MAKE) clean-config \
 		&& cd "$$LAGOON_CORE" \

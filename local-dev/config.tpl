@@ -1,12 +1,8 @@
-current: ${CURRENT}
-default: ${DEFAULT}
+current: test
+default: test
 lagoons:
-  ${LAGOON_NAME}:
-    graphql: ${GRAPHQL}
-    hostname: ${HOSTNAME}
-    kibana: ${KIBANA}
-    port: ${PORT}
-    sshkey: ${SSHKEY}
+  test:
+    graphql: "http://localhost:3000/graphql"
+    hostname: "localhost"
+    port: "2020"
     token: ${TOKEN}
-    ui: ${UI}
-    version: ${VERSION}
