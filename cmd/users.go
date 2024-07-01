@@ -501,7 +501,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 	Use:     "organization-administrator",
 	Aliases: []string{"org-admin"},
 	Short:   "Add an administrator to an Organization",
-	Long:    "Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers",
+	Long:    "Add an administrator to an Organization. If the role flag is not provided users will be added as viewers",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
@@ -522,9 +522,20 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 		if err := requiredInputCheck("Organization name", organizationName, "User email", userEmail); err != nil {
 			return err
 		}
-		owner, err := cmd.Flags().GetBool("owner")
+		role, err := cmd.Flags().GetString("role")
 		if err != nil {
 			return err
+		}
+		userInput := schema.AddUserToOrganizationInput{
+			User: schema.UserInput{Email: userEmail},
+		}
+		switch strings.ToLower(role) {
+		case "viewer":
+		case "admin":
+		case "owner":
+			userInput.Owner = true
+		default:
+			return fmt.Errorf(`role '%s' is not valid - valid roles include "viewer", "admin", "owner"`, role)
 		}
 
 		current := lagoonCLIConfig.Current
@@ -543,12 +554,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 		if organization.Name == "" {
 			return fmt.Errorf("error querying organization by name")
 		}
-
-		userInput := schema.AddUserToOrganizationInput{
-			User:         schema.UserInput{Email: userEmail},
-			Organization: organization.ID,
-			Owner:        owner,
-		}
+		userInput.Organization = organization.ID
 
 		orgUser := schema.Organization{}
 		err = lc.AddUserToOrganization(context.TODO(), &userInput, &orgUser)
@@ -595,10 +601,6 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 		if err := requiredInputCheck("User email", userEmail); err != nil {
 			return err
 		}
-		owner, err := cmd.Flags().GetBool("owner")
-		if err != nil {
-			return err
-		}
 
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
@@ -620,7 +622,6 @@ var removeAdministratorFromOrganizationCmd = &cobra.Command{
 		userInput := schema.AddUserToOrganizationInput{
 			User:         schema.UserInput{Email: userEmail},
 			Organization: organization.ID,
-			Owner:        owner,
 		}
 
 		orgUser := schema.Organization{}
@@ -707,9 +708,8 @@ func init() {
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	addAdministratorToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	addAdministratorToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
-	addAdministratorToOrganizationCmd.Flags().Bool("owner", false, "Set the user as an owner of the organization")
+	addAdministratorToOrganizationCmd.Flags().StringP("role", "R", "", "Role in the organization [owner, admin, viewer]")
 	removeAdministratorFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	removeAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
-	removeAdministratorFromOrganizationCmd.Flags().Bool("owner", false, "Set the user as an administrator of the organization")
 	resetPasswordCmd.Flags().StringP("email", "E", "", "Email address of the user")
 }
