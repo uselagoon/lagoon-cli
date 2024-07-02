@@ -50,7 +50,8 @@ var deleteEnvCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: environment.DeleteEnvironment,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -123,10 +124,13 @@ var updateEnvironmentCmd = &cobra.Command{
 		if project.Name == "" {
 			err = fmt.Errorf("project not found")
 		}
+		fmt.Println("project", project)
 		if err != nil {
 			return err
 		}
 		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		fmt.Println("cmdProjectEnvironment", cmdProjectEnvironment)
+		fmt.Println("environment", environment.Name)
 		if environment.Name == "" {
 			err = fmt.Errorf("environment not found")
 		}
@@ -172,7 +176,8 @@ var updateEnvironmentCmd = &cobra.Command{
 				"Environment Name": result.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -233,7 +238,7 @@ var listBackupsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", backup.Restore.Status)),
 			})
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"BackupID",
 				"Source",
@@ -243,6 +248,7 @@ var listBackupsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

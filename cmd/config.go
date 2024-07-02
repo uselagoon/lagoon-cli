@@ -129,10 +129,11 @@ var configLagoonsCmd = &cobra.Command{
 			tableHeader = append(tableHeader, "Kibana-URL")
 		}
 		tableHeader = append(tableHeader, "SSH-Key")
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: tableHeader,
 			Data:   data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -176,7 +177,7 @@ var configAddCmd = &cobra.Command{
 			if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 				return fmt.Errorf("couldn't write config: %v", err)
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"Name",
 					"GraphQL",
@@ -198,6 +199,7 @@ var configAddCmd = &cobra.Command{
 					},
 				},
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
 			return fmt.Errorf("must have Hostname, Port, and GraphQL endpoint")
 		}

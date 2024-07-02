@@ -79,7 +79,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 				notificationData = append(notificationData, "-")
 			}
 			data = append(data, notificationData)
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -88,6 +88,7 @@ It does not configure a project to send notifications to Microsoft Teams though,
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -135,7 +136,8 @@ This command is used to add an existing Microsoft Teams notification in Lagoon t
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -185,13 +187,14 @@ var listProjectMicrosoftTeamsCmd = &cobra.Command{
 				})
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Name",
 				"Webhook",
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -233,7 +236,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 				}
 			}
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"Project",
 				"Name",
@@ -241,6 +244,7 @@ var listAllMicrosoftTeamsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -285,7 +289,8 @@ var deleteProjectMicrosoftTeamsNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: "success",
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -326,7 +331,8 @@ var deleteMicrosoftTeamsNotificationCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: result.DeleteNotification,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -392,7 +398,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 					returnNonEmptyString(fmt.Sprintf("%v", result.Webhook)),
 				},
 			}
-			output.RenderOutput(output.Table{
+			r := output.RenderOutput(output.Table{
 				Header: []string{
 					"ID",
 					"Name",
@@ -400,6 +406,7 @@ var updateMicrosoftTeamsNotificationCmd = &cobra.Command{
 				},
 				Data: data,
 			}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},

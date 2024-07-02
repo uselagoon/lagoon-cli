@@ -1,6 +1,7 @@
 package output
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -39,7 +40,7 @@ type Result struct {
 }
 
 // RenderJSON .
-func RenderJSON(data interface{}, opts Options) {
+func RenderJSON(data interface{}, opts Options) string {
 	var jsonBytes []byte
 	var err error
 	if opts.Pretty {
@@ -53,7 +54,7 @@ func RenderJSON(data interface{}, opts Options) {
 			panic(err)
 		}
 	}
-	fmt.Println(string(jsonBytes))
+	return string(jsonBytes)
 }
 
 // RenderError .
@@ -64,8 +65,7 @@ func RenderError(errorMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		//fmt.Println(fmt.Sprintf("Error: %s", aurora.Yellow(trimQuotes(errorMsg))))
-		fmt.Println("Error:", trimQuotes(errorMsg))
+		os.Stderr.WriteString(fmt.Sprintf("Error: %s", trimQuotes(errorMsg)))
 	}
 }
 
@@ -77,38 +77,40 @@ func RenderInfo(infoMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		fmt.Println("Info:", trimQuotes(infoMsg))
+		os.Stderr.WriteString(fmt.Sprintf("Info: %s", trimQuotes(infoMsg)))
 	}
 }
 
 // RenderResult .
-func RenderResult(result Result, opts Options) {
+func RenderResult(result Result, opts Options) string {
+	var out bytes.Buffer
 	if opts.JSON {
-		RenderJSON(result, opts)
+		return RenderJSON(result, opts)
 	} else {
 		if trimQuotes(result.Result) == "success" {
-			fmt.Printf("Result: %s\n", aurora.Green(trimQuotes(result.Result)))
+			out.WriteString(fmt.Sprintf("Result: %s\n", aurora.Green(trimQuotes(result.Result))))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Printf("%s: %v\n", k, v)
+					out.WriteString(fmt.Sprintf("%s: %v\n", k, v))
 				}
 			}
 		} else {
 			fmt.Printf("Result: %s\n", aurora.Yellow(trimQuotes(result.Result)))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					fmt.Printf("%s: %v\n", k, v)
+					out.WriteString(fmt.Sprintf("%s: %v\n", k, v))
 				}
 			}
 		}
 	}
-
+	return out.String()
 }
 
 // RenderOutput .
-func RenderOutput(data Table, opts Options) {
+func RenderOutput(data Table, opts Options) string {
+	var out bytes.Buffer
 	if opts.Debug {
-		fmt.Printf("%s\n", aurora.Yellow("Final result:"))
+		out.WriteString(fmt.Sprintf("%s\n", aurora.Yellow("Final result:")))
 	}
 	if opts.JSON {
 		// really basic tabledata to json implementation
@@ -124,7 +126,7 @@ func RenderOutput(data Table, opts Options) {
 		returnedData := map[string]interface{}{
 			"data": rawData,
 		}
-		RenderJSON(returnedData, opts)
+		return RenderJSON(returnedData, opts)
 	} else {
 		// otherwise render a table
 		if opts.Error != "" {
@@ -139,7 +141,7 @@ func RenderOutput(data Table, opts Options) {
 			}
 			t.AppendHeader(hRow)
 		}
-		t.SetOutputMirror(os.Stdout)
+		t.SetOutputMirror(&out)
 		for _, rowData := range data.Data {
 			var dRow table.Row
 			for _, k := range rowData {
@@ -164,9 +166,10 @@ func RenderOutput(data Table, opts Options) {
 
 		if opts.CSV {
 			t.RenderCSV()
-			return
+			return out.String()
 		}
 		t.Render()
+		return out.String()
 	}
 }
 
