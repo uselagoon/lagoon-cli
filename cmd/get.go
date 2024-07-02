@@ -245,7 +245,7 @@ var getEnvironmentCmd = &cobra.Command{
 			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)),
 		})
 		dataMain := output.Table{
-			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "OpenshiftProjectName", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "Namespace", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)

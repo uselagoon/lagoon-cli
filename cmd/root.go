@@ -26,6 +26,7 @@ var cmdProject app.LagoonProject
 var cmdLagoon = ""
 var forceAction bool
 var cmdSSHKey = ""
+var cmdPubkeyIdentity = ""
 var inputScanner = bufio.NewScanner(os.Stdin)
 var versionFlag bool
 var docsFlag bool
@@ -36,6 +37,8 @@ var createConfig bool
 var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
+var verboseOutput bool
+
 var skipUpdateCheck bool
 
 // global for the lagoon config that the cli uses
@@ -128,6 +131,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&cmdLagoon, "lagoon", "l", "", "The Lagoon instance to interact with")
 	rootCmd.PersistentFlags().BoolVarP(&forceAction, "force", "", false, "Force yes on prompts (if supported)")
 	rootCmd.PersistentFlags().StringVarP(&cmdSSHKey, "ssh-key", "i", "", "Specify path to a specific SSH key to use for lagoon authentication")
+	rootCmd.PersistentFlags().StringVarP(&cmdPubkeyIdentity, "ssh-publickey", "", "",
+		"Specify path to a specific SSH public key to use for lagoon authentication using ssh-agent.\nThis will override any public key identities defined in configuration")
 
 	// rootCmd.PersistentFlags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Header, "no-header", "", false, "No header on table (if supported)")
@@ -136,6 +141,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&outputOptions.Pretty, "pretty", "", false, "Make JSON pretty (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
+	rootCmd.PersistentFlags().BoolVarP(&verboseOutput, "verbose", "v", false, "Enable verbose output to stderr (if supported)")
 
 	// get config-file from flag
 	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")

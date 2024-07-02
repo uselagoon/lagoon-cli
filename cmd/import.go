@@ -30,7 +30,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 		if err != nil {
 			return err
 		}
-		openshiftID, err := cmd.Flags().GetUint("openshiftID")
+		deploytargetID, err := cmd.Flags().GetUint("deploytarget-id")
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 			return fmt.Errorf("couldn't open file: %w", err)
 		}
 
-		return lagoon.Import(context.TODO(), lc, file, keepGoing, openshiftID)
+		return lagoon.Import(context.TODO(), lc, file, keepGoing, deploytargetID)
 	},
 }
 
@@ -136,9 +136,9 @@ func init() {
 		"path to the file to import")
 	importCmd.Flags().Bool("keep-going", false,
 		"on error, just log and continue instead of aborting")
-	importCmd.Flags().Uint("openshiftID", 0,
-		"ID of the openshift to target for import")
-	for _, flag := range []string{"import-file", "openshiftID"} {
+	importCmd.Flags().Uint("deploytarget-id", 0,
+		"ID of the deploytarget to target for import")
+	for _, flag := range []string{"import-file", "deploytarget-id"} {
 		if err := importCmd.MarkFlagRequired(flag); err != nil {
 			panic(err)
 		}

@@ -1,18 +1,19 @@
-## lagoon delete organization-administrator
+## lagoon logs
 
-Remove an administrator from an Organization
+Display logs for a service of an environment and project
 
 ```
-lagoon delete organization-administrator [flags]
+lagoon logs [flags]
 ```
 
 ### Options
 
 ```
-  -E, --email string               Email address of the user
-  -h, --help                       help for organization-administrator
-  -O, --organization-name string   Name of the organization
-      --owner                      Set the user as an administrator of the organization
+  -c, --container string   specify a specific container name
+  -f, --follow             continue outputting new lines as they are logged
+  -h, --help               help for logs
+  -n, --lines uint         the number of lines to return for each container (default 32)
+  -s, --service string     specify a specific service name
 ```
 
 ### Options inherited from parent commands
@@ -37,5 +38,5 @@ lagoon delete organization-administrator [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon](lagoon.md)	 - Command line integration for Lagoon
 

@@ -17,12 +17,12 @@ lagoon add project [flags]
   -a, --auto-idle uint                          Auto idle setting of the project
   -b, --branches string                         Which branches should be deployed
       --build-image string                      Build Image for the project
+  -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) target this Project should be deployed to
+      --deploytarget-project-pattern string     Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated
   -L, --development-environments-limit uint     How many environments can be deployed at one time
   -g, --git-url string                          GitURL of the project
   -h, --help                                    help for project
   -j, --json string                             JSON string to patch
-  -S, --openshift uint                          Reference to OpenShift Object this Project should be deployed to
-  -o, --openshift-project-pattern string        Pattern of OpenShift Project/Namespace that should be generated
       --organization-id uint                    ID of the Organization to add the project to
   -O, --organization-name string                Name of the Organization to add the project to
       --owner                                   Add the user as an owner of the project
@@ -38,18 +38,21 @@ lagoon add project [flags]
 ### Options inherited from parent commands
 
 ```
-      --config-file string   Path to the config file to use (must be *.yml or *.yaml)
-      --debug                Enable debugging output (if supported)
-  -e, --environment string   Specify an environment to use
-      --force                Force yes on prompts (if supported)
-  -l, --lagoon string        The Lagoon instance to interact with
-      --no-header            No header on table (if supported)
-      --output-csv           Output as CSV (if supported)
-      --output-json          Output as JSON (if supported)
-      --pretty               Make JSON pretty (if supported)
-  -p, --project string       Specify a project to use
-      --skip-update-check    Skip checking for updates
-  -i, --ssh-key string       Specify path to a specific SSH key to use for lagoon authentication
+      --config-file string     Path to the config file to use (must be *.yml or *.yaml)
+      --debug                  Enable debugging output (if supported)
+  -e, --environment string     Specify an environment to use
+      --force                  Force yes on prompts (if supported)
+  -l, --lagoon string          The Lagoon instance to interact with
+      --no-header              No header on table (if supported)
+      --output-csv             Output as CSV (if supported)
+      --output-json            Output as JSON (if supported)
+      --pretty                 Make JSON pretty (if supported)
+  -p, --project string         Specify a project to use
+      --skip-update-check      Skip checking for updates
+  -i, --ssh-key string         Specify path to a specific SSH key to use for lagoon authentication
+      --ssh-publickey string   Specify path to a specific SSH public key to use for lagoon authentication using ssh-agent.
+                               This will override any public key identities defined in configuration
+  -v, --verbose                Enable verbose output to stderr (if supported)
 ```
 
 ### SEE ALSO
