@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func TestProjectCommands(t *testing.T) {
+func TestAPIProjectCommands(t *testing.T) {
 	tests := []struct {
 		name              string
 		cmdArgs           []string

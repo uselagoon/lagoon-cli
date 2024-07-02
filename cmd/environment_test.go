@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func TestEnvironmentCommands(t *testing.T) {
+func TestAPIEnvironmentCommands(t *testing.T) {
 	tests := []struct {
 		name              string
 		cmdArgs           []string

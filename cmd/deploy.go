@@ -42,7 +42,7 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
@@ -109,7 +109,7 @@ var deployPromoteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
@@ -164,7 +164,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
@@ -237,23 +237,23 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err != nil {
 			return err
 		}
-		baseBranchName, err := cmd.Flags().GetString("baseBranchName")
+		baseBranchName, err := cmd.Flags().GetString("base-branch-name")
 		if err != nil {
 			return err
 		}
-		baseBranchRef, err := cmd.Flags().GetString("baseBranchRef")
+		baseBranchRef, err := cmd.Flags().GetString("base-branch-ref")
 		if err != nil {
 			return err
 		}
-		headBranchName, err := cmd.Flags().GetString("headBranchName")
+		headBranchName, err := cmd.Flags().GetString("head-branch-name")
 		if err != nil {
 			return err
 		}
-		headBranchRef, err := cmd.Flags().GetString("headBranchRef")
+		headBranchRef, err := cmd.Flags().GetString("head-branch-ref")
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Project name", cmdProjectName, "Pullrequest title", prTitle, "Pullrequest number", strconv.Itoa(int(prNumber)), "baseBranchName", baseBranchName, "baseBranchRef", baseBranchRef, "headBranchName", headBranchName, "headBranchRef", headBranchRef); err != nil {
+		if err := requiredInputCheck("Project name", cmdProjectName, "Pullrequest title", prTitle, "Pullrequest number", strconv.Itoa(int(prNumber)), "Base branch name", baseBranchName, "Base branch ref", baseBranchRef, "Head branch name", headBranchName, "Head branch ref", headBranchRef); err != nil {
 			return err
 		}
 		buildVarStrings, err := cmd.Flags().GetStringArray("buildvar")
@@ -265,7 +265,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			return err
 		}
 
-		returnData, err := cmd.Flags().GetBool("returnData")
+		returnData, err := cmd.Flags().GetBool("returndata")
 		if err != nil {
 			return err
 		}
@@ -309,25 +309,25 @@ func init() {
 	deployCmd.AddCommand(deployPullrequestCmd)
 
 	const returnDataUsageText = "Returns the build name instead of success text"
-	deployLatestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployLatestCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployLatestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
-	deployBranchCmd.Flags().StringP("branchRef", "r", "", "Branch ref to deploy")
-	deployBranchCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployBranchCmd.Flags().StringP("branch-ref", "r", "", "Branch ref to deploy")
+	deployBranchCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployBranchCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
-	deployPromoteCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPromoteCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployPromoteCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
 	deployPullrequestCmd.Flags().UintP("number", "n", 0, "Pullrequest number")
-	deployPullrequestCmd.Flags().StringP("baseBranchName", "N", "", "Pullrequest base branch name")
-	deployPullrequestCmd.Flags().StringP("baseBranchRef", "R", "", "Pullrequest base branch reference hash")
-	deployPullrequestCmd.Flags().StringP("headBranchName", "H", "", "Pullrequest head branch name")
-	deployPullrequestCmd.Flags().StringP("headBranchRef", "M", "", "Pullrequest head branch reference hash")
-	deployPullrequestCmd.Flags().Bool("returnData", false, returnDataUsageText)
+	deployPullrequestCmd.Flags().StringP("base-branch-name", "N", "", "Pullrequest base branch name")
+	deployPullrequestCmd.Flags().StringP("base-branch-ref", "R", "", "Pullrequest base branch reference hash")
+	deployPullrequestCmd.Flags().StringP("head-branch-name", "H", "", "Pullrequest head branch name")
+	deployPullrequestCmd.Flags().StringP("head-branch-ref", "M", "", "Pullrequest head branch reference hash")
+	deployPullrequestCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployPullrequestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 }

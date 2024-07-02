@@ -87,7 +87,7 @@ var listDeployTargetsCmd = &cobra.Command{
 	Use:     "deploytargets",
 	Aliases: []string{"deploytarget", "dt"},
 	Short:   "List all DeployTargets in Lagoon",
-	Long:    "List all DeployTargets (kubernetes or openshift) in lagoon, this requires admin level permissions",
+	Long:    "List all Deploytargets(Kubernetes) in lagoon, this requires admin level permissions",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
 	},
