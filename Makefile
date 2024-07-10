@@ -122,7 +122,10 @@ api-tests: gen
 # upstream
 CI_BUILD_TAG ?= lagoon-cli
 CORE_REPO=https://github.com/uselagoon/lagoon.git
-CORE_TREEISH=main
+CORE_TREEISH=make-export-refactoring
+
+LAGOON_CORE_IMAGE_REPO=testlagoon
+LAGOON_CORE_IMAGE_TAG=main
 
 TEMP_CONFIG_FILE := temp_config.yaml
 
@@ -133,23 +136,33 @@ generate-config:
 clean-config:
 	@rm -f $(TEMP_CONFIG_FILE)
 
-# TODO - Update with UI-PR#266
-.PHONY: test-with-api
-test-with-api:
+.PHONY: cli-tests-with-development-api
+cli-tests-with-development-api: development-api
+	TOKEN=$$(docker run -e JWTSECRET=super-secret-string \
+		 -e JWTAUDIENCE=api.dev \
+		 -e JWTUSER=localadmin \
+		 uselagoon/tests \
+		 python3 /ansible/tasks/api/admin_token.py) \
+	&& $(MAKE) generate-config TOKEN=$$TOKEN \
+	&& $(MAKE) api-tests \
+	&& $(MAKE) clean-config \
+	&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) development-api-down
+
+.PHONY: development-api
+development-api:
 	export LAGOON_CORE=$$(mktemp -d ./lagoon-core.XXX) \
-		&& git clone $(CORE_REPO) "$$LAGOON_CORE" \
-		&& cd "$$LAGOON_CORE" \
-		&& git checkout $(CORE_TREEISH) \
-		&& TOKEN=$$(docker run -e JWTSECRET=super-secret-string \
-	                             -e JWTAUDIENCE=api.dev \
-	                             -e JWTUSER=localadmin \
-	                             uselagoon/tests \
-	                             python3 /ansible/tasks/api/admin_token.py) \
-		&& IMAGE_REPO=uselagoon docker compose -p $(CI_BUILD_TAG) --compatibility up -d api api-db actions-handler local-api-data-watcher-pusher keycloak keycloak-db broker api-redis logs2notifications local-minio mailhog \
-		&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) wait-for-keycloak \
-		&& cd .. \
-		&& $(MAKE) generate-config TOKEN=$$TOKEN \
-		&& $(MAKE) api-tests \
-		&& $(MAKE) clean-config \
-		&& cd "$$LAGOON_CORE" \
-		&& $(MAKE) CI_BUILD_TAG=$(CI_BUILD_TAG) down
+	&& git clone $(CORE_REPO) "$$LAGOON_CORE" \
+	&& cd "$$LAGOON_CORE" \
+	&& git checkout $(CORE_TREEISH) \
+	&& IMAGE_REPO=$(LAGOON_CORE_IMAGE_REPO) IMAGE_REPO_TAG=$(LAGOON_CORE_IMAGE_TAG) COMPOSE_STACK_NAME=core-$(CI_BUILD_TAG) docker compose -p core-$(CI_BUILD_TAG) pull \
+	&& IMAGE_REPO=$(LAGOON_CORE_IMAGE_REPO) IMAGE_REPO_TAG=$(LAGOON_CORE_IMAGE_TAG) COMPOSE_STACK_NAME=core-$(CI_BUILD_TAG) $(MAKE) compose-api-logs-development
+
+.PHONY: development-api-down
+development-api-down:
+	cd lagoon-core* && \
+	docker-compose -p core-$(CI_BUILD_TAG) --compatibility down -v --remove-orphans
+
+.PHONY: down
+down:
+	$(MAKE) development-api-down
+	docker-compose -p $(CI_BUILD_TAG) --compatibility down -v --remove-orphans

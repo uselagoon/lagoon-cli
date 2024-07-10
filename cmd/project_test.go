@@ -21,7 +21,7 @@ func TestAPIProjectCommands(t *testing.T) {
 	}{
 		{
 			name:    "Add Project",
-			cmdArgs: []string{"add", "project", "--project=test-project", "--production-environment=main", "--openshift=4", "--git-url=https://github.com/lagoon-examples/drupal10-base"},
+			cmdArgs: []string{"add", "project", "--project=test-project", "--production-environment=main", "--deploytarget=4", "--git-url=https://github.com/lagoon-examples/drupal10-base"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(addCmd)
 				addCmd.AddCommand(addProjectCmd)
@@ -31,7 +31,7 @@ func TestAPIProjectCommands(t *testing.T) {
 		},
 		{
 			name:    "Add Project to an Organization",
-			cmdArgs: []string{"add", "project", "--project=test-organization-project", "--organization-name=lagoon-demo-organization", "--production-environment=main", "--openshift=4", "--git-url=https://github.com/lagoon-examples/drupal10-base"},
+			cmdArgs: []string{"add", "project", "--project=test-organization-project", "--organization-name=lagoon-demo-organization", "--production-environment=main", "--deploytarget=4", "--git-url=https://github.com/lagoon-examples/drupal10-base"},
 			setupCmd: func(cmd *cobra.Command, flags pflag.FlagSet) {
 				cmd.AddCommand(addCmd)
 				addCmd.AddCommand(addProjectCmd)

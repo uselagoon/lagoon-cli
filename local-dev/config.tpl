@@ -6,3 +6,4 @@ lagoons:
     hostname: "localhost"
     port: "2020"
     token: ${TOKEN}
+    version: v1.9.0
