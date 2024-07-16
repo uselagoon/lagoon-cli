@@ -43,6 +43,7 @@ List projects, environments, deployments, variables or notifications
 * [lagoon list groups](lagoon_list_groups.md)	 - List groups you have access to (alias: g)
 * [lagoon list invokable-tasks](lagoon_list_invokable-tasks.md)	 - Print a list of invokable tasks
 * [lagoon list notification](lagoon_list_notification.md)	 - List all notifications or notifications on projects
+* [lagoon list organization-admins](lagoon_list_organization-admins.md)	 - List admins in an organization
 * [lagoon list organization-deploytargets](lagoon_list_organization-deploytargets.md)	 - List deploy targets in an organization
 * [lagoon list organization-groups](lagoon_list_organization-groups.md)	 - List groups in an organization
 * [lagoon list organization-projects](lagoon_list_organization-projects.md)	 - List projects in an organization
