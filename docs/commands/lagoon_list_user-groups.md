@@ -13,8 +13,8 @@ lagoon list user-groups [flags]
 ### Options
 
 ```
-  -E, --email-address string   The email address of a user
-  -h, --help                   help for user-groups
+  -E, --email string   The email address of a user
+  -h, --help           help for user-groups
 ```
 
 ### Options inherited from parent commands

@@ -14,8 +14,8 @@ lagoon list all-users [flags]
 ### Options
 
 ```
-  -E, --email-address string   The email address of a user
-  -h, --help                   help for all-users
+  -E, --email string   The email address of a user
+  -h, --help           help for all-users
 ```
 
 ### Options inherited from parent commands
