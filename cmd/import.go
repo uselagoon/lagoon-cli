@@ -19,7 +19,7 @@ var importCmd = &cobra.Command{
 By default this command will exit on encountering an error (such as an existing object).
 You can get it to continue anyway with --keep-going. To disable any prompts, use --force.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		importFile, err := cmd.Flags().GetString("import-file")
@@ -39,21 +39,16 @@ You can get it to continue anyway with --keep-going. To disable any prompts, use
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
+		current := lContext.Name
 		if !yesNo(fmt.Sprintf(
 			`Are you sure you want to import config from %s into "%s" lagoon?`,
 			importFile, current)) {
 			return nil // user cancelled
 		}
-
-		err = setConfigDefaultVersion(&lagoonCLIConfig, current, "1.0.0")
-		if err != nil {
-			return err
-		}
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 
@@ -83,7 +78,7 @@ var exportCmd = &cobra.Command{
 	Long: `Export lagoon output to yaml
 You must specify to export a specific project by using the '-p <project-name>' flag`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
@@ -102,21 +97,17 @@ You must specify to export a specific project by using the '-p <project-name>' f
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
+		current := lContext.Name
 		if !yesNo(fmt.Sprintf(
 			`Are you sure you want to export lagoon config for %s on "%s" lagoon?`,
 			project, current)) {
 			return nil // user cancelled
 		}
 
-		err = setConfigDefaultVersion(&lagoonCLIConfig, current, "1.0.0")
-		if err != nil {
-			return err
-		}
 		lc := client.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
+			lUser.UserConfig.Grant.AccessToken,
+			lContext.ContextConfig.Version,
 			lagoonCLIVersion,
 			debug)
 
