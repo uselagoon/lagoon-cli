@@ -20,7 +20,7 @@ lagoon update deploytarget [flags]
       --friendly-name string    DeployTarget friendly name
   -h, --help                    help for deploytarget
       --id uint                 ID of the DeployTarget
-      --router-pattern string   DeployTarget router-pattern
+      --router-pattern string   Router pattern of the DeployTarget, e.g. '${service}-${environment}-${project}.lagoon.example.com'
       --ssh-host string         DeployTarget ssh host
       --ssh-port string         DeployTarget ssh port
       --token string            DeployTarget token

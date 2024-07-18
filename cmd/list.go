@@ -627,7 +627,7 @@ This query can take a long time to run if there are a lot of users.`,
 		if err != nil {
 			return err
 		}
-		emailAddress, err := cmd.Flags().GetString("email-address")
+		emailAddress, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
@@ -677,7 +677,7 @@ var listUsersGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		emailAddress, err := cmd.Flags().GetString("email-address")
+		emailAddress, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
@@ -1207,8 +1207,8 @@ func init() {
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(listOrganizationsCmd)
-	listAllUsersCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
-	listUsersGroupsCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
+	listAllUsersCmd.Flags().StringP("email", "E", "", "The email address of a user")
+	listUsersGroupsCmd.Flags().StringP("email", "E", "", "The email address of a user")
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in")
 	listGroupProjectsCmd.Flags().StringP("name", "N", "", "Name of the group to list projects in")
