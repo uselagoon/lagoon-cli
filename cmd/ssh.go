@@ -44,8 +44,8 @@ var sshEnvCmd = &cobra.Command{
 
 		privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 		// if the user has a key defined in their lagoon cli config, use it
-		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
-			privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+		if lUser.UserConfig.SSHKey != "" {
+			privateKey = lUser.UserConfig.SSHKey
 			skipAgent = true
 		}
 		// otherwise check if one has been provided by the override flag
@@ -67,7 +67,7 @@ var sshEnvCmd = &cobra.Command{
 				return fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
 			}
 			// start an interactive ssh session
-			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
+			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lUser.UserConfig.PublicKeyIdentities, skipAgent)
 			config := &ssh.ClientConfig{
 				User: sshConfig["username"],
 				Auth: []ssh.AuthMethod{
