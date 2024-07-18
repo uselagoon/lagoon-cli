@@ -9,7 +9,7 @@ var runCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Run a task against an environment",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 

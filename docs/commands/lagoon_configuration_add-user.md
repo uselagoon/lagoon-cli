@@ -1,15 +1,17 @@
-## lagoon config default
+## lagoon configuration add-user
 
-Set the default Lagoon to use
+Add a new Lagoon context user
 
 ```
-lagoon config default [flags]
+lagoon configuration add-user [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for default
+  -h, --help             help for add-user
+      --name string      The name to reference this user as
+      --ssh-key string   The full path to this users ssh-key
 ```
 
 ### Options inherited from parent commands
@@ -26,7 +28,6 @@ lagoon config default [flags]
       --pretty                            Make JSON pretty (if supported)
   -p, --project string                    Specify a project to use
       --skip-update-check                 Skip checking for updates
-  -i, --ssh-key string                    Specify path to a specific SSH key to use for lagoon authentication
       --ssh-publickey string              Specify path to a specific SSH public key to use for lagoon authentication using ssh-agent.
                                           This will override any public key identities defined in configuration
       --strict-host-key-checking string   Similar to SSH StrictHostKeyChecking (accept-new, no, ignore) (default "accept-new")
@@ -35,5 +36,5 @@ lagoon config default [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

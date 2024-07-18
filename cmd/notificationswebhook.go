@@ -21,7 +21,7 @@ This command is used to set up a new webhook notification in Lagoon. This requir
 It does not configure a project to send notifications to webhook though, you need to use project-webhook for that.`,
 	Aliases: []string{"w"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -44,13 +44,12 @@ It does not configure a project to send notifications to webhook though, you nee
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create a webhook notification '%s' with webhook url '%s', are you sure?", name, webhook)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 
 			notification := schema.AddNotificationWebhookInput{
@@ -101,7 +100,7 @@ var addProjectNotificationWebhookCmd = &cobra.Command{
 	Long: `Add a webhook notification to a project
 This command is used to add an existing webhook notification in Lagoon to a project.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -116,13 +115,12 @@ This command is used to add an existing webhook notification in Lagoon to a proj
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add webhook notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
 				NotificationType: schema.WebhookNotification,
@@ -148,7 +146,7 @@ var listProjectWebhooksCmd = &cobra.Command{
 	Aliases: []string{"pw"},
 	Short:   "List webhook details about a project (alias: pw)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -158,14 +156,12 @@ var listProjectWebhooksCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
-
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		result, err := lagoon.GetProjectNotificationWebhook(context.TODO(), cmdProjectName, lc)
@@ -204,20 +200,19 @@ var listAllWebhooksCmd = &cobra.Command{
 	Aliases: []string{"w"},
 	Short:   "List all webhook notification details (alias: w)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		result, err := lagoon.GetAllNotificationWebhook(context.TODO(), lc)
 		if err != nil {
@@ -254,7 +249,7 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 	Aliases: []string{"pw"},
 	Short:   "Delete a webhook notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -269,13 +264,12 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
@@ -311,7 +305,7 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 	Aliases: []string{"w"},
 	Short:   "Delete a webhook notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -327,13 +321,12 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 		}
 		// Todo: Verify notifcation name exists - requires #PR https://github.com/uselagoon/lagoon/pull/3740
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.DeleteNotificationWebhook(context.TODO(), name, lc)
 			if err != nil {
@@ -354,7 +347,7 @@ var updateWebhookNotificationCmd = &cobra.Command{
 	Aliases: []string{"w"},
 	Short:   "Update an existing webhook notification",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -385,13 +378,12 @@ var updateWebhookNotificationCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update webhook notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 
 			notification := &schema.UpdateNotificationWebhookInput{

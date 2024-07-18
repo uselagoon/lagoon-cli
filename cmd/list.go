@@ -23,7 +23,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List projects, environments, deployments, variables or notifications",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
@@ -43,13 +43,12 @@ var listProjectsCmd = &cobra.Command{
 		// if err != nil {
 		// 	return err
 		// }
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		projects, err := lagoon.ListAllProjects(context.TODO(), lc)
@@ -136,13 +135,12 @@ var listDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
 		if err != nil {
@@ -212,13 +210,12 @@ var listGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		groups, err := lagoon.ListAllGroups(context.TODO(), lc)
@@ -273,13 +270,12 @@ var listGroupProjectsCmd = &cobra.Command{
 			}
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		var groupProjects *[]schema.Group
@@ -335,7 +331,7 @@ var listEnvironmentsCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "List environments for a project (alias: e)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -346,13 +342,12 @@ var listEnvironmentsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		environments, err := lagoon.GetEnvironmentsByProjectName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
@@ -408,13 +403,12 @@ var listVariablesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		in := &schema.EnvVariableByProjectEnvironmentNameInput{
 			Project:     cmdProjectName,
@@ -489,13 +483,12 @@ var listDeploymentsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		deployments, err := lagoon.GetDeploymentsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
@@ -561,13 +554,12 @@ var listTasksCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		tasks, err := lagoon.GetTasksByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
@@ -621,13 +613,12 @@ Without a group name, this query may time out in large Lagoon instalschema.`,
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		data := []output.Data{}
 		if groupName != "" {
@@ -689,13 +680,12 @@ This query can take a long time to run if there are a lot of users.`,
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		allUsers, err := lagoon.AllUsers(context.TODO(), schema.AllUsersFilter{
 			Email: emailAddress,
@@ -743,13 +733,12 @@ var listUsersGroupsCmd = &cobra.Command{
 		if err := requiredInputCheck("Email Address", emailAddress); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		allUsers, err := lagoon.GetUserByEmail(context.TODO(), emailAddress, lc)
 		if err != nil {
@@ -791,13 +780,12 @@ var listInvokableTasks = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
@@ -831,7 +819,7 @@ var listNotificationCmd = &cobra.Command{
 	Aliases: []string{"n"},
 	Short:   "List all notifications or notifications on projects",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
@@ -840,7 +828,7 @@ var listProjectGroupsCmd = &cobra.Command{
 	Aliases: []string{"pg"},
 	Short:   "List groups in a project (alias: pg)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -851,13 +839,12 @@ var listProjectGroupsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		projectGroups, err := lagoon.GetProjectGroups(context.TODO(), cmdProjectName, lc)
 		if err != nil {
@@ -910,13 +897,12 @@ var listOrganizationProjectsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
@@ -973,13 +959,12 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
@@ -1040,13 +1025,12 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			return fmt.Errorf("missing arguments: Organization name or ID is not defined")
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		deployTargets, err := lagoon.ListDeployTargetsByOrganizationNameOrID(context.TODO(), nullStrCheck(organizationName), nullUintCheck(organizationID), lc)
 		if err != nil {
@@ -1098,13 +1082,12 @@ var listOrganizationUsersCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		users, err := lagoon.UsersByOrganizationName(context.TODO(), organizationName, lc)
 		if err != nil {
@@ -1151,13 +1134,12 @@ var listOrganizationAdminsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		users, err := lagoon.ListOrganizationAdminsByName(context.TODO(), organizationName, lc)
 		if err != nil {
@@ -1206,13 +1188,12 @@ var listOrganizationsCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		organizations, err := lagoon.AllOrganizations(context.TODO(), lc)

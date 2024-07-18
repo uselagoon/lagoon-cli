@@ -9,15 +9,6 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
-// config vars
-var lagoonHostname string
-var lagoonPort string
-var lagoonGraphQL string
-var lagoonToken string
-var lagoonUI string
-var lagoonKibana string
-var lagoonSSHKey string
-
 // group vars
 var groupName string
 

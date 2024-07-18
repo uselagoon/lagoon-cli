@@ -1,95 +1,71 @@
 # Introduction
 
-By default the CLI is configured to use the `amazeeio` Lagoon. But you can also define additional Lagoons if you need to.
+Lagoon CLI uses a shared configuration package. You can [read more about it here](https://github.com/uselagoon/machinery/tree/main/utils/config).
 
-The `.lagoon.yml` file will be installed in your home directory by default
+It uses [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) for storing the configuration in known locations.
 
-## Layout of the configuration file
-The configuration file is laid out like below
-```yaml
-current: amazeeio
-default: amazeeio
-lagoons:
-  amazeeio:
-    graphql: https://api.lagoon.amazeeio.cloud/graphql
-    hostname: ssh.lagoon.amazeeio.cloud
-    port: 32222
-    token: ey.....xA
+The main configuration file will be stored in `$XDG_CONFIG_HOME` with the file location being in a `lagoon` directory, with the actual configuration file being named `config.yaml`.
+
+The full path will then be `$XDG_CONFIG_HOME/lagoon/config.yml`. 
+
+If `$XDG_CONFIG_HOME` is not set, then depending on the operating system, this location could be different. Review the specification to understand more about this.
+
+# Usage
+
+See the sub command `lagoon configuration` for information on managing users and contexts.
+
+# Components
+
+Configuration is broken down into two core components, `users` and `contexts`. You need a user, and you need a context, a user must be linked to a context.
+
+Information about the two components are below, but further information can be found in the package that defines configurations if you want further information.
+
+## Users
+
+Users are a way to leverage separate SSH keys if using SSH based authentication. This user does not have to match the name of an account within the Lagoon, but a friendly name for the conifugration owner.
+
+## Contexts
+
+Contexts are a way to leverage multiple Lagoons. A context needs a user linked to it, you can change the user associated to a context, and you can define multiple contexts for the same cluster with different users.
+
+## Features
+
+The Lagoon CLI has some features that can be enabled and disabled. Features may be disabled by default, depending on the feature or features name. Features can be defined globally, or for a specific context if required.
+
+See the help output of `lagoon configuration feature` for how to change features.
+
+### ssh-token
+
+This feature when set to `true` will only use SSH to get a token, instead of using the Lagoon provided Keycloak OAuth mechanism. This is useful if you're using the CLI and are unable to use the OAuth mechanism to authenticate with the API for any reason, for example in a CI job.
+
+The default value of this is `false` (or unset).
+
+### disable-update-check
+
+This feature when set to `true` will inform the CLI to not perform the automatic update checks.
+
+The default value of this is `false` (or unset).
+
+### environment-from-directory
+
+This feature when set to `true` will enable the abilty for the CLI to read some basic information from the directory the command is executed in to try and guess which project or environment you're in.
+
+> Note: The recommendation is to never use this feature. We may deprecate this feature in the future.
+
+The default value of this is `false` (or unset).
+
+# Migrating from the legacy configuration
+
+Previous versions of Lagoon CLI used a `.lagoon.yml` in a home directory. This is no longer the case. 
+
+The CLI offers a way to convert a legacy configuration into the new format. It will not modify the legacy configuration though, only read it.
+
+You can run it in dry run mode first to see what the resulting configuration will prompt you to provide input for.
 ```
-There are a few sections to cover off
-
-* `current` is the current Lagoon that you will be using, if you only have the one, it will be `amazeeio`
-* `default` is the default Lagoon to use, if you always use a particular Lagoon then you can set your preference as your default
-* `lagoons` is where the actual connection parameters are stored for each Lagoon, they all follow the same template.
-    * `graphql` is the graphql endpoint
-    * `hostname` is the ssh hostname
-    * `port` is the ssh port
-    * `token` is the graphql token, this is automatically generate the first time you `lagoon login` and will automatically refresh if it expires via ssh.
-
-# Add a Lagoon
-If you want to add a different Lagoon to use, then you can use the CLI command to view the flags available
-```bash
-lagoon config add --lagoon LagoonName
-```
-## Example
-```bash
-lagoon config add --lagoon amazeeio \
-    --graphql https://api.lagoon.amazeeio.cloud/graphql \
-    --hostname ssh.lagoon.amazeeio.cloud \
-    --port 32222
+lagoon configuration convert-config
 ```
 
-# Delete a Lagoon
-If you want to remove a Lagoon, you can use
-```bash
-lagoon config delete --lagoon LagoonName
+If you're happy with the process, and the output looks good, you can run it again with the `--write-config` flag (you will be prompted for input again).
 ```
-## Example
-```bash
-lagoon config delete --lagoon amazeeio
-```
-
-# Change default Lagoon
-If you add additional Lagoons, you can select which one is the default you want to use by running
-```bash
-lagoon config default --lagoon LagoonName
-```
-## Example
-```bash
-lagoon config default --lagoon amazeeio
-```
-
-# Use a different Lagoon
-If you want to temporarily use a different Lagoon, when you run any commands you can specify the flag `--lagoon` or `-l` and then the name of the Lagoon
-## Example
-```bash
-lagoon --lagoon mylagoon list projects
-```
-
-# View Lagoons
-You can view all the Lagoons you have configured by running
-```bash
-lagoon config list
-```
-Output
-```yaml
-You have the following lagoons configured:
-Name: amazeeio
- - Hostname: ssh.lagoon.amazeeio.cloud
- - GraphQL: https://api.lagoon.amazeeio.cloud/graphql
- - Port: 32222
-Name: mylagoon
- - Hostname: ssh.mylagoon.example
- - GraphQL: https://api.mylagoon.example/graphql
- - Port: 32000
-Name: local
- - Hostname: localhost
- - GraphQL: http://localhost:3000/graphql
- - Port: 2020
-
-Your default lagoon is:
-Name: local
-
-Your current lagoon is:
-Name: local
+lagoon configuration convert-config --write-config
 ```

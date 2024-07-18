@@ -1,15 +1,11 @@
-## lagoon kibana
+## lagoon configuration
 
-Launch the kibana interface
-
-```
-lagoon kibana [flags]
-```
+Manage or view the contexts and users for interacting with Lagoon
 
 ### Options
 
 ```
-  -h, --help   help for kibana
+  -h, --help   help for configuration
 ```
 
 ### Options inherited from parent commands
@@ -36,4 +32,14 @@ lagoon kibana [flags]
 ### SEE ALSO
 
 * [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration add-context](lagoon_configuration_add-context.md)	 - Add a new Lagoon context
+* [lagoon configuration add-user](lagoon_configuration_add-user.md)	 - Add a new Lagoon context user
+* [lagoon configuration config-path](lagoon_configuration_config-path.md)	 - Get the path of where the config file lives
+* [lagoon configuration convert-config](lagoon_configuration_convert-config.md)	 - Convert legacy .lagoon.yml config to the new configuration format
+* [lagoon configuration default-context](lagoon_configuration_default-context.md)	 - Change which context is the default
+* [lagoon configuration feature](lagoon_configuration_feature.md)	 - Enable or disable a feature for all contexts or a specific context
+* [lagoon configuration list-contexts](lagoon_configuration_list-contexts.md)	 - View all configured Lagoon contexts
+* [lagoon configuration list-users](lagoon_configuration_list-users.md)	 - View all configured Lagoon context users
+* [lagoon configuration update-context](lagoon_configuration_update-context.md)	 - Update a Lagoon context
+* [lagoon configuration update-user](lagoon_configuration_update-user.md)	 - Update a Lagoon context user
 

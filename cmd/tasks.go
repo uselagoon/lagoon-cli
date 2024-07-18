@@ -24,7 +24,7 @@ var getTaskByID = &cobra.Command{
 	Long:    `Get information about a task by its ID`,
 	Aliases: []string{"t", "tbi"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -43,13 +43,12 @@ var getTaskByID = &cobra.Command{
 		if err := requiredInputCheck("ID", strconv.Itoa(taskID)); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		result, err := lagoon.TaskByID(context.TODO(), taskID, lc)
 		if err != nil {
@@ -93,7 +92,7 @@ You should only run this once and then check the status of the task that gets cr
 If the task fails or fails to update, contact your Lagoon administrator for assistance.`,
 	Aliases: []string{"as", "standby"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -104,19 +103,18 @@ If the task fails or fails to update, contact your Lagoon administrator for assi
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to run the active/standby switch for project '%s', are you sure?", cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.ActiveStandbySwitch(context.TODO(), cmdProjectName, lc)
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Created a new task with ID %d \nYou can use the following command to query the task status: \nlagoon -l %s get task-by-id --id %d --logs \n", result.ID, current, result.ID)
+			fmt.Printf("Created a new task with ID %d \nYou can use the following command to query the task status: \nlagoon -l %s get task-by-id --id %d --logs \n", result.ID, lContext.Name, result.ID)
 		}
 		return nil
 	},
@@ -127,7 +125,7 @@ var runDrushArchiveDump = &cobra.Command{
 	Aliases: []string{"dard"},
 	Short:   "Run a drush archive dump on an environment",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -137,13 +135,12 @@ var runDrushArchiveDump = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		if err != nil {
 			return err
@@ -192,7 +189,7 @@ var runDrushSQLDump = &cobra.Command{
 	Aliases: []string{"dsqld"},
 	Short:   "Run a drush sql dump on an environment",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -202,13 +199,12 @@ var runDrushSQLDump = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		if err != nil {
 			return err
@@ -257,7 +253,7 @@ var runDrushCacheClear = &cobra.Command{
 	Aliases: []string{"dcc"},
 	Short:   "Run a drush cache clear on an environment",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -267,13 +263,12 @@ var runDrushCacheClear = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		if err != nil {
 			return err
@@ -327,7 +322,7 @@ Direct:
  lagoon run invoke -p example -e main -N "advanced task name"
 `,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -342,13 +337,12 @@ Direct:
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
@@ -402,7 +396,7 @@ Path:
   lagoon run custom -p example -e main -N "My Task" -S cli -s /path/to/my-script.sh
 `,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -450,13 +444,12 @@ Path:
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment, "Task command", taskCommand, "Task name", taskName, "Task service", taskService); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		task := schema.Task{
@@ -490,7 +483,7 @@ var uploadFilesToTask = &cobra.Command{
 	Long:    `Upload files to a task by its ID`,
 	Aliases: []string{"tf"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -509,13 +502,12 @@ var uploadFilesToTask = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		result, err := lagoon.UploadFilesForTask(context.TODO(), taskID, files, lc)
 		if err != nil {

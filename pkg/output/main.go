@@ -22,13 +22,14 @@ type Data []string
 
 // Options .
 type Options struct {
-	Header    bool
-	CSV       bool
-	JSON      bool
-	Pretty    bool
-	Debug     bool
-	Error     string
-	MultiLine bool
+	Header        bool
+	CSV           bool
+	JSON          bool
+	Pretty        bool
+	Debug         bool
+	Error         string
+	MultiLine     bool
+	MessagePrefix string
 }
 
 // Result .
@@ -77,7 +78,11 @@ func RenderInfo(infoMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		os.Stderr.WriteString(fmt.Sprintf("Info: %s", trimQuotes(infoMsg)))
+		if opts.MessagePrefix != "" {
+			os.Stderr.WriteString(fmt.Sprintf("%s: %s", opts.MessagePrefix, trimQuotes(infoMsg)))
+		} else {
+			os.Stderr.WriteString(fmt.Sprintf("Info: %s", trimQuotes(infoMsg)))
+		}
 	}
 }
 

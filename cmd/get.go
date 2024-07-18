@@ -25,7 +25,7 @@ var getCmd = &cobra.Command{
 	Aliases: []string{"g"},
 	Short:   "Get info on a resource",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
@@ -34,7 +34,7 @@ var getProjectCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Get details about a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -48,13 +48,12 @@ var getProjectCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
@@ -161,13 +160,12 @@ This returns information about a deployment, the logs of this build can also be 
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		deployment, err := lagoon.GetDeploymentByName(context.TODO(), cmdProjectName, cmdProjectEnvironment, buildName, showLogs, lc)
 		if err != nil {
@@ -228,7 +226,7 @@ var getEnvironmentCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "Get details about an environment",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -242,13 +240,12 @@ var getEnvironmentCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
@@ -319,7 +316,7 @@ var getProjectKeyCmd = &cobra.Command{
 	Aliases: []string{"pk"},
 	Short:   "Get a projects public key",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -330,13 +327,12 @@ var getProjectKeyCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
@@ -378,11 +374,10 @@ var getToken = &cobra.Command{
 	Aliases: []string{"tk"},
 	Short:   "Generates a Lagoon auth token (for use in, for example, graphQL queries)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		token, err := retrieveTokenViaSsh()
-		if err != nil {
+		if err := validateTokenE(lContext.Name); err != nil { // use existing token or fetch a new one if required
 			return err
 		}
-		fmt.Println(token)
+		fmt.Println(lUser.UserConfig.Grant.AccessToken)
 		return nil
 	},
 }
@@ -407,13 +402,12 @@ var getOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {

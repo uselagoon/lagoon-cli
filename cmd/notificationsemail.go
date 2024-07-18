@@ -20,7 +20,7 @@ This command is used to set up a new email notification in Lagoon. This requires
 It does not configure a project to send notifications to email though, you need to use project-email for that.`,
 	Aliases: []string{"e"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -43,13 +43,12 @@ It does not configure a project to send notifications to email though, you need 
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to create an email notification '%s' with email address '%s', are you sure?", name, email)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 
 			notification := schema.AddNotificationEmailInput{
@@ -100,7 +99,7 @@ var addProjectNotificationEmailCmd = &cobra.Command{
 	Long: `Add an email notification to a project
 This command is used to add an existing email notification in Lagoon to a project.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -116,13 +115,12 @@ This command is used to add an existing email notification in Lagoon to a projec
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add email notification '%s' to project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			notification := &schema.AddNotificationToProjectInput{
 				NotificationType: schema.EmailNotification,
@@ -148,7 +146,7 @@ var listProjectEmailsCmd = &cobra.Command{
 	Aliases: []string{"pe"},
 	Short:   "List email details about a project (alias: pe)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -158,14 +156,12 @@ var listProjectEmailsCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
-
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		result, err := lagoon.GetProjectNotificationEmail(context.TODO(), cmdProjectName, lc)
@@ -204,20 +200,19 @@ var listAllEmailsCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "List all email notification details (alias: e)",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		result, err := lagoon.GetAllNotificationEmail(context.TODO(), lc)
 		if err != nil {
@@ -254,7 +249,7 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 	Aliases: []string{"pe"},
 	Short:   "Delete a email notification from a project",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -269,13 +264,12 @@ var deleteProjectEmailNotificationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
@@ -310,7 +304,7 @@ var deleteEmailNotificationCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "Delete an email notification from Lagoon",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -326,13 +320,12 @@ var deleteEmailNotificationCmd = &cobra.Command{
 		}
 		// Todo: Verify notifcation name exists - requires #PR https://github.com/uselagoon/lagoon/pull/3740
 		if yesNo(fmt.Sprintf("You are attempting to delete email notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.DeleteNotificationEmail(context.TODO(), name, lc)
 			if err != nil {
@@ -353,7 +346,7 @@ var updateEmailNotificationCmd = &cobra.Command{
 	Aliases: []string{"e"},
 	Short:   "Update an existing email notification",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -384,13 +377,12 @@ var updateEmailNotificationCmd = &cobra.Command{
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to update email notification '%s', are you sure?", name)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 
 			notification := &schema.UpdateNotificationEmailInput{

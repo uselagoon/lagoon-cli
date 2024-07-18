@@ -1,21 +1,15 @@
-## lagoon login
+## lagoon configuration list-contexts
 
-Login and refresh a token
-
-### Synopsis
-
-Login and refresh a token
-Optionally reset the token to force a new one to be retrieved
+View all configured Lagoon contexts
 
 ```
-lagoon login [flags]
+lagoon configuration list-contexts [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for login
-      --reset-token   clear the token before attempting to log in
+  -h, --help   help for list-contexts
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +35,5 @@ lagoon login [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

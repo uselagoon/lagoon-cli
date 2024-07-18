@@ -89,13 +89,13 @@ var addDeployTargetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		lagoonToken := lagoonCLIConfig.Lagoons[current].Token
+
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&lagoonToken,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to add '%s' DeployTarget, are you sure?", addDeployTarget.Name)) {
@@ -208,13 +208,12 @@ var updateDeployTargetCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		lagoonToken := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&lagoonToken,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		updateDeployTarget := &schema.UpdateDeployTargetInput{
@@ -300,13 +299,12 @@ var deleteDeployTargetCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		deleteDeployTarget := &schema.DeleteDeployTargetInput{
@@ -333,7 +331,7 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 	Aliases: []string{"org-dt"},
 	Short:   "Add a deploy target to an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -352,13 +350,13 @@ var addDeployTargetToOrganizationCmd = &cobra.Command{
 		if err := requiredInputCheck("Organization name", organizationName, "Deploy Target", strconv.Itoa(int(deploytarget))); err != nil {
 			return err
 		}
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
@@ -397,7 +395,7 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 	Aliases: []string{"org-dt"},
 	Short:   "Remove a deploy target from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -417,13 +415,12 @@ var removeDeployTargetFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		current := lagoonCLIConfig.Current
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)

@@ -1,15 +1,23 @@
-## lagoon config delete
+## lagoon configuration convert-config
 
-Delete a Lagoon instance configuration
+Convert legacy .lagoon.yml config to the new configuration format
+
+### Synopsis
+
+Convert legacy .lagoon.yml config to the new configuration format.
+This will prompt you to provide any required information if it is missing from your legacy configuration.
+Running this command initially will run in dry-run mode, if you're happy with the result you can run it again
+with the --write-config flag to save the new configuration.
 
 ```
-lagoon config delete [flags]
+lagoon configuration convert-config [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for delete
+  -h, --help           help for convert-config
+      --write-config   Whether the config should be written to the config file or not
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +43,5 @@ lagoon config delete [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 
