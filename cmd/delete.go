@@ -9,7 +9,7 @@ var deleteCmd = &cobra.Command{
 	Aliases: []string{"del"},
 	Short:   "Delete a project, or delete notifications and variables from projects or environments",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
@@ -18,7 +18,7 @@ var deleteNotificationCmd = &cobra.Command{
 	Aliases: []string{"n"},
 	Short:   "Delete notifications or delete notifications from projects",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 

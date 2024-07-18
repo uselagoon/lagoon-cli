@@ -15,7 +15,7 @@ var retrieveCmd = &cobra.Command{
 	Aliases: []string{"re", "ret"},
 	Short:   "Trigger a retrieval operation on backups",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
@@ -28,7 +28,7 @@ var retrieveBackupCmd = &cobra.Command{
 Given a backup-id, you can initiate a retrieval for it.
 You can check the status of the backup using the list backups or get backup command.`,
 	PreRunE: func(_ *cobra.Command, _ []string) error {
-		return validateTokenE(lagoonCLIConfig.Current)
+		return validateTokenE(lContext.Name)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		debug, err := cmd.Flags().GetBool("debug")
@@ -43,13 +43,12 @@ You can check the status of the backup using the list backups or get backup comm
 			return err
 		}
 		if yesNo(fmt.Sprintf("You are attempting to trigger a retrieval for backup ID '%s', are you sure?", backupID)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
+			utoken := lUser.UserConfig.Grant.AccessToken
 			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
+				fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
+				lContext.ContextConfig.Version,
+				&utoken,
 				debug)
 			result, err := lagoon.AddBackupRestore(context.TODO(), backupID, lc)
 			if err != nil {

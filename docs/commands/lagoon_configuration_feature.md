@@ -1,15 +1,18 @@
-## lagoon kibana
+## lagoon configuration feature
 
-Launch the kibana interface
+Enable or disable a feature for all contexts or a specific context
 
 ```
-lagoon kibana [flags]
+lagoon configuration feature [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for kibana
+      --context string   If provided the feature will be enabled for this context, otherwise globally
+      --feature string   The name of the feature to enable or disable [environment-from-directory,disable-update-check,ssh-token]
+  -h, --help             help for feature
+      --state            The state of the feature (--state=true or --state=false)
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +37,5 @@ lagoon kibana [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

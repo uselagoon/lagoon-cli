@@ -1,15 +1,23 @@
-## lagoon web
+## lagoon configuration update-context
 
-Launch the web user interface
+Update a Lagoon context
 
 ```
-lagoon web [flags]
+lagoon configuration update-context [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for web
+      --api-hostname string              Lagoon API hostname (eg: https://api.lagoon.sh)
+      --authentication-hostname string   Lagoon authentication hostname (eg: https://keycloak.lagoon.sh)
+  -h, --help                             help for update-context
+      --name string                      The name to reference this context as
+      --token-hostname string            Lagoon Token endpoint hostname (eg: token.lagoon.sh)
+      --token-port int                   Lagoon Token endpoint port (eg: 22)
+      --ui-hostname string               Lagoon UI hostname (eg: https://ui.lagoon.sh)
+      --user string                      The user to associate to this context
+      --webhook-hostname string          Lagoon webhook hostname (eg: https://webhook.lagoon.sh)
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +42,5 @@ lagoon web [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

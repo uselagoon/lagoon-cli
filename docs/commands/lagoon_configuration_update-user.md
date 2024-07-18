@@ -1,16 +1,17 @@
-## lagoon config list
+## lagoon configuration update-user
 
-View all configured Lagoon instances
+Update a Lagoon context user
 
 ```
-lagoon config list [flags]
+lagoon configuration update-user [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help        help for list
-      --show-full   Show full config output when listing Lagoon configurations
+  -h, --help             help for update-user
+      --name string      The name to reference this user as
+      --ssh-key string   The full path to this users ssh-key
 ```
 
 ### Options inherited from parent commands
@@ -27,7 +28,6 @@ lagoon config list [flags]
       --pretty                 Make JSON pretty (if supported)
   -p, --project string         Specify a project to use
       --skip-update-check      Skip checking for updates
-  -i, --ssh-key string         Specify path to a specific SSH key to use for lagoon authentication
       --ssh-publickey string   Specify path to a specific SSH public key to use for lagoon authentication using ssh-agent.
                                This will override any public key identities defined in configuration
   -v, --verbose                Enable verbose output to stderr (if supported)
@@ -35,5 +35,5 @@ lagoon config list [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

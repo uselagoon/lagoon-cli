@@ -1,15 +1,23 @@
-## lagoon config lagoon-version
+## lagoon configuration add-context
 
-Checks the current Lagoon for its version and sets it in the config file
+Add a new Lagoon context
 
 ```
-lagoon config lagoon-version [flags]
+lagoon configuration add-context [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for lagoon-version
+      --api-hostname string              Lagoon API hostname (eg: https://api.lagoon.sh)
+      --authentication-hostname string   Lagoon authentication hostname (eg: https://keycloak.lagoon.sh)
+  -h, --help                             help for add-context
+      --name string                      The name to reference this context as
+      --token-hostname string            Lagoon Token endpoint hostname (eg: token.lagoon.sh)
+      --token-port int                   Lagoon Token endpoint port (eg: 22)
+      --ui-hostname string               Lagoon UI hostname (eg: https://ui.lagoon.sh)
+      --user string                      The user to associate to this context
+      --webhook-hostname string          Lagoon webhook hostname (eg: https://webhook.lagoon.sh)
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +42,5 @@ lagoon config lagoon-version [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

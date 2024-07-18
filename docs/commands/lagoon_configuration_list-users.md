@@ -1,17 +1,15 @@
-## lagoon config feature
+## lagoon configuration list-users
 
-Enable or disable CLI features
+View all configured Lagoon context users
 
 ```
-lagoon config feature [flags]
+lagoon configuration list-users [flags]
 ```
 
 ### Options
 
 ```
-      --disable-update-check string     Enable or disable checking of updates (true/false)
-      --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
-  -h, --help                            help for feature
+  -h, --help   help for list-users
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +34,5 @@ lagoon config feature [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 
