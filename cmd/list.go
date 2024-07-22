@@ -331,7 +331,7 @@ var listEnvironmentsCmd = &cobra.Command{
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "DeployType", "Environment", "Namespace", "Route", "DeployTarget"},
+			Header: []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"},
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)

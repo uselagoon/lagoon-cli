@@ -204,6 +204,10 @@ var getEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
@@ -226,22 +230,38 @@ var getEnvironmentCmd = &cobra.Command{
 		}
 
 		data := []output.Data{}
-		data = append(data, []string{
+		var envRoute = "none"
+		if environment.Route != "" {
+			envRoute = environment.Route
+		}
+		envData := []string{
 			returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployType)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Created)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.OpenshiftProjectName)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Route)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)),
-			returnNonEmptyString(fmt.Sprintf("%d", environment.AutoIdle)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)),
-		})
+			returnNonEmptyString(fmt.Sprintf("%v", envRoute)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTarget.Name)),
+		}
+		envHeader := []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"}
+		// if wide, add additional fields to the result
+		if wide {
+			envHeader = append(envHeader, "Created")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Created)))
+			envHeader = append(envHeader, "AutoIdle")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.AutoIdle)))
+			envHeader = append(envHeader, "DeployTitle")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)))
+			envHeader = append(envHeader, "DeployBaseRef")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)))
+			envHeader = append(envHeader, "DeployHeadRef")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)))
+			envHeader = append(envHeader, "Routes")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)))
+		}
+		data = append(data, envData)
 		dataMain := output.Table{
-			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "Namespace", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+			Header: envHeader,
 			Data:   data,
 		}
 		output.RenderOutput(dataMain, outputOptions)
@@ -392,4 +412,5 @@ func init() {
 	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
 	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
 	getOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
+	getEnvironmentCmd.Flags().Bool("wide", false, "Display additional information about the environment")
 }
