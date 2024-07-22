@@ -56,9 +56,13 @@ var listProjectsCmd = &cobra.Command{
 		data := []output.Data{}
 		for _, project := range *projects {
 			var devEnvironments = 0
+			productionRoute := ""
 			for _, environment := range project.Environments {
 				if environment.EnvironmentType == "development" {
 					devEnvironments++
+				}
+				if environment.EnvironmentType == "production" {
+					productionRoute = environment.Route
 				}
 			}
 
@@ -67,6 +71,7 @@ var listProjectsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
+				returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
 				returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, project.DevelopmentEnvironmentsLimit)),
 			})
 		}
@@ -74,7 +79,7 @@ var listProjectsCmd = &cobra.Command{
 			outputOptions.Error = "No access to any projects in Lagoon\n"
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "DevEnvironments"},
+			Header: []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"},
 			Data:   data,
 		}
 
