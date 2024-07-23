@@ -53,10 +53,10 @@ jobs:
         run: go mod download
       -
         name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v6
         with:
-          version: v1.25.1
-          args: release --debug --skip-validate
+          version: latest
+          args: release --verbose --skip=validate
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
           GOVERSION: ${{ matrix.goversion }}
