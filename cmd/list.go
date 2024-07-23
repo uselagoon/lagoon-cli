@@ -640,7 +640,7 @@ This query can take a long time to run if there are a lot of users.`,
 		if err != nil {
 			return err
 		}
-		emailAddress, err := cmd.Flags().GetString("email-address")
+		emailAddress, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
@@ -691,7 +691,7 @@ var listUsersGroupsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		emailAddress, err := cmd.Flags().GetString("email-address")
+		emailAddress, err := cmd.Flags().GetString("email")
 		if err != nil {
 			return err
 		}
@@ -1080,14 +1080,7 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		organization, err := lagoon.GetOrganizationByName(context.Background(), organizationName, lc)
-		if err != nil {
-			return err
-		}
-		if organization.Name == "" {
-			return fmt.Errorf("error querying organization by name")
-		}
-		users, err := lagoon.UsersByOrganization(context.TODO(), organization.ID, lc)
+		users, err := lagoon.UsersByOrganizationName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
 		}
@@ -1095,16 +1088,71 @@ var ListOrganizationUsersCmd = &cobra.Command{
 		data := []output.Data{}
 		for _, user := range *users {
 			data = append(data, []string{
-				returnNonEmptyString(user.ID),
+				returnNonEmptyString(user.ID.String()),
 				returnNonEmptyString(user.Email),
 				returnNonEmptyString(user.FirstName),
 				returnNonEmptyString(user.LastName),
 				returnNonEmptyString(user.Comment),
-				returnNonEmptyString(fmt.Sprintf("%v", user.Owner)),
 			})
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Email", "First Name", "LastName", "Comment", "Owner"},
+			Header: []string{"ID", "Email", "First Name", "LastName", "Comment"},
+			Data:   data,
+		}
+		output.RenderOutput(dataMain, outputOptions)
+		return nil
+	},
+}
+
+var ListOrganizationAdminsCmd = &cobra.Command{
+	Use:     "organization-admins",
+	Aliases: []string{"org-a"},
+	Short:   "List admins in an organization",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		organizationName, err := cmd.Flags().GetString("organization-name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		users, err := lagoon.ListOrganizationAdminsByName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+
+		data := []output.Data{}
+		for _, user := range *users {
+			role := "viewer"
+			if user.Owner {
+				role = "owner"
+			}
+			data = append(data, []string{
+				returnNonEmptyString(user.ID.String()),
+				returnNonEmptyString(user.Email),
+				returnNonEmptyString(user.FirstName),
+				returnNonEmptyString(user.LastName),
+				returnNonEmptyString(role),
+			})
+		}
+		dataMain := output.Table{
+			Header: []string{"ID", "Email", "First Name", "LastName", "OrganizationRole"},
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -1182,11 +1230,12 @@ func init() {
 	listCmd.AddCommand(listUsersGroupsCmd)
 	listCmd.AddCommand(listOrganizationProjectsCmd)
 	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(ListOrganizationAdminsCmd)
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(listOrganizationsCmd)
-	listAllUsersCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
-	listUsersGroupsCmd.Flags().StringP("email-address", "E", "", "The email address of a user")
+	listAllUsersCmd.Flags().StringP("email", "E", "", "The email address of a user")
+	listUsersGroupsCmd.Flags().StringP("email", "E", "", "The email address of a user")
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
 	listUsersCmd.Flags().StringVarP(&groupName, "name", "N", "", "Name of the group to list users in")
 	listGroupProjectsCmd.Flags().StringP("name", "N", "", "Name of the group to list projects in")
@@ -1194,6 +1243,7 @@ func init() {
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
 	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	ListOrganizationAdminsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")

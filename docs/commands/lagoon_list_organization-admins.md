@@ -1,20 +1,16 @@
-## lagoon list user-groups
+## lagoon list organization-admins
 
-List a single users groups and roles
-
-### Synopsis
-
-List a single users groups and roles
+List admins in an organization
 
 ```
-lagoon list user-groups [flags]
+lagoon list organization-admins [flags]
 ```
 
 ### Options
 
 ```
-  -E, --email string   The email address of a user
-  -h, --help           help for user-groups
+  -h, --help                       help for organization-admins
+  -O, --organization-name string   Name of the organization to list associated users for
 ```
 
 ### Options inherited from parent commands

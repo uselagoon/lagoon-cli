@@ -4,7 +4,7 @@ Add an administrator to an Organization
 
 ### Synopsis
 
-Add an administrator to an Organization. If the owner flag is not provided users will be added as viewers
+Add an administrator to an Organization. If the role flag is not provided users will be added as viewers
 
 ```
 lagoon add organization-administrator [flags]
@@ -16,7 +16,7 @@ lagoon add organization-administrator [flags]
   -E, --email string               Email address of the user
   -h, --help                       help for organization-administrator
   -O, --organization-name string   Name of the organization
-      --owner                      Set the user as an owner of the organization
+  -R, --role string                Role in the organization [owner, viewer]
 ```
 
 ### Options inherited from parent commands
