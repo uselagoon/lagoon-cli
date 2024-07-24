@@ -10,6 +10,7 @@ lagoon get environment [flags]
 
 ```
   -h, --help   help for environment
+      --wide   Display additional information about the environment
 ```
 
 ### Options inherited from parent commands
