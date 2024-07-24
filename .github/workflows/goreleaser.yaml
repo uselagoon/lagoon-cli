@@ -56,7 +56,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
-          args: release --verbose --skip=validate
+          args: release --verbose --skip=validate --snapshot
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
           GOVERSION: ${{ matrix.goversion }}
