@@ -1,15 +1,15 @@
-## lagoon config delete
+## lagoon configuration list-contexts
 
-Delete a Lagoon instance configuration
+View all configured Lagoon contexts
 
 ```
-lagoon config delete [flags]
+lagoon configuration list-contexts [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for delete
+  -h, --help   help for list-contexts
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +34,5 @@ lagoon config delete [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

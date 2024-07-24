@@ -39,19 +39,18 @@ var sshEnvCmd = &cobra.Command{
 		// run the environment through the makesafe and shorted functions that lagoon uses
 		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
 
-		current := lagoonCLIConfig.Current
 		// set the default ssh host and port to the core ssh endpoint
-		sshHost := lagoonCLIConfig.Lagoons[current].HostName
-		sshPort := lagoonCLIConfig.Lagoons[current].Port
+		sshHost := lContext.ContextConfig.TokenHost
+		sshPort := fmt.Sprintf("%d", lContext.ContextConfig.TokenPort)
 		isPortal := false
 
 		// if the config for this lagoon is set to use ssh portal support, handle that here
-		token := lagoonCLIConfig.Lagoons[current].Token
+		utoken := lUser.UserConfig.Grant.AccessToken
 		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
+			fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
+			lContext.ContextConfig.Version,
+			&utoken,
 			debug)
 		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
 		if err != nil {
@@ -75,8 +74,8 @@ var sshEnvCmd = &cobra.Command{
 
 		privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 		// if the user has a key defined in their lagoon cli config, use it
-		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
-			privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+		if lUser.UserConfig.SSHKey != "" {
+			privateKey = lUser.UserConfig.SSHKey
 			skipAgent = true
 		}
 		// otherwise check if one has been provided by the override flag
@@ -95,7 +94,7 @@ var sshEnvCmd = &cobra.Command{
 		} else {
 
 			// start an interactive ssh session
-			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
+			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lUser.UserConfig.PublicKeyIdentities, skipAgent)
 			config := &ssh.ClientConfig{
 				User: sshConfig["username"],
 				Auth: []ssh.AuthMethod{

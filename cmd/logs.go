@@ -59,18 +59,16 @@ func generateLogsCommand(service, container string, lines uint,
 }
 
 func getSSHHostPort(environmentName string, debug bool) (string, string, error) {
-	current := lagoonCLIConfig.Current
-	// set the default ssh host and port to the core ssh endpoint
-	sshHost := lagoonCLIConfig.Lagoons[current].HostName
-	sshPort := lagoonCLIConfig.Lagoons[current].Port
-	token := lagoonCLIConfig.Lagoons[current].Token
+	sshHost := lContext.ContextConfig.TokenHost
+	sshPort := fmt.Sprintf("%d", lContext.ContextConfig.TokenPort)
 
-	// get SSH Portal endpoint if required
+	// if the config for this lagoon is set to use ssh portal support, handle that here
+	utoken := lUser.UserConfig.Grant.AccessToken
 	lc := lclient.New(
-		lagoonCLIConfig.Lagoons[current].GraphQL,
+		fmt.Sprintf("%s/graphql", lContext.ContextConfig.APIHostname),
 		lagoonCLIVersion,
-		lagoonCLIConfig.Lagoons[current].Version,
-		&token,
+		lContext.ContextConfig.Version,
+		&utoken,
 		debug)
 	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
 	defer cancel()
@@ -97,8 +95,8 @@ func getSSHClientConfig(environmentName string) (*ssh.ClientConfig,
 	skipAgent := false
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
 	// check for user-defined key
-	if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey != "" {
-		privateKey = lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].SSHKey
+	if lUser.UserConfig.SSHKey != "" {
+		privateKey = lUser.UserConfig.SSHKey
 		skipAgent = true
 	}
 	// check for specified key
@@ -112,7 +110,7 @@ func getSSHClientConfig(environmentName string) (*ssh.ClientConfig,
 		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
 	}
 	// configure an SSH client session
-	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
+	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lUser.UserConfig.PublicKeyIdentities, skipAgent)
 	return &ssh.ClientConfig{
 		User:            cmdProjectName + "-" + environmentName,
 		Auth:            []ssh.AuthMethod{authMethod},
@@ -126,7 +124,7 @@ var logsCmd = &cobra.Command{
 	Short: "Display logs for a service of an environment and project",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// validate/refresh token
-		validateToken(lagoonCLIConfig.Current)
+		validateToken(lContext.Name)
 		// validate and parse arguments
 		if cmdProjectName == "" || cmdProjectEnvironment == "" {
 			return fmt.Errorf(

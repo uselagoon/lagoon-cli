@@ -1,15 +1,16 @@
-## lagoon config current
+## lagoon configuration default-context
 
-Display the current Lagoon that commands would be executed against
+Change which context is the default
 
 ```
-lagoon config current [flags]
+lagoon configuration default-context [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for current
+  -h, --help          help for default-context
+      --name string   The name of the context to be default
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +35,5 @@ lagoon config current [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

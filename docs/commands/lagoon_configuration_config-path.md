@@ -1,24 +1,15 @@
-## lagoon config add
+## lagoon configuration config-path
 
-Add information about an additional Lagoon instance to use
+Get the path of where the config file lives
 
 ```
-lagoon config add [flags]
+lagoon configuration config-path [flags]
 ```
 
 ### Options
 
 ```
-      --create-config                    Create the config file if it is non existent (to be used with --config-file)
-  -g, --graphql string                   Lagoon GraphQL endpoint
-  -h, --help                             help for add
-  -H, --hostname string                  Lagoon SSH hostname
-  -k, --kibana string                    Lagoon Kibana URL (https://logs.amazeeio.cloud)
-  -P, --port string                      Lagoon SSH port
-      --publickey-identityfile strings   Specific public key identity files to use when doing ssh-agent checks (support multiple)
-      --ssh-key string                   SSH Key to use for this cluster for generating tokens
-  -t, --token string                     Lagoon GraphQL token
-  -u, --ui string                        Lagoon UI location (https://dashboard.amazeeio.cloud)
+  -h, --help   help for config-path
 ```
 
 ### Options inherited from parent commands
@@ -35,6 +26,7 @@ lagoon config add [flags]
       --pretty                 Make JSON pretty (if supported)
   -p, --project string         Specify a project to use
       --skip-update-check      Skip checking for updates
+  -i, --ssh-key string         Specify path to a specific SSH key to use for lagoon authentication
       --ssh-publickey string   Specify path to a specific SSH public key to use for lagoon authentication using ssh-agent.
                                This will override any public key identities defined in configuration
   -v, --verbose                Enable verbose output to stderr (if supported)
@@ -42,5 +34,5 @@ lagoon config add [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

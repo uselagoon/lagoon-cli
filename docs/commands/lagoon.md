@@ -36,13 +36,12 @@ lagoon [flags]
 
 * [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 * [lagoon completion](lagoon_completion.md)	 - Generate the autocompletion script for the specified shell
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 * [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
 * [lagoon deploy](lagoon_deploy.md)	 - Actions for deploying or promoting branches or environments in lagoon
 * [lagoon export](lagoon_export.md)	 - Export lagoon output to yaml
 * [lagoon get](lagoon_get.md)	 - Get info on a resource
 * [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
-* [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
 * [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 * [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
 * [lagoon logs](lagoon_logs.md)	 - Display logs for a service of an environment and project
@@ -54,6 +53,5 @@ lagoon [flags]
 * [lagoon update](lagoon_update.md)	 - Update a resource
 * [lagoon upload](lagoon_upload.md)	 - Upload files to tasks
 * [lagoon version](lagoon_version.md)	 - Version information
-* [lagoon web](lagoon_web.md)	 - Launch the web user interface
 * [lagoon whoami](lagoon_whoami.md)	 - Whoami will return your user information for lagoon
 
