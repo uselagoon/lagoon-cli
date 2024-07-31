@@ -1104,7 +1104,8 @@ var ListOrganizationUsersCmd = &cobra.Command{
 			Header: []string{"ID", "Email", "First Name", "LastName", "Comment"},
 			Data:   data,
 		}
-		output.RenderOutput(dataMain, outputOptions)
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }

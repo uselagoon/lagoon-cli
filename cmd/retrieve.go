@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -59,7 +60,9 @@ You can check the status of the backup using the list backups or get backup comm
 				}
 				return err
 			}
-			fmt.Println("successfully created restore with ID:", result.ID)
+			resultData := output.Result{Result: fmt.Sprintf("successfully created restore with ID: %d", result.ID)}
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
