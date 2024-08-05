@@ -50,7 +50,8 @@ var deleteEnvCmd = &cobra.Command{
 			resultData := output.Result{
 				Result: environment.DeleteEnvironment,
 			}
-			output.RenderResult(resultData, outputOptions)
+			r := output.RenderResult(resultData, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}
 		return nil
 	},
@@ -172,7 +173,8 @@ var updateEnvironmentCmd = &cobra.Command{
 				"Environment Name": result.Name,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -233,7 +235,7 @@ var listBackupsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", backup.Restore.Status)),
 			})
 		}
-		output.RenderOutput(output.Table{
+		r := output.RenderOutput(output.Table{
 			Header: []string{
 				"BackupID",
 				"Source",
@@ -243,6 +245,7 @@ var listBackupsCmd = &cobra.Command{
 			},
 			Data: data,
 		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
 }
@@ -290,7 +293,9 @@ This returns a direct URL to the backup, this is a signed download link with a l
 		for _, backup := range backupsResult.Backups {
 			if backup.BackupID == backupID {
 				if backup.Restore.RestoreLocation != "" {
-					fmt.Println(backup.Restore.RestoreLocation)
+					resultData := output.Result{Result: backup.Restore.RestoreLocation}
+					r := output.RenderResult(resultData, outputOptions)
+					fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 					return nil
 				}
 				status = backup.Restore.Status

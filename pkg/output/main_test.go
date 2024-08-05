@@ -20,132 +20,105 @@ func checkEqual(t *testing.T, got, want interface{}, msgs ...interface{}) {
 	}
 }
 
-func TestRenderError(t *testing.T) {
+func TestRenderJSON(t *testing.T) {
 	var testData = `Error Message`
-	var testSuccess1 = `{"error":"Error Message"}
-`
-	var testSuccess2 = `Error: Error Message
-`
-
+	var testSuccess = `{
+  "error": "Error Message"
+}`
 	outputOptions := Options{
 		Header: false,
 		CSV:    false,
 		JSON:   true,
-		Pretty: false,
-	}
-	rescueStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	RenderError(testData, outputOptions)
-	w.Close()
-	out, _ := io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess1 {
-		checkEqual(t, string(out), testSuccess1, " render error json processing failed")
+		Pretty: true,
 	}
 
-	outputOptions.JSON = false
-	rescueStdout = os.Stdout
-	r, w, _ = os.Pipe()
-	os.Stdout = w
+	jsonData := Result{
+		Error: trimQuotes(testData),
+	}
+	output := RenderJSON(jsonData, outputOptions)
+	if output != testSuccess {
+		checkEqual(t, output, testSuccess, " render error json processing failed")
+	}
+}
+
+func TestRenderError(t *testing.T) {
+	var testData = `Error Message`
+	var testSuccess = `Error: Error Message`
+
+	outputOptions := Options{
+		Header: false,
+		CSV:    false,
+		JSON:   false,
+		Pretty: false,
+	}
+
+	rescueStdout := os.Stderr
+	r, w, _ := os.Pipe()
+	defer func() {
+		os.Stderr = rescueStdout
+	}()
+	os.Stderr = w
 	RenderError(testData, outputOptions)
 	w.Close()
-	out, _ = io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess2 {
-		checkEqual(t, string(out), testSuccess2, " render error stdout processing failed")
+	var out bytes.Buffer
+	io.Copy(&out, r)
+	if out.String() != testSuccess {
+		checkEqual(t, out.String(), testSuccess, " render error stdout processing failed")
 	}
 }
 
 func TestRenderInfo(t *testing.T) {
 	var testData = `Info Message`
-	var testSuccess1 = `{"info":"Info Message"}
-`
-	var testSuccess2 = `Info: Info Message
-`
+	var testSuccess1 = `Info: Info Message`
 
 	outputOptions := Options{
 		Header: false,
 		CSV:    false,
-		JSON:   true,
+		JSON:   false,
 		Pretty: false,
 	}
-	rescueStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	RenderInfo(testData, outputOptions)
-	w.Close()
-	out, _ := io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess1 {
-		checkEqual(t, string(out), testSuccess1, " render info json processing failed")
-	}
 
-	outputOptions.JSON = false
-	rescueStdout = os.Stdout
-	r, w, _ = os.Pipe()
-	os.Stdout = w
+	rescueStdout := os.Stderr
+	r, w, _ := os.Pipe()
+	defer func() {
+		os.Stderr = rescueStdout
+	}()
+	os.Stderr = w
 	RenderInfo(testData, outputOptions)
 	w.Close()
-	out, _ = io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess2 {
-		checkEqual(t, string(out), testSuccess2, " render info stdout processing failed")
+	var out bytes.Buffer
+	io.Copy(&out, r)
+	if out.String() != testSuccess1 {
+		checkEqual(t, out.String(), testSuccess1, " render info stdout processing failed")
 	}
 }
 
 func TestRenderOutput(t *testing.T) {
 	var testData = `{"header":["NID","NotificationName","Channel","Webhook"],"data":[["1","amazeeio--lagoon-local-ci","lagoon-local-ci","https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"]]}`
-	var testSuccess1 = `{"data":[{"channel":"lagoon-local-ci","nid":"1","notificationname":"amazeeio--lagoon-local-ci","webhook":"https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn"}]}
-`
-	var testSuccess2 = `NID	NOTIFICATIONNAME         	CHANNEL        	WEBHOOK
+	var testSuccess1 = `NID	NOTIFICATIONNAME         	CHANNEL        	WEBHOOK
 1  	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 `
-	var testSuccess3 = `1	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
+	var testSuccess2 = `1	amazeeio--lagoon-local-ci	lagoon-local-ci	https://amazeeio.rocket.chat/hooks/ikF5XMohDZK7KpsZf/c9BFBt2ch8oMMuycoERJQMSLTPo8nmZhg2Hf2ny68ZpuD4Kn
 `
 
 	outputOptions := Options{
 		Header: false,
 		CSV:    false,
-		JSON:   true,
+		JSON:   false,
 		Pretty: false,
 	}
 
 	var dataMain Table
 	json.Unmarshal([]byte(testData), &dataMain)
 
-	rescueStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	RenderOutput(dataMain, outputOptions)
-	w.Close()
-	out, _ := io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess1 {
-		checkEqual(t, string(out), testSuccess1, " render output json processing failed")
-	}
-
-	outputOptions.JSON = false
-	rescueStdout = os.Stdout
-	r, w, _ = os.Pipe()
-	os.Stdout = w
-	RenderOutput(dataMain, outputOptions)
-	w.Close()
-	out, _ = io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess2 {
-		checkEqual(t, string(out), testSuccess2, " render output table stdout processing failed")
+	output := RenderOutput(dataMain, outputOptions)
+	if output != testSuccess1 {
+		checkEqual(t, output, testSuccess1, " render output table stdout processing failed")
 	}
 
 	outputOptions.Header = true
-	rescueStdout = os.Stdout
-	r, w, _ = os.Pipe()
-	os.Stdout = w
-	RenderOutput(dataMain, outputOptions)
-	w.Close()
-	out, _ = io.ReadAll(r)
-	os.Stdout = rescueStdout
-	if string(out) != testSuccess3 {
-		checkEqual(t, string(out), testSuccess3, " render output table stdout no header processing failed")
+	output = RenderOutput(dataMain, outputOptions)
+	if output != testSuccess2 {
+		checkEqual(t, output, testSuccess2, " render output table stdout no header processing failed")
 	}
 }
