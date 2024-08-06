@@ -82,7 +82,8 @@ var configDefaultCmd = &cobra.Command{
 				"default-lagoon": lagoonConfig.Lagoon,
 			},
 		}
-		output.RenderResult(resultData, outputOptions)
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 	},
 }
 

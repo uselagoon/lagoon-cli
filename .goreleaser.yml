@@ -1,3 +1,5 @@
+version: 2
+
 env:
   - GO111MODULE=on
   - GOPROXY=https://gocenter.io
@@ -94,7 +96,7 @@ changelog:
 
 brews:
   - name: lagoon
-    tap:
+    repository:
       owner: "{{ .Env.LOCAL_ORG }}"
       name: homebrew-lagoon-cli
     homepage: "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli"

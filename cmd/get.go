@@ -41,6 +41,10 @@ var getProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
@@ -66,7 +70,7 @@ var getProjectCmd = &cobra.Command{
 		}
 
 		DevEnvironments := 0
-		productionRoute := "none"
+		productionRoute := ""
 		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(project.DeploymentsDisabled)))
 		if err != nil {
 			return err
@@ -92,25 +96,35 @@ var getProjectCmd = &cobra.Command{
 			}
 		}
 
-		data := []output.Data{}
-		data = append(data, []string{
+		projData := []string{
 			returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
 			returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
 			returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
-			returnNonEmptyString(fmt.Sprintf("%v", project.Branches)),
-			returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)),
+			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
 			returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
 			returnNonEmptyString(fmt.Sprintf("%v/%v", DevEnvironments, project.DevelopmentEnvironmentsLimit)),
-			returnNonEmptyString(fmt.Sprintf("%v", project.DevelopmentEnvironmentsLimit)),
-			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
-			returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)),
-			returnNonEmptyString(fmt.Sprintf("%v", autoIdle)),
-			returnNonEmptyString(fmt.Sprintf("%v", factsUI)),
-			returnNonEmptyString(fmt.Sprintf("%v", problemsUI)),
-			returnNonEmptyString(fmt.Sprintf("%v", deploymentsDisabled)),
-		})
+		}
+		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
+		if wide {
+			projHeader = append(projHeader, "AutoIdle")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", autoIdle)))
+			projHeader = append(projHeader, "Branches")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.Branches)))
+			projHeader = append(projHeader, "PullRequests")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)))
+			projHeader = append(projHeader, "RouterPattern")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)))
+			projHeader = append(projHeader, "FactsUI")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", factsUI)))
+			projHeader = append(projHeader, "ProblemsUI")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", problemsUI)))
+			projHeader = append(projHeader, "DeploymentsDisabled")
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", deploymentsDisabled)))
+		}
+		data := []output.Data{}
+		data = append(data, projData)
 		dataMain := output.Table{
-			Header: []string{"ID", "ProjectName", "GitURL", "Branches", "PullRequests", "ProductionRoute", "DevEnvironments", "DevEnvLimit", "ProductionEnv", "RouterPattern", "AutoIdle", "FactsUI", "ProblemsUI", "DeploymentsDisabled"},
+			Header: projHeader,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -208,6 +222,10 @@ var getEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
@@ -230,22 +248,38 @@ var getEnvironmentCmd = &cobra.Command{
 		}
 
 		data := []output.Data{}
-		data = append(data, []string{
+		var envRoute = "none"
+		if environment.Route != "" {
+			envRoute = environment.Route
+		}
+		envData := []string{
 			returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployType)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Created)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.EnvironmentType)),
 			returnNonEmptyString(fmt.Sprintf("%v", environment.OpenshiftProjectName)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Route)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)),
-			returnNonEmptyString(fmt.Sprintf("%d", environment.AutoIdle)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)),
-			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)),
-		})
+			returnNonEmptyString(fmt.Sprintf("%v", envRoute)),
+			returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTarget.Name)),
+		}
+		envHeader := []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"}
+		// if wide, add additional fields to the result
+		if wide {
+			envHeader = append(envHeader, "Created")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Created)))
+			envHeader = append(envHeader, "AutoIdle")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.AutoIdle)))
+			envHeader = append(envHeader, "DeployTitle")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)))
+			envHeader = append(envHeader, "DeployBaseRef")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)))
+			envHeader = append(envHeader, "DeployHeadRef")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)))
+			envHeader = append(envHeader, "Routes")
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)))
+		}
+		data = append(data, envData)
 		dataMain := output.Table{
-			Header: []string{"ID", "EnvironmentName", "EnvironmentType", "DeployType", "Created", "Namespace", "Route", "Routes", "AutoIdle", "DeployTitle", "DeployBaseRef", "DeployHeadRef"},
+			Header: envHeader,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -400,4 +434,6 @@ func init() {
 	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
 	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
 	getOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
+	getEnvironmentCmd.Flags().Bool("wide", false, "Display additional information about the environment")
+	getProjectCmd.Flags().Bool("wide", false, "Display additional information about the project")
 }
