@@ -102,7 +102,11 @@ var getProjectCmd = &cobra.Command{
 			returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
 			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
 			returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
-			returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)),
+		}
+		if project.DevelopmentEnvironmentsLimit != nil {
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)))
+		} else {
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, 0)))
 		}
 		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
 		if wide {
