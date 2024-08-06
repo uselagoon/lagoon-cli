@@ -1183,7 +1183,12 @@ var ListOrganizationAdminsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
+		if len(*users) == 0 {
+			outputOptions.Error = fmt.Sprintf("No associated users found for organization '%s'\n", organizationName)
+			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+			return nil
+		}
 		data := []output.Data{}
 		for _, user := range *users {
 			role := "viewer"
