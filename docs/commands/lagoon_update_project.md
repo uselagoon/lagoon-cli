@@ -9,28 +9,28 @@ lagoon update project [flags]
 ### Options
 
 ```
-  -a, --auto-idle uint                          Auto idle setting of the project
+  -a, --auto-idle                               Auto idle setting of the project. Set to enable, --auto-idle=false to disable
       --availability string                     Availability of the project
   -b, --branches string                         Which branches should be deployed
       --build-image string                      Build Image for the project. Set to 'null' to remove the build image
-      --deployments-disabled uint               Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable
+      --deployments-disabled                    Admin only flag for disabling deployments on a project. Set to disable deployments, --deployments-disabled=false to enable
   -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) this Project should be deployed to
   -o, --deploytarget-project-pattern string     Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated
       --development-build-priority uint         Set the priority of the development build
   -L, --development-environments-limit uint     How many environments can be deployed at one time
-      --facts-ui uint                           Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable
+      --facts-ui                                Enables the Lagoon insights Facts tab in the UI. Set to enable, --facts-ui=false to disable
   -g, --git-url string                          GitURL of the project
   -h, --help                                    help for project
   -j, --json string                             JSON string to patch
   -N, --name string                             Change the name of the project by specifying a new name (careful!)
   -I, --private-key string                      Private key to use for the project
-      --problems-ui uint                        Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable
+      --problems-ui                             Enables the Lagoon insights Problems tab in the UI. Set to enable, --problems-ui=false to disable
       --production-build-priority uint          Set the priority of the production build
   -E, --production-environment string           Which environment(the name) should be marked as the production environment
   -m, --pullrequests string                     Which Pull Requests should be deployed
   -Z, --router-pattern string                   Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
       --standby-production-environment string   Which environment(the name) should be marked as the standby production environment
-  -C, --storage-calc uint                       Should storage for this environment be calculated
+  -C, --storage-calc                            Should storage for this environment be calculated. Set to enable, --storage-calc=false to disable
   -s, --subfolder string                        Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 

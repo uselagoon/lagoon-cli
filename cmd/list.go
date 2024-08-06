@@ -39,6 +39,10 @@ var listProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		// wide, err := cmd.Flags().GetBool("wide")
+		// if err != nil {
+		// 	return err
+		// }
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -65,21 +69,40 @@ var listProjectsCmd = &cobra.Command{
 					productionRoute = environment.Route
 				}
 			}
-
-			data = append(data, []string{
+			projData := []string{
 				returnNonEmptyString(fmt.Sprintf("%d", project.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
 				returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
 				returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
-				returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, project.DevelopmentEnvironmentsLimit)),
-			})
+				returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)),
+			}
+			// if wide {
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.AutoIdle)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.Branches)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.FactsUI)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.ProblemsUI)))
+			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.DeploymentsDisabled)))
+			// }
+			data = append(data, projData)
 		}
 		if len(data) == 0 {
 			outputOptions.Error = "No access to any projects in Lagoon\n"
 		}
+		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
+		// if wide {
+		// 	projHeader = append(projHeader, "AutoIdle")
+		// 	projHeader = append(projHeader, "Branches")
+		// 	projHeader = append(projHeader, "PullRequests")
+		// 	projHeader = append(projHeader, "RouterPattern")
+		// 	projHeader = append(projHeader, "FactsUI")
+		// 	projHeader = append(projHeader, "ProblemsUI")
+		// 	projHeader = append(projHeader, "DeploymentsDisabled")
+		// }
 		dataMain := output.Table{
-			Header: []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"},
+			Header: projHeader,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -101,6 +124,14 @@ var listDeployTargetsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
+		showToken, err := cmd.Flags().GetBool("show-token")
+		if err != nil {
+			return err
+		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -115,40 +146,50 @@ var listDeployTargetsCmd = &cobra.Command{
 		}
 		data := []output.Data{}
 		for _, deploytarget := range *deploytargets {
-			data = append(data, []string{
+			depTarget := []string{
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Name)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ConsoleURL)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.BuildImage)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Token)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHHost)),
 				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.SSHPort)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudRegion)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.RouterPattern)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Created)),
-				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)),
-			})
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.BuildImage)),
+				returnNonEmptyString(fmt.Sprintf("%v", deploytarget.ConsoleURL)),
+			}
+			if wide {
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudRegion)))
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.CloudProvider)))
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.FriendlyName)))
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.MonitoringConfig)))
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Created)))
+			}
+			if showToken {
+				depTarget = append(depTarget, returnNonEmptyString(fmt.Sprintf("%v", deploytarget.Token)))
+			}
+			data = append(data, depTarget)
 		}
 		outputOptions.MultiLine = true
+		header := []string{
+			"ID",
+			"Name",
+			"RouterPattern",
+			"SshHost",
+			"SshPort",
+			"BuildImage",
+			"ConsoleUrl",
+		}
+		if wide {
+			header = append(header, "CloudRegion")
+			header = append(header, "CloudProvider")
+			header = append(header, "FriendlyName")
+			header = append(header, "MonitoringConfig")
+			header = append(header, "Created")
+		}
+		if showToken {
+			header = append(header, "Token")
+		}
 		r := output.RenderOutput(output.Table{
-			Header: []string{
-				"ID",
-				"Name",
-				"ConsoleUrl",
-				"BuildImage",
-				"Token",
-				"SshHost",
-				"SshPort",
-				"CloudRegion",
-				"CloudProvider",
-				"FriendlyName",
-				"RouterPattern",
-				"Created",
-				"MonitoringConfig",
-			},
-			Data: data,
+			Header: header,
+			Data:   data,
 		}, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
@@ -1149,6 +1190,9 @@ var ListOrganizationAdminsCmd = &cobra.Command{
 			if user.Owner {
 				role = "owner"
 			}
+			if user.Admin {
+				role = "admin"
+			}
 			data = append(data, []string{
 				returnNonEmptyString(user.ID.String()),
 				returnNonEmptyString(user.Email),
@@ -1253,4 +1297,8 @@ func init() {
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
+	listDeployTargetsCmd.Flags().Bool("wide", false, "Display additional information about deploytargets")
+	listDeployTargetsCmd.Flags().Bool("show-token", false, "Display the token for deploytargets")
+	// TODO: support wide on list projects (machinery update required to add additional fields to all projects query)
+	// listProjectsCmd.Flags().Bool("wide", false, "Display additional information about projects")
 }
