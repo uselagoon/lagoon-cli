@@ -506,7 +506,7 @@ var getAllUserKeysCmd = &cobra.Command{
 
 var addAdministratorToOrganizationCmd = &cobra.Command{
 	Use:     "organization-administrator",
-	Aliases: []string{"org-admin"},
+	Aliases: []string{"organization-admin", "org-admin", "org-a"},
 	Short:   "Add an administrator to an Organization",
 	Long:    "Add an administrator to an Organization. If the role flag is not provided users will be added as viewers",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
@@ -585,7 +585,7 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 
 var removeAdministratorFromOrganizationCmd = &cobra.Command{
 	Use:     "organization-administrator",
-	Aliases: []string{"org-admin"},
+	Aliases: []string{"organization-admin", "org-admin", "org-a"},
 	Short:   "Remove an administrator from an Organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)

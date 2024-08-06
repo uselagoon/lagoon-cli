@@ -1151,9 +1151,9 @@ var ListOrganizationUsersCmd = &cobra.Command{
 	},
 }
 
-var ListOrganizationAdminsCmd = &cobra.Command{
-	Use:     "organization-admins",
-	Aliases: []string{"org-a"},
+var listOrganizationAdminsCmd = &cobra.Command{
+	Use:     "organization-admininstrators",
+	Aliases: []string{"organization-admins", "org-admins", "org-a"},
 	Short:   "List admins in an organization",
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(cmdLagoon)
@@ -1285,7 +1285,7 @@ func init() {
 	listCmd.AddCommand(listUsersGroupsCmd)
 	listCmd.AddCommand(listOrganizationProjectsCmd)
 	listCmd.AddCommand(ListOrganizationUsersCmd)
-	listCmd.AddCommand(ListOrganizationAdminsCmd)
+	listCmd.AddCommand(listOrganizationAdminsCmd)
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(listOrganizationsCmd)
@@ -1298,7 +1298,7 @@ func init() {
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
 	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
-	ListOrganizationAdminsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationAdminsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")

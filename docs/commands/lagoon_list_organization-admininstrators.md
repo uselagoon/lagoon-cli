@@ -1,15 +1,15 @@
-## lagoon list organization-admins
+## lagoon list organization-admininstrators
 
 List admins in an organization
 
 ```
-lagoon list organization-admins [flags]
+lagoon list organization-admininstrators [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help                       help for organization-admins
+  -h, --help                       help for organization-admininstrators
   -O, --organization-name string   Name of the organization to list associated users for
 ```
 
