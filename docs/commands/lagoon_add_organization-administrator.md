@@ -16,7 +16,7 @@ lagoon add organization-administrator [flags]
   -E, --email string               Email address of the user
   -h, --help                       help for organization-administrator
   -O, --organization-name string   Name of the organization
-  -R, --role string                Role in the organization [owner, viewer]
+  -R, --role string                Role in the organization [owner, admin, viewer]
 ```
 
 ### Options inherited from parent commands

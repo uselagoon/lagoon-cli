@@ -13,7 +13,9 @@ lagoon list deploytargets [flags]
 ### Options
 
 ```
-  -h, --help   help for deploytargets
+  -h, --help         help for deploytargets
+      --show-token   Display the token for deploytargets
+      --wide         Display additional information about deploytargets
 ```
 
 ### Options inherited from parent commands

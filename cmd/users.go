@@ -538,10 +538,12 @@ var addAdministratorToOrganizationCmd = &cobra.Command{
 		}
 		switch strings.ToLower(role) {
 		case "viewer":
+		case "admin":
+			userInput.Admin = true
 		case "owner":
 			userInput.Owner = true
 		default:
-			return fmt.Errorf(`role '%s' is not valid - valid roles include "viewer", "owner"`, role)
+			return fmt.Errorf(`role '%s' is not valid - valid roles include "viewer", "admin", or "owner"`, role)
 		}
 
 		current := lagoonCLIConfig.Current
@@ -717,7 +719,7 @@ func init() {
 	getAllUserKeysCmd.Flags().StringP("name", "N", "", "Name of the group to list users in (if not specified, will default to all groups)")
 	addAdministratorToOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	addAdministratorToOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
-	addAdministratorToOrganizationCmd.Flags().StringP("role", "R", "", "Role in the organization [owner, viewer]")
+	addAdministratorToOrganizationCmd.Flags().StringP("role", "R", "", "Role in the organization [owner, admin, viewer]")
 	removeAdministratorFromOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	removeAdministratorFromOrganizationCmd.Flags().StringP("email", "E", "", "Email address of the user")
 	resetPasswordCmd.Flags().StringP("email", "E", "", "Email address of the user")
