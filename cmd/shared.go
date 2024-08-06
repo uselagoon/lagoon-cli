@@ -80,6 +80,14 @@ func nullUintCheck(i uint) *uint {
 	return &i
 }
 
+func nullBoolToUint(b bool) *uint {
+	t := uint(0)
+	if b {
+		t = uint(1)
+	}
+	return &t
+}
+
 func nullIntCheck(i int) *int {
 	if i == 0 {
 		return nil

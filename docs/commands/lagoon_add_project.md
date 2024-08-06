@@ -14,7 +14,7 @@ lagoon add project [flags]
 ### Options
 
 ```
-  -a, --auto-idle uint                          Auto idle setting of the project
+  -a, --auto-idle                               Auto idle setting of the project. Set to enable, --auto-idle=false to disable
   -b, --branches string                         Which branches should be deployed
       --build-image string                      Build Image for the project
   -S, --deploytarget uint                       Reference to Deploytarget(Kubernetes) target this Project should be deployed to
@@ -31,7 +31,7 @@ lagoon add project [flags]
   -m, --pullrequests string                     Which Pull Requests should be deployed
   -Z, --router-pattern string                   Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'
       --standby-production-environment string   Which environment(the name) should be marked as the standby production environment
-  -C, --storage-calc uint                       Should storage for this environment be calculated
+  -C, --storage-calc                            Should storage for this environment be calculated. Set to enable, --storage-calc=false to disable
   -s, --subfolder string                        Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository
 ```
 

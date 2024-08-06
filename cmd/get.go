@@ -69,27 +69,27 @@ var getProjectCmd = &cobra.Command{
 			return nil
 		}
 
-		DevEnvironments := 0
+		devEnvironments := 0
 		productionRoute := ""
-		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(project.DeploymentsDisabled)))
+		deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(*project.DeploymentsDisabled)))
 		if err != nil {
 			return err
 		}
-		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(project.AutoIdle)))
+		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(*project.AutoIdle)))
 		if err != nil {
 			return err
 		}
-		factsUI, err := strconv.ParseBool(strconv.Itoa(int(project.FactsUI)))
+		factsUI, err := strconv.ParseBool(strconv.Itoa(int(*project.FactsUI)))
 		if err != nil {
 			return err
 		}
-		problemsUI, err := strconv.ParseBool(strconv.Itoa(int(project.ProblemsUI)))
+		problemsUI, err := strconv.ParseBool(strconv.Itoa(int(*project.ProblemsUI)))
 		if err != nil {
 			return err
 		}
 		for _, environment := range project.Environments {
 			if environment.EnvironmentType == "development" {
-				DevEnvironments++
+				devEnvironments++
 			}
 			if environment.EnvironmentType == "production" {
 				productionRoute = environment.Route
@@ -102,7 +102,7 @@ var getProjectCmd = &cobra.Command{
 			returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
 			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
 			returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
-			returnNonEmptyString(fmt.Sprintf("%v/%v", DevEnvironments, project.DevelopmentEnvironmentsLimit)),
+			returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)),
 		}
 		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
 		if wide {

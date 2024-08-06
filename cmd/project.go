@@ -111,14 +111,17 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storage-calc")
+		developmentEnvironmentsLimitProvided := cmd.Flags().Lookup("development-environments-limit").Changed
+		storageCalc, err := cmd.Flags().GetBool("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("auto-idle")
+		storageCalcProvided := cmd.Flags().Lookup("storage-calc").Changed
+		autoIdle, err := cmd.Flags().GetBool("auto-idle")
 		if err != nil {
 			return err
 		}
+		autoIdleProvided := cmd.Flags().Lookup("auto-idle").Changed
 		subfolder, err := cmd.Flags().GetString("subfolder")
 		if err != nil {
 			return err
@@ -135,6 +138,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		orgOwnerProvided := cmd.Flags().Lookup("owner").Changed
 		routerPattern, err := cmd.Flags().GetString("router-pattern")
 		if err != nil {
 			return err
@@ -155,7 +159,6 @@ var addProjectCmd = &cobra.Command{
 
 		projectInput := schema.AddProjectInput{
 			Name:                         cmdProjectName,
-			AddOrgOwner:                  orgOwner,
 			GitURL:                       gitUrl,
 			ProductionEnvironment:        productionEnvironment,
 			StandbyProductionEnvironment: standbyProductionEnvironment,
@@ -163,17 +166,26 @@ var addProjectCmd = &cobra.Command{
 			PullRequests:                 pullrequests,
 			OpenshiftProjectPattern:      deploytargetProjectPattern,
 			Openshift:                    deploytarget,
-			DevelopmentEnvironmentsLimit: developmentEnvironmentsLimit,
-			StorageCalc:                  storageCalc,
-			AutoIdle:                     autoIdle,
 			Subfolder:                    subfolder,
 			PrivateKey:                   privateKey,
 			BuildImage:                   buildImage,
 			RouterPattern:                routerPattern,
 		}
+		if orgOwnerProvided {
+			projectInput.AddOrgOwner = &orgOwner
+		}
+		if storageCalcProvided {
+			projectInput.StorageCalc = nullBoolToUint(storageCalc)
+		}
+		if autoIdleProvided {
+			projectInput.AutoIdle = nullBoolToUint(autoIdle)
+		}
+		if developmentEnvironmentsLimitProvided {
+			projectInput.DevelopmentEnvironmentsLimit = nullUintCheck(developmentEnvironmentsLimit)
+		}
 		// if organizationid is provided, use it over the name
 		if organizationID != 0 {
-			projectInput.Organization = organizationID
+			projectInput.Organization = &organizationID
 		}
 		// otherwise if name is provided use it
 		if organizationName != "" && organizationID == 0 {
@@ -186,7 +198,7 @@ var addProjectCmd = &cobra.Command{
 			if organization.Name == "" {
 				return fmt.Errorf("error querying organization by name")
 			}
-			projectInput.Organization = organization.ID
+			projectInput.Organization = &organization.ID
 		}
 
 		project := schema.Project{}
@@ -255,14 +267,16 @@ var updateProjectCmd = &cobra.Command{
 			return err
 		}
 		developmentEnvironmentsLimit, err := cmd.Flags().GetUint("development-environments-limit")
+		developmentEnvironmentsLimitProvided := cmd.Flags().Lookup("development-environments-limit").Changed
 		if err != nil {
 			return err
 		}
-		storageCalc, err := cmd.Flags().GetUint("storage-calc")
+		storageCalc, err := cmd.Flags().GetBool("storage-calc")
 		if err != nil {
 			return err
 		}
-		autoIdle, err := cmd.Flags().GetUint("auto-idle")
+		storageCalcProvided := cmd.Flags().Lookup("storage-calc").Changed
+		autoIdle, err := cmd.Flags().GetBool("auto-idle")
 		if err != nil {
 			return err
 		}
@@ -284,12 +298,12 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		factsUi, err := cmd.Flags().GetUint("facts-ui")
+		factsUi, err := cmd.Flags().GetBool("facts-ui")
 		if err != nil {
 			return err
 		}
 		factsUIProvided := cmd.Flags().Lookup("facts-ui").Changed
-		problemsUi, err := cmd.Flags().GetUint("problems-ui")
+		problemsUi, err := cmd.Flags().GetBool("problems-ui")
 		if err != nil {
 			return err
 		}
@@ -298,19 +312,21 @@ var updateProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		deploymentsDisabled, err := cmd.Flags().GetUint("deployments-disabled")
+		deploymentsDisabled, err := cmd.Flags().GetBool("deployments-disabled")
 		if err != nil {
 			return err
 		}
 		deploymentsDisabledProvided := cmd.Flags().Lookup("deployments-disabled").Changed
-		ProductionBuildPriority, err := cmd.Flags().GetUint("production-build-priority")
+		productionBuildPriority, err := cmd.Flags().GetUint("production-build-priority")
 		if err != nil {
 			return err
 		}
-		DevelopmentBuildPriority, err := cmd.Flags().GetUint("development-build-priority")
+		productionBuildPriorityProvided := cmd.Flags().Lookup("production-build-priority").Changed
+		developmentBuildPriority, err := cmd.Flags().GetUint("development-build-priority")
 		if err != nil {
 			return err
 		}
+		developmentBuildPriorityProvided := cmd.Flags().Lookup("development-build-priority").Changed
 
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
@@ -333,17 +349,9 @@ var updateProjectCmd = &cobra.Command{
 			Branches:                     nullStrCheck(branches),
 			Pullrequests:                 nullStrCheck(pullrequests),
 			OpenshiftProjectPattern:      nullStrCheck(deploytargetProjectPattern),
-			DevelopmentEnvironmentsLimit: nullUintCheck(developmentEnvironmentsLimit),
-			StorageCalc:                  nullUintCheck(storageCalc),
-			AutoIdle:                     nullUintCheck(autoIdle),
 			Subfolder:                    nullStrCheck(subfolder),
 			PrivateKey:                   nullStrCheck(privateKey),
-			FactsUI:                      nullUintCheck(factsUi),
-			ProblemsUI:                   nullUintCheck(problemsUi),
 			RouterPattern:                nullStrCheck(routerPattern),
-			DeploymentsDisabled:          nullUintCheck(deploymentsDisabled),
-			ProductionBuildPriority:      nullUintCheck(ProductionBuildPriority),
-			DevelopmentBuildPriority:     nullUintCheck(DevelopmentBuildPriority),
 			Name:                         nullStrCheck(projectName),
 		}
 
@@ -351,17 +359,29 @@ var updateProjectCmd = &cobra.Command{
 			ProjectAvailability := schema.ProjectAvailability(strings.ToUpper(availability))
 			projectPatch.Availability = &ProjectAvailability
 		}
+		if storageCalcProvided {
+			projectPatch.StorageCalc = nullBoolToUint(storageCalc)
+		}
 		if autoIdleProvided {
-			projectPatch.AutoIdle = &autoIdle
+			projectPatch.AutoIdle = nullBoolToUint(autoIdle)
 		}
 		if deploymentsDisabledProvided {
-			projectPatch.DeploymentsDisabled = &deploymentsDisabled
+			projectPatch.DeploymentsDisabled = nullBoolToUint(deploymentsDisabled)
 		}
 		if factsUIProvided {
-			projectPatch.FactsUI = &factsUi
+			projectPatch.FactsUI = nullBoolToUint(factsUi)
 		}
 		if problemsUIProvided {
-			projectPatch.ProblemsUI = &problemsUi
+			projectPatch.ProblemsUI = nullBoolToUint(problemsUi)
+		}
+		if productionBuildPriorityProvided {
+			projectPatch.ProductionBuildPriority = nullUintCheck(productionBuildPriority)
+		}
+		if developmentBuildPriorityProvided {
+			projectPatch.DevelopmentBuildPriority = nullUintCheck(developmentBuildPriority)
+		}
+		if developmentEnvironmentsLimitProvided {
+			projectPatch.DevelopmentEnvironmentsLimit = nullUintCheck(developmentEnvironmentsLimit)
 		}
 		if buildImageProvided {
 			if buildImage == "null" {
@@ -727,14 +747,14 @@ func init() {
 
 	updateProjectCmd.Flags().Uint("production-build-priority", 0, "Set the priority of the production build")
 	updateProjectCmd.Flags().Uint("development-build-priority", 0, "Set the priority of the development build")
-	updateProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
-	updateProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	updateProjectCmd.Flags().BoolP("auto-idle", "a", false, "Auto idle setting of the project. Set to enable, --auto-idle=false to disable")
+	updateProjectCmd.Flags().BoolP("storage-calc", "C", false, "Should storage for this environment be calculated. Set to enable, --storage-calc=false to disable")
 	updateProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
 	updateProjectCmd.Flags().UintP("deploytarget", "S", 0, "Reference to Deploytarget(Kubernetes) this Project should be deployed to")
-	updateProjectCmd.Flags().UintP("deployments-disabled", "", 0, "Admin only flag for disabling deployments on a project, 1 to disable deployments, 0 to enable")
+	updateProjectCmd.Flags().BoolP("deployments-disabled", "", false, "Admin only flag for disabling deployments on a project. Set to disable deployments, --deployments-disabled=false to enable")
 
-	updateProjectCmd.Flags().UintP("facts-ui", "", 0, "Enables the Lagoon insights Facts tab in the UI. Set to 1 to enable, 0 to disable")
-	updateProjectCmd.Flags().UintP("problems-ui", "", 0, "Enables the Lagoon insights Problems tab in the UI. Set to 1 to enable, 0 to disable")
+	updateProjectCmd.Flags().BoolP("facts-ui", "", false, "Enables the Lagoon insights Facts tab in the UI. Set to enable, --facts-ui=false to disable")
+	updateProjectCmd.Flags().BoolP("problems-ui", "", false, "Enables the Lagoon insights Problems tab in the UI. Set to enable, --problems-ui=false to disable")
 
 	addProjectCmd.Flags().StringP("json", "j", "", "JSON string to patch")
 
@@ -748,8 +768,8 @@ func init() {
 	addProjectCmd.Flags().String("standby-production-environment", "", "Which environment(the name) should be marked as the standby production environment")
 	addProjectCmd.Flags().StringP("deploytarget-project-pattern", "", "", "Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated")
 
-	addProjectCmd.Flags().UintP("auto-idle", "a", 0, "Auto idle setting of the project")
-	addProjectCmd.Flags().UintP("storage-calc", "C", 0, "Should storage for this environment be calculated")
+	addProjectCmd.Flags().BoolP("auto-idle", "a", false, "Auto idle setting of the project. Set to enable, --auto-idle=false to disable")
+	addProjectCmd.Flags().BoolP("storage-calc", "C", false, "Should storage for this environment be calculated. Set to enable, --storage-calc=false to disable")
 	addProjectCmd.Flags().UintP("development-environments-limit", "L", 0, "How many environments can be deployed at one time")
 	addProjectCmd.Flags().UintP("deploytarget", "S", 0, "Reference to Deploytarget(Kubernetes) target this Project should be deployed to")
 	addProjectCmd.Flags().StringP("build-image", "", "", "Build Image for the project")
