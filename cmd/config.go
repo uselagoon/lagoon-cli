@@ -247,6 +247,16 @@ var configFeatureSwitch = &cobra.Command{
 		case "false":
 			lagoonCLIConfig.EnvironmentFromDirectory = false
 		}
+		strictHostKeyChecking, err := cmd.Flags().GetString("strict-host-key-checking")
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		strictHostKeyCheckingProvided := cmd.Flags().Lookup("strict-host-key-checking").Changed
+		if strictHostKeyCheckingProvided {
+			lagoonCLIConfig.StrictHostKeyChecking = strictHostKeyChecking
+		}
+
 		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -299,6 +309,7 @@ var configLagoonVersionCmd = &cobra.Command{
 
 var updateCheck string
 var environmentFromDirectory string
+var strictHostKeyChecking string
 var fullConfigList bool
 
 func init() {
@@ -333,6 +344,8 @@ func init() {
 		"Enable or disable checking of updates (true/false)")
 	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "",
 		"Enable or disable checking of local directory for Lagoon project (true/false)")
+	configFeatureSwitch.Flags().StringVar(&strictHostKeyChecking, "strict-host-key-checking", "",
+		"Enable or disable StrictHostKeyChecking (yes, no, ignore)")
 }
 
 // readLagoonConfig reads the lagoon config from specified file.

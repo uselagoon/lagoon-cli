@@ -7,6 +7,7 @@ type Config struct {
 	Lagoons                  map[string]Context `json:"lagoons"`
 	UpdateCheckDisable       bool               `json:"updatecheckdisable,omitempty"`
 	EnvironmentFromDirectory bool               `json:"environmentfromdirectory,omitempty"`
+	StrictHostKeyChecking    string             `json:"stricthostkeychecking,omitempty"`
 }
 
 // Context is used for each lagoon context in the config file.

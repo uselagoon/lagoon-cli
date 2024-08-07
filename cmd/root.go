@@ -41,6 +41,8 @@ var verboseOutput bool
 
 var skipUpdateCheck bool
 
+var strictHostKeyCheck string
+
 // global for the lagoon config that the cli uses
 // @TODO: when lagoon-cli rewrite happens, do this a bit better
 var lagoonCLIConfig lagooncli.Config
@@ -60,6 +62,9 @@ var rootCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if lagoonCLIConfig.UpdateCheckDisable {
 			skipUpdateCheck = true
+		}
+		if lagoonCLIConfig.StrictHostKeyChecking != "" {
+			strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
 		}
 		if !skipUpdateCheck {
 			// Using code from https://github.com/drud/ddev/
@@ -142,6 +147,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 	rootCmd.PersistentFlags().BoolVarP(&verboseOutput, "verbose", "v", false, "Enable verbose output to stderr (if supported)")
+	rootCmd.PersistentFlags().StringVar(&strictHostKeyCheck, "strict-host-key-checking", "accept-new", "Similar to SSH StrictHostKeyChecking (accept-new, no, ignore)")
 
 	// get config-file from flag
 	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
