@@ -162,7 +162,7 @@ var updateDeployTargetConfigCmd = &cobra.Command{
 		if branches != "" {
 			updateDeployTargetConfig.Branches = branches
 		}
-		if branches != "" {
+		if pullrequests != "" {
 			updateDeployTargetConfig.Pullrequests = pullrequests
 		}
 		if deploytarget != 0 {
