@@ -49,7 +49,7 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyName = stripNewLines(splitKey[2])
 	} else if keyName == "" && len(splitKey) == 2 {
 		keyName = userEmail
-		output.RenderInfo("no name provided, using email address as key name", outputOptions)
+		output.RenderInfo("no name provided, using email address as key name\n", outputOptions)
 	}
 	SSHKeyInput := schema.AddSSHKeyInput{
 		SSHKey: schema.SSHKey{
@@ -407,7 +407,7 @@ var getUserKeysCmd = &cobra.Command{
 			return err
 		}
 		if len(userKeys.SSHKeys) == 0 {
-			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
+			output.RenderInfo(fmt.Sprintf("There are no SSH keys for user '%s'\n", strings.ToLower(userEmail)), outputOptions)
 			return nil
 		}
 

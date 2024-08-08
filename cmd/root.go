@@ -67,17 +67,17 @@ var rootCmd = &cobra.Command{
 			// Do periodic detection of whether an update is available for lagoon-cli users.
 			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
 			if err != nil {
-				output.RenderInfo(fmt.Sprintf("Could not perform update check %v", err), outputOptions)
+				output.RenderInfo(fmt.Sprintf("Could not perform update check %v\n", err), outputOptions)
 			}
 			if timeToCheckForUpdates && isInternetActive() {
 				// Recreate the updatefile with current time so we won't do this again soon.
 				err = updatecheck.ResetUpdateTime(updateFile)
 				if err != nil {
-					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s", updateFile), outputOptions)
+					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s\n", updateFile), outputOptions)
 				}
 				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
 				if err != nil {
-					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
+					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.\n", outputOptions)
 					output.RenderError(err.Error(), outputOptions)
 					return
 				}
