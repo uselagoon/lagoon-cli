@@ -214,7 +214,7 @@ var addProjectToGroupCmd = &cobra.Command{
 			return err
 		}
 		if len(project.Name) == 0 {
-			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
@@ -335,7 +335,7 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			return err
 		}
 		if len(project.Name) == 0 {
-			outputOptions.Error = fmt.Sprintf("Project '%s' not found", cmdProjectName)
+			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
 			output.RenderError(outputOptions.Error, outputOptions)
 			return nil
 		}
