@@ -38,6 +38,8 @@ build-linux: test
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-linux-amd64 -v
 build-darwin: test
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64 -v
+build-darwin-arm64: test
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(GOCMD) build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-arm64 -v
 
 docs: test
 	LAGOON_GEN_DOCS=true GO111MODULE=on $(GOCMD) run main.go --docs 
@@ -96,20 +98,3 @@ install-linux:
 install-darwin:
 	cp builds/lagoon-cli-${VERSION}-darwin-amd64 ${ARTIFACT_DESTINATION}/lagoon
 
-release-patch: 
-	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -p $(shell git describe --abbrev=0 --tags)))
-	git tag $(VERSION)
-	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) main --tags
-
-release-minor: 
-	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -m $(shell git describe --abbrev=0 --tags)))
-	git tag $(VERSION)
-	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) main --tags
-
-release-major: 
-	$(eval VERSION=$(shell ${PWD}/increment_ver.sh -M $(shell git describe --abbrev=0 --tags)))
-	git tag $(VERSION)
-	mkdocs gh-deploy
-	git push $(GIT_ORIGIN) main --tags
