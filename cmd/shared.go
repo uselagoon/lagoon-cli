@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
 
@@ -106,4 +107,11 @@ func requiredInputCheck(fieldsAndValues ...string) error {
 		}
 	}
 	return nil
+}
+
+// Outputs the message in a way that can be captured by testing
+func handleNilResults(message string, cmd *cobra.Command, fields ...interface{}) {
+	outputOptions.Error = fmt.Sprintf(message, fields...)
+	r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
+	fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 }

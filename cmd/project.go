@@ -696,6 +696,10 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if project.Name == "" {
+			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
+			return nil
+		}
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
 			return err
