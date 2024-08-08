@@ -27,20 +27,38 @@ lagoon <command>
 ### Commands
 For the full list of commands see the docs for [Lagoon CLI](https://uselagoon.github.io/lagoon-cli/commands/lagoon/)
 
-## Build
+## Building
 
-Note: You should make sure you have your `GOPATH` configured and in your path if you are going to build the lagoon CLI. If you haven't got `go` installed and are using the docker method, you can export `GOPATH` to be somewhere else in your `PATH` for binaries.
+### Requirements
+
+Install `Go` - https://go.dev/doc/install
+
+You also need `mockgen`, it can be installed using the following command once `Go` is installed.
+
+```
+go install go.uber.org/mock/mockgen@v0.4.0
+```
+
+Note: You should make sure you have your `GOPATH` configured and in your path, see https://pkg.go.dev/cmd/go#hdr-GOPATH_environment_variable
 
 ### Run tests
 ```
 make test
-make test-docker
 ```
 
 ### Build locally
+
+You can compile the binary and load it into your `GOPATH` bin directory using the following.
+```
+make build
+```
+
+Alternatively, these will compile a binary inside a `builds` directory in this repository, you can place them wherever you wish.
 ```
 make build-linux
-make build-darwin #macos
+#macos
+make build-darwin
+make build-darwin-arm64
 ```
 
 ### Build using Docker
@@ -57,14 +75,6 @@ make all-docker-linux
 make all-docker-darwin
 ```
 
-### Releasing
-New releases can be created by running one of the following, this will create the version bump and update the `gh-pages` branch
-```
-make release-patch
-make release-minor
-make release-major
-```
-
 ### Install
 ```
 make ARTIFACT_DESTINATION=/usr/local/bin install-linux
@@ -76,8 +86,6 @@ Versions can also be defined, and the binaries will be version tagged
 ```
 make VERSION=v0.0.1 ...
 ```
-
-
 
 ### Acknowledgements
 

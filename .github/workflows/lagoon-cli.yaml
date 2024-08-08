@@ -28,7 +28,7 @@ jobs:
         go-version: ${{matrix.goversion}}
     - name: Build
       run: |
-        go install github.com/golang/mock/mockgen@v1.4.3
+        go install go.uber.org/mock/mockgen@v0.4.0
         ARTIFACT_DESTINATION=./builds make build
     # - name: Check version
     #   run: |
