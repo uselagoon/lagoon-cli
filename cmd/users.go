@@ -407,8 +407,7 @@ var getUserKeysCmd = &cobra.Command{
 			return err
 		}
 		if len(userKeys.SSHKeys) == 0 {
-			output.RenderInfo(fmt.Sprintf("No SSH keys for user '%s'", strings.ToLower(userEmail)), outputOptions)
-			return nil
+			return handleNilResults("No SSH keys for user '%s'\n", cmd, strings.ToLower(userEmail))
 		}
 
 		data := []output.Data{}
@@ -475,7 +474,7 @@ var getAllUserKeysCmd = &cobra.Command{
 			}
 		}
 		if len(userGroups) == 0 {
-			outputOptions.Error = fmt.Sprintf("No SSH keys for group '%s'\n", groupName)
+			return handleNilResults("No SSH keys for group '%s'\n", cmd, groupName)
 		}
 		var data []output.Data
 		for _, userData := range userGroups {

@@ -93,7 +93,7 @@ var listProjectsCmd = &cobra.Command{
 			data = append(data, projData)
 		}
 		if len(data) == 0 {
-			outputOptions.Error = "No access to any projects in Lagoon\n"
+			return handleNilResults("No access to any projects in Lagoon\n", cmd)
 		}
 		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
 		// if wide {
@@ -234,7 +234,7 @@ var listGroupsCmd = &cobra.Command{
 			})
 		}
 		if len(data) == 0 {
-			outputOptions.Error = "This account is not in any groups\n"
+			return handleNilResults("This account is not in any groups\n", cmd)
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "Name"},
@@ -311,11 +311,10 @@ var listGroupProjectsCmd = &cobra.Command{
 		}
 		if len(data) == 0 {
 			if !listAllProjects {
-				handleNilResults("There are no projects in group '%s'\n", cmd, groupName)
+				return handleNilResults("There are no projects in group '%s'\n", cmd, groupName)
 			} else {
-				handleNilResults("There are no projects in any groups\n", cmd)
+				return handleNilResults("There are no projects in any groups\n", cmd)
 			}
-			return nil
 		}
 
 		dataMain := output.Table{
@@ -361,8 +360,7 @@ var listEnvironmentsCmd = &cobra.Command{
 		}
 
 		if len(*environments) == 0 {
-			handleNilResults("No environments found for project '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No environments found for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		data := []output.Data{}
@@ -457,11 +455,10 @@ var listVariablesCmd = &cobra.Command{
 		}
 		if len(data) == 0 {
 			if cmdProjectEnvironment != "" {
-				handleNilResults("There are no variables for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
+				return handleNilResults("There are no variables for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 			} else {
-				handleNilResults("There are no variables for project '%s'\n", cmd, cmdProjectName)
+				return handleNilResults("There are no variables for project '%s'\n", cmd, cmdProjectName)
 			}
-			return nil
 		}
 		r := output.RenderOutput(output.Table{
 			Header: header,
@@ -502,8 +499,7 @@ var listDeploymentsCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 
 		deployments, err := lagoon.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
@@ -525,8 +521,7 @@ var listDeploymentsCmd = &cobra.Command{
 		}
 
 		if len(data) == 0 {
-			handleNilResults("There are no deployments for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
-			return nil
+			return handleNilResults("There are no deployments for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
@@ -568,8 +563,7 @@ var listTasksCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 
 		tasks, err := lagoon.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
@@ -592,8 +586,7 @@ var listTasksCmd = &cobra.Command{
 		}
 
 		if len(data) == 0 {
-			handleNilResults("There are no tasks for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
-			return nil
+			return handleNilResults("There are no tasks for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 		}
 		dataMain := output.Table{
 			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed", "Service"},
@@ -808,8 +801,7 @@ var listInvokableTasks = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
 		if err != nil {
@@ -825,8 +817,7 @@ var listInvokableTasks = &cobra.Command{
 		}
 
 		if len(data) == 0 {
-			handleNilResults("There are no user defined tasks for environment %s\n", cmd, cmdProjectEnvironment)
-			return nil
+			return handleNilResults("There are no user defined tasks for environment %s\n", cmd, cmdProjectEnvironment)
 		}
 		dataMain := output.Table{
 			Header: []string{"Task Name", "Description"},
@@ -877,8 +868,7 @@ var listProjectGroupsCmd = &cobra.Command{
 		}
 
 		if len(projectGroups.Groups) == 0 {
-			handleNilResults("There are no groups for project '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("There are no groups for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		data := []output.Data{}
@@ -945,8 +935,7 @@ var listOrganizationProjectsCmd = &cobra.Command{
 		}
 
 		if len(*orgProjects) == 0 {
-			handleNilResults("No associated projects found for organization '%s'\n", cmd, organizationName)
-			return nil
+			return handleNilResults("No associated projects found for organization '%s'\n", cmd, organizationName)
 		}
 
 		data := []output.Data{}
@@ -1008,8 +997,7 @@ var listOrganizationGroupsCmd = &cobra.Command{
 			return err
 		}
 		if len(*orgGroups) == 0 {
-			handleNilResults("No associated groups found for organization '%s'\n", cmd, organizationName)
-			return nil
+			return handleNilResults("No associated groups found for organization '%s'\n", cmd, organizationName)
 		}
 
 		data := []output.Data{}
@@ -1068,8 +1056,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 			return err
 		}
 		if len(*deployTargets) == 0 {
-			handleNilResults("No associated deploy targets found for organization '%s'\n", cmd, organizationName)
-			return nil
+			return handleNilResults("No associated deploy targets found for organization '%s'\n", cmd, organizationName)
 		}
 
 		data := []output.Data{}
@@ -1180,8 +1167,7 @@ var listOrganizationAdminsCmd = &cobra.Command{
 			return err
 		}
 		if len(*users) == 0 {
-			handleNilResults("No associated users found for organization '%s'\n", cmd, organizationName)
-			return nil
+			return handleNilResults("No associated users found for organization '%s'\n", cmd, organizationName)
 		}
 		data := []output.Data{}
 		for _, user := range *users {

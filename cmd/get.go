@@ -63,8 +63,7 @@ var getProjectCmd = &cobra.Command{
 		}
 
 		if project.Name == "" {
-			handleNilResults("No details for project '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No details for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		devEnvironments := 0
@@ -251,11 +250,10 @@ var getEnvironmentCmd = &cobra.Command{
 
 		if project.Name == "" || environment.Name == "" {
 			if project.Name == "" {
-				handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
+				return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
 			} else {
-				handleNilResults("Environment '%s' not found in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
+				return handleNilResults("Environment '%s' not found in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 			}
-			return nil
 		}
 
 		data := []output.Data{}
@@ -329,8 +327,7 @@ var getProjectKeyCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 
 		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
@@ -338,8 +335,7 @@ var getProjectKeyCmd = &cobra.Command{
 			return err
 		}
 		if projectKey.PublicKey == "" && projectKey.PrivateKey == "" {
-			handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		projectKeys := []string{projectKey.PublicKey}
@@ -420,9 +416,9 @@ var getOrganizationCmd = &cobra.Command{
 			strconv.Itoa(int(organization.ID)),
 			organization.Name,
 			organization.Description,
-			strconv.Itoa(int(organization.QuotaProject)),
-			strconv.Itoa(int(organization.QuotaGroup)),
-			strconv.Itoa(int(organization.QuotaNotification)),
+			strconv.Itoa(organization.QuotaProject),
+			strconv.Itoa(organization.QuotaGroup),
+			strconv.Itoa(organization.QuotaNotification),
 		})
 
 		dataMain := output.Table{

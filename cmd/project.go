@@ -398,9 +398,7 @@ var updateProjectCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			outputOptions.Error = fmt.Sprintf("Project '%s' not found\n", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
-			return nil
+			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
 		}
 		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
 		if err != nil {
@@ -460,9 +458,9 @@ var listProjectByMetadata = &cobra.Command{
 		}
 		if len(*projects) == 0 {
 			if value != "" {
-				outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s' and value '%s'\n", key, value)
+				return handleNilResults("No projects found with metadata key '%s' and value '%s'\n", cmd, key, value)
 			}
-			outputOptions.Error = fmt.Sprintf("No projects found with metadata key '%s'\n", key)
+			return handleNilResults("No projects found with metadata key '%s'\n", cmd, key)
 		}
 		data := []output.Data{}
 		for _, project := range *projects {
@@ -520,7 +518,7 @@ var getProjectMetadata = &cobra.Command{
 			return err
 		}
 		if len(project.Metadata) == 0 {
-			outputOptions.Error = fmt.Sprintf("There is no metadata for project '%s'\n", cmdProjectName)
+			return handleNilResults("There is no metadata for project '%s'\n", cmd, cmdProjectName)
 		}
 		data := []output.Data{}
 		for metaKey, metaVal := range project.Metadata {
@@ -697,8 +695,7 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 		organization, err := lagoon.GetOrganizationByName(context.TODO(), organizationName, lc)
 		if err != nil {
