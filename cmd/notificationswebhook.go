@@ -173,9 +173,9 @@ var listProjectWebhooksCmd = &cobra.Command{
 			return err
 		}
 		if len(result.Name) == 0 {
-			outputOptions.Error = fmt.Sprintf("No project found for '%s'\n", cmdProjectName)
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		} else if len(result.Notifications.Webhook) == 0 {
-			outputOptions.Error = fmt.Sprintf("No webhook notificatons found for project: '%s'\n", cmdProjectName)
+			return handleNilResults("No webhook notificatons found for project: '%s'\n", cmd, cmdProjectName)
 		}
 
 		data := []output.Data{}
@@ -268,15 +268,25 @@ var deleteProjectWebhookNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Project name", cmdProjectName, "Notification name", name); err != nil {
 			return err
 		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		if project.Name == "" {
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s' from project '%s', are you sure?", name, cmdProjectName)) {
-			current := lagoonCLIConfig.Current
-			token := lagoonCLIConfig.Lagoons[current].Token
-			lc := lclient.New(
-				lagoonCLIConfig.Lagoons[current].GraphQL,
-				lagoonCLIVersion,
-				lagoonCLIConfig.Lagoons[current].Version,
-				&token,
-				debug)
 			notification := &schema.RemoveNotificationFromProjectInput{
 				NotificationType: schema.WebhookNotification,
 				NotificationName: name,
@@ -315,6 +325,7 @@ var deleteWebhookNotificationCmd = &cobra.Command{
 		if err := requiredInputCheck("Notification name", name); err != nil {
 			return err
 		}
+		// Todo: Verify notifcation name exists - requires #PR https://github.com/uselagoon/lagoon/pull/3740
 		if yesNo(fmt.Sprintf("You are attempting to delete webhook notification '%s', are you sure?", name)) {
 			current := lagoonCLIConfig.Current
 			token := lagoonCLIConfig.Lagoons[current].Token

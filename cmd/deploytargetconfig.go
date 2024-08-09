@@ -239,9 +239,7 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
-			return nil
+			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
 		}
 
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {
@@ -291,13 +289,14 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			outputOptions.Error = fmt.Sprintf("No details for project '%s'", cmdProjectName)
-			output.RenderError(outputOptions.Error, outputOptions)
-			return nil
+			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
 		}
 		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
 		if err != nil {
 			return err
+		}
+		if len(*deployTargetConfigs) == 0 {
+			return handleNilResults("No deploytarget-configs for project '%s'\n", cmd, cmdProjectName)
 		}
 		data := []output.Data{}
 		for _, deployTargetConfig := range *deployTargetConfigs {
