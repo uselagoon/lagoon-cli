@@ -215,8 +215,7 @@ var listBackupsCmd = &cobra.Command{
 			return err
 		}
 		if project.Name == "" {
-			handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-			return nil
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
 		}
 		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
 		if err != nil {

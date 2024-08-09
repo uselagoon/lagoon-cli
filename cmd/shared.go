@@ -110,8 +110,9 @@ func requiredInputCheck(fieldsAndValues ...string) error {
 }
 
 // Outputs the message in a way that can be captured by testing
-func handleNilResults(message string, cmd *cobra.Command, fields ...interface{}) {
+func handleNilResults(message string, cmd *cobra.Command, fields ...interface{}) error {
 	outputOptions.Error = fmt.Sprintf(message, fields...)
 	r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
 	fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+	return nil
 }
