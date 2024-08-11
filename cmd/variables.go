@@ -91,7 +91,7 @@ var addVariableCmd = &cobra.Command{
 			}, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		} else {
-			output.RenderInfo(fmt.Sprintf("variable %s remained unchanged", varName), outputOptions)
+			output.RenderInfo(fmt.Sprintf("variable %s remained unchanged\n", varName), outputOptions)
 		}
 		return nil
 	},
