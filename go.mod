@@ -15,13 +15,14 @@ require (
 	github.com/machinebox/graphql v0.2.3-0.20181106130121-3a9253180225
 	github.com/manifoldco/promptui v0.9.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
+	github.com/skeema/knownhosts v1.3.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.2
 	github.com/uselagoon/machinery v0.0.29
 	go.uber.org/mock v0.4.0
-	golang.org/x/crypto v0.21.0
-	golang.org/x/term v0.18.0
+	golang.org/x/crypto v0.26.0
+	golang.org/x/term v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.4.0
 )
@@ -37,7 +38,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
 )
 
 //replace github.com/uselagoon/machinery => ../machinery
