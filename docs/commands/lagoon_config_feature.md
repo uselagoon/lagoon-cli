@@ -9,9 +9,10 @@ lagoon config feature [flags]
 ### Options
 
 ```
-      --disable-update-check string     Enable or disable checking of updates (true/false)
-      --enable-local-dir-check string   Enable or disable checking of local directory for Lagoon project (true/false)
-  -h, --help                            help for feature
+      --disable-update-check string       Enable or disable checking of updates (true/false)
+      --enable-local-dir-check string     Enable or disable checking of local directory for Lagoon project (true/false)
+  -h, --help                              help for feature
+      --strict-host-key-checking string   Enable or disable StrictHostKeyChecking (yes, no, ignore)
 ```
 
 ### Options inherited from parent commands
