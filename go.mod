@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/golang/mock v1.6.0
 	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
 	github.com/google/uuid v1.5.0
 	github.com/guregu/null v4.0.0+incompatible
@@ -19,7 +18,8 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.2
-	github.com/uselagoon/machinery v0.0.27
+	github.com/uselagoon/machinery v0.0.29
+	go.uber.org/mock v0.4.0
 	golang.org/x/crypto v0.21.0
 	golang.org/x/term v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -37,7 +37,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	go.uber.org/mock v0.4.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 )
 
