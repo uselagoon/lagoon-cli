@@ -63,10 +63,7 @@ var getProjectCmd = &cobra.Command{
 		}
 
 		if project.Name == "" {
-			outputOptions.Error = fmt.Sprintf("No details for project '%s'\n", cmdProjectName)
-			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
-			return nil
+			return handleNilResults("No details for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		devEnvironments := 0
@@ -251,6 +248,14 @@ var getEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
+		if project.Name == "" || environment.Name == "" {
+			if project.Name == "" {
+				return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
+			} else {
+				return handleNilResults("Environment '%s' not found in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
+			}
+		}
+
 		data := []output.Data{}
 		var envRoute = "none"
 		if environment.Route != "" {
@@ -317,10 +322,22 @@ var getProjectKeyCmd = &cobra.Command{
 			&token,
 			debug)
 
+		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		if project.Name == "" {
+			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
+		}
+
 		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
 		if err != nil {
 			return err
 		}
+		if projectKey.PublicKey == "" && projectKey.PrivateKey == "" {
+			return handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)
+		}
+
 		projectKeys := []string{projectKey.PublicKey}
 		if projectKey.PrivateKey != "" {
 			projectKeys = append(projectKeys, strings.TrimSuffix(projectKey.PrivateKey, "\n"))
@@ -333,13 +350,6 @@ var getProjectKeyCmd = &cobra.Command{
 		dataMain := output.Table{
 			Header: []string{"PublicKey"},
 			Data:   data,
-		}
-
-		if len(dataMain.Data) == 0 {
-			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
-			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
-			return nil
 		}
 
 		if projectKey.PrivateKey != "" {
@@ -406,9 +416,9 @@ var getOrganizationCmd = &cobra.Command{
 			strconv.Itoa(int(organization.ID)),
 			organization.Name,
 			organization.Description,
-			strconv.Itoa(int(organization.QuotaProject)),
-			strconv.Itoa(int(organization.QuotaGroup)),
-			strconv.Itoa(int(organization.QuotaNotification)),
+			strconv.Itoa(organization.QuotaProject),
+			strconv.Itoa(organization.QuotaGroup),
+			strconv.Itoa(organization.QuotaNotification),
 		})
 
 		dataMain := output.Table{
