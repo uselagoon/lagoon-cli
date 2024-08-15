@@ -3,8 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"strconv"
+
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
@@ -38,7 +39,7 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
-		branchRef, err := cmd.Flags().GetString("branchRef")
+		branchRef, err := cmd.Flags().GetString("branch-ref")
 		if err != nil {
 			return err
 		}
