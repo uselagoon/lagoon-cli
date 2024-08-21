@@ -256,6 +256,11 @@ var getEnvironmentCmd = &cobra.Command{
 			}
 		}
 
+		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(*environment.AutoIdle)))
+		if err != nil {
+			return err
+		}
+
 		data := []output.Data{}
 		var envRoute = "none"
 		if environment.Route != "" {
@@ -276,7 +281,7 @@ var getEnvironmentCmd = &cobra.Command{
 			envHeader = append(envHeader, "Created")
 			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Created)))
 			envHeader = append(envHeader, "AutoIdle")
-			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.AutoIdle)))
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", autoIdle)))
 			envHeader = append(envHeader, "DeployTitle")
 			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)))
 			envHeader = append(envHeader, "DeployBaseRef")

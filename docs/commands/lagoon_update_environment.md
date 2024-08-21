@@ -9,7 +9,7 @@ lagoon update environment [flags]
 ### Options
 
 ```
-  -a, --auto-idle uint            Auto idle setting of the environment (default 1)
+  -a, --auto-idle                 Auto idle setting of the environment. Set to enable, --auto-idle=false to disable
       --deploy-base-ref string    Updates the deploy base ref for the selected environment
       --deploy-head-ref string    Updates the deploy head ref for the selected environment
       --deploy-title string       Updates the deploy title for the selected environment
