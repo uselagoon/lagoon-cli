@@ -8,15 +8,10 @@ import (
 	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
-
-// @TODO re-enable this at some point if more environment based commands are made available
-var environmentAutoIdle uint
-var environmentAutoIdleProvided bool
 
 var deleteEnvCmd = &cobra.Command{
 	Use:     "environment",
@@ -105,8 +100,11 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
-		cmd.Flags().Visit(checkFlags)
+		autoIdle, err := cmd.Flags().GetBool("auto-idle")
+		if err != nil {
+			return err
+		}
+		autoIdleProvided := cmd.Flags().Lookup("auto-idle").Changed
 
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
@@ -144,8 +142,8 @@ var updateEnvironmentCmd = &cobra.Command{
 			DeployTitle:          nullStrCheck(deployTitle),
 			Openshift:            nullUintCheck(deploytarget),
 		}
-		if environmentAutoIdleProvided {
-			environmentFlags.AutoIdle = &environmentAutoIdle
+		if autoIdleProvided {
+			environmentFlags.AutoIdle = nullBoolToUint(autoIdle)
 		}
 		if environmentType != "" {
 			envType := schema.EnvType(strings.ToUpper(environmentType))
@@ -177,12 +175,6 @@ var updateEnvironmentCmd = &cobra.Command{
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		return nil
 	},
-}
-
-func checkFlags(f *pflag.Flag) {
-	if f.Name == "auto-idle" {
-		environmentAutoIdleProvided = true
-	}
 }
 
 var listBackupsCmd = &cobra.Command{
@@ -320,7 +312,7 @@ func init() {
 	updateEnvironmentCmd.Flags().String("namespace", "", "Update the namespace for the selected environment")
 	updateEnvironmentCmd.Flags().String("route", "", "Update the route for the selected environment")
 	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes for the selected environment")
-	updateEnvironmentCmd.Flags().UintVarP(&environmentAutoIdle, "auto-idle", "a", 1, "Auto idle setting of the environment")
+	updateEnvironmentCmd.Flags().BoolP("auto-idle", "a", false, "Auto idle setting of the environment. Set to enable, --auto-idle=false to disable")
 	updateEnvironmentCmd.Flags().UintP("deploytarget", "d", 0, "Reference to Deploytarget(Kubernetes) this Environment should be deployed to")
 	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - production | development")
 	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - branch | pullrequest | promote")
