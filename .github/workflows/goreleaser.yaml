@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         goversion:
-        - 1.21
+        - 1.22
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -31,11 +31,11 @@ jobs:
 
   goreleaser:
     needs: test-suite
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         goversion:
-        - 1.21
+        - 1.22
     steps:
       -
         name: Checkout
