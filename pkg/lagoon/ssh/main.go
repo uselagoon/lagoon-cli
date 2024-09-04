@@ -163,13 +163,13 @@ Add correct host key in %s to get rid of this message`
 
 // add interactive known hosts to reduce confusion with host key errors
 func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.HostKeyCallback, []string, error) {
+	if ignorehost {
+		// if ignore provided, just skip the hostkey verifications
+		return ssh.InsecureIgnoreHostKey(), nil, nil
+	}
 	kh, err := knownhosts.NewDB(path.Join(userPath, ".ssh/known_hosts"))
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
-	}
-	if ignorehost {
-		// if ignore provided, just skip the hostkey verifications
-		return ssh.InsecureIgnoreHostKey(), kh.HostKeyAlgorithms(host), nil
 	}
 	// otherwise prompt or accept for the key if required
 	return ssh.HostKeyCallback(func(hostname string, remote net.Addr, key ssh.PublicKey) error {
