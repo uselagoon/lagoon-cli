@@ -41,10 +41,10 @@ release:
     brew install lagoon
     ```
     ### Running from released binaries
-    Alternatively, you may install by downloading one of the pre-compiled binaries (replace `amd64` with `arm64` for ARM-compatible binaries)
+    Alternatively, you may install by downloading one of the pre-compiled binaries
     ```
     # MacOS
-    sudo curl -L "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/releases/download/v{{.Version}}/lagoon-cli-v{{.Version}}-darwin-amd64" -o /usr/local/bin/lagoon && sudo chmod +x /usr/local/bin/lagoon
+    sudo curl -L "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/releases/download/v{{.Version}}/lagoon-cli-v{{.Version}}-darwin-arm64" -o /usr/local/bin/lagoon && sudo chmod +x /usr/local/bin/lagoon
     # Linux
     sudo curl -L "https://github.com/{{ .Env.LOCAL_ORG }}/lagoon-cli/releases/download/v{{.Version}}/lagoon-cli-v{{.Version}}-linux-amd64" -o /usr/local/bin/lagoon && sudo chmod +x /usr/local/bin/lagoon
     ```
