@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -1289,6 +1290,76 @@ var listOrganizationsCmd = &cobra.Command{
 	},
 }
 
+var listEnvironmentServicesCmd = &cobra.Command{
+	Use:     "environment-services",
+	Aliases: []string{"es"},
+	Short:   "Get information about an environments services",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		project, err := lagoon.GetProjectByName(context.TODO(), cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		if err != nil {
+			return err
+		}
+
+		if project.Name == "" || environment.Name == "" {
+			if project.Name == "" {
+				return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
+			} else {
+				return handleNilResults("Environment '%s' not found in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
+			}
+		}
+
+		data := []output.Data{}
+		envHeader := []string{"EnvironmentID", "EnvironmentName", "ServiceID", "ServiceName", "ServiceType", "Containers", "Updated", "Created"}
+		for _, es := range environment.Services {
+			containers := []string{}
+			for _, c := range es.Containers {
+				containers = append(containers, c.Name)
+			}
+			envData := []string{
+				returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
+				returnNonEmptyString(fmt.Sprintf("%d", es.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", es.Name)),
+				returnNonEmptyString(fmt.Sprintf("%v", es.Type)),
+				returnNonEmptyString(fmt.Sprintf("%v", strings.Join(containers, ","))),
+				returnNonEmptyString(fmt.Sprintf("%v", es.Updated)),
+				returnNonEmptyString(fmt.Sprintf("%v", es.Created)),
+			}
+			data = append(data, envData)
+		}
+		dataMain := output.Table{
+			Header: envHeader,
+			Data:   data,
+		}
+		r := output.RenderOutput(dataMain, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		return nil
+	},
+}
+
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
@@ -1313,6 +1384,7 @@ func init() {
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(listOrganizationsCmd)
+	listCmd.AddCommand(listEnvironmentServicesCmd)
 	listAllUsersCmd.Flags().StringP("email", "E", "", "The email address of a user")
 	listUsersGroupsCmd.Flags().StringP("email", "E", "", "The email address of a user")
 	listCmd.Flags().BoolVarP(&listAllProjects, "all-projects", "", false, "All projects (if supported)")
