@@ -339,8 +339,11 @@ var getProjectKeyCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if projectKey.PublicKey == "" && projectKey.PrivateKey == "" {
+		if projectKey.PublicKey == "" {
 			return handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)
+		}
+		if revealValue && projectKey.PrivateKey == "" {
+			return handleNilResults("No private-key for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		projectKeys := []string{projectKey.PublicKey}
