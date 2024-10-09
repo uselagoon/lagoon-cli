@@ -149,6 +149,10 @@ This returns information about a deployment, the logs of this build can also be 
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		showLogs, err := cmd.Flags().GetBool("logs")
 		if err != nil {
 			return err
@@ -184,27 +188,35 @@ This returns information about a deployment, the logs of this build can also be 
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
+		data := []output.Data{}
+		dep := []string{
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.ID)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.BuildStep)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
+		}
+		if wide {
+			dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)))
+			dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)))
+		}
+		data = append(data, dep)
+		header := []string{
+			"ID",
+			"Name",
+			"Status",
+			"BuildStep",
+			"Started",
+			"Completed",
+		}
+		if wide {
+			header = append(header, "Created")
+			header = append(header, "RemoteID")
+		}
 		dataMain := output.Table{
-			Header: []string{
-				"ID",
-				"RemoteID",
-				"Name",
-				"Status",
-				"Created",
-				"Started",
-				"Completed",
-			},
-			Data: []output.Data{
-				{
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
-				},
-			},
+			Header: header,
+			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
@@ -447,6 +459,7 @@ func init() {
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
 	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
+	getDeploymentByNameCmd.Flags().Bool("wide", false, "Display additional information about deployments")
 	getOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	getEnvironmentCmd.Flags().Bool("wide", false, "Display additional information about the environment")
 	getProjectCmd.Flags().Bool("wide", false, "Display additional information about the project")
