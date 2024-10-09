@@ -1,15 +1,4 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-/vendor
-/.idea
-site/
-
-/builds/lagoon-cli-*
+/dist
+/cover.out
+/cover.out.raw
+/sbom.spdx.json
