@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine as build
+FROM golang:1.21-alpine AS build
 
 WORKDIR /go/src/github.com/uselagoon/lagoon-cli/
 COPY . .

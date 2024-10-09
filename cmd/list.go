@@ -1081,7 +1081,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 	},
 }
 
-var ListOrganizationUsersCmd = &cobra.Command{
+var listOrganizationUsersCmd = &cobra.Command{
 	Use:     "organization-users",
 	Aliases: []string{"org-u"},
 	Short:   "List users in an organization",
@@ -1264,7 +1264,7 @@ func init() {
 	listCmd.AddCommand(listAllUsersCmd)
 	listCmd.AddCommand(listUsersGroupsCmd)
 	listCmd.AddCommand(listOrganizationProjectsCmd)
-	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(listOrganizationUsersCmd)
 	listCmd.AddCommand(listOrganizationAdminsCmd)
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
@@ -1277,7 +1277,7 @@ func init() {
 	listGroupProjectsCmd.Flags().BoolP("all-projects", "", false, "All projects")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationAdminsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")

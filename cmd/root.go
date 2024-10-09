@@ -155,7 +155,7 @@ func init() {
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
 
-	rootCmd.Flags().MarkHidden("docs")
+	_ = rootCmd.Flags().MarkHidden("docs")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}

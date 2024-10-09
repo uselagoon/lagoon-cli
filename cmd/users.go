@@ -27,25 +27,25 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 	var err error
 
 	// will fail if value is not right
-	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
+	switch splitKey[0] {
+	case "ssh-rsa":
 		keyType = schema.SSHRsa
-	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
+	case "ssh-ed25519":
 		keyType = schema.SSHEd25519
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
+	case "ecdsa-sha2-nistp256":
 		keyType = schema.SSHECDSA256
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
+	case "ecdsa-sha2-nistp384":
 		keyType = schema.SSHECDSA384
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
+	case "ecdsa-sha2-nistp521":
 		keyType = schema.SSHECDSA521
-	} else {
-		// return error stating key type not supported
+	default:
 		keyType = schema.SSHRsa
-		err = fmt.Errorf(fmt.Sprintf("SSH key type %s not supported", splitKey[0]))
+		err = fmt.Errorf("SSH key type %s not supported", splitKey[0])
 	}
 
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
-		//strip new line
+		// strip new line
 		keyName = stripNewLines(splitKey[2])
 	} else if keyName == "" && len(splitKey) == 2 {
 		keyName = userEmail
@@ -373,7 +373,7 @@ var updateUserCmd = &cobra.Command{
 }
 
 var getUserKeysCmd = &cobra.Command{
-	//@TODO: once individual user interaction comes in, this will need to be adjusted
+	// @TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "user-sshkeys",
 	Aliases: []string{"us"},
 	Short:   "Get a user's SSH keys",
@@ -434,7 +434,7 @@ var getUserKeysCmd = &cobra.Command{
 }
 
 var getAllUserKeysCmd = &cobra.Command{
-	//@TODO: once individual user interaction comes in, this will need to be adjusted
+	// @TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "all-user-sshkeys",
 	Aliases: []string{"aus"},
 	Short:   "Get all user SSH keys",
@@ -479,10 +479,10 @@ var getAllUserKeysCmd = &cobra.Command{
 		var data []output.Data
 		for _, userData := range userGroups {
 			keyID := strconv.Itoa(int(userData.SSHKey.ID))
-			userEmail := returnNonEmptyString(strings.Replace(userData.UserEmail, " ", "_", -1))
-			keyName := returnNonEmptyString(strings.Replace(userData.SSHKey.Name, " ", "_", -1))
-			keyValue := returnNonEmptyString(strings.Replace(userData.SSHKey.KeyValue, " ", "_", -1))
-			keyType := returnNonEmptyString(strings.Replace(string(userData.SSHKey.KeyType), " ", "_", -1))
+			userEmail := returnNonEmptyString(strings.ReplaceAll(userData.UserEmail, " ", "_"))
+			keyName := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.Name, " ", "_"))
+			keyValue := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.KeyValue, " ", "_"))
+			keyType := returnNonEmptyString(strings.ReplaceAll(string(userData.SSHKey.KeyType), " ", "_"))
 			data = append(data, []string{
 				keyID,
 				userEmail,

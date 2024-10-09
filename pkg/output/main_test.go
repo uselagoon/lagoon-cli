@@ -61,7 +61,7 @@ func TestRenderError(t *testing.T) {
 	RenderError(testData, outputOptions)
 	w.Close()
 	var out bytes.Buffer
-	io.Copy(&out, r)
+	_, _ = io.Copy(&out, r)
 	if out.String() != testSuccess {
 		checkEqual(t, out.String(), testSuccess, " render error stdout processing failed")
 	}
@@ -87,7 +87,7 @@ func TestRenderInfo(t *testing.T) {
 	RenderInfo(testData, outputOptions)
 	w.Close()
 	var out bytes.Buffer
-	io.Copy(&out, r)
+	_, _ = io.Copy(&out, r)
 	if out.String() != testSuccess1 {
 		checkEqual(t, out.String(), testSuccess1, " render info stdout processing failed")
 	}
@@ -109,7 +109,7 @@ func TestRenderOutput(t *testing.T) {
 	}
 
 	var dataMain Table
-	json.Unmarshal([]byte(testData), &dataMain)
+	_ = json.Unmarshal([]byte(testData), &dataMain)
 
 	output := RenderOutput(dataMain, outputOptions)
 	if output != testSuccess1 {

@@ -157,7 +157,12 @@ func retrieveTokenViaSsh() (string, error) {
 		HostKeyCallback:   hkcb,
 		HostKeyAlgorithms: hkalgo,
 	}
-	defer closeSSHAgent()
+	defer func() {
+		err = closeSSHAgent()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+		}
+	}()
 
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {

@@ -39,7 +39,7 @@ func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
 	})
 	jsonStr, _ := json.Marshal(configMap)
 	parsedFlags := LagoonConfigFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
+	_ = json.Unmarshal(jsonStr, &parsedFlags)
 	return parsedFlags
 }
 
@@ -55,12 +55,10 @@ var configDefaultCmd = &cobra.Command{
 	Use:     "default",
 	Aliases: []string{"d"},
 	Short:   "Set the default Lagoon to use",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
-			fmt.Println("Not enough arguments")
-			cmd.Help()
-			os.Exit(1)
+			return fmt.Errorf("not enough arguments")
 		}
 		lagoonCLIConfig.Default = strings.TrimSpace(string(lagoonConfig.Lagoon))
 		contextExists := false
@@ -70,8 +68,7 @@ var configDefaultCmd = &cobra.Command{
 			}
 		}
 		if !contextExists {
-			fmt.Println(fmt.Printf("Chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current))
-			os.Exit(1)
+			return fmt.Errorf("chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current)
 		}
 		err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
@@ -84,6 +81,7 @@ var configDefaultCmd = &cobra.Command{
 		}
 		r := output.RenderResult(resultData, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		return nil
 	},
 }
 

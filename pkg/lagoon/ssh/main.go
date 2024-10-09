@@ -66,7 +66,12 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 		if err != nil {
 			return err
 		}
-		defer term.Restore(fileDescriptor, originalState)
+		defer func() {
+			err = term.Restore(fileDescriptor, originalState)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error restoring ssh terminal:%v\n", err)
+			}
+		}()
 		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
@@ -85,23 +90,22 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	err = session.Start(connString)
 	if err != nil {
-		return fmt.Errorf("Failed to start shell: " + err.Error())
+		return fmt.Errorf("failed to start shell: %s", err.Error())
 	}
-	session.Wait()
-	return nil
+	return session.Wait()
 }
 
 // RunSSHCommand .
 func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("failed to dial: %s\nCheck that the project or environment you are trying to connect to exists", err.Error())
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create session: " + err.Error())
+		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -118,7 +122,12 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		if err != nil {
 			return err
 		}
-		defer term.Restore(fileDescriptor, originalState)
+		defer func() {
+			err = term.Restore(fileDescriptor, originalState)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error restoring ssh terminal:%v\n", err)
+			}
+		}()
 		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
@@ -188,7 +197,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
 			if ferr == nil {
 				defer f.Close()
-				response := "n"
+				var response string
 				if accept {
 					response = "y"
 				} else {
