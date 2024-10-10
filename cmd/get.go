@@ -327,17 +327,9 @@ var getProjectKeyCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-
 		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
 		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project exists", err.Error())
 		}
 		if projectKey.PublicKey == "" {
 			return handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)

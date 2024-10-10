@@ -494,17 +494,9 @@ var listDeploymentsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		deployments, err := lagoon.GetDeploymentsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-
-		deployments, err := lagoon.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
@@ -558,17 +550,9 @@ var listTasksCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		tasks, err := lagoon.GetTasksByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-
-		tasks, err := lagoon.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
@@ -796,16 +780,9 @@ var listInvokableTasks = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
