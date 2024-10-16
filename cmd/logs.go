@@ -163,7 +163,12 @@ var logsCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("couldn't get SSH client config: %v", err)
 		}
-		defer closeSSHAgent()
+		defer func() {
+			err = closeSSHAgent()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+			}
+		}()
 		// start SSH log streaming session
 		err = lagoonssh.LogStream(sshConfig, sshHost, sshPort, argv)
 		if err != nil {

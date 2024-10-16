@@ -43,7 +43,7 @@ func CreateTmpDir(prefix string) string {
 func CleanupDir(dir string) {
 	err := os.RemoveAll(dir)
 	if err != nil {
-		log.Println(fmt.Sprintf("Failed to remove directory %s, err: %v", dir, err))
+		log.Printf("Failed to remove directory %s, err: %v", dir, err)
 	}
 }
 

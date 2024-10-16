@@ -157,7 +157,11 @@ func Test_flagStringNullValueOrNil(t *testing.T) {
 			for k, v := range tt.args.flags {
 				flags.StringP(k, "", "", "")
 				if v != nil {
-					flags.Set(k, v.(string))
+					err := flags.Set(k, v.(string))
+					if (err != nil) != tt.wantErr {
+						t.Errorf("flagStringNullValueOrNil() error setting flags = %v, wantErr %v", err, tt.wantErr)
+						return
+					}
 				}
 			}
 			got, err := flagStringNullValueOrNil(flags, tt.args.flag)
