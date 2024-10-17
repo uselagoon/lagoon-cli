@@ -57,13 +57,8 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
 		addDeployTargetConfig := &schema.AddDeployTargetConfigInput{
-			Project: project.ID,
-			Weight:  weight,
+			Weight: weight,
 		}
 		if branches != "" {
 			addDeployTargetConfig.Branches = branches
@@ -75,9 +70,9 @@ var addDeployTargetConfigCmd = &cobra.Command{
 			addDeployTargetConfig.DeployTarget = deploytarget
 		}
 		if yesNo(fmt.Sprintf("You are attempting to add a deploytarget configuration to project '%s', are you sure?", cmdProjectName)) {
-			deployTargetConfig, err := lagoon.AddDeployTargetConfiguration(context.TODO(), addDeployTargetConfig, lc)
+			deployTargetConfig, err := lagoon.AddDeployTargetConfigurationByProjectName(context.TODO(), cmdProjectName, addDeployTargetConfig, lc)
 			if err != nil {
-				return err
+				return fmt.Errorf("%v: check if the project exists", err.Error())
 			}
 			data := []output.Data{}
 			data = append(data, []string{
@@ -234,18 +229,10 @@ var deleteDeployTargetConfigCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
-		}
-
 		if yesNo(fmt.Sprintf("You are attempting to delete deploytarget configuration with id '%d' from project '%s', are you sure?", id, cmdProjectName)) {
-			result, err := lagoon.DeleteDeployTargetConfiguration(context.TODO(), int(id), int(project.ID), lc)
+			result, err := lagoon.DeleteDeployTargetConfigurationByIDAndProjectName(context.TODO(), id, cmdProjectName, lc)
 			if err != nil {
-				return err
+				return fmt.Errorf("%v: check if the project exists", err.Error())
 			}
 			resultData := output.Result{
 				Result: result.DeleteDeployTargetConfig,
@@ -284,16 +271,9 @@ var listDeployTargetConfigsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		deployTargetConfigs, err := lagoon.GetDeployTargetConfigsByProjectName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
-		}
-		deployTargetConfigs, err := lagoon.GetDeployTargetConfigs(context.TODO(), int(project.ID), lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project exists", err.Error())
 		}
 		if len(*deployTargetConfigs) == 0 {
 			return handleNilResults("No deploytarget-configs for project '%s'\n", cmd, cmdProjectName)
