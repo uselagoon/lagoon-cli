@@ -15,33 +15,16 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (schema.AddSSHKeyInput, error) {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (*schema.AddUserSSHPublicKeyInput, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := os.ReadFile(sshPubKey) // just pass the file name
-		handleError(err)
+		if err != nil {
+			return nil, err
+		}
 		keyValue = string(b)
 	}
 	splitKey := strings.Split(keyValue, " ")
-	var keyType schema.SSHKeyType
-	var err error
-
-	// will fail if value is not right
-	switch splitKey[0] {
-	case "ssh-rsa":
-		keyType = schema.SSHRsa
-	case "ssh-ed25519":
-		keyType = schema.SSHEd25519
-	case "ecdsa-sha2-nistp256":
-		keyType = schema.SSHECDSA256
-	case "ecdsa-sha2-nistp384":
-		keyType = schema.SSHECDSA384
-	case "ecdsa-sha2-nistp521":
-		keyType = schema.SSHECDSA521
-	default:
-		keyType = schema.SSHRsa
-		err = fmt.Errorf("SSH key type %s not supported", splitKey[0])
-	}
 
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
@@ -51,16 +34,13 @@ func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmai
 		keyName = userEmail
 		output.RenderInfo("no name provided, using email address as key name\n", outputOptions)
 	}
-	SSHKeyInput := schema.AddSSHKeyInput{
-		SSHKey: schema.SSHKey{
-			KeyType:  keyType,
-			KeyValue: stripNewLines(splitKey[1]),
-			Name:     keyName,
-		},
+	SSHKeyInput := schema.AddUserSSHPublicKeyInput{
+		PublicKey: keyValue,
+		Name:      keyName,
 		UserEmail: userEmail,
 	}
 
-	return SSHKeyInput, err
+	return &SSHKeyInput, nil
 }
 
 var addUserCmd = &cobra.Command{
@@ -189,7 +169,7 @@ Add key by defining key value, but not specifying a key name (will default to tr
 		if err != nil {
 			return err
 		}
-		result, err := lagoon.AddSSHKey(context.TODO(), &userSSHKey, lc)
+		result, err := lagoon.AddUserSSHPublicKey(context.TODO(), userSSHKey, lc)
 		if err != nil {
 			return err
 		}
@@ -236,7 +216,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete SSH key ID:'%d', are you sure?", sshKeyID)) {
-			_, err := lagoon.RemoveSSHKey(context.TODO(), sshKeyID, lc)
+			_, err := lagoon.DeleteUserSSHPublicKey(context.TODO(), sshKeyID, lc)
 			if err != nil {
 				return err
 			}
