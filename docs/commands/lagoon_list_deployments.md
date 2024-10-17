@@ -10,6 +10,7 @@ lagoon list deployments [flags]
 
 ```
   -h, --help   help for deployments
+      --wide   Display additional information about deployments
 ```
 
 ### Options inherited from parent commands
