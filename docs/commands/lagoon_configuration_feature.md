@@ -1,15 +1,18 @@
-## lagoon config current
+## lagoon configuration feature
 
-Display the current Lagoon that commands would be executed against
+Enable or disable a feature for all contexts or a specific context
 
 ```
-lagoon config current [flags]
+lagoon configuration feature [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for current
+      --context string   If provided the feature will be enabled for this context, otherwise globally
+      --feature string   The name of the feature to enable or disable [environment-from-directory,disable-update-check,ssh-token,no-strict-host-key-checking]
+  -h, --help             help for feature
+      --state            The state of the feature (--state=true or --state=false)
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +38,5 @@ lagoon config current [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 
