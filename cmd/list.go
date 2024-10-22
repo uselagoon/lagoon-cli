@@ -481,6 +481,10 @@ var listDeploymentsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
@@ -501,22 +505,38 @@ var listDeploymentsCmd = &cobra.Command{
 
 		data := []output.Data{}
 		for _, deployment := range deployments.Deployments {
-			data = append(data, []string{
+			dep := []string{
 				returnNonEmptyString(fmt.Sprintf("%d", deployment.ID)),
-				returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
-				returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.BuildStep)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
-			})
+			}
+			if wide {
+				dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)))
+				dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)))
+			}
+			data = append(data, dep)
 		}
 
 		if len(data) == 0 {
 			return handleNilResults("There are no deployments for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 		}
+		header := []string{
+			"ID",
+			"Name",
+			"Status",
+			"BuildStep",
+			"Started",
+			"Completed",
+		}
+		if wide {
+			header = append(header, "Created")
+			header = append(header, "RemoteID")
+		}
 		dataMain := output.Table{
-			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
+			Header: header,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -1226,6 +1246,7 @@ var listOrganizationsCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
+	listDeploymentsCmd.Flags().Bool("wide", false, "Display additional information about deployments")
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
 	listCmd.AddCommand(listProjectGroupsCmd)
