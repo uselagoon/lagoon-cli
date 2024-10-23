@@ -89,6 +89,7 @@ var addUserCmd = &cobra.Command{
 			LastName:      LastName,
 			Email:         email,
 			ResetPassword: resetPassword,
+			Comment:       "added via lagoon-cli",
 		}
 		user, err := lagoon.AddUser(context.TODO(), userInput, lc)
 		if err != nil {
