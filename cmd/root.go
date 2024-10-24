@@ -106,7 +106,7 @@ var rootCmd = &cobra.Command{
 			displayVersionInfo()
 			return
 		}
-		cmd.Help()
+		_ = cmd.Help()
 		os.Exit(1)
 	},
 }

@@ -76,7 +76,12 @@ var sshEnvCmd = &cobra.Command{
 				HostKeyCallback:   hkcb,
 				HostKeyAlgorithms: hkalgo,
 			}
-			defer closeSSHAgent()
+			defer func() {
+				err = closeSSHAgent()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+				}
+			}()
 			if sshCommand != "" {
 				err = lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
 			} else {

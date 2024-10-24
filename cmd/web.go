@@ -17,7 +17,7 @@ var webCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdProjectName == "" {
 			fmt.Println("Missing arguments: Project name is not defined")
-			cmd.Help()
+			_ = cmd.Help()
 			os.Exit(1)
 		}
 

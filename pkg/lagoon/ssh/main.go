@@ -43,13 +43,13 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("failed to dial: %s\nCheck that the project or environment you are trying to connect to exists", err.Error())
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create session: " + err.Error())
+		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout

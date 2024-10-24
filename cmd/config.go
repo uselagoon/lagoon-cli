@@ -215,7 +215,7 @@ var configDeleteCmd = &cobra.Command{
 
 		if lagoonConfig.Lagoon == "" {
 			fmt.Println("Missing arguments: Lagoon name is not defined")
-			cmd.Help()
+			_ = cmd.Help()
 			os.Exit(1)
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete config for lagoon '%s', are you sure?", lagoonConfig.Lagoon)) {
