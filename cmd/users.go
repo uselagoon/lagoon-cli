@@ -311,7 +311,6 @@ var updateUserCmd = &cobra.Command{
 			return err
 		}
 		if firstName == "" && lastName == "" && emailAddress == "" {
-			cmd.Help()
 			output.RenderError("Missing arguments: Nothing to update, please provide a field to update", outputOptions)
 			return nil
 		}
