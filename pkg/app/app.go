@@ -98,7 +98,7 @@ func findLocalProjectRoot(path string) (string, error) {
 			return path, nil
 		}
 	}
-	return "", fmt.Errorf("no %s file was found in this directory or any parent", filepath.Join(".lagoon.yml"))
+	return "", fmt.Errorf("no .lagoon.yml file was found in this directory or any parent")
 }
 
 // FileExists checks a file's existence
