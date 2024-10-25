@@ -25,4 +25,4 @@ jobs:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     - uses: docker://rhysd/actionlint:1.7.0@sha256:601d6faeefa07683a4a79f756f430a1850b34d575d734b1d1324692202bf312e # v1.7.0
       with:
-        args: -color -shellcheck=
+        args: -color
