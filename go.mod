@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/google/go-github v0.0.0-20180716180158-c0b63e2f9bb1
+	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/uuid v1.5.0
 	github.com/guregu/null v4.0.0+incompatible
 	github.com/hashicorp/go-version v1.6.0
