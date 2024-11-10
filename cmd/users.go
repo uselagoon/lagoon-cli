@@ -15,52 +15,32 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
-func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (schema.AddSSHKeyInput, error) {
+func parseSSHKeyFile(sshPubKey string, keyName string, keyValue string, userEmail string) (*schema.AddUserSSHPublicKeyInput, error) {
 	// if we haven't got a keyvalue
 	if keyValue == "" {
 		b, err := os.ReadFile(sshPubKey) // just pass the file name
-		handleError(err)
+		if err != nil {
+			return nil, err
+		}
 		keyValue = string(b)
 	}
 	splitKey := strings.Split(keyValue, " ")
-	var keyType schema.SSHKeyType
-	var err error
-
-	// will fail if value is not right
-	if strings.EqualFold(string(splitKey[0]), "ssh-rsa") {
-		keyType = schema.SSHRsa
-	} else if strings.EqualFold(string(splitKey[0]), "ssh-ed25519") {
-		keyType = schema.SSHEd25519
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp256") {
-		keyType = schema.SSHECDSA256
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp384") {
-		keyType = schema.SSHECDSA384
-	} else if strings.EqualFold(string(splitKey[0]), "ecdsa-sha2-nistp521") {
-		keyType = schema.SSHECDSA521
-	} else {
-		// return error stating key type not supported
-		keyType = schema.SSHRsa
-		err = fmt.Errorf(fmt.Sprintf("SSH key type %s not supported", splitKey[0]))
-	}
 
 	// if the sshkey has a comment/name in it, we can use that
 	if keyName == "" && len(splitKey) == 3 {
-		//strip new line
+		// strip new line
 		keyName = stripNewLines(splitKey[2])
 	} else if keyName == "" && len(splitKey) == 2 {
 		keyName = userEmail
 		output.RenderInfo("no name provided, using email address as key name\n", outputOptions)
 	}
-	SSHKeyInput := schema.AddSSHKeyInput{
-		SSHKey: schema.SSHKey{
-			KeyType:  keyType,
-			KeyValue: stripNewLines(splitKey[1]),
-			Name:     keyName,
-		},
+	SSHKeyInput := schema.AddUserSSHPublicKeyInput{
+		PublicKey: keyValue,
+		Name:      keyName,
 		UserEmail: userEmail,
 	}
 
-	return SSHKeyInput, err
+	return &SSHKeyInput, nil
 }
 
 var addUserCmd = &cobra.Command{
@@ -109,6 +89,7 @@ var addUserCmd = &cobra.Command{
 			LastName:      LastName,
 			Email:         email,
 			ResetPassword: resetPassword,
+			Comment:       "added via lagoon-cli",
 		}
 		user, err := lagoon.AddUser(context.TODO(), userInput, lc)
 		if err != nil {
@@ -189,7 +170,7 @@ Add key by defining key value, but not specifying a key name (will default to tr
 		if err != nil {
 			return err
 		}
-		result, err := lagoon.AddSSHKey(context.TODO(), &userSSHKey, lc)
+		result, err := lagoon.AddUserSSHPublicKey(context.TODO(), userSSHKey, lc)
 		if err != nil {
 			return err
 		}
@@ -236,7 +217,7 @@ var deleteSSHKeyCmd = &cobra.Command{
 			debug)
 
 		if yesNo(fmt.Sprintf("You are attempting to delete SSH key ID:'%d', are you sure?", sshKeyID)) {
-			_, err := lagoon.RemoveSSHKey(context.TODO(), sshKeyID, lc)
+			_, err := lagoon.DeleteUserSSHPublicKey(context.TODO(), sshKeyID, lc)
 			if err != nil {
 				return err
 			}
@@ -330,7 +311,6 @@ var updateUserCmd = &cobra.Command{
 			return err
 		}
 		if firstName == "" && lastName == "" && emailAddress == "" {
-			cmd.Help()
 			output.RenderError("Missing arguments: Nothing to update, please provide a field to update", outputOptions)
 			return nil
 		}
@@ -373,7 +353,7 @@ var updateUserCmd = &cobra.Command{
 }
 
 var getUserKeysCmd = &cobra.Command{
-	//@TODO: once individual user interaction comes in, this will need to be adjusted
+	// @TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "user-sshkeys",
 	Aliases: []string{"us"},
 	Short:   "Get a user's SSH keys",
@@ -434,7 +414,7 @@ var getUserKeysCmd = &cobra.Command{
 }
 
 var getAllUserKeysCmd = &cobra.Command{
-	//@TODO: once individual user interaction comes in, this will need to be adjusted
+	// @TODO: once individual user interaction comes in, this will need to be adjusted
 	Use:     "all-user-sshkeys",
 	Aliases: []string{"aus"},
 	Short:   "Get all user SSH keys",
@@ -479,10 +459,10 @@ var getAllUserKeysCmd = &cobra.Command{
 		var data []output.Data
 		for _, userData := range userGroups {
 			keyID := strconv.Itoa(int(userData.SSHKey.ID))
-			userEmail := returnNonEmptyString(strings.Replace(userData.UserEmail, " ", "_", -1))
-			keyName := returnNonEmptyString(strings.Replace(userData.SSHKey.Name, " ", "_", -1))
-			keyValue := returnNonEmptyString(strings.Replace(userData.SSHKey.KeyValue, " ", "_", -1))
-			keyType := returnNonEmptyString(strings.Replace(string(userData.SSHKey.KeyType), " ", "_", -1))
+			userEmail := returnNonEmptyString(strings.ReplaceAll(userData.UserEmail, " ", "_"))
+			keyName := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.Name, " ", "_"))
+			keyValue := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.KeyValue, " ", "_"))
+			keyType := returnNonEmptyString(strings.ReplaceAll(string(userData.SSHKey.KeyType), " ", "_"))
 			data = append(data, []string{
 				keyID,
 				userEmail,

@@ -1,5 +1,12 @@
 ## Lagoon CLI
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/uselagoon/lagoon-cli.svg)](https://pkg.go.dev/github.com/uselagoon/lagoon-cli)
+[![Release](https://github.com/uselagoon/lagoon-cli/actions/workflows/goreleaser.yaml/badge.svg)](https://github.com/uselagoon/lagoon-cli/actions/workflows/goreleaser.yaml)
+[![coverage](https://raw.githubusercontent.com/uselagoon/lagoon-cli/badges/.badges/main/coverage.svg)](https://github.com/uselagoon/lagoon-cli/actions/workflows/coverage.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/uselagoon/lagoon-cli)](https://goreportcard.com/report/github.com/uselagoon/lagoon-cli)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/uselagoon/lagoon-cli/badge)](https://securityscorecards.dev/viewer/?uri=github.com/uselagoon/lagoon-cli)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9386/badge)](https://www.bestpractices.dev/projects/9386)
+
 <img src="./docs/lagoon-cli-logo.png" width=100>
 
 This is a CLI for interacting with a [Lagoon](https://github.com/uselagoon/lagoon) instance. By default, it is configured

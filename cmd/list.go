@@ -481,6 +481,10 @@ var listDeploymentsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
 		}
@@ -494,37 +498,45 @@ var listDeploymentsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		deployments, err := lagoon.GetDeploymentsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-
-		deployments, err := lagoon.GetDeploymentsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
 		for _, deployment := range deployments.Deployments {
-			data = append(data, []string{
+			dep := []string{
 				returnNonEmptyString(fmt.Sprintf("%d", deployment.ID)),
-				returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
-				returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
+				returnNonEmptyString(fmt.Sprintf("%v", deployment.BuildStep)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
 				returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
-			})
+			}
+			if wide {
+				dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)))
+				dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)))
+			}
+			data = append(data, dep)
 		}
 
 		if len(data) == 0 {
 			return handleNilResults("There are no deployments for environment '%s' in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
 		}
+		header := []string{
+			"ID",
+			"Name",
+			"Status",
+			"BuildStep",
+			"Started",
+			"Completed",
+		}
+		if wide {
+			header = append(header, "Created")
+			header = append(header, "RemoteID")
+		}
 		dataMain := output.Table{
-			Header: []string{"ID", "RemoteID", "Name", "Status", "Created", "Started", "Completed"},
+			Header: header,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -558,17 +570,9 @@ var listTasksCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		tasks, err := lagoon.GetTasksByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-
-		tasks, err := lagoon.GetTasksByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
@@ -796,16 +800,9 @@ var listInvokableTasks = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironmentAndProjectName(context.TODO(), cmdProjectName, cmdProjectEnvironment, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-		tasks, err := lagoon.GetInvokableAdvancedTaskDefinitionsByEnvironment(context.TODO(), project.ID, cmdProjectEnvironment, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		data := []output.Data{}
@@ -1081,7 +1078,7 @@ var listOrganizationDeployTargetsCmd = &cobra.Command{
 	},
 }
 
-var ListOrganizationUsersCmd = &cobra.Command{
+var listOrganizationUsersCmd = &cobra.Command{
 	Use:     "organization-users",
 	Aliases: []string{"org-u"},
 	Short:   "List users in an organization",
@@ -1249,6 +1246,7 @@ var listOrganizationsCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(listDeployTargetsCmd)
 	listCmd.AddCommand(listDeploymentsCmd)
+	listDeploymentsCmd.Flags().Bool("wide", false, "Display additional information about deployments")
 	listCmd.AddCommand(listGroupsCmd)
 	listCmd.AddCommand(listGroupProjectsCmd)
 	listCmd.AddCommand(listProjectGroupsCmd)
@@ -1264,7 +1262,7 @@ func init() {
 	listCmd.AddCommand(listAllUsersCmd)
 	listCmd.AddCommand(listUsersGroupsCmd)
 	listCmd.AddCommand(listOrganizationProjectsCmd)
-	listCmd.AddCommand(ListOrganizationUsersCmd)
+	listCmd.AddCommand(listOrganizationUsersCmd)
 	listCmd.AddCommand(listOrganizationAdminsCmd)
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
@@ -1277,7 +1275,7 @@ func init() {
 	listGroupProjectsCmd.Flags().BoolP("all-projects", "", false, "All projects")
 	listVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 	listOrganizationProjectsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated projects for")
-	ListOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
+	listOrganizationUsersCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationAdminsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated users for")
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")

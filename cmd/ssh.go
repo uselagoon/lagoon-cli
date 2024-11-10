@@ -35,7 +35,7 @@ var sshEnvCmd = &cobra.Command{
 		// since ssh requires the `feature-branch` type name to be used as the ssh username
 		// run the environment through the makesafe and shorted functions that lagoon uses
 		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
-		sshHost, sshPort, isPortal, err := getSSHHostPort(environmentName, debug)
+		sshHost, sshPort, username, isPortal, err := getSSHHostPort(environmentName, debug)
 		if err != nil {
 			return fmt.Errorf("couldn't get SSH endpoint: %v", err)
 		}
@@ -56,7 +56,7 @@ var sshEnvCmd = &cobra.Command{
 		sshConfig := map[string]string{
 			"hostname": sshHost,
 			"port":     sshPort,
-			"username": cmdProjectName + "-" + environmentName,
+			"username": username,
 			"sshkey":   privateKey,
 		}
 		if sshConnString {
@@ -76,7 +76,12 @@ var sshEnvCmd = &cobra.Command{
 				HostKeyCallback:   hkcb,
 				HostKeyAlgorithms: hkalgo,
 			}
-			defer closeSSHAgent()
+			defer func() {
+				err = closeSSHAgent()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+				}
+			}()
 			if sshCommand != "" {
 				err = lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
 			} else {

@@ -393,16 +393,9 @@ var updateProjectCmd = &cobra.Command{
 			}
 		}
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		projectUpdate, err := lagoon.UpdateProjectByName(context.TODO(), cmdProjectName, projectPatch, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
-		}
-		projectUpdate, err := lagoon.UpdateProject(context.TODO(), int(project.ID), projectPatch, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project exists", err.Error())
 		}
 
 		resultData := output.Result{
@@ -573,13 +566,10 @@ var updateProjectMetadata = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+
+			projectResult, err := lagoon.UpdateProjectMetadataByName(context.TODO(), cmdProjectName, key, value, lc)
 			if err != nil {
-				return err
-			}
-			projectResult, err := lagoon.UpdateProjectMetadata(context.TODO(), int(project.ID), key, value, lc)
-			if err != nil {
-				return err
+				return fmt.Errorf("%v: check if the project exists", err.Error())
 			}
 			data := []output.Data{}
 			metaData, _ := json.Marshal(projectResult.Metadata)
@@ -630,11 +620,8 @@ var deleteProjectMetadataByKey = &cobra.Command{
 				lagoonCLIConfig.Lagoons[current].Version,
 				&token,
 				debug)
-			project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-			if err != nil {
-				return err
-			}
-			projectResult, err := lagoon.RemoveProjectMetadataByKey(context.TODO(), int(project.ID), key, lc)
+
+			projectResult, err := lagoon.RemoveProjectMetadataByKeyByName(context.TODO(), cmdProjectName, key, lc)
 			if err != nil {
 				return err
 			}
@@ -690,6 +677,7 @@ var removeProjectFromOrganizationCmd = &cobra.Command{
 			&token,
 			debug)
 
+		// this can stay for now as `removeProjectFromOrganization` is platform only scoped
 		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
 		if err != nil {
 			return err

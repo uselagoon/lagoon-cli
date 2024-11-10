@@ -118,19 +118,10 @@ var updateEnvironmentCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if project.Name == "" {
-			err = fmt.Errorf("project not found")
-		}
+
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if environment.Name == "" {
-			err = fmt.Errorf("environment not found")
-		}
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		environmentFlags := schema.UpdateEnvironmentPatchInput{
@@ -202,16 +193,9 @@ var listBackupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		if project.Name == "" {
-			return handleNilResults("No project found for '%s'\n", cmd, cmdProjectName)
-		}
-		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 		data := []output.Data{}
 		for _, backup := range backupsResult.Backups {
@@ -276,13 +260,9 @@ This returns a direct URL to the backup, this is a signed download link with a l
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 		status := ""
 		for _, backup := range backupsResult.Backups {

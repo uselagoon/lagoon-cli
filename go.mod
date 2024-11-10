@@ -18,8 +18,8 @@ require (
 	github.com/skeema/knownhosts v1.3.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.9.0
-	github.com/uselagoon/machinery v0.0.29
+	github.com/stretchr/testify v1.8.2
+	github.com/uselagoon/machinery v0.0.31
 	go.uber.org/mock v0.4.0
 	golang.org/x/crypto v0.26.0
 	golang.org/x/term v0.23.0

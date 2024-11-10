@@ -209,16 +209,9 @@ var addProjectToGroupCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		if len(project.Name) == 0 {
-			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
-		}
 		_, err = lagoon.AddProjectToGroup(context.TODO(), projectGroup, lc)
 		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or group exists", err.Error())
 		}
 
 		resultData := output.Result{
@@ -328,18 +321,10 @@ var deleteProjectFromGroupCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		if len(project.Name) == 0 {
-			return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
-		}
-
 		if yesNo(fmt.Sprintf("You are attempting to delete project '%s' from group '%s', are you sure?", projectGroup.Project.Name, projectGroup.Groups[0].Name)) {
 			_, err = lagoon.RemoveGroupsFromProject(context.TODO(), projectGroup, lc)
 			if err != nil {
-				return err
+				return fmt.Errorf("%v: check if the project or group exists", err.Error())
 			}
 
 			resultData := output.Result{

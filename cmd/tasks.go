@@ -149,11 +149,7 @@ var runDrushArchiveDump = &cobra.Command{
 			return err
 		}
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -218,11 +214,7 @@ var runDrushSQLDump = &cobra.Command{
 			return err
 		}
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -287,11 +279,7 @@ var runDrushCacheClear = &cobra.Command{
 			return err
 		}
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
 			return err
 		}
@@ -476,11 +464,7 @@ Path:
 			Command: taskCommand,
 			Service: taskService,
 		}
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
 			return err
 		}

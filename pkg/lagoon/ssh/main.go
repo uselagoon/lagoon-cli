@@ -43,13 +43,13 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("failed to dial: %s\nCheck that the project or environment you are trying to connect to exists", err.Error())
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create session: " + err.Error())
+		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -66,7 +66,12 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 		if err != nil {
 			return err
 		}
-		defer term.Restore(fileDescriptor, originalState)
+		defer func() {
+			err = term.Restore(fileDescriptor, originalState)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error restoring ssh terminal:%v\n", err)
+			}
+		}()
 		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
@@ -85,23 +90,22 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	err = session.Start(connString)
 	if err != nil {
-		return fmt.Errorf("Failed to start shell: " + err.Error())
+		return fmt.Errorf("failed to start shell: %s", err.Error())
 	}
-	session.Wait()
-	return nil
+	return session.Wait()
 }
 
 // RunSSHCommand .
 func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer string, command string, config *ssh.ClientConfig) error {
 	client, err := ssh.Dial("tcp", lagoon["hostname"]+":"+lagoon["port"], config)
 	if err != nil {
-		return fmt.Errorf("Failed to dial: " + err.Error() + "\nCheck that the project or environment you are trying to connect to exists")
+		return fmt.Errorf("failed to dial: %s\nCheck that the project or environment you are trying to connect to exists", err.Error())
 	}
 
 	// start the session
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create session: " + err.Error())
+		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
 	defer session.Close()
 	session.Stdout = os.Stdout
@@ -118,7 +122,12 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		if err != nil {
 			return err
 		}
-		defer term.Restore(fileDescriptor, originalState)
+		defer func() {
+			err = term.Restore(fileDescriptor, originalState)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error restoring ssh terminal:%v\n", err)
+			}
+		}()
 		termWidth, termHeight, err := term.GetSize(fileDescriptor)
 		if err != nil {
 			return err
@@ -163,13 +172,13 @@ Add correct host key in %s to get rid of this message`
 
 // add interactive known hosts to reduce confusion with host key errors
 func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.HostKeyCallback, []string, error) {
+	if ignorehost {
+		// if ignore provided, just skip the hostkey verifications
+		return ssh.InsecureIgnoreHostKey(), nil, nil
+	}
 	kh, err := knownhosts.NewDB(path.Join(userPath, ".ssh/known_hosts"))
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
-	}
-	if ignorehost {
-		// if ignore provided, just skip the hostkey verifications
-		return ssh.InsecureIgnoreHostKey(), kh.HostKeyAlgorithms(host), nil
 	}
 	// otherwise prompt or accept for the key if required
 	return ssh.HostKeyCallback(func(hostname string, remote net.Addr, key ssh.PublicKey) error {
@@ -188,7 +197,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
 			if ferr == nil {
 				defer f.Close()
-				response := "n"
+				var response string
 				if accept {
 					response = "y"
 				} else {

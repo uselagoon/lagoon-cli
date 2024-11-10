@@ -17,6 +17,7 @@ lagoon get deployment [flags]
   -h, --help          help for deployment
   -L, --logs          Show the build logs if available
   -N, --name string   The name of the deployment (eg, lagoon-build-abcdef)
+      --wide          Display additional information about deployments
 ```
 
 ### Options inherited from parent commands

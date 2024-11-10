@@ -11,6 +11,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/utils/namespace"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -56,7 +57,7 @@ func generateLogsCommand(service, container string, lines uint,
 	return argv, nil
 }
 
-func getSSHHostPort(environmentName string, debug bool) (string, string, bool, error) {
+func getSSHHostPort(environmentName string, debug bool) (string, string, string, bool, error) {
 	current := lagoonCLIConfig.Current
 	// set the default ssh host and port to the core ssh endpoint
 	sshHost := lagoonCLIConfig.Lagoons[current].HostName
@@ -75,24 +76,29 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, bool, e
 	defer cancel()
 	project, err := lagoon.GetSSHEndpointsByProject(ctx, cmdProjectName, lc)
 	if err != nil {
-		return "", "", portal, fmt.Errorf("couldn't get SSH endpoint by project: %v", err)
+		return "", "", "", portal, fmt.Errorf("couldn't get SSH endpoint by project: %v", err)
 	}
+	// default the username to the combinded project + made safe environment name
+	username := fmt.Sprintf("%s-%s", cmdProjectName, environmentName)
+
 	// check all the environments for this project
 	for _, env := range project.Environments {
-		// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
-		if env.Name == environmentName {
+		// if the env name matches the requested or computed environment then check if the deploytarget supports regional ssh endpoints
+		if env.OpenshiftProjectName == namespace.GenerateNamespaceName("", cmdProjectEnvironment, cmdProjectName, "", "", false) || env.Name == environmentName || env.Name == cmdProjectEnvironment {
 			// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
 			if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
 				sshHost = env.DeployTarget.SSHHost
 				sshPort = env.DeployTarget.SSHPort
 				portal = true
 			}
+			// found a matching env, use the actual namespace name for this environment
+			username = env.OpenshiftProjectName
 		}
 	}
-	return sshHost, sshPort, portal, nil
+	return sshHost, sshPort, username, portal, nil
 }
 
-func getSSHClientConfig(environmentName, host string, ignoreHostKey, acceptNewHostKey bool) (*ssh.ClientConfig,
+func getSSHClientConfig(username, host string, ignoreHostKey, acceptNewHostKey bool) (*ssh.ClientConfig,
 	func() error, error) {
 	skipAgent := false
 	privateKey := fmt.Sprintf("%s/.ssh/id_rsa", userPath)
@@ -115,7 +121,7 @@ func getSSHClientConfig(environmentName, host string, ignoreHostKey, acceptNewHo
 	// configure an SSH client session
 	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 	return &ssh.ClientConfig{
-		User:              cmdProjectName + "-" + environmentName,
+		User:              username,
 		Auth:              []ssh.AuthMethod{authMethod},
 		HostKeyCallback:   hkcb,
 		HostKeyAlgorithms: hkalgo,
@@ -148,16 +154,21 @@ var logsCmd = &cobra.Command{
 		environmentName := makeSafe(
 			shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
 		// query the Lagoon API for the environment's SSH endpoint
-		sshHost, sshPort, _, err := getSSHHostPort(environmentName, debug)
+		sshHost, sshPort, username, _, err := getSSHHostPort(environmentName, debug)
 		if err != nil {
 			return fmt.Errorf("couldn't get SSH endpoint: %v", err)
 		}
 		// configure SSH client session
-		sshConfig, closeSSHAgent, err := getSSHClientConfig(environmentName, fmt.Sprintf("%s:%s", sshHost, sshPort), ignoreHostKey, acceptNewHostKey)
+		sshConfig, closeSSHAgent, err := getSSHClientConfig(username, fmt.Sprintf("%s:%s", sshHost, sshPort), ignoreHostKey, acceptNewHostKey)
 		if err != nil {
 			return fmt.Errorf("couldn't get SSH client config: %v", err)
 		}
-		defer closeSSHAgent()
+		defer func() {
+			err = closeSSHAgent()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+			}
+		}()
 		// start SSH log streaming session
 		err = lagoonssh.LogStream(sshConfig, sshHost, sshPort, argv)
 		if err != nil {
