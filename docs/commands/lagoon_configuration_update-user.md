@@ -1,24 +1,17 @@
-## lagoon config add
+## lagoon configuration update-user
 
-Add information about an additional Lagoon instance to use
+Update a Lagoon context user
 
 ```
-lagoon config add [flags]
+lagoon configuration update-user [flags]
 ```
 
 ### Options
 
 ```
-      --create-config                    Create the config file if it is non existent (to be used with --config-file)
-  -g, --graphql string                   Lagoon GraphQL endpoint
-  -h, --help                             help for add
-  -H, --hostname string                  Lagoon SSH hostname
-  -k, --kibana string                    Lagoon Kibana URL (https://logs.amazeeio.cloud)
-  -P, --port string                      Lagoon SSH port
-      --publickey-identityfile strings   Specific public key identity files to use when doing ssh-agent checks (support multiple)
-      --ssh-key string                   SSH Key to use for this cluster for generating tokens
-  -t, --token string                     Lagoon GraphQL token
-  -u, --ui string                        Lagoon UI location (https://dashboard.amazeeio.cloud)
+  -h, --help             help for update-user
+      --name string      The name to reference this user as
+      --ssh-key string   The full path to this users ssh-key
 ```
 
 ### Options inherited from parent commands
@@ -43,5 +36,5 @@ lagoon config add [flags]
 
 ### SEE ALSO
 
-* [lagoon config](lagoon_config.md)	 - Configure Lagoon CLI
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

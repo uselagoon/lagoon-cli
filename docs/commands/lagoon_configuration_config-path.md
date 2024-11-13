@@ -1,21 +1,15 @@
-## lagoon login
+## lagoon configuration config-path
 
-Login and refresh a token
-
-### Synopsis
-
-Login and refresh a token
-Optionally reset the token to force a new one to be retrieved
+Get the path of where the config file lives
 
 ```
-lagoon login [flags]
+lagoon configuration config-path [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for login
-      --reset-token   clear the token before attempting to log in
+  -h, --help   help for config-path
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +35,5 @@ lagoon login [flags]
 
 ### SEE ALSO
 
-* [lagoon](lagoon.md)	 - Command line integration for Lagoon
+* [lagoon configuration](lagoon_configuration.md)	 - Manage or view the contexts and users for interacting with Lagoon
 

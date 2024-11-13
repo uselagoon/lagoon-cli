@@ -9,7 +9,7 @@ var uploadCmd = &cobra.Command{
 	Aliases: []string{"u"},
 	Short:   "Upload files to tasks",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
+		validateToken(lContext.Name) // get a new token if the current one is invalid
 	},
 }
 
