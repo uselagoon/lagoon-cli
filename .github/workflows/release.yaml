@@ -3,23 +3,23 @@ name: Release CLI
 on:
   push:
     tags:
-      - 'v*.*.*'
+    - 'v*.*.*'
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: "0"
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
         go-version: 1.21
     - name: Build CLI
       run: |
-        go install github.com/golang/mock/mockgen@v1.4.3
+        go install go.uber.org/mock/mockgen@v0.4.0
         make deps
         make test
     - name: Compile CLI
@@ -29,9 +29,23 @@ jobs:
         # create the archived versions and remove anything not required for the release
         rm ./builds/README.md ./builds/release_template.md
         for BUILD in $(ls builds); do tar --transform="flags=r;s|${BUILD}|lagoon|" -czf builds/${BUILD}.tar.gz -C builds ${BUILD}; done
+    - name: Generate SBOM from Github API
+      uses: advanced-security/sbom-generator-action@375dee8e6144d9fd0ec1f5667b4f6fb4faacefed # v0.0.1
+      id: sbom
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Move SBOM to avoid dirty git
+      run: mv "$GITHUB_SBOM_PATH" ./sbom.spdx.json
+      env:
+        GITHUB_SBOM_PATH: ${{ steps.sbom.outputs.fileName }}
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           builds/*
+          sbom.spdx.json
+    - name: Attest build provenance
+      uses: actions/attest-build-provenance@5e9cb68e95676991667494a6a4e59b8a2f13e1d0 # v1.3.3
+      with:
+        subject-path: "builds/*"

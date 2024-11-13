@@ -8,15 +8,10 @@ import (
 	"github.com/uselagoon/machinery/api/schema"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
-
-// @TODO re-enable this at some point if more environment based commands are made available
-var environmentAutoIdle uint
-var environmentAutoIdleProvided bool
 
 var deleteEnvCmd = &cobra.Command{
 	Use:     "environment",
@@ -105,8 +100,11 @@ var updateEnvironmentCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
-		cmd.Flags().Visit(checkFlags)
+		autoIdle, err := cmd.Flags().GetBool("auto-idle")
+		if err != nil {
+			return err
+		}
+		autoIdleProvided := cmd.Flags().Lookup("auto-idle").Changed
 
 		if err := requiredInputCheck("Project name", cmdProjectName, "Environment name", cmdProjectEnvironment); err != nil {
 			return err
@@ -120,19 +118,10 @@ var updateEnvironmentCmd = &cobra.Command{
 			lagoonCLIConfig.Lagoons[current].Version,
 			&token,
 			debug)
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
-		if project.Name == "" {
-			err = fmt.Errorf("project not found")
-		}
+
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		environment, err := lagoon.GetEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if environment.Name == "" {
-			err = fmt.Errorf("environment not found")
-		}
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 
 		environmentFlags := schema.UpdateEnvironmentPatchInput{
@@ -144,8 +133,8 @@ var updateEnvironmentCmd = &cobra.Command{
 			DeployTitle:          nullStrCheck(deployTitle),
 			Openshift:            nullUintCheck(deploytarget),
 		}
-		if environmentAutoIdleProvided {
-			environmentFlags.AutoIdle = &environmentAutoIdle
+		if autoIdleProvided {
+			environmentFlags.AutoIdle = nullBoolToUint(autoIdle)
 		}
 		if environmentType != "" {
 			envType := schema.EnvType(strings.ToUpper(environmentType))
@@ -179,12 +168,6 @@ var updateEnvironmentCmd = &cobra.Command{
 	},
 }
 
-func checkFlags(f *pflag.Flag) {
-	if f.Name == "auto-idle" {
-		environmentAutoIdleProvided = true
-	}
-}
-
 var listBackupsCmd = &cobra.Command{
 	Use:     "backups",
 	Aliases: []string{"b"},
@@ -210,13 +193,9 @@ var listBackupsCmd = &cobra.Command{
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 		data := []output.Data{}
 		for _, backup := range backupsResult.Backups {
@@ -281,13 +260,9 @@ This returns a direct URL to the backup, this is a signed download link with a l
 			&token,
 			debug)
 
-		project, err := lagoon.GetMinimalProjectByName(context.TODO(), cmdProjectName, lc)
+		backupsResult, err := lagoon.GetBackupsForEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
 		if err != nil {
-			return err
-		}
-		backupsResult, err := lagoon.GetBackupsForEnvironmentByName(context.TODO(), cmdProjectEnvironment, project.ID, lc)
-		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project or environment exists", err.Error())
 		}
 		status := ""
 		for _, backup := range backupsResult.Backups {
@@ -317,7 +292,7 @@ func init() {
 	updateEnvironmentCmd.Flags().String("namespace", "", "Update the namespace for the selected environment")
 	updateEnvironmentCmd.Flags().String("route", "", "Update the route for the selected environment")
 	updateEnvironmentCmd.Flags().String("routes", "", "Update the routes for the selected environment")
-	updateEnvironmentCmd.Flags().UintVarP(&environmentAutoIdle, "auto-idle", "a", 1, "Auto idle setting of the environment")
+	updateEnvironmentCmd.Flags().BoolP("auto-idle", "a", false, "Auto idle setting of the environment. Set to enable, --auto-idle=false to disable")
 	updateEnvironmentCmd.Flags().UintP("deploytarget", "d", 0, "Reference to Deploytarget(Kubernetes) this Environment should be deployed to")
 	updateEnvironmentCmd.Flags().String("environment-type", "", "Update the environment type - production | development")
 	updateEnvironmentCmd.Flags().String("deploy-type", "", "Update the deploy type - branch | pullrequest | promote")

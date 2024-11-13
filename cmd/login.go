@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	terminal "golang.org/x/term"
@@ -139,19 +140,30 @@ func retrieveTokenViaSsh() (string, error) {
 		privateKey = cmdSSHKey
 		skipAgent = true
 	}
+	ignoreHostKey, acceptNewHostKey := lagoonssh.CheckStrictHostKey(strictHostKeyCheck)
+	sshHost := fmt.Sprintf("%s:%s",
+		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
+		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
+	hkcb, hkalgo, err := lagoonssh.InteractiveKnownHosts(userPath, sshHost, ignoreHostKey, acceptNewHostKey)
+	if err != nil {
+		return "", fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
+	}
 	authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 	config := &ssh.ClientConfig{
 		User: "lagoon",
 		Auth: []ssh.AuthMethod{
 			authMethod,
 		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback:   hkcb,
+		HostKeyAlgorithms: hkalgo,
 	}
-	defer closeSSHAgent()
+	defer func() {
+		err = closeSSHAgent()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+		}
+	}()
 
-	sshHost := fmt.Sprintf("%s:%s",
-		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].HostName,
-		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Port)
 	conn, err := ssh.Dial("tcp", sshHost, config)
 	if err != nil {
 		return "", fmt.Errorf("unable to authenticate or connect to host %s\nthere may be an issue determining which ssh-key to use, or there may be an issue establishing a connection to the host\nthe error returned was: %v", sshHost, err)

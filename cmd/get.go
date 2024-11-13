@@ -63,10 +63,7 @@ var getProjectCmd = &cobra.Command{
 		}
 
 		if project.Name == "" {
-			outputOptions.Error = fmt.Sprintf("No details for project '%s'\n", cmdProjectName)
-			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
-			return nil
+			return handleNilResults("No details for project '%s'\n", cmd, cmdProjectName)
 		}
 
 		devEnvironments := 0
@@ -102,7 +99,11 @@ var getProjectCmd = &cobra.Command{
 			returnNonEmptyString(fmt.Sprintf("%v", project.GitURL)),
 			returnNonEmptyString(fmt.Sprintf("%v", project.ProductionEnvironment)),
 			returnNonEmptyString(fmt.Sprintf("%v", productionRoute)),
-			returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)),
+		}
+		if project.DevelopmentEnvironmentsLimit != nil {
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, *project.DevelopmentEnvironmentsLimit)))
+		} else {
+			projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, 0)))
 		}
 		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
 		if wide {
@@ -148,6 +149,10 @@ This returns information about a deployment, the logs of this build can also be 
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		showLogs, err := cmd.Flags().GetBool("logs")
 		if err != nil {
 			return err
@@ -183,27 +188,35 @@ This returns information about a deployment, the logs of this build can also be 
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 			return nil
 		}
+		data := []output.Data{}
+		dep := []string{
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.ID)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.BuildStep)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
+			returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
+		}
+		if wide {
+			dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)))
+			dep = append(dep, returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)))
+		}
+		data = append(data, dep)
+		header := []string{
+			"ID",
+			"Name",
+			"Status",
+			"BuildStep",
+			"Started",
+			"Completed",
+		}
+		if wide {
+			header = append(header, "Created")
+			header = append(header, "RemoteID")
+		}
 		dataMain := output.Table{
-			Header: []string{
-				"ID",
-				"RemoteID",
-				"Name",
-				"Status",
-				"Created",
-				"Started",
-				"Completed",
-			},
-			Data: []output.Data{
-				{
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.ID)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.RemoteID)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Name)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Status)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Created)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Started)),
-					returnNonEmptyString(fmt.Sprintf("%v", deployment.Completed)),
-				},
-			},
+			Header: header,
+			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
@@ -247,6 +260,19 @@ var getEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
+		if project.Name == "" || environment.Name == "" {
+			if project.Name == "" {
+				return handleNilResults("Project '%s' not found\n", cmd, cmdProjectName)
+			} else {
+				return handleNilResults("Environment '%s' not found in project '%s'\n", cmd, cmdProjectEnvironment, cmdProjectName)
+			}
+		}
+
+		autoIdle, err := strconv.ParseBool(strconv.Itoa(int(*environment.AutoIdle)))
+		if err != nil {
+			return err
+		}
+
 		data := []output.Data{}
 		var envRoute = "none"
 		if environment.Route != "" {
@@ -267,7 +293,7 @@ var getEnvironmentCmd = &cobra.Command{
 			envHeader = append(envHeader, "Created")
 			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Created)))
 			envHeader = append(envHeader, "AutoIdle")
-			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.AutoIdle)))
+			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", autoIdle)))
 			envHeader = append(envHeader, "DeployTitle")
 			envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)))
 			envHeader = append(envHeader, "DeployBaseRef")
@@ -315,8 +341,15 @@ var getProjectKeyCmd = &cobra.Command{
 
 		projectKey, err := lagoon.GetProjectKeyByName(context.TODO(), cmdProjectName, revealValue, lc)
 		if err != nil {
-			return err
+			return fmt.Errorf("%v: check if the project exists", err.Error())
 		}
+		if projectKey.PublicKey == "" {
+			return handleNilResults("No project-key for project '%s'\n", cmd, cmdProjectName)
+		}
+		if revealValue && projectKey.PrivateKey == "" {
+			return handleNilResults("No private-key for project '%s'\n", cmd, cmdProjectName)
+		}
+
 		projectKeys := []string{projectKey.PublicKey}
 		if projectKey.PrivateKey != "" {
 			projectKeys = append(projectKeys, strings.TrimSuffix(projectKey.PrivateKey, "\n"))
@@ -329,13 +362,6 @@ var getProjectKeyCmd = &cobra.Command{
 		dataMain := output.Table{
 			Header: []string{"PublicKey"},
 			Data:   data,
-		}
-
-		if len(dataMain.Data) == 0 {
-			outputOptions.Error = fmt.Sprintf("No project-key for project '%s'", cmdProjectName)
-			r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
-			return nil
 		}
 
 		if projectKey.PrivateKey != "" {
@@ -402,9 +428,9 @@ var getOrganizationCmd = &cobra.Command{
 			strconv.Itoa(int(organization.ID)),
 			organization.Name,
 			organization.Description,
-			strconv.Itoa(int(organization.QuotaProject)),
-			strconv.Itoa(int(organization.QuotaGroup)),
-			strconv.Itoa(int(organization.QuotaNotification)),
+			strconv.Itoa(organization.QuotaProject),
+			strconv.Itoa(organization.QuotaGroup),
+			strconv.Itoa(organization.QuotaNotification),
 		})
 
 		dataMain := output.Table{
@@ -433,6 +459,7 @@ func init() {
 	getProjectKeyCmd.Flags().BoolVarP(&revealValue, "reveal", "", false, "Reveal the variable values")
 	getDeploymentByNameCmd.Flags().StringP("name", "N", "", "The name of the deployment (eg, lagoon-build-abcdef)")
 	getDeploymentByNameCmd.Flags().BoolP("logs", "L", false, "Show the build logs if available")
+	getDeploymentByNameCmd.Flags().Bool("wide", false, "Display additional information about deployments")
 	getOrganizationCmd.Flags().StringP("organization-name", "O", "", "Name of the organization")
 	getEnvironmentCmd.Flags().Bool("wide", false, "Display additional information about the environment")
 	getProjectCmd.Flags().Bool("wide", false, "Display additional information about the project")

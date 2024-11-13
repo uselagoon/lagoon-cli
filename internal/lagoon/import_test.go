@@ -7,11 +7,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/uselagoon/lagoon-cli/internal/lagoon"
 	"github.com/uselagoon/lagoon-cli/internal/mock"
 	"github.com/uselagoon/lagoon-cli/internal/schema"
 	api "github.com/uselagoon/machinery/api/schema"
+	"go.uber.org/mock/gomock"
 )
 
 // importCalls stores arrays of expected import calls associated with a given

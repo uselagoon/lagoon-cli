@@ -41,6 +41,8 @@ var verboseOutput bool
 
 var skipUpdateCheck bool
 
+var strictHostKeyCheck string
+
 // global for the lagoon config that the cli uses
 // @TODO: when lagoon-cli rewrite happens, do this a bit better
 var lagoonCLIConfig lagooncli.Config
@@ -61,23 +63,26 @@ var rootCmd = &cobra.Command{
 		if lagoonCLIConfig.UpdateCheckDisable {
 			skipUpdateCheck = true
 		}
+		if lagoonCLIConfig.StrictHostKeyChecking != "" {
+			strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
+		}
 		if !skipUpdateCheck {
 			// Using code from https://github.com/drud/ddev/
 			updateFile := filepath.Join(userPath, ".lagoon.update")
 			// Do periodic detection of whether an update is available for lagoon-cli users.
 			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
 			if err != nil {
-				output.RenderInfo(fmt.Sprintf("Could not perform update check %v", err), outputOptions)
+				output.RenderInfo(fmt.Sprintf("Could not perform update check %v\n", err), outputOptions)
 			}
 			if timeToCheckForUpdates && isInternetActive() {
 				// Recreate the updatefile with current time so we won't do this again soon.
 				err = updatecheck.ResetUpdateTime(updateFile)
 				if err != nil {
-					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s", updateFile), outputOptions)
+					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s\n", updateFile), outputOptions)
 				}
 				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
 				if err != nil {
-					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.", outputOptions)
+					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.\n", outputOptions)
 					output.RenderError(err.Error(), outputOptions)
 					return
 				}
@@ -101,7 +106,7 @@ var rootCmd = &cobra.Command{
 			displayVersionInfo()
 			return
 		}
-		cmd.Help()
+		_ = cmd.Help()
 		os.Exit(1)
 	},
 }
@@ -142,6 +147,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&debugEnable, "debug", "", false, "Enable debugging output (if supported)")
 	rootCmd.PersistentFlags().BoolVarP(&skipUpdateCheck, "skip-update-check", "", false, "Skip checking for updates")
 	rootCmd.PersistentFlags().BoolVarP(&verboseOutput, "verbose", "v", false, "Enable verbose output to stderr (if supported)")
+	rootCmd.PersistentFlags().StringVar(&strictHostKeyCheck, "strict-host-key-checking", "accept-new", "Similar to SSH StrictHostKeyChecking (accept-new, no, ignore)")
 
 	// get config-file from flag
 	rootCmd.PersistentFlags().StringP("config-file", "", "", "Path to the config file to use (must be *.yml or *.yaml)")
@@ -149,7 +155,7 @@ func init() {
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "", false, "Version information")
 	rootCmd.Flags().BoolVarP(&docsFlag, "docs", "", false, "Generate docs")
 
-	rootCmd.Flags().MarkHidden("docs")
+	_ = rootCmd.Flags().MarkHidden("docs")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}

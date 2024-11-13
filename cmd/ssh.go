@@ -1,12 +1,8 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
-
-	"github.com/uselagoon/machinery/api/lagoon"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
 	"github.com/spf13/cobra"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
@@ -33,43 +29,16 @@ var sshEnvCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		ignoreHostKey, acceptNewHostKey := lagoonssh.CheckStrictHostKey(strictHostKeyCheck)
 
 		// allow the use of the `feature/branch` and standard `feature-branch` type environment names to be used
 		// since ssh requires the `feature-branch` type name to be used as the ssh username
 		// run the environment through the makesafe and shorted functions that lagoon uses
 		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
-
-		current := lagoonCLIConfig.Current
-		// set the default ssh host and port to the core ssh endpoint
-		sshHost := lagoonCLIConfig.Lagoons[current].HostName
-		sshPort := lagoonCLIConfig.Lagoons[current].Port
-		isPortal := false
-
-		// if the config for this lagoon is set to use ssh portal support, handle that here
-		token := lagoonCLIConfig.Lagoons[current].Token
-		lc := lclient.New(
-			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIVersion,
-			lagoonCLIConfig.Lagoons[current].Version,
-			&token,
-			debug)
-		project, err := lagoon.GetSSHEndpointsByProject(context.TODO(), cmdProjectName, lc)
+		sshHost, sshPort, username, isPortal, err := getSSHHostPort(environmentName, debug)
 		if err != nil {
-			return err
+			return fmt.Errorf("couldn't get SSH endpoint: %v", err)
 		}
-		// check all the environments for this project
-		for _, env := range project.Environments {
-			// if the env name matches the requested environment then check if the deploytarget supports regional ssh endpoints
-			if env.Name == environmentName {
-				// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
-				if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
-					sshHost = env.DeployTarget.SSHHost
-					sshPort = env.DeployTarget.SSHPort
-					isPortal = true
-				}
-			}
-		}
-
 		// get private key that the cli is using
 		skipAgent := false
 
@@ -87,13 +56,16 @@ var sshEnvCmd = &cobra.Command{
 		sshConfig := map[string]string{
 			"hostname": sshHost,
 			"port":     sshPort,
-			"username": cmdProjectName + "-" + environmentName,
+			"username": username,
 			"sshkey":   privateKey,
 		}
 		if sshConnString {
 			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer, isPortal))
 		} else {
-
+			hkcb, hkalgo, err := lagoonssh.InteractiveKnownHosts(userPath, fmt.Sprintf("%s:%s", sshHost, sshPort), ignoreHostKey, acceptNewHostKey)
+			if err != nil {
+				return fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
+			}
 			// start an interactive ssh session
 			authMethod, closeSSHAgent := publicKey(privateKey, cmdPubkeyIdentity, lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].PublicKeyIdentities, skipAgent)
 			config := &ssh.ClientConfig{
@@ -101,10 +73,15 @@ var sshEnvCmd = &cobra.Command{
 				Auth: []ssh.AuthMethod{
 					authMethod,
 				},
-				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+				HostKeyCallback:   hkcb,
+				HostKeyAlgorithms: hkalgo,
 			}
-			defer closeSSHAgent()
-			var err error
+			defer func() {
+				err = closeSSHAgent()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+				}
+			}()
 			if sshCommand != "" {
 				err = lagoonssh.RunSSHCommand(sshConfig, sshService, sshContainer, sshCommand, config)
 			} else {

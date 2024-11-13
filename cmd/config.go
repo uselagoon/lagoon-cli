@@ -39,7 +39,7 @@ func parseLagoonConfig(flags pflag.FlagSet) LagoonConfigFlags {
 	})
 	jsonStr, _ := json.Marshal(configMap)
 	parsedFlags := LagoonConfigFlags{}
-	json.Unmarshal(jsonStr, &parsedFlags)
+	_ = json.Unmarshal(jsonStr, &parsedFlags)
 	return parsedFlags
 }
 
@@ -55,12 +55,10 @@ var configDefaultCmd = &cobra.Command{
 	Use:     "default",
 	Aliases: []string{"d"},
 	Short:   "Set the default Lagoon to use",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		lagoonConfig := parseLagoonConfig(*cmd.Flags())
 		if lagoonConfig.Lagoon == "" {
-			fmt.Println("Not enough arguments")
-			cmd.Help()
-			os.Exit(1)
+			return fmt.Errorf("not enough arguments")
 		}
 		lagoonCLIConfig.Default = strings.TrimSpace(string(lagoonConfig.Lagoon))
 		contextExists := false
@@ -70,8 +68,7 @@ var configDefaultCmd = &cobra.Command{
 			}
 		}
 		if !contextExists {
-			fmt.Println(fmt.Printf("Chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current))
-			os.Exit(1)
+			return fmt.Errorf("chosen context '%s' doesn't exist in config file", lagoonCLIConfig.Current)
 		}
 		err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
 		handleError(err)
@@ -84,6 +81,7 @@ var configDefaultCmd = &cobra.Command{
 		}
 		r := output.RenderResult(resultData, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		return nil
 	},
 }
 
@@ -217,7 +215,7 @@ var configDeleteCmd = &cobra.Command{
 
 		if lagoonConfig.Lagoon == "" {
 			fmt.Println("Missing arguments: Lagoon name is not defined")
-			cmd.Help()
+			_ = cmd.Help()
 			os.Exit(1)
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete config for lagoon '%s', are you sure?", lagoonConfig.Lagoon)) {
@@ -247,6 +245,16 @@ var configFeatureSwitch = &cobra.Command{
 		case "false":
 			lagoonCLIConfig.EnvironmentFromDirectory = false
 		}
+		strictHostKeyChecking, err := cmd.Flags().GetString("strict-host-key-checking")
+		if err != nil {
+			output.RenderError(err.Error(), outputOptions)
+			os.Exit(1)
+		}
+		strictHostKeyCheckingProvided := cmd.Flags().Lookup("strict-host-key-checking").Changed
+		if strictHostKeyCheckingProvided {
+			lagoonCLIConfig.StrictHostKeyChecking = strictHostKeyChecking
+		}
+
 		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			os.Exit(1)
@@ -299,6 +307,7 @@ var configLagoonVersionCmd = &cobra.Command{
 
 var updateCheck string
 var environmentFromDirectory string
+var strictHostKeyChecking string
 var fullConfigList bool
 
 func init() {
@@ -333,6 +342,8 @@ func init() {
 		"Enable or disable checking of updates (true/false)")
 	configFeatureSwitch.Flags().StringVarP(&environmentFromDirectory, "enable-local-dir-check", "", "",
 		"Enable or disable checking of local directory for Lagoon project (true/false)")
+	configFeatureSwitch.Flags().StringVar(&strictHostKeyChecking, "strict-host-key-checking", "",
+		"Enable or disable StrictHostKeyChecking (yes, no, ignore)")
 }
 
 // readLagoonConfig reads the lagoon config from specified file.

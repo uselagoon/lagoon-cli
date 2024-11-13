@@ -118,7 +118,7 @@ func RenderOutput(data Table, opts Options) string {
 		for _, dataValues := range data.Data {
 			jsonData := make(map[string]interface{})
 			for indexID, dataValue := range dataValues {
-				dataHeader := strings.Replace(strings.ToLower(data.Header[indexID]), " ", "-", -1)
+				dataHeader := strings.ReplaceAll(strings.ToLower(data.Header[indexID]), " ", "-")
 				jsonData[dataHeader] = dataValue
 			}
 			rawData = append(rawData, jsonData)

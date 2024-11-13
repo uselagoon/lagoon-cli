@@ -43,7 +43,7 @@ func (project *LagoonProject) ReadConfig() error {
 	}
 	sourceCompose, _ := os.ReadFile(dockerComposeFilepath)
 	var dockerCompose LagoonDockerCompose
-	yaml.Unmarshal(sourceCompose, &dockerCompose)
+	_ = yaml.Unmarshal(sourceCompose, &dockerCompose)
 	// Reset the name based on the docker-compose.yml file.
 	project.Name = dockerCompose.LagoonProject
 
@@ -83,8 +83,8 @@ func getProjectFromPath(path string) (LagoonProject, error) {
 	}
 	app.Name = filepath.Base(appDir)
 	app.Dir = appDir
-	app.ReadConfig()
-	return app, nil
+	err = app.ReadConfig()
+	return app, err
 }
 
 func findLocalProjectRoot(path string) (string, error) {
@@ -98,7 +98,7 @@ func findLocalProjectRoot(path string) (string, error) {
 			return path, nil
 		}
 	}
-	return "", fmt.Errorf("no %s file was found in this directory or any parent", filepath.Join(".lagoon.yml"))
+	return "", fmt.Errorf("no .lagoon.yml file was found in this directory or any parent")
 }
 
 // FileExists checks a file's existence

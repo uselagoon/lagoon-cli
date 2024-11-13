@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  pull_request:
 
 jobs:
   test-suite:
@@ -15,16 +14,16 @@ jobs:
         - 1.21
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: "0"
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v5
       with:
         go-version: ${{matrix.goversion}}
     - name: Build
       run: |
-        go install github.com/golang/mock/mockgen@v1.4.3
+        go install go.uber.org/mock/mockgen@v0.4.0
         ARTIFACT_DESTINATION=./builds make build
     # - name: Check version
     #   run: |
@@ -40,12 +39,12 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: "0"
       -
         name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{matrix.goversion}}
       -
@@ -56,7 +55,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           version: v2
-          args: release --verbose --skip=validate --snapshot
+          args: release --verbose --skip=validate
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
           GOVERSION: ${{ matrix.goversion }}
