@@ -48,15 +48,15 @@ jobs:
         if: "!startsWith(github.ref, 'refs/tags/')"
         id: version_tag_build
         run: |
-          VERSION=$(echo $(git describe --abbrev=0 --tags)+$(git rev-parse --short=8 HEAD))
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          VERSION="$(git describe --abbrev=0 --tags)+$(git rev-parse --short=8 HEAD)"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "tag is $VERSION"
       -
         name: Set tag version for tag
         if: "startsWith(github.ref, 'refs/tags/')"
         id: version_tag
         run: |
-          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
           echo "tag is $VERSION"
       -
         name: Docker meta
