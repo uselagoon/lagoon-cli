@@ -46,6 +46,6 @@ jobs:
           builds/*
           sbom.spdx.json
     - name: Attest build provenance
-      uses: actions/attest-build-provenance@5e9cb68e95676991667494a6a4e59b8a2f13e1d0 # v1.3.3
+      uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
       with:
         subject-path: "builds/*"
