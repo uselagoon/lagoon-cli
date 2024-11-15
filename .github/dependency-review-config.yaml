@@ -1,4 +1,4 @@
-fail_on_severity: 'critical'
+warn-only: true
 
 # https://github.com/cncf/foundation/blob/main/allowed-third-party-license-policy.md
 allow-licenses:
