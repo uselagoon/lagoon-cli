@@ -1,3 +1,5 @@
+fail_on_severity: 'critical'
+
 # https://github.com/cncf/foundation/blob/main/allowed-third-party-license-policy.md
 allow-licenses:
 - 'Apache-2.0'
@@ -14,7 +16,15 @@ allow-licenses:
 allow-dependencies-licenses:
 # this action is GPL-3 but it is only used in CI
 # https://github.com/actions/dependency-review-action/issues/530#issuecomment-1638291806
-- pkg:githubactions/vladopajic/go-test-coverage@bcd064e5ceef1ccec5441519eb054263b6a44787
+- pkg:githubactions/vladopajic/go-test-coverage
 # this package is MPL-2.0 and has a CNCF exception
-# https://github.com/cncf/foundation/blob/9b8c9173c2101c1b4aedad3caf2c0128715133f6/license-exceptions/cncf-exceptions-2022-04-12.json#L43C17-L43C47
+# https://github.com/cncf/foundation/blob/main/license-exceptions/cncf-exceptions-2022-04-12.json
 - pkg:golang/github.com/go-sql-driver/mysql
+# this package is MPL-2.0 and has a CNCF exception
+# https://github.com/cncf/foundation/blob/main/license-exceptions/cncf-exceptions-2022-04-12.json
+- pkg:golang/github.com/hashicorp/go-version
+# this package is MPL-2.0 and has a CNCF exception
+# https://github.com/cncf/foundation/blob/main/license-exceptions/cncf-exceptions-2022-04-12.json
+- pkg:golang/github.com/hashicorp/golang-lru
+# this package is CC0-1.0 and is only used in test asserts
+- pkg:golang/github.com/zeebo/assert
