@@ -11,7 +11,7 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v66/github"
 )
 
 // AvailableUpdates returns true (along with a release URL) if there is an update available in the specified repo which is newer than the currentVersion string.
