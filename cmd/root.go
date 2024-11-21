@@ -365,7 +365,6 @@ func versionCheck(lagoon string) error {
 
 func getLagoonConfigFile(configPath *string, configName *string, configExtension *string, createConfig bool, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our confg file
-	var configFilePath string
 	configFilePath, err := cmd.Flags().GetString("config-file")
 	if err != nil {
 		return fmt.Errorf("error reading flag `config-file`: %v", err)
