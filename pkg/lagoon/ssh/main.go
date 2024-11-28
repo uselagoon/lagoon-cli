@@ -83,7 +83,7 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	}
 	var connString string
 	if sshService != "" {
-		connString = fmt.Sprintf("%s service=%s", connString, sshService)
+		connString = fmt.Sprintf("service=%s", sshService)
 	}
 	if sshContainer != "" && sshService != "" {
 		connString = fmt.Sprintf("%s container=%s", connString, sshContainer)
