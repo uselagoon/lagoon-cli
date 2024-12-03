@@ -3,14 +3,14 @@ module github.com/uselagoon/lagoon-cli
 go 1.23
 
 require (
-	github.com/Masterminds/semver/v3 v3.3.0
+	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/go-github/v66 v66.0.0
 	github.com/google/uuid v1.6.0
 	github.com/guregu/null v4.0.0+incompatible
 	github.com/hashicorp/go-version v1.7.0
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
-	github.com/jedib0t/go-pretty/v6 v6.6.1
+	github.com/jedib0t/go-pretty/v6 v6.6.3
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/machinebox/graphql v0.2.3-0.20181106130121-3a9253180225
 	github.com/manifoldco/promptui v0.9.0
@@ -18,7 +18,7 @@ require (
 	github.com/skeema/knownhosts v1.3.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/uselagoon/machinery v0.0.31
 	go.uber.org/mock v0.5.0
 	golang.org/x/crypto v0.29.0
