@@ -1,6 +1,11 @@
 ## lagoon login
 
-Log into a Lagoon instance
+Login or refresh an authentication token
+
+### Synopsis
+
+Login or refresh an authentication token
+This can be used to clear out and force your CLI to refresh a token for a given context.
 
 ```
 lagoon login [flags]
@@ -9,7 +14,8 @@ lagoon login [flags]
 ### Options
 
 ```
-  -h, --help   help for login
+  -h, --help          help for login
+      --reset-token   clear the token before attempting to log in
 ```
 
 ### Options inherited from parent commands
