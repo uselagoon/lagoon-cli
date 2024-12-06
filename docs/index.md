@@ -9,6 +9,9 @@ If you run the CLI in a directory that has a valid `.lagoon.yml` and `docker-com
 # Requirements
 To use this CLI, you need an account in the Lagoon that you wish to communicate with, and your SSH key needs to be associated to your account.
 
+# Problems?
+If you experience any problems, check out the [troubleshooting](./troubleshooting.md) page first.
+
 # Installation
 The preferred method to install is via [Homebrew](https://brew.sh/).
 ```

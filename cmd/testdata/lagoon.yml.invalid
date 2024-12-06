@@ -2,8 +2,8 @@ current: amazeeio
 default: amazeeio
 lagoons:
   amazeeio:
-    graphql: https://api.lagoon.amazeeio.cloud/graphql
-        hostname: ssh.lagoon.amazeeio.cloud
-    kibana: https://logs-db-ui-lagoon-master.ch.amazee.io/
-    port: 32222
-    ui: https://ui-lagoon-master.ch.amazee.io
+    graphql: https://api.amazeeio.cloud/graphql
+        hostname: token.amazeeio.cloud
+    kibana: https://logs.amazeeio.cloud/
+    port: 22
+    ui: https://dashboard.amazeeio.cloud

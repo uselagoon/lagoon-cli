@@ -30,4 +30,5 @@ func init() {
 	updateCmd.AddCommand(updateDeployTargetConfigCmd)
 	updateCmd.AddCommand(updateDeployTargetCmd)
 	updateCmd.AddCommand(updateOrganizationCmd)
+	updateCmd.AddCommand(updateVariableCmd)
 }

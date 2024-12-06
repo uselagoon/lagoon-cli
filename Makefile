@@ -98,3 +98,16 @@ install-linux:
 install-darwin:
 	cp builds/lagoon-cli-${VERSION}-darwin-amd64 ${ARTIFACT_DESTINATION}/lagoon
 
+# Settings for the MKDocs serving
+MKDOCS_IMAGE ?= ghcr.io/amazeeio/mkdocs-material
+MKDOCS_SERVE_PORT ?= 8000
+
+.PHONY: docs/serve
+docs/serve:
+	@echo "Starting container to serve documentation"
+	@docker pull $(MKDOCS_IMAGE)
+	@docker run --rm -it \
+		-p 127.0.0.1:$(MKDOCS_SERVE_PORT):$(MKDOCS_SERVE_PORT) \
+		-v ${PWD}:/docs \
+		--entrypoint sh $(MKDOCS_IMAGE) \
+		-c 'mkdocs serve -s --dev-addr=0.0.0.0:$(MKDOCS_SERVE_PORT) -f mkdocs.yml'
