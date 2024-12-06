@@ -1,15 +1,18 @@
-## lagoon update variable
+## lagoon add variable
 
 Add or update a variable to an environment or project
 
 ```
-lagoon update variable [flags]
+lagoon add variable [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for variable
+  -h, --help           help for variable
+  -N, --name string    Name of the variable to add
+  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
+  -V, --value string   Value of the variable to add
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +38,5 @@ lagoon update variable [flags]
 
 ### SEE ALSO
 
-* [lagoon update](lagoon_update.md)	 - Update a resource
+* [lagoon add](lagoon_add.md)	 - Add a project, or add notifications and variables to projects or environments
 
