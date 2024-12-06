@@ -45,7 +45,7 @@ lagoon [flags]
 * [lagoon import](lagoon_import.md)	 - Import a config from a yaml file
 * [lagoon kibana](lagoon_kibana.md)	 - Launch the kibana interface
 * [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
-* [lagoon login](lagoon_login.md)	 - Log into a Lagoon instance
+* [lagoon login](lagoon_login.md)	 - Login or refresh an authentication token
 * [lagoon logs](lagoon_logs.md)	 - Display logs for a service of an environment and project
 * [lagoon raw](lagoon_raw.md)	 - Run a custom query or mutation
 * [lagoon reset-password](lagoon_reset-password.md)	 - Send a password reset email

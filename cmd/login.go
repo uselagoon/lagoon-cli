@@ -16,12 +16,22 @@ import (
 )
 
 var loginCmd = &cobra.Command{
-	Use:     "login",
-	Short:   "Log into a Lagoon instance",
-	Aliases: []string{"l"},
-	Run: func(cmd *cobra.Command, args []string) {
-		validateToken(lagoonCLIConfig.Current) // get a new token if the current one is invalid
-		fmt.Println("Token fetched and saved.")
+	Use:   "login",
+	Short: "Login or refresh an authentication token",
+	Long: `Login or refresh an authentication token
+This can be used to clear out and force your CLI to refresh a token for a given context.`,
+	Aliases: []string{"token-refresh", "tr", "l"},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// clear the current token
+		lc := lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current]
+		lc.Token = ""
+		lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current] = lc
+		// refresh and save new token
+		if err := validateTokenE(lagoonCLIConfig.Current); err != nil {
+			return err
+		}
+		fmt.Printf("token for context %s fetched and saved.\n", lagoonCLIConfig.Current)
+		return nil
 	},
 }
 
@@ -180,4 +190,8 @@ func retrieveTokenViaSsh() (string, error) {
 		return "", fmt.Errorf("unable to get token: %v", err)
 	}
 	return strings.TrimSpace(string(out)), err
+}
+
+func init() {
+	loginCmd.Flags().Bool("reset-token", false, "clear the token before attempting to log in")
 }
