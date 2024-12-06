@@ -47,4 +47,4 @@ nav:
   - Getting Started: index.md
   - Configuration: config.md
   - Commands: commands/lagoon.md
-  - Custom Commands: customcommands.md
+  - Troubleshooting: troubleshooting.md
