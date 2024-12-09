@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -23,11 +24,11 @@ func TestConfigRead(t *testing.T) {
 				Default: "amazeeio",
 				Lagoons: map[string]lagoon.Context{
 					"amazeeio": {
-						GraphQL:  "https://api.lagoon.amazeeio.cloud/graphql",
-						HostName: "ssh.lagoon.amazeeio.cloud",
-						Kibana:   "https://logs-db-ui-lagoon-master.ch.amazee.io/",
-						UI:       "https://ui-lagoon-master.ch.amazee.io",
-						Port:     "32222",
+						GraphQL:  "https://api.amazeeio.cloud/graphql",
+						HostName: "token.amazeeio.cloud",
+						Kibana:   "https://logs.amazeeio.cloud/",
+						UI:       "https://dashboard.amazeeio.cloud",
+						Port:     "22",
 					},
 				},
 				UpdateCheckDisable:       false,
@@ -49,8 +50,8 @@ func TestConfigRead(t *testing.T) {
 				Default: "amazeeio",
 				Lagoons: map[string]lagoon.Context{
 					"amazeeio": {
-						Kibana: "https://logs-db-ui-lagoon-master.ch.amazee.io/",
-						UI:     "https://ui-lagoon-master.ch.amazee.io",
+						Kibana: "https://logs.amazeeio.cloud/",
+						UI:     "https://dashboard.amazeeio.cloud",
 					},
 				},
 				UpdateCheckDisable:       false,
@@ -66,6 +67,7 @@ func TestConfigRead(t *testing.T) {
 					tt.Fatal(err)
 				}
 			}
+			fmt.Println(lc, tc.expect)
 			if !reflect.DeepEqual(lc, tc.expect) {
 				tt.Fatalf("Read config does not match expected config")
 			}

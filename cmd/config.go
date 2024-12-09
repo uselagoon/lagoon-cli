@@ -354,10 +354,10 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 		// configuration to point to the amazeeio lagoon instance
 		if yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
 			l := lagoon.Context{
-				GraphQL:  "https://api.lagoon.amazeeio.cloud/graphql",
-				HostName: "ssh.lagoon.amazeeio.cloud",
+				GraphQL:  "https://api.amazeeio.cloud/graphql",
+				HostName: "token.amazeeio.cloud",
 				Token:    "",
-				Port:     "32222",
+				Port:     "22",
 				UI:       "https://dashboard.amazeeio.cloud",
 				Kibana:   "https://logs.amazeeio.cloud/",
 			}
