@@ -10,9 +10,9 @@ lagoon update variable [flags]
 
 ```
   -h, --help           help for variable
-  -N, --name string    Name of the variable to add
+  -N, --name string    Name of the variable to update
   -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
-  -V, --value string   Value of the variable to add
+  -V, --value string   Value of the variable to update
 ```
 
 ### Options inherited from parent commands
