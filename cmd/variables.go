@@ -166,5 +166,8 @@ func init() {
 	addVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
 	addVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
 	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	updateVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
+	updateVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
+	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
 	deleteVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to delete")
 }
