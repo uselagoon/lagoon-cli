@@ -30,7 +30,7 @@ jobs:
         rm ./builds/README.md ./builds/release_template.md
         for BUILD in builds/*; do tar --transform="flags=r;s|${BUILD#builds/}|lagoon|" -czf "$BUILD.tar.gz" -C builds "${BUILD#builds/}"; done
     - name: Generate SBOM from Github API
-      uses: advanced-security/sbom-generator-action@375dee8e6144d9fd0ec1f5667b4f6fb4faacefed # v0.0.1
+      uses: advanced-security/sbom-generator-action@6fe43abf522b2e7a19bc769aec1e6c848614b517 # v0.0.2
       id: sbom
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
