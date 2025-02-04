@@ -1,4 +1,4 @@
-package lagoon
+package config
 
 // Config is used for the lagoon configuration.
 type Config struct {
