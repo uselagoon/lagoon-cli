@@ -15,11 +15,12 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
-	lagooncli "github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/config"
 	"github.com/uselagoon/lagoon-cli/pkg/app"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/lagoon-cli/pkg/updatecheck"
+	llagoon "github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 )
 
 var cmdProject app.LagoonProject
@@ -45,7 +46,7 @@ var strictHostKeyCheck string
 
 // global for the lagoon config that the cli uses
 // @TODO: when lagoon-cli rewrite happens, do this a bit better
-var lagoonCLIConfig lagooncli.Config
+var lagoonCLIConfig config.Config
 
 // version/build information (populated at build time by make file)
 var (
@@ -199,8 +200,6 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(retrieveCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(webCmd)
-	rootCmd.AddCommand(importCmd)
-	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(whoamiCmd)
 	rootCmd.AddCommand(uploadCmd)
 	rootCmd.AddCommand(rawCmd)
@@ -344,13 +343,14 @@ func validateTokenE(lagoon string) error {
 // check if we have a version set in config, if not get the version.
 // this checks whenever a token is refreshed
 func versionCheck(lagoon string) error {
-	lc := client.New(
+	token := lagoonCLIConfig.Lagoons[lagoon].Token
+	lc := lclient.New(
 		lagoonCLIConfig.Lagoons[lagoon].GraphQL,
-		lagoonCLIConfig.Lagoons[lagoon].Token,
-		lagoonCLIConfig.Lagoons[lagoon].Version,
 		lagoonCLIVersion,
+		lagoonCLIConfig.Lagoons[lagoon].Version,
+		&token,
 		debugEnable)
-	lagoonVersion, err := lagooncli.GetLagoonAPIVersion(context.TODO(), lc)
+	lagoonVersion, err := llagoon.GetLagoonAPIVersion(context.TODO(), lc)
 	if err != nil {
 		return err
 	}
@@ -393,7 +393,7 @@ func getLagoonConfigFile(configPath *string, configName *string, configExtension
 	return nil
 }
 
-func getLagoonContext(lagoonCLIConfig *lagooncli.Config, lagoon *string, cmd *cobra.Command) error {
+func getLagoonContext(lagoonCLIConfig *config.Config, lagoon *string, cmd *cobra.Command) error {
 	// check if we have an envvar or flag to define our lagoon context
 	var lagoonContext string
 	lagoonContext, err := cmd.Flags().GetString("lagoon")
@@ -423,7 +423,7 @@ func getLagoonContext(lagoonCLIConfig *lagooncli.Config, lagoon *string, cmd *co
 	return nil
 }
 
-func checkContextExists(lagoonCLIConfig *lagooncli.Config) error {
+func checkContextExists(lagoonCLIConfig *config.Config) error {
 	contextExists := false
 	for l := range lagoonCLIConfig.Lagoons {
 		if l == lagoonCLIConfig.Current {
@@ -437,7 +437,7 @@ func checkContextExists(lagoonCLIConfig *lagooncli.Config) error {
 }
 
 // VerifyTokenExpiry verfies if the current token is valid or not
-func VerifyTokenExpiry(lc *lagooncli.Config, lagoon string) bool {
+func VerifyTokenExpiry(lc *config.Config, lagoon string) bool {
 	var p jwt.Parser
 	token, _, err := p.ParseUnverified(
 		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
