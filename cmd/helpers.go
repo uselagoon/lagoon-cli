@@ -20,6 +20,15 @@ func makeSafe(in string) string {
 	return unsafeRegex.ReplaceAllString(strings.ToLower(in), "$1-$2")
 }
 
+// convert a slice of strings to a set (as a map)
+func sliceToMap(s []string) map[string]bool {
+	m := map[string]bool{}
+	for _, ss := range s {
+		m[ss] = true
+	}
+	return m
+}
+
 // shortenEnvironment shortens the environment name down the same way that Lagoon does
 func shortenEnvironment(project, environment string) string {
 	overlength := 58 - len(project)

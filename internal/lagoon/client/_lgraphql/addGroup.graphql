@@ -1,9 +1,0 @@
-mutation (
-  $name: String!) {
-    addGroup(input: {
-      name: $name
-    }) {
-      id
-      name
-    }
-  }
