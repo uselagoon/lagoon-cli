@@ -74,24 +74,12 @@ test-docker:
 
 ## build using docker golang
 build-docker-linux:
-	docker run \
-	-v $(PKGMODPATH):/go/pkg/mod \
-	-v $(DIR):/go/src/${PKG}/ \
-	-e GO111MODULE=on \
-	-e GOOS=linux \
-	-e GOARCH=amd64 \
-	-w="/go/src/${PKG}/" \
-	golang:$(DOCKER_GO_VER) go build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-linux-amd64
+	docker build . -t lagoon/lagoon-cli
+	docker run -v $(DIR):/app --entrypoint="/bin/sh" lagoon/lagoon-cli -c "cp /lagoon /app/builds/lagoon"
 
 build-docker-darwin:
-	docker run \
-	-v $(PKGMODPATH):/go/pkg/mod \
-	-v $(DIR):/go/src/${PKG}/ \
-	-e GO111MODULE=on \
-	-e GOOS=darwin \
-	-e GOARCH=amd64 \
-	-w="/go/src/${PKG}/" \
-	golang:$(DOCKER_GO_VER) go build -ldflags '${LDFLAGS} -X "${PKG}/cmd.lagoonCLIBuildGoVersion=${GO_VER}"' -o builds/lagoon-cli-${VERSION}-darwin-amd64
+	docker build . -t lagoon/lagoon-cli-darwin --build-arg OS=darwin --build-arg ARCH=arm64
+	docker run -v $(DIR):/app --entrypoint="/bin/sh" lagoon/lagoon-cli-darwin -c "cp /lagoon /app/builds/lagoon"
 
 install-linux:
 	cp builds/lagoon-cli-${VERSION}-linux-amd64 ${ARTIFACT_DESTINATION}/lagoon

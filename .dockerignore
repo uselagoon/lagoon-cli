@@ -1,0 +1,6 @@
+Makefile
+mkdocs.yml
+Dockerfile
+Dockerfile.build
+.goreleaser.yml
+builds/
