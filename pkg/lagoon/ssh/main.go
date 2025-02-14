@@ -146,12 +146,17 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	}
 	var b bytes.Buffer
 	session.Stdout = &b
-
 	err = session.Run(connString + " " + command)
+
+	// if there's anything waiting in the buffer, display it (regardless of error state or not)
+	// it may, in error state, contain useful information.
+	if b.Len() > 0 {
+		fmt.Println(b.String())
+	}
+
 	if err != nil {
 		return err
 	}
-	fmt.Println(b.String())
 	return nil
 }
 
