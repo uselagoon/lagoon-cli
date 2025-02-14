@@ -151,12 +151,12 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	err = session.Run(connString + " " + command)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, b.String())
-		fmt.Fprintf(os.Stderr, e.String())
+		os.Stderr.WriteString(b.String())
+		os.Stderr.WriteString(e.String())
 		return err
 	}
-	fmt.Fprintf(os.Stdout, b.String())
-	fmt.Fprintf(os.Stderr, e.String())
+	os.Stdout.WriteString(b.String())
+	os.Stderr.WriteString(e.String())
 	return nil
 }
 
