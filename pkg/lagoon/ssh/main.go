@@ -146,12 +146,17 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	}
 	var b bytes.Buffer
 	session.Stdout = &b
-
+	var e bytes.Buffer
+	session.Stderr = &e
 	err = session.Run(connString + " " + command)
+
 	if err != nil {
+		os.Stderr.WriteString(b.String())
+		os.Stderr.WriteString(e.String())
 		return err
 	}
-	fmt.Println(b.String())
+	os.Stdout.WriteString(b.String())
+	os.Stderr.WriteString(e.String())
 	return nil
 }
 
