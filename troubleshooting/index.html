@@ -1,0 +1,821 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="The Lagoon Authors">
+      
+      
+        <link rel="canonical" href="https://uselagoon.github.io/lagoon-cli/troubleshooting/">
+      
+      
+        <link rel="prev" href="../commands/lagoon/">
+      
+      
+      
+      <link rel="icon" href="../lagoon-cli-logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>Troubleshooting - Lagoon CLI</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bcfcd587.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-W1SJFEVFDB"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-W1SJFEVFDB",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-W1SJFEVFDB",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#raising-issues" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Lagoon CLI" class="md-header__button md-logo" aria-label="Lagoon CLI" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M9.4 86.6c-12.5-12.5-12.5-32.7 0-45.2s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416h288c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lagoon CLI
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Troubleshooting
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/uselagoon/lagoon-cli/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uselagoon/lagoon-cli
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Lagoon CLI" class="md-nav__button md-logo" aria-label="Lagoon CLI" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M9.4 86.6c-12.5-12.5-12.5-32.7 0-45.2s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416h288c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+
+    </a>
+    Lagoon CLI
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/uselagoon/lagoon-cli/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uselagoon/lagoon-cli
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/lagoon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#raising-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raising Issues
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refresh token
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSH keys
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specific-key-in-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      specific key in agent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specific-private-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      specific private key
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unauthorizedpermission-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unauthorized/permission errors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Unauthorized/permission errors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#correct-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      correct user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incorrect-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      incorrect user
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-user-accounts-or-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple user accounts or contexts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multiple user accounts or contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-a-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selecting a context
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#raising-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raising Issues
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refresh token
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSH keys
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specific-key-in-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      specific key in agent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specific-private-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      specific private key
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unauthorizedpermission-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unauthorized/permission errors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Unauthorized/permission errors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#correct-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      correct user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incorrect-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      incorrect user
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-user-accounts-or-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple user accounts or contexts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multiple user accounts or contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-a-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selecting a context
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Troubleshooting</h1>
+
+<p>This page attempts to describe some common problems and provide basic troubleshooting guides on what the issue could be and how to attempt a resolution.</p>
+<p>Since every issue can be slightly different, there may be cases where some or none of the steps outlined can help. In these cases, you may have encountered a bug with the CLI or the Lagoon API. Before raising an issue, it is important to try and determine if the issue is related to the API or the CLI.</p>
+<h2 id="raising-issues">Raising Issues<a class="headerlink" href="#raising-issues" title="Permanent link">#</a></h2>
+<p>If raising issues against the CLI, please ensure you include which <a href="../commands/lagoon_version/">version</a> of the CLI you're using in your report. </p>
+<p>If your issues appears to be permissions or API related, you may need to consult with your hosting provider before raising any issues.</p>
+<h2 id="common-problems">Common Problems<a class="headerlink" href="#common-problems" title="Permanent link">#</a></h2>
+<h3 id="refresh-token">Refresh token<a class="headerlink" href="#refresh-token" title="Permanent link">#</a></h3>
+<p>Sometimes simply refreshing your auth token can help.</p>
+<p>Use <a href="../commands/lagoon_login/">lagoon login</a> to attempt to retrieve a new token. </p>
+<p>You can also use the flag <code>--verbose</code> to see information about the authentication attempt being made and which keys may be being used.</p>
+<div class="highlight"><span class="filename">verbose login example</span><pre><span></span><code>$<span class="w"> </span>lagoon<span class="w"> </span>login<span class="w"> </span>--verbose
+ssh:<span class="w"> </span>attempting<span class="w"> </span>connection<span class="w"> </span>using<span class="w"> </span>any<span class="w"> </span>keys<span class="w"> </span><span class="k">in</span><span class="w"> </span>ssh-agent
+
+$<span class="w"> </span>lagoon<span class="w"> </span>login<span class="w"> </span>--verbose<span class="w"> </span>--ssh-publickey<span class="w"> </span>/home/user/.ssh/id_ed25519.pub
+ssh:<span class="w"> </span>attempting<span class="w"> </span>connection<span class="w"> </span>using<span class="w"> </span>identity<span class="w"> </span>file<span class="w"> </span>public<span class="w"> </span>key:<span class="w"> </span>/home/user/.ssh/id_ed25519.pub
+
+$<span class="w"> </span>lagoon<span class="w"> </span>login<span class="w"> </span>--verbose<span class="w"> </span>--ssh-key<span class="w"> </span>/home/user/.ssh/id_ed25519
+ssh:<span class="w"> </span>attempting<span class="w"> </span>connection<span class="w"> </span>using<span class="w"> </span>private<span class="w"> </span>key:<span class="w"> </span>/home/user/.ssh/id_ed25519
+</code></pre></div>
+<h3 id="ssh-keys">SSH keys<a class="headerlink" href="#ssh-keys" title="Permanent link">#</a></h3>
+<p>The CLI will prefer to use your ssh-agent when providing keys to the authentication endpoint. If you haven't got any keys in your ssh-agent, the CLI will fall back to checking <code>~/.ssh/id_rsa</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Which keys are in my agent?</p>
+<p>You can check the keys in your ssh-agent using <code>ssh-add -L</code></p>
+</div>
+<p>Some flags and configurations exist that allow you to force which key in your ssh-agent is used, or which SSH key file you want to use.</p>
+<h4 id="specific-key-in-agent">specific key in agent<a class="headerlink" href="#specific-key-in-agent" title="Permanent link">#</a></h4>
+<p>If you know which public key you want to use when interacting Lagoon, you can use the following flag</p>
+<div class="highlight"><pre><span></span><code>--ssh-publickey<span class="w"> </span>/path/to/privatekey.pub
+</code></pre></div>
+<p>This will attempt to use this key if it is present in your ssh-agent. Alternatively, you can add <code>publickeyidentities</code> to your context in your Lagoon CLI configuration file.</p>
+<div class="highlight"><span class="filename">~/.lagoon.yml CLI configuration</span><pre><span></span><code><span class="nt">lagoons</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">contextname</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">publickeyidentities</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/privatekey.pub</span>
+</code></pre></div>
+<h4 id="specific-private-key">specific private key<a class="headerlink" href="#specific-private-key" title="Permanent link">#</a></h4>
+<p>If you know which private key you want to use when interacting Lagoon, you can use the following flag</p>
+<div class="highlight"><pre><span></span><code>--ssh-key<span class="w"> </span>/path/to/privatekey
+</code></pre></div>
+<p>Alternatively, you can add <code>sshkey</code> to your context in your Lagoon CLI configuration file.</p>
+<div class="highlight"><span class="filename">~/.lagoon.yml CLI configuration</span><pre><span></span><code><span class="nt">lagoons</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">contextname</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">sshkey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/privatekey</span>
+</code></pre></div>
+<h3 id="unauthorizedpermission-errors">Unauthorized/permission errors<a class="headerlink" href="#unauthorizedpermission-errors" title="Permanent link">#</a></h3>
+<p>In the event you experience an unauthorized or permission error, it is important to confirm which user has authenticated against the Lagoon API.</p>
+<p>The CLI provides a command <a href="../commands/lagoon_whoami/">whoami</a> which will query the Lagoon API to determine which user the API is seeing.</p>
+<div class="highlight"><span class="filename">lagoon whoami</span><pre><span></span><code>ID                      EMAIL                   FIRSTNAME   LASTNAME    SSHKEYS
+95101742-07f373b0bfe3   bob.johnson@example.com Bob         Johnson     3
+</code></pre></div>
+<h4 id="correct-user">correct user<a class="headerlink" href="#correct-user" title="Permanent link">#</a></h4>
+<p>If the user returned is the correct user, then you need to ensure that commands you're executing you have permission to do so with. Some things to check:</p>
+<ul>
+<li>That your user actually has access to the resource (project, environment, group, etc..) that you're interacting with<ul>
+<li>check your user with the <a href="../commands/lagoon_list_user-groups/">list user-groups</a> command (you will only be able to run this for your own user).</li>
+<li>some options are only available to <code>platform-owners</code> or <code>organization</code> administrators, and you'll get permission errors you can check against <a href="https://docs.lagoon.sh/interacting/rbac/">Lagoon RBAC</a>.</li>
+</ul>
+</li>
+<li>Ensure you've typed the command and all the flags required correctly. Sometimes a typo can present as a permission error.</li>
+<li>Check that you're using the right command for what you're trying to do, the <code>--help</code> flag on any command will provide information that may be helpful.</li>
+</ul>
+<h4 id="incorrect-user">incorrect user<a class="headerlink" href="#incorrect-user" title="Permanent link">#</a></h4>
+<p>If the user is not the user you're expecting, then it is likely you have multiple user accounts, or multiple SSH keys. To help resolve this, its important to know:</p>
+<ul>
+<li>How many users you've got</li>
+<li>How many SSH keys you've got</li>
+<li>Which SSH keys are attached to which user<ul>
+<li>check your user with the <a href="../commands/lagoon_get_user-sshkeys/">get user-sshkeys</a> command (you will only be able to run this for your own user). </li>
+</ul>
+</li>
+<li>If you're using an SSH agent, <a href="#ssh-keys">which keys are loaded</a> into it</li>
+<li><a href="#refresh-token">Login with verbosity</a> enabled to see how the CLI is attempting to authenticate</li>
+</ul>
+<h3 id="multiple-user-accounts-or-contexts">Multiple user accounts or contexts<a class="headerlink" href="#multiple-user-accounts-or-contexts" title="Permanent link">#</a></h3>
+<p>The CLI supports multiple contexts, think of these as a way to interact with multiple Lagoon instances, or a way to select a user if you have multiple accounts.</p>
+<p>An example of how a configuration file looks for a user with multiple accounts is shown below. See <a href="../config/">configuration</a> on how to add more contexts, or modify your config file manually.
+<div class="highlight"><span class="filename">~/.lagoon.yml Multiple accounts</span><pre><span></span><code><span class="nt">current</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user1</span>
+<span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user1</span>
+<span class="nt">lagoons</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">user1</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">graphql</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://api.example.com/graphql</span>
+<span class="w">        </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh.example.com</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;22&quot;</span>
+<span class="w">        </span><span class="nt">publickeyidentities</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/user1/public.key</span>
+<span class="w">    </span><span class="nt">user2</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">graphql</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://api.example.com/graphql</span>
+<span class="w">        </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh.example.com</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;22&quot;</span>
+<span class="w">        </span><span class="nt">publickeyidentities</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/user2/public.key</span>
+</code></pre></div></p>
+<p>You'll see that there are 2 <code>lagoons</code> (or contexts), one for <code>user1</code> which the publickey override, and one for <code>user2</code> with a different publickey override.</p>
+<h4 id="selecting-a-context">Selecting a context<a class="headerlink" href="#selecting-a-context" title="Permanent link">#</a></h4>
+<p>When you want to use the CLI to perform actions as <code>user1</code>, you don't need to provide any flags, as the <code>default</code> in this example is <code>user1</code>.</p>
+<p>If you need to perform actions as <code>user2</code>, you will have to <a href="../config/#use-a-different-lagoon-context">select a context</a> or <a href="../config/#change-default-lagoon-context">change the default</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Changing context</p>
+<p>Sometimes changing your context could result in a token not refreshing correctly. Firstly attempt a <a href="#refresh-token">token refresh</a> with your selected context.</p>
+</div>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+    
+  </body>
+</html>
