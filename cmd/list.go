@@ -420,7 +420,7 @@ var listVariablesCmd = &cobra.Command{
 			Project:     cmdProjectName,
 			Environment: cmdProjectEnvironment,
 		}
-		envvars, err := lagoon.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, lc)
+		envvars, err := lagoon.GetEnvVariablesByProjectEnvironmentName(context.TODO(), in, reveal, lc)
 		if err != nil {
 			return err
 		}
