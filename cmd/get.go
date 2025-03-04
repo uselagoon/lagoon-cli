@@ -428,13 +428,15 @@ var getOrganizationCmd = &cobra.Command{
 			strconv.Itoa(int(organization.ID)),
 			organization.Name,
 			organization.Description,
-			strconv.Itoa(organization.QuotaProject),
-			strconv.Itoa(organization.QuotaGroup),
-			strconv.Itoa(organization.QuotaNotification),
+			quotaCheck(organization.QuotaProject),
+			quotaCheck(organization.QuotaGroup),
+			quotaCheck(organization.QuotaNotification),
+			quotaCheck(organization.QuotaEnvironment),
+			quotaCheck(organization.QuotaRoute),
 		})
 
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota"},
+			Header: []string{"ID", "Name", "Description", "Project Quota", "Group Quota", "Notification Quota", "Environment Quota", "Route Quota"},
 			Data:   data,
 		}
 
