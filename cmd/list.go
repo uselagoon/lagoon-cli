@@ -39,10 +39,10 @@ var listProjectsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		// wide, err := cmd.Flags().GetBool("wide")
-		// if err != nil {
-		// 	return err
-		// }
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		current := lagoonCLIConfig.Current
 		token := lagoonCLIConfig.Lagoons[current].Token
 		lc := lclient.New(
@@ -81,30 +81,48 @@ var listProjectsCmd = &cobra.Command{
 			} else {
 				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v/%v", devEnvironments, 0)))
 			}
-			// if wide {
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.AutoIdle)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.Branches)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.FactsUI)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.ProblemsUI)))
-			// 	projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.DeploymentsDisabled)))
-			// }
+
+			if wide {
+				autoIdle, err := strconv.ParseBool(strconv.Itoa(int(*project.AutoIdle)))
+				if err != nil {
+					return err
+				}
+				factsUI, err := strconv.ParseBool(strconv.Itoa(int(*project.FactsUI)))
+				if err != nil {
+					return err
+				}
+				problemsUI, err := strconv.ParseBool(strconv.Itoa(int(*project.ProblemsUI)))
+				if err != nil {
+					return err
+				}
+				deploymentsDisabled, err := strconv.ParseBool(strconv.Itoa(int(*project.DeploymentsDisabled)))
+				if err != nil {
+					return err
+				}
+
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", autoIdle)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.Branches)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.PullRequests)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", project.RouterPattern)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", factsUI)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", problemsUI)))
+				projData = append(projData, returnNonEmptyString(fmt.Sprintf("%v", deploymentsDisabled)))
+			}
 			data = append(data, projData)
 		}
 		if len(data) == 0 {
 			return handleNilResults("No access to any projects in Lagoon\n", cmd)
 		}
 		projHeader := []string{"ID", "ProjectName", "GitUrl", "ProductionEnvironment", "ProductionRoute", "DevEnvironments"}
-		// if wide {
-		// 	projHeader = append(projHeader, "AutoIdle")
-		// 	projHeader = append(projHeader, "Branches")
-		// 	projHeader = append(projHeader, "PullRequests")
-		// 	projHeader = append(projHeader, "RouterPattern")
-		// 	projHeader = append(projHeader, "FactsUI")
-		// 	projHeader = append(projHeader, "ProblemsUI")
-		// 	projHeader = append(projHeader, "DeploymentsDisabled")
-		// }
+		if wide {
+			projHeader = append(projHeader, "AutoIdle")
+			projHeader = append(projHeader, "Branches")
+			projHeader = append(projHeader, "PullRequests")
+			projHeader = append(projHeader, "RouterPattern")
+			projHeader = append(projHeader, "FactsUI")
+			projHeader = append(projHeader, "ProblemsUI")
+			projHeader = append(projHeader, "DeploymentsDisabled")
+		}
 		dataMain := output.Table{
 			Header: projHeader,
 			Data:   data,
@@ -342,6 +360,10 @@ var listEnvironmentsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		wide, err := cmd.Flags().GetBool("wide")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName); err != nil {
 			return err
 		}
@@ -369,7 +391,7 @@ var listEnvironmentsCmd = &cobra.Command{
 			if environment.Route != "" {
 				envRoute = environment.Route
 			}
-			data = append(data, []string{
+			envData := []string{
 				returnNonEmptyString(fmt.Sprintf("%d", environment.ID)),
 				returnNonEmptyString(fmt.Sprintf("%v", environment.Name)),
 				returnNonEmptyString(fmt.Sprintf("%v", environment.DeployType)),
@@ -377,10 +399,34 @@ var listEnvironmentsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%v", environment.OpenshiftProjectName)),
 				returnNonEmptyString(fmt.Sprintf("%v", envRoute)),
 				returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTarget.Name)),
-			})
+			}
+
+			if wide {
+				autoIdle, err := strconv.ParseBool(strconv.Itoa(int(*environment.AutoIdle)))
+				if err != nil {
+					return err
+				}
+
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Created)))
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", autoIdle)))
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployTitle)))
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployBaseRef)))
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.DeployHeadRef)))
+				envData = append(envData, returnNonEmptyString(fmt.Sprintf("%v", environment.Routes)))
+			}
+			data = append(data, envData)
+		}
+		environmentHeaders := []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"}
+		if wide {
+			environmentHeaders = append(environmentHeaders, "Created")
+			environmentHeaders = append(environmentHeaders, "AutoIdle")
+			environmentHeaders = append(environmentHeaders, "DeployTitle")
+			environmentHeaders = append(environmentHeaders, "DeployBaseRef")
+			environmentHeaders = append(environmentHeaders, "DeployHeadRef")
+			environmentHeaders = append(environmentHeaders, "Routes")
 		}
 		dataMain := output.Table{
-			Header: []string{"ID", "Name", "DeployType", "EnvironmentType", "Namespace", "Route", "DeployTarget"},
+			Header: environmentHeaders,
 			Data:   data,
 		}
 		r := output.RenderOutput(dataMain, outputOptions)
@@ -1226,11 +1272,11 @@ var listOrganizationsCmd = &cobra.Command{
 				returnNonEmptyString(fmt.Sprintf("%d", organization.ID)),
 				returnNonEmptyString(organization.Name),
 				returnNonEmptyString(organization.Description),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaProject)),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaGroup)),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaNotification)),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaEnvironment)),
-				returnNonEmptyString(fmt.Sprintf("%d", organization.QuotaRoute)),
+				returnNonEmptyString(quotaCheck(organization.QuotaProject)),
+				returnNonEmptyString(quotaCheck(organization.QuotaGroup)),
+				returnNonEmptyString(quotaCheck(organization.QuotaNotification)),
+				returnNonEmptyString(quotaCheck(organization.QuotaEnvironment)),
+				returnNonEmptyString(quotaCheck(organization.QuotaRoute)),
 			})
 		}
 		dataMain := output.Table{
@@ -1282,6 +1328,6 @@ func init() {
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
 	listDeployTargetsCmd.Flags().Bool("wide", false, "Display additional information about deploytargets")
 	listDeployTargetsCmd.Flags().Bool("show-token", false, "Display the token for deploytargets")
-	// TODO: support wide on list projects (machinery update required to add additional fields to all projects query)
-	// listProjectsCmd.Flags().Bool("wide", false, "Display additional information about projects")
+	listProjectsCmd.Flags().Bool("wide", false, "Display additional information about projects")
+	listEnvironmentsCmd.Flags().Bool("wide", false, "Display additional information about environments")
 }

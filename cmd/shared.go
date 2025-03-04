@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/uselagoon/lagoon-cli/pkg/output"
@@ -115,4 +116,12 @@ func handleNilResults(message string, cmd *cobra.Command, fields ...interface{})
 	r := output.RenderOutput(output.Table{Data: []output.Data{[]string{}}}, outputOptions)
 	fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 	return nil
+}
+
+func quotaCheck(quota int) string {
+	quotaRoute := strconv.Itoa(quota)
+	if quota < 0 {
+		quotaRoute = "∞"
+	}
+	return quotaRoute
 }
