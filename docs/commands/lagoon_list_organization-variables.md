@@ -1,21 +1,17 @@
-## lagoon delete variable
+## lagoon list organization-variables
 
-Delete a variable from an environment
-
-### Synopsis
-
-This allows you to delete an environment variable from a project.
+List variables for an organization (alias: org-v)
 
 ```
-lagoon delete variable [flags]
+lagoon list organization-variables [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help                       help for variable
-  -N, --name string                Name of the variable to delete
-  -O, --organization-name string   Name of the organization to delete variable from
+  -h, --help                       help for organization-variables
+  -O, --organization-name string   Name of the organization to list associated variables for
+      --reveal                     Reveal the variable values
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +37,5 @@ lagoon delete variable [flags]
 
 ### SEE ALSO
 
-* [lagoon delete](lagoon_delete.md)	 - Delete a project, or delete notifications and variables from projects or environments
+* [lagoon list](lagoon_list.md)	 - List projects, environments, deployments, variables or notifications
 
