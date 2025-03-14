@@ -38,6 +38,7 @@ var outputOptions = output.Options{
 }
 
 var groupRoles = []string{"guest", "reporter", "developer", "maintainer", "owner"}
+var variableScopes = []string{"global", "build", "runtime", "container_registry", "internal_container_registry"}
 
 var debugEnable bool
 
