@@ -11,9 +11,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon"
-	"github.com/uselagoon/lagoon-cli/internal/lagoon/client"
+	"github.com/uselagoon/lagoon-cli/internal/config"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"github.com/uselagoon/machinery/api/lagoon"
+	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 	"gopkg.in/yaml.v3"
 )
 
@@ -284,11 +285,13 @@ var configLagoonVersionCmd = &cobra.Command{
 			return err
 		}
 		current := lagoonCLIConfig.Current
-		lc := client.New(
+
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
 			lagoonCLIConfig.Lagoons[current].GraphQL,
-			lagoonCLIConfig.Lagoons[current].Token,
-			lagoonCLIConfig.Lagoons[current].Version,
 			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
 			debug)
 		lagoonVersion, err := lagoon.GetLagoonAPIVersion(context.TODO(), lc)
 		if err != nil {
@@ -347,13 +350,13 @@ func init() {
 }
 
 // readLagoonConfig reads the lagoon config from specified file.
-func readLagoonConfig(lc *lagoon.Config, file string) error {
+func readLagoonConfig(lc *config.Config, file string) error {
 	data, err := os.ReadFile(file)
 	if err != nil {
 		// if there is no file found in the specified location, prompt the user to create it with the default
 		// configuration to point to the amazeeio lagoon instance
 		if yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
-			l := lagoon.Context{
+			l := config.Context{
 				GraphQL:  "https://api.amazeeio.cloud/graphql",
 				HostName: "token.amazeeio.cloud",
 				Token:    "",
@@ -361,7 +364,7 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 				UI:       "https://dashboard.amazeeio.cloud",
 				Kibana:   "https://logs.amazeeio.cloud/",
 			}
-			lc.Lagoons = map[string]lagoon.Context{}
+			lc.Lagoons = map[string]config.Context{}
 			lc.Lagoons["amazeeio"] = l
 			lc.Default = "amazeeio"
 			return writeLagoonConfig(lc, file)
@@ -384,7 +387,7 @@ func readLagoonConfig(lc *lagoon.Config, file string) error {
 // functions to handle read/write of configuration file
 
 // writeLagoonConfig writes the lagoon config to specified file.
-func writeLagoonConfig(lc *lagoon.Config, file string) error {
+func writeLagoonConfig(lc *config.Config, file string) error {
 	d, err := yaml.Marshal(&lc)
 	if err != nil {
 		return fmt.Errorf("unable to marshal config into valid yaml: %v", err)
@@ -392,18 +395,6 @@ func writeLagoonConfig(lc *lagoon.Config, file string) error {
 	err = os.WriteFile(file, d, 0777)
 	if err != nil {
 		return err
-	}
-	return nil
-}
-
-func setConfigDefaultVersion(lc *lagoon.Config, lagoon string, version string) error {
-	if lc.Lagoons[lagoon].Version == "" {
-		l := lc.Lagoons[lagoon]
-		l.Version = version
-		lc.Lagoons[lagoon] = l
-		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-			return fmt.Errorf("couldn't write config: %v", err)
-		}
 	}
 	return nil
 }
