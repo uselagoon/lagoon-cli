@@ -19,7 +19,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
-	github.com/uselagoon/machinery v0.0.33-0.20250304051733-9d016e3d4ce6
+	github.com/uselagoon/machinery v0.0.33
 	go.uber.org/mock v0.5.0
 	golang.org/x/crypto v0.32.0
 	golang.org/x/term v0.28.0
