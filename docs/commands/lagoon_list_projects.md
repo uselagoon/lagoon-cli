@@ -10,6 +10,7 @@ lagoon list projects [flags]
 
 ```
   -h, --help   help for projects
+      --wide   Display additional information about projects
 ```
 
 ### Options inherited from parent commands
