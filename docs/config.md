@@ -32,9 +32,9 @@ If you want to add a different Lagoon context to use, then you can use the CLI c
 lagoon config add --lagoon example
 ```
 
-It is also possible to set an SSH key or public key itendity file to use when adding (or updating) a context. 
+It is also possible to set an SSH key or public key identity file to use when adding (or updating) a context. 
 
-The flag `--publickey-identitfyfile /path/to/key.pub` can be used to tell the CLI which public key identity in your SSH agent should be used.
+The flag `--publickey-identityfile /path/to/key.pub` can be used to tell the CLI which public key identity in your SSH agent should be used.
 
 The flag `--ssh-key /path/to/key` can be used to tell the CLI which SSH private key should be used.
 
