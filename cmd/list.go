@@ -1290,6 +1290,76 @@ var listOrganizationsCmd = &cobra.Command{
 	},
 }
 
+var listOrganizationVariablesCmd = &cobra.Command{
+	Use:     "organization-variables",
+	Aliases: []string{"org-v"},
+	Short:   "List variables for an organization (alias: org-v)",
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(cmdLagoon)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		organizationName, err := cmd.Flags().GetString("organization-name")
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Organization name", organizationName); err != nil {
+			return err
+		}
+		reveal, err := cmd.Flags().GetBool("reveal")
+		if err != nil {
+			return err
+		}
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+		envvars, err := lagoon.GetEnvVariablesByOrganizationName(context.TODO(), organizationName, lc)
+		if err != nil {
+			return err
+		}
+		data := []output.Data{}
+		for _, envvar := range *envvars {
+			env := []string{
+				returnNonEmptyString(fmt.Sprintf("%v", envvar.ID)),
+				returnNonEmptyString(fmt.Sprintf("%v", organizationName)),
+			}
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
+			if reveal {
+				env = append(env, fmt.Sprintf("%v", envvar.Value))
+				outputOptions.MultiLine = true
+			}
+			data = append(data, env)
+		}
+		header := []string{
+			"ID",
+			"Organization",
+		}
+		header = append(header, "Scope")
+		header = append(header, "Name")
+		if reveal {
+			header = append(header, "Value")
+		}
+		if len(data) == 0 {
+			return handleNilResults("There are no variables for organization '%s'\n", cmd, organizationName)
+		}
+		r := output.RenderOutput(output.Table{
+			Header: header,
+			Data:   data,
+		}, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		return nil
+	},
+}
+
 var listEnvironmentServicesCmd = &cobra.Command{
 	Use:     "environment-services",
 	Aliases: []string{"es"},
@@ -1384,6 +1454,7 @@ func init() {
 	listCmd.AddCommand(listOrganizationGroupsCmd)
 	listCmd.AddCommand(listOrganizationDeployTargetsCmd)
 	listCmd.AddCommand(listOrganizationsCmd)
+	listCmd.AddCommand(listOrganizationVariablesCmd)
 	listCmd.AddCommand(listEnvironmentServicesCmd)
 	listAllUsersCmd.Flags().StringP("email", "E", "", "The email address of a user")
 	listUsersGroupsCmd.Flags().StringP("email", "E", "", "The email address of a user")
@@ -1398,6 +1469,8 @@ func init() {
 	listOrganizationGroupsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated groups for")
 	listOrganizationDeployTargetsCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated deploy targets for")
 	listOrganizationDeployTargetsCmd.Flags().Uint("id", 0, "ID of the organization to list associated deploy targets for")
+	listOrganizationVariablesCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to list associated variables for")
+	listOrganizationVariablesCmd.Flags().BoolP("reveal", "", false, "Reveal the variable values")
 	listDeployTargetsCmd.Flags().Bool("wide", false, "Display additional information about deploytargets")
 	listDeployTargetsCmd.Flags().Bool("show-token", false, "Display the token for deploytargets")
 	listProjectsCmd.Flags().Bool("wide", false, "Display additional information about projects")

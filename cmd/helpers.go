@@ -84,3 +84,18 @@ func buildVarsToMap(slice []string) ([]schema.EnvKeyValueInput, error) {
 
 	return result, nil
 }
+
+// getEnvVarType determines if the user intends to manipulate an api env var
+// for an organization, project, or environment.
+func getEnvVarType(org string, project string, env string) (string, error) {
+	switch {
+	case org != "" && project == "" && env == "":
+		return "organization", nil
+	case org == "" && project != "" && env == "":
+		return "project", nil
+	case org == "" && project != "" && env != "":
+		return "environment", nil
+	}
+
+	return "", fmt.Errorf("missing argument: Use either an organization name, a project name, or a project name and environment name")
+}
