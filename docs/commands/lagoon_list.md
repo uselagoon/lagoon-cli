@@ -50,6 +50,7 @@ List projects, environments, deployments, variables or notifications
 * [lagoon list organization-groups](lagoon_list_organization-groups.md)	 - List groups in an organization
 * [lagoon list organization-projects](lagoon_list_organization-projects.md)	 - List projects in an organization
 * [lagoon list organization-users](lagoon_list_organization-users.md)	 - List users in an organization
+* [lagoon list organization-variables](lagoon_list_organization-variables.md)	 - List variables for an organization (alias: org-v)
 * [lagoon list organizations](lagoon_list_organizations.md)	 - List all organizations
 * [lagoon list project-groups](lagoon_list_project-groups.md)	 - List groups in a project (alias: pg)
 * [lagoon list projects](lagoon_list_projects.md)	 - List all projects you have access to (alias: p)
