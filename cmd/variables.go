@@ -108,7 +108,7 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 		header = append(header, "Name")
 		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 		header = append(header, "Value")
-		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
+		env = append(env, fmt.Sprintf("%v", envvar.Value))
 		data := []output.Data{env}
 		r := output.RenderOutput(output.Table{
 			Header: header,
