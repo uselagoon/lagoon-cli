@@ -15,7 +15,7 @@ If you experience any problems, check out the [troubleshooting](./troubleshootin
 # Installation
 The preferred method to install is via [Homebrew](https://brew.sh/).
 ```
-brew tap amazeeio/lagoon-cli
+brew tap uselagoon/lagoon-cli
 brew install lagoon
 ```
 
