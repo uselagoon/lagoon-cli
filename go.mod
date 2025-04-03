@@ -1,7 +1,6 @@
 module github.com/uselagoon/lagoon-cli
 
-go 1.23
-toolchain go1.24.1
+go 1.23.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
