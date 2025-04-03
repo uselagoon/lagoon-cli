@@ -81,7 +81,8 @@ var configDefaultCmd = &cobra.Command{
 			},
 		}
 		r := output.RenderResult(resultData, outputOptions)
-		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		_, err = fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		handleError(err)
 		return nil
 	},
 }
@@ -133,7 +134,8 @@ var configLagoonsCmd = &cobra.Command{
 			Header: tableHeader,
 			Data:   data,
 		}, outputOptions)
-		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		handleError(err)
 		return nil
 	},
 }
@@ -199,7 +201,8 @@ var configAddCmd = &cobra.Command{
 					},
 				},
 			}, outputOptions)
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+			_, err = fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+			handleError(err)
 		} else {
 			return fmt.Errorf("must have Hostname, Port, and GraphQL endpoint")
 		}

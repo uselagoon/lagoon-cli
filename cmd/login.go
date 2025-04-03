@@ -178,7 +178,11 @@ func retrieveTokenViaSsh() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("unable to authenticate or connect to host %s\nthere may be an issue determining which ssh-key to use, or there may be an issue establishing a connection to the host\nthe error returned was: %v", sshHost, err)
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			handleError(err)
+		}
+	}()
 
 	session, err := conn.NewSession()
 	if err != nil {

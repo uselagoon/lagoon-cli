@@ -3,6 +3,7 @@ package output
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"reflect"
@@ -59,7 +60,11 @@ func TestRenderError(t *testing.T) {
 	}()
 	os.Stderr = w
 	RenderError(testData, outputOptions)
-	w.Close()
+	defer func() {
+		if err := w.Close(); err != nil {
+			_ = fmt.Errorf("error closing pipe: %v", err)
+		}
+	}()
 	var out bytes.Buffer
 	_, _ = io.Copy(&out, r)
 	if out.String() != testSuccess {
@@ -85,7 +90,11 @@ func TestRenderInfo(t *testing.T) {
 	}()
 	os.Stderr = w
 	RenderInfo(testData, outputOptions)
-	w.Close()
+	defer func() {
+		if err := w.Close(); err != nil {
+			_ = fmt.Errorf("error closing pipe: %v", err)
+		}
+	}()
 	var out bytes.Buffer
 	_, _ = io.Copy(&out, r)
 	if out.String() != testSuccess1 {

@@ -28,7 +28,11 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 	if err != nil {
 		return fmt.Errorf("couldn't create SSH session: %v", err)
 	}
-	defer session.Close()
+	defer func() {
+		if err := session.Close(); err != nil {
+			_ = fmt.Errorf("error closing SSH session: %v\n", err)
+		}
+	}()
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -51,7 +55,11 @@ func InteractiveSSH(lagoon map[string]string, sshService string, sshContainer st
 	if err != nil {
 		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
-	defer session.Close()
+	defer func() {
+		if err := session.Close(); err != nil {
+			_ = fmt.Errorf("error closing SSH session: %v\n", err)
+		}
+	}()
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -107,7 +115,11 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 	if err != nil {
 		return fmt.Errorf("failed to create session: %s", err.Error())
 	}
-	defer session.Close()
+	defer func() {
+		if err := session.Close(); err != nil {
+			_ = fmt.Errorf("error closing SSH session: %v\n", err)
+		}
+	}()
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -155,7 +167,10 @@ func RunSSHCommand(lagoon map[string]string, sshService string, sshContainer str
 		os.Stderr.WriteString(e.String())
 		return err
 	}
-	os.Stdout.WriteString(b.String())
+	_, err = os.Stdout.WriteString(b.String())
+	if err != nil {
+		return err
+	}
 	os.Stderr.WriteString(e.String())
 	return nil
 }
@@ -201,7 +216,11 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 		} else if knownhosts.IsHostUnknown(err) {
 			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
 			if ferr == nil {
-				defer f.Close()
+				defer func() {
+					if err := f.Close(); err != nil {
+						_ = fmt.Errorf("error closing known_hosts: %v\n", err)
+					}
+				}()
 				var response string
 				if accept {
 					response = "y"
