@@ -9,10 +9,11 @@ lagoon add variable [flags]
 ### Options
 
 ```
-  -h, --help           help for variable
-  -N, --name string    Name of the variable to add
-  -S, --scope string   Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
-  -V, --value string   Value of the variable to add
+  -h, --help                       help for variable
+  -N, --name string                Name of the variable to add
+  -O, --organization-name string   Name of the organization to add variable to
+  -S, --scope string               Scope of the variable[global, build, runtime, container_registry, internal_container_registry]
+  -V, --value string               Value of the variable to add
 ```
 
 ### Options inherited from parent commands

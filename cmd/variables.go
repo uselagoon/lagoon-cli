@@ -50,7 +50,15 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if err := requiredInputCheck("Project name", cmdProjectName, "Variable name", varName); err != nil {
+	organizationName, err := cmd.Flags().GetString("organization-name")
+	if err != nil {
+		return err
+	}
+	_, err = getEnvVarType(organizationName, cmdProjectName, cmdProjectEnvironment)
+	if err != nil {
+		return err
+	}
+	if err := requiredInputCheck("Variable name", varName); err != nil {
 		return err
 	}
 
@@ -64,11 +72,12 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 		debug)
 
 	in := &schema.EnvVariableByNameInput{
-		Project:     cmdProjectName,
-		Environment: cmdProjectEnvironment,
-		Scope:       schema.EnvVariableScope(strings.ToUpper(varScope)),
-		Name:        varName,
-		Value:       varValue,
+		Organization: organizationName,
+		Project:      cmdProjectName,
+		Environment:  cmdProjectEnvironment,
+		Scope:        schema.EnvVariableScope(strings.ToUpper(varScope)),
+		Name:         varName,
+		Value:        varValue,
 	}
 	envvar, err := lagoon.AddOrUpdateEnvVariableByName(context.TODO(), in, lc)
 	if err != nil {
@@ -76,28 +85,31 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 	}
 
 	if envvar.ID != 0 {
-		data := []output.Data{}
-		env := []string{
-			returnNonEmptyString(fmt.Sprintf("%v", envvar.ID)),
-			returnNonEmptyString(fmt.Sprintf("%v", cmdProjectName)),
-		}
-		if cmdProjectEnvironment != "" {
-			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", cmdProjectEnvironment)))
-		}
-		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
-		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
-		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
-		data = append(data, env)
 		header := []string{
 			"ID",
-			"Project",
+		}
+		env := []string{
+			returnNonEmptyString(fmt.Sprintf("%v", envvar.ID)),
+		}
+		if organizationName != "" {
+			header = append(header, "Organization")
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", organizationName)))
+		}
+		if cmdProjectName != "" {
+			header = append(header, "Project")
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", cmdProjectName)))
 		}
 		if cmdProjectEnvironment != "" {
 			header = append(header, "Environment")
+			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", cmdProjectEnvironment)))
 		}
 		header = append(header, "Scope")
+		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
 		header = append(header, "Name")
+		env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 		header = append(header, "Value")
+		env = append(env, fmt.Sprintf("%v", envvar.Value))
+		data := []output.Data{env}
 		r := output.RenderOutput(output.Table{
 			Header: header,
 			Data:   data,
@@ -126,12 +138,24 @@ var deleteVariableCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := requiredInputCheck("Project name", cmdProjectName, "Variable name", varName); err != nil {
+		organizationName, err := cmd.Flags().GetString("organization-name")
+		if err != nil {
+			return err
+		}
+		envVarType, err := getEnvVarType(organizationName, cmdProjectName, cmdProjectEnvironment)
+		if err != nil {
+			return err
+		}
+		if err := requiredInputCheck("Variable name", varName); err != nil {
 			return err
 		}
 
-		deleteMsg := fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
-		if cmdProjectEnvironment != "" {
+		var deleteMsg string
+		if envVarType == "organization" {
+			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from organization '%s', are you sure?", varName, organizationName)
+		} else if envVarType == "project" {
+			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
+		} else if envVarType == "environment" {
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
@@ -144,9 +168,10 @@ var deleteVariableCmd = &cobra.Command{
 				&token,
 				debug)
 			in := &schema.DeleteEnvVariableByNameInput{
-				Project:     cmdProjectName,
-				Environment: cmdProjectEnvironment,
-				Name:        varName,
+				Organization: organizationName,
+				Project:      cmdProjectName,
+				Environment:  cmdProjectEnvironment,
+				Name:         varName,
 			}
 			deleteResult, err := lagoon.DeleteEnvVariableByName(context.TODO(), in, lc)
 			if err != nil {
@@ -166,8 +191,11 @@ func init() {
 	addVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
 	addVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
 	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	addVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to add variable to")
 	updateVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to update")
 	updateVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to update")
 	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	updateVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to update variable for")
 	deleteVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to delete")
+	deleteVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to delete variable from")
 }
