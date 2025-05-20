@@ -4,10 +4,6 @@ WORKDIR /go/src/github.com/uselagoon/lagoon-cli/
 COPY . .
 
 ARG VERSION
-ARG OS
-ENV OS=${OS:-linux}
-ARG ARCH
-ENV ARCH=${ARCH:-amd64}
 
 RUN apk update && apk add git
 
