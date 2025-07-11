@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/uselagoon/lagoon-cli/internal/wizard/project"
 	"strconv"
 
 	"strings"
@@ -143,9 +144,15 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
-		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
+		interactive, err := cmd.Flags().GetBool("interactive")
+		if err != nil {
 			return err
+		}
+
+		if !interactive {
+			if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
+				return err
+			}
 		}
 
 		current := lagoonCLIConfig.Current
@@ -157,19 +164,45 @@ var addProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectInput := schema.AddProjectInput{
-			Name:                         cmdProjectName,
-			GitURL:                       gitUrl,
-			ProductionEnvironment:        productionEnvironment,
-			StandbyProductionEnvironment: standbyProductionEnvironment,
-			Branches:                     branches,
-			PullRequests:                 pullrequests,
-			OpenshiftProjectPattern:      deploytargetProjectPattern,
-			Openshift:                    deploytarget,
-			Subfolder:                    subfolder,
-			PrivateKey:                   privateKey,
-			BuildImage:                   buildImage,
-			RouterPattern:                routerPattern,
+		projectInput := schema.AddProjectInput{}
+		if interactive {
+			config, err := project.RunCreateWizard(lc)
+			if err != nil {
+				return err
+			}
+			projectInput = config.Input
+			if config.OrganizationName != "" {
+				organizationName = config.OrganizationName
+			}
+			if config.AutoIdleProvided {
+				autoIdle = config.AutoIdle
+				autoIdleProvided = config.AutoIdleProvided
+			}
+			if config.StorageCalcProvided {
+				storageCalc = config.StorageCalc
+				storageCalcProvided = config.StorageCalcProvided
+			}
+			if config.DevEnvLimit != 0 {
+				developmentEnvironmentsLimit = config.DevEnvLimit
+				developmentEnvironmentsLimitProvided = true
+			}
+		}
+
+		if !interactive {
+			projectInput = schema.AddProjectInput{
+				Name:                         cmdProjectName,
+				GitURL:                       gitUrl,
+				ProductionEnvironment:        productionEnvironment,
+				StandbyProductionEnvironment: standbyProductionEnvironment,
+				Branches:                     branches,
+				PullRequests:                 pullrequests,
+				OpenshiftProjectPattern:      deploytargetProjectPattern,
+				Openshift:                    deploytarget,
+				Subfolder:                    subfolder,
+				PrivateKey:                   privateKey,
+				BuildImage:                   buildImage,
+				RouterPattern:                routerPattern,
+			}
 		}
 		if orgOwnerProvided {
 			projectInput.AddOrgOwner = &orgOwner
@@ -210,7 +243,7 @@ var addProjectCmd = &cobra.Command{
 			Result: "success",
 			ResultData: map[string]interface{}{
 				"Project Name": project.Name,
-				"GitURL":       gitUrl,
+				"GitURL":       projectInput.GitURL,
 			},
 		}
 		if organizationName != "" {
@@ -765,6 +798,7 @@ func init() {
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
+	addProjectCmd.Flags().Bool("interactive", false, "Set Interactive mode for the project creation wizard.")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
