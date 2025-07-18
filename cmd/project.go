@@ -3,7 +3,10 @@ package cmd
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/charmbracelet/huh"
+	"github.com/uselagoon/lagoon-cli/internal/util"
 	"github.com/uselagoon/lagoon-cli/internal/wizard/project"
 	"strconv"
 
@@ -148,6 +151,7 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		generatedCommand := ""
 
 		if !interactive {
 			if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
@@ -168,11 +172,14 @@ var addProjectCmd = &cobra.Command{
 		if interactive {
 			config, err := project.RunCreateWizard(lc)
 			if err != nil {
+				if errors.Is(err, huh.ErrUserAborted) {
+					return nil
+				}
 				return err
 			}
 			projectInput = config.Input
-			if config.OrganizationName != "" {
-				organizationName = config.OrganizationName
+			if config.OrganizationDetails.Name != "" {
+				organizationName = config.OrganizationDetails.Name
 			}
 			if config.AutoIdleProvided {
 				autoIdle = config.AutoIdle
@@ -186,6 +193,7 @@ var addProjectCmd = &cobra.Command{
 				developmentEnvironmentsLimit = config.DevEnvLimit
 				developmentEnvironmentsLimitProvided = true
 			}
+			generatedCommand = util.GenerateCLICommand(config)
 		}
 
 		if !interactive {
@@ -248,6 +256,9 @@ var addProjectCmd = &cobra.Command{
 		}
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
+		}
+		if interactive {
+			resultData.ResultData["Generated Command"] = "lagoon add project" + generatedCommand
 		}
 		r := output.RenderResult(resultData, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
