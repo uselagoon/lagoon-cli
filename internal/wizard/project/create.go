@@ -25,13 +25,22 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 					if !valid {
 						return errors.New(errMsg)
 					}
+					if valid {
+						proj, err := lagoon.GetMinimalProjectByName(context.TODO(), name, lc)
+						if err != nil {
+							return err
+						}
+						if proj.Name != "" {
+							return errors.New(fmt.Sprintf("project: %s already exists", name))
+						}
+					}
 					return nil
 				}),
 			huh.NewConfirm().
 				Title("Do you want to create this project in an Organization?").
 				Value(&organizationConfirm),
 		),
-	).WithTheme(huh.ThemeCatppuccin())
+	).WithTheme(huh.ThemeCharm())
 
 	formErr := initForm.Run()
 	if formErr != nil {
@@ -73,7 +82,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 						return nil
 					}),
 			),
-		).WithTheme(huh.ThemeCatppuccin())
+		).WithTheme(huh.ThemeCharm())
 
 		err = form2.Run()
 		if err != nil {
@@ -83,6 +92,10 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 
 	deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
 	var additionalFields bool
+	options := make([]huh.Option[uint], len(*deploytargets))
+	for i, target := range *deploytargets {
+		options[i] = huh.NewOption(target.Name, target.ID)
+	}
 	form3 := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
@@ -99,20 +112,13 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 				Value(&config.Input.ProductionEnvironment),
 			huh.NewSelect[uint]().
 				Title("Select a deploy target").
-				OptionsFunc(func() []huh.Option[uint] {
-					options := make([]huh.Option[uint], len(*deploytargets))
-					for i, target := range *deploytargets {
-						options[i] = huh.NewOption(target.Name, target.ID)
-					}
-
-					return options
-				}, &config.Input.Openshift).
+				Options(options...).
 				Value(&config.Input.Openshift),
 			huh.NewConfirm().
 				Title("Do you want to define any other fields?").
 				Value(&additionalFields),
 		),
-	).WithTheme(huh.ThemeCatppuccin())
+	).WithTheme(huh.ThemeCharm())
 
 	err = form3.Run()
 	if err != nil {
@@ -124,8 +130,6 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 		additionalFieldsOptions := []huh.Option[string]{
 			huh.NewOption("branches: Which branches should be deployed", "Branches"),
 			huh.NewOption("pullrequests: Which Pull Requests should be deployed", "PullRequests"),
-			huh.NewOption("standby-production-environment: Which environment(the name) should be marked as the standby production environment", "StandbyProductionEnvironment"),
-			huh.NewOption("subfolder: Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository", "Subfolder"),
 		}
 		if organizationConfirm {
 			additionalFieldsOptions = append(additionalFieldsOptions, huh.NewOption("owner (Only select if adding to an Organization)", "AddOrgOwner"))
@@ -151,7 +155,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 					Options(additionalFieldsOptions...).
 					Value(&fields),
 			),
-		).WithTheme(huh.ThemeCatppuccin())
+		).WithTheme(huh.ThemeCharm())
 
 		err = form4.Run()
 		if err != nil {
@@ -159,7 +163,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 		}
 
 		if len(fields) == 0 {
-			fmt.Println("No fields selected.")
+			return config, nil
 		}
 
 		var inputs []huh.Field
@@ -216,7 +220,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 
 		form5 := huh.NewForm(
 			huh.NewGroup(inputs...),
-		).WithTheme(huh.ThemeCatppuccin())
+		).WithTheme(huh.ThemeCharm())
 
 		err = form5.Run()
 		if err != nil {
