@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/charmbracelet/huh"
@@ -9,6 +10,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/internal/util"
 	"github.com/uselagoon/machinery/api/lagoon"
 	"github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 	"strconv"
 )
 
@@ -47,17 +49,48 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 		return nil, formErr
 	}
 	if organizationConfirm {
-		organizations, err := lagoon.AllOrganizationsExtended(context.TODO(), lc) // requires machinery changes current - todo: change to raw
+		raw := `query allOrgsWithProjects {
+			allOrganizations {
+				id
+				name
+				description
+				friendlyName
+				quotaProject
+				quotaGroup
+				quotaNotification
+				quotaEnvironment
+				quotaRoute
+				projects {
+					id
+					name
+				}
+			}
+		}`
+		resp, err := lc.ProcessRaw(context.TODO(), raw, map[string]interface{}{})
 		if err != nil {
 			return nil, err
 		}
+
+		allOrgs := resp.(map[string]interface{})["allOrganizations"]
+		o, err := json.Marshal(allOrgs)
+		if err != nil {
+			return nil, err
+		}
+
+		var organizations []schema.Organization
+		err = json.Unmarshal(o, &organizations)
+		if err != nil {
+			return nil, err
+		}
+
+		orgValidationErr := false
 		form2 := huh.NewForm(
 			huh.NewGroup(
 				huh.NewSelect[string]().
 					Title("Select an organization").
 					OptionsFunc(func() []huh.Option[string] {
-						options := make([]huh.Option[string], len(*organizations))
-						for i, org := range *organizations {
+						options := make([]huh.Option[string], len(organizations))
+						for i, org := range organizations {
 							orgProjectCount := len(org.Projects)
 							if orgProjectCount >= org.QuotaProject && org.QuotaProject >= 0 {
 								quotaFullLabel := lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Render(fmt.Sprintf("%s | Project Limit: %v/%v | ⚠️  Project Quota full, cannot assigned project to this organization.", org.Name, orgProjectCount, org.QuotaProject))
@@ -71,11 +104,13 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 					}, &config.OrganizationDetails.Name).
 					Value(&config.OrganizationDetails.Name).
 					Validate(func(selectedOrg string) error {
-						for _, org := range *organizations {
+						for _, org := range organizations {
 							if org.Name == selectedOrg {
 								orgProjectCount := len(org.Projects)
 								if orgProjectCount >= org.QuotaProject && org.QuotaProject >= 0 {
-									return fmt.Errorf("Organization %s has reached its project quota (%d/%d)", org.Name, orgProjectCount, org.QuotaProject)
+									orgValidationErr = true
+									return nil
+									//return fmt.Errorf("Organization %s has reached its project quota (%d/%d)", org.Name, orgProjectCount, org.QuotaProject)
 								}
 							}
 						}
@@ -87,6 +122,33 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 		err = form2.Run()
 		if err != nil {
 			return nil, err
+		}
+
+		if orgValidationErr {
+			var orgRetryResp string
+			orgRetryRespForm := huh.NewForm(
+				huh.NewGroup(
+					huh.NewSelect[string]().
+						Title("Organization quota exceeded. What would you like to do?").
+						Options(
+							huh.NewOption("Go back to previous form", "back"),
+							huh.NewOption("Cancel wizard", "cancel"),
+						).
+						Value(&orgRetryResp),
+				),
+			).WithTheme(huh.ThemeCharm())
+
+			err := orgRetryRespForm.Run()
+			if err != nil {
+				return nil, err
+			}
+
+			switch orgRetryResp {
+			case "back":
+				return RunCreateWizard(lc)
+			case "cancel":
+				return nil, huh.ErrUserAborted
+			}
 		}
 	}
 
