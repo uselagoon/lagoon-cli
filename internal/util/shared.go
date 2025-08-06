@@ -1,7 +1,11 @@
 package util
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/uselagoon/machinery/api/lagoon/client"
 	"github.com/uselagoon/machinery/api/schema"
 	"reflect"
 	"regexp"
@@ -74,6 +78,48 @@ func IsValidProjectName(name string) (bool, string) {
 		return false, "Multiple consecutive dashes are not allowed for name"
 	}
 	return true, ""
+}
+
+func GetOrgDeployTargets(lc *client.Client, orgName string) ([]schema.DeployTarget, error) {
+	var orgDeployTargets []schema.DeployTarget
+	rawOrgByName := `query organizationByNameWithDeployTargets($name: String!) {
+			organizationByName(name: $name) {
+				id
+				name
+				deployTargets{
+				  id
+				  name
+				}
+			}
+		}`
+
+	orgResp, err := lc.ProcessRaw(context.TODO(), rawOrgByName, map[string]interface{}{
+		"name": orgName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	orgData, ok := orgResp.(map[string]interface{})["organizationByName"]
+	if !ok {
+		return nil, errors.New("organization not found")
+	}
+
+	orgDT, exists := orgData.(map[string]interface{})["deployTargets"]
+	if !exists {
+		return nil, errors.New("no deployTargets found in organization")
+	}
+
+	odt, err := json.Marshal(orgDT)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(odt, &orgDeployTargets)
+	if err != nil {
+		return nil, err
+	}
+	return orgDeployTargets, nil
 }
 
 func GenerateCLICommand(config *CreateConfig) string {

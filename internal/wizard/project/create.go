@@ -33,7 +33,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 							return err
 						}
 						if proj.Name != "" {
-							return errors.New(fmt.Sprintf("project: %s already exists", name))
+							return fmt.Errorf("project: %s already exists", name)
 						}
 					}
 					return nil
@@ -48,6 +48,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 	if formErr != nil {
 		return nil, formErr
 	}
+	var organizations []schema.Organization
 	if organizationConfirm {
 		raw := `query allOrgsWithProjects {
 			allOrganizations {
@@ -77,7 +78,6 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 			return nil, err
 		}
 
-		var organizations []schema.Organization
 		err = json.Unmarshal(o, &organizations)
 		if err != nil {
 			return nil, err
@@ -99,7 +99,6 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 								options[i] = huh.NewOption(fmt.Sprintf("%s | Project Limit: %v/%v", org.Name, orgProjectCount, util.QuotaCheck(org.QuotaProject)), org.Name)
 							}
 						}
-
 						return options
 					}, &config.OrganizationDetails.Name).
 					Value(&config.OrganizationDetails.Name).
@@ -110,7 +109,6 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 								if orgProjectCount >= org.QuotaProject && org.QuotaProject >= 0 {
 									orgValidationErr = true
 									return nil
-									//return fmt.Errorf("Organization %s has reached its project quota (%d/%d)", org.Name, orgProjectCount, org.QuotaProject)
 								}
 							}
 						}
@@ -152,10 +150,26 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 		}
 	}
 
-	deploytargets, err := lagoon.ListDeployTargets(context.TODO(), lc)
+	var deployTargets *[]schema.DeployTarget
+	var err error
+	if organizationConfirm {
+		orgDeploytargets, err := util.GetOrgDeployTargets(lc, config.OrganizationDetails.Name)
+		if err != nil {
+			return nil, err
+		}
+		deployTargets = &orgDeploytargets
+	} else {
+		deployTargets, err = lagoon.ListDeployTargets(context.TODO(), lc)
+		if err != nil {
+			return nil, err
+		}
+		if deployTargets == nil {
+			return nil, errors.New("no deployTargets found for user")
+		}
+	}
 	var additionalFields bool
-	options := make([]huh.Option[uint], len(*deploytargets))
-	for i, target := range *deploytargets {
+	options := make([]huh.Option[uint], len(*deployTargets))
+	for i, target := range *deployTargets {
 		options[i] = huh.NewOption(target.Name, target.ID)
 	}
 	form3 := huh.NewForm(
@@ -165,7 +179,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 				Value(&config.Input.GitURL).
 				Validate(func(str string) error {
 					if !util.IsValidGitURL(config.Input.GitURL) {
-						return errors.New("Invalid Git URL")
+						return errors.New("invalid Git URL")
 					}
 					return nil
 				}),
@@ -194,26 +208,12 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 			huh.NewOption("pullrequests: Which Pull Requests should be deployed", "PullRequests"),
 		}
 		if organizationConfirm {
-			additionalFieldsOptions = append(additionalFieldsOptions, huh.NewOption("owner (Only select if adding to an Organization)", "AddOrgOwner"))
+			additionalFieldsOptions = append(additionalFieldsOptions, huh.NewOption("owner", "AddOrgOwner"))
 		}
 		form4 := huh.NewForm(
 			huh.NewGroup(
 				huh.NewMultiSelect[string]().
 					Title("Select which fields you want to define").
-					//Options(
-					//	//huh.NewOption("auto-idle: Auto idle setting of the project.", "AutoIdle"),
-					//	huh.NewOption("branches: Which branches should be deployed", "Branches"),
-					//	//huh.NewOption("build-image: Build Image for the project", "BuildImage"),
-					//	//huh.NewOption("deploytarget-project-pattern: Pattern of Deploytarget(Kubernetes) Project/Namespace that should be generated", "OpenshiftProjectPattern"),
-					//	//huh.NewOption("development-environments-limit: How many environments can be deployed at one time", "DevelopmentEnvironmentsLimit"),
-					//	huh.NewOption("owner (Only select if adding to an Organization)", "AddOrgOwner"),
-					//	//huh.NewOption("private-key: Private key to use for the project", "PrivateKey"),
-					//	huh.NewOption("pullrequests: Which Pull Requests should be deployed", "PullRequests"),
-					//	//huh.NewOption("router-pattern: Router pattern of the project, e.g. '${service}-${environment}-${project}.lagoon.example.com'", "RouterPattern"),
-					//	huh.NewOption("standby-production-environment: Which environment(the name) should be marked as the standby production environment", "StandbyProductionEnvironment"),
-					//	//huh.NewOption("storage-calc: Should storage for this environment be calculated.", "StorageCalc"),
-					//	huh.NewOption("subfolder: Set if the .lagoon.yml should be found in a subfolder useful if you have multiple Lagoon projects per Git Repository", "Subfolder"),
-					//).
 					Options(additionalFieldsOptions...).
 					Value(&fields),
 			),
