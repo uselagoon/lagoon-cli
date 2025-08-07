@@ -27,7 +27,7 @@ type LagoonConfigFlags struct {
 	Token     string `json:"token,omitempty"`
 	UI        string `json:"ui,omitempty"`
 	Kibana    string `json:"kibana,omitempty"`
-	SSHKey    string `json:"sshkey,omitempty"`
+	SSHKey    string `json:"ssh-key,omitempty"`
 	SSHPortal bool   `json:"sshportal,omitempty"`
 }
 
