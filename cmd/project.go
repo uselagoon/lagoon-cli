@@ -181,18 +181,6 @@ var addProjectCmd = &cobra.Command{
 			if config.OrganizationDetails.Name != "" {
 				organizationName = config.OrganizationDetails.Name
 			}
-			if config.AutoIdleProvided {
-				autoIdle = config.AutoIdle
-				autoIdleProvided = config.AutoIdleProvided
-			}
-			if config.StorageCalcProvided {
-				storageCalc = config.StorageCalc
-				storageCalcProvided = config.StorageCalcProvided
-			}
-			if config.DevEnvLimit != 0 {
-				developmentEnvironmentsLimit = config.DevEnvLimit
-				developmentEnvironmentsLimitProvided = true
-			}
 			generatedCommand = util.GenerateCLICommand(config)
 		}
 

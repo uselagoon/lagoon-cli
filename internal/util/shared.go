@@ -9,18 +9,12 @@ import (
 	"github.com/uselagoon/machinery/api/schema"
 	"reflect"
 	"regexp"
-	"slices"
 	"strconv"
 )
 
 type CreateConfig struct {
 	Input               schema.AddProjectInput
 	OrganizationDetails schema.Organization
-	AutoIdle            bool
-	AutoIdleProvided    bool
-	StorageCalc         bool
-	StorageCalcProvided bool
-	DevEnvLimit         uint
 }
 
 var fieldCmdMap = map[string]string{
@@ -47,6 +41,11 @@ var fieldCmdMap = map[string]string{
 	"ProductionBuildPriority":      "--production-build-priority",
 	"DevelopmentBuildPriority":     "--development-build-priority",
 	"DeploymentsDisabled":          "--deployments-disabled",
+}
+
+type reflectFields struct {
+	fieldType  reflect.Type
+	fieldValue reflect.Value
 }
 
 func IsValidGitURL(url string) bool {
@@ -122,56 +121,49 @@ func GetOrgDeployTargets(lc *client.Client, orgName string) ([]schema.DeployTarg
 	return orgDeployTargets, nil
 }
 
-func GenerateCLICommand(config *CreateConfig) string {
+func processFields(fieldName string, fieldValue reflect.Value) string {
 	cmd := ""
-	configFields := config.Input
-	configType := reflect.TypeOf(configFields)
-	configValue := reflect.ValueOf(configFields)
-	boolFields := []string{
-		"--auto-idle",
-		"--storage-calc",
-	}
 
-	for i := 0; i < configType.NumField(); i++ {
-		fieldName := configType.Field(i).Name
-		fieldValue := configValue.Field(i)
-
-		if !fieldValue.IsZero() {
-			if flag, exists := fieldCmdMap[fieldName]; exists {
-				if flag == "--owner" {
-					cmd += " " + fmt.Sprintf("%s=%v", flag, *(fieldValue.Interface().(*bool)))
-				} else {
-					cmd += " " + fmt.Sprintf("%s %v", flag, fieldValue.Interface())
-				}
-			}
+	if fieldName == "OrganizationDetails" {
+		addOrgInputField := fieldValue.FieldByName("AddOrganizationInput")
+		nameField := addOrgInputField.FieldByName("Name")
+		if nameField.IsValid() {
+			cmd += " " + fmt.Sprintf("%s=%v", "--organization-name", nameField.Interface())
 		}
 	}
 
-	configBoolType := reflect.TypeOf(*config)
-	configBoolValue := reflect.ValueOf(*config)
-
-	for i := 0; i < configBoolType.NumField(); i++ {
-		fieldName := configBoolType.Field(i).Name
-		fieldValue := configBoolValue.Field(i)
-
-		var fieldProvided bool
-
-		switch fieldName {
-		case "AutoIdle":
-			fieldProvided = config.AutoIdleProvided
-		case "StorageCalc":
-			fieldProvided = config.StorageCalcProvided
-		}
-
-		if fieldProvided {
-			if flag, exists := fieldCmdMap[fieldName]; exists {
-				if slices.Contains(boolFields, flag) {
-					boolVal := fieldValue.Interface().(bool)
-					cmd += " " + fmt.Sprintf("%s=%v", flag, boolVal)
-				}
-			}
+	if flag, exists := fieldCmdMap[fieldName]; exists {
+		if flag == "--owner" {
+			cmd += " " + fmt.Sprintf("%s=%v", flag, *(fieldValue.Interface().(*bool)))
+		} else {
+			cmd += " " + fmt.Sprintf("%s %v", flag, fieldValue.Interface())
 		}
 	}
-
 	return cmd
+}
+
+func GenerateCLICommand(config *CreateConfig) string {
+	commands := ""
+
+	configFields := []reflectFields{
+		{
+			fieldType:  reflect.TypeOf(config.Input),
+			fieldValue: reflect.ValueOf(config.Input),
+		},
+		{
+			fieldType:  reflect.TypeOf(*config),
+			fieldValue: reflect.ValueOf(*config),
+		},
+	}
+
+	for _, field := range configFields {
+		for i := 0; i < field.fieldType.NumField(); i++ {
+			fieldName := field.fieldType.Field(i).Name
+			fieldValue := field.fieldValue.Field(i)
+			if !fieldValue.IsZero() {
+				commands += processFields(fieldName, fieldValue)
+			}
+		}
+	}
+	return commands
 }

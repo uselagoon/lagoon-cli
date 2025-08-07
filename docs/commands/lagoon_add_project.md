@@ -22,6 +22,7 @@ lagoon add project [flags]
   -L, --development-environments-limit uint     How many environments can be deployed at one time
   -g, --git-url string                          GitURL of the project
   -h, --help                                    help for project
+      --interactive                             Set Interactive mode for the project creation wizard.
   -j, --json string                             JSON string to patch
       --organization-id uint                    ID of the Organization to add the project to
   -O, --organization-name string                Name of the Organization to add the project to

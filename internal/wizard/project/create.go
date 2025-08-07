@@ -262,16 +262,16 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 					}),
 				)
 
-			case "StorageCalc":
-				config.StorageCalcProvided = true
-				inputs = append(inputs, huh.NewConfirm().
-					Title(fmt.Sprintf("Enable '%s'?", field)).
-					Value(&config.StorageCalc))
-			case "AutoIdle":
-				config.AutoIdleProvided = true
-				inputs = append(inputs, huh.NewConfirm().
-					Title(fmt.Sprintf("Enable '%s'?", field)).
-					Value(&config.AutoIdle))
+			//case "StorageCalc":
+			//	config.StorageCalcProvided = true
+			//	inputs = append(inputs, huh.NewConfirm().
+			//		Title(fmt.Sprintf("Enable '%s'?", field)).
+			//		Value(&config.StorageCalc))
+			//case "AutoIdle":
+			//	config.AutoIdleProvided = true
+			//	inputs = append(inputs, huh.NewConfirm().
+			//		Title(fmt.Sprintf("Enable '%s'?", field)).
+			//		Value(&config.AutoIdle))
 			case "AddOrgOwner":
 				config.Input.AddOrgOwner = new(bool)
 				inputs = append(inputs, huh.NewConfirm().
@@ -289,14 +289,14 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 			return nil, err
 		}
 
-		if devEnvLimit != "" {
-			developmentEnvLimit, err := strconv.Atoi(devEnvLimit)
-			if err != nil {
-				fmt.Println("Error:", err)
-				return nil, err
-			}
-			config.DevEnvLimit = uint(developmentEnvLimit)
-		}
+		//if devEnvLimit != "" {
+		//	developmentEnvLimit, err := strconv.Atoi(devEnvLimit)
+		//	if err != nil {
+		//		fmt.Println("Error:", err)
+		//		return nil, err
+		//	}
+		//	config.DevEnvLimit = uint(developmentEnvLimit)
+		//}
 
 	}
 	return config, nil
