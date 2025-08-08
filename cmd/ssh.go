@@ -35,7 +35,7 @@ var sshEnvCmd = &cobra.Command{
 		// since ssh requires the `feature-branch` type name to be used as the ssh username
 		// run the environment through the makesafe and shorted functions that lagoon uses
 		environmentName := makeSafe(shortenEnvironment(cmdProjectName, cmdProjectEnvironment))
-		sshHost, sshPort, username, isPortal, err := getSSHHostPort(environmentName, debug)
+		sshHost, sshPort, username, _, err := getSSHHostPort(environmentName, debug)
 		if err != nil {
 			return fmt.Errorf("couldn't get SSH endpoint: %v", err)
 		}
@@ -60,7 +60,7 @@ var sshEnvCmd = &cobra.Command{
 			"sshkey":   privateKey,
 		}
 		if sshConnString {
-			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer, isPortal))
+			fmt.Println(generateSSHConnectionString(sshConfig, sshService, sshContainer))
 		} else {
 			hkcb, hkalgo, err := lagoonssh.InteractiveKnownHosts(userPath, fmt.Sprintf("%s:%s", sshHost, sshPort), ignoreHostKey, acceptNewHostKey)
 			if err != nil {
@@ -107,7 +107,7 @@ func init() {
 }
 
 // generateSSHConnectionString .
-func generateSSHConnectionString(lagoon map[string]string, service string, container string, isPortal bool) string {
+func generateSSHConnectionString(lagoon map[string]string, service string, container string) string {
 	var connString string
 	if service != "" {
 		connString = "ssh -t"
@@ -116,9 +116,6 @@ func generateSSHConnectionString(lagoon map[string]string, service string, conta
 	}
 	if lagoon["sshKey"] != "" {
 		connString = fmt.Sprintf("%s -i %s", connString, lagoon["sshKey"])
-	}
-	if !isPortal {
-		connString = fmt.Sprintf("%s -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\"", connString)
 	}
 	if lagoon["port"] != "22" {
 		connString = fmt.Sprintf("%s -p %v", connString, lagoon["port"])
