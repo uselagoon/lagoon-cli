@@ -108,14 +108,22 @@ func init() {
 
 // generateSSHConnectionString .
 func generateSSHConnectionString(lagoon map[string]string, service string, container string, isPortal bool) string {
-	connString := "ssh -t"
+	var connString string
+	if service != "" {
+		connString = "ssh -t"
+	} else {
+		connString = "ssh"
+	}
 	if lagoon["sshKey"] != "" {
 		connString = fmt.Sprintf("%s -i %s", connString, lagoon["sshKey"])
 	}
 	if !isPortal {
 		connString = fmt.Sprintf("%s -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\"", connString)
 	}
-	connString = fmt.Sprintf("%s -p %v %s@%s", connString, lagoon["port"], lagoon["username"], lagoon["hostname"])
+	if lagoon["port"] != "22" {
+		connString = fmt.Sprintf("%s -p %v", connString, lagoon["port"])
+	}
+	connString = fmt.Sprintf("%s %s@%s", connString, lagoon["username"], lagoon["hostname"])
 	if service != "" {
 		connString = fmt.Sprintf("%s service=%s", connString, service)
 	}
