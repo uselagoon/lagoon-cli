@@ -367,6 +367,9 @@ func readLagoonConfig(lc *config.Config, file string) error {
 			lc.Lagoons = map[string]config.Context{}
 			lc.Lagoons["amazeeio"] = l
 			lc.Default = "amazeeio"
+			lc.Flags = config.Flags{
+				Experimental: false,
+			}
 			return writeLagoonConfig(lc, file)
 		}
 		return err

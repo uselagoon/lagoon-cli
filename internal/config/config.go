@@ -3,6 +3,7 @@ package config
 // Config is used for the lagoon configuration.
 type Config struct {
 	Current                  string             `json:"current"`
+	Flags                    Flags              `json:"flags,omitempty"`
 	Default                  string             `json:"default"`
 	Lagoons                  map[string]Context `json:"lagoons"`
 	UpdateCheckDisable       bool               `json:"updatecheckdisable,omitempty"`
@@ -23,3 +24,8 @@ type Context struct {
 	SSHPortal           bool     `json:"sshPortal,omitempty"`
 	PublicKeyIdentities []string `json:"publickeyidentities,omitempty"`
 }
+
+type Flags struct {
+	Experimental bool `json:"experimental,omitempty"`
+}
+
