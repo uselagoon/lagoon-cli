@@ -458,11 +458,11 @@ var getAllUserKeysCmd = &cobra.Command{
 		}
 		var data []output.Data
 		for _, userData := range userGroups {
-			keyID := strconv.Itoa(int(userData.SSHKey.ID))
+			keyID := strconv.Itoa(int(userData.ID))
 			userEmail := returnNonEmptyString(strings.ReplaceAll(userData.UserEmail, " ", "_"))
-			keyName := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.Name, " ", "_"))
-			keyValue := returnNonEmptyString(strings.ReplaceAll(userData.SSHKey.KeyValue, " ", "_"))
-			keyType := returnNonEmptyString(strings.ReplaceAll(string(userData.SSHKey.KeyType), " ", "_"))
+			keyName := returnNonEmptyString(strings.ReplaceAll(userData.Name, " ", "_"))
+			keyValue := returnNonEmptyString(strings.ReplaceAll(userData.KeyValue, " ", "_"))
+			keyType := returnNonEmptyString(strings.ReplaceAll(string(userData.KeyType), " ", "_"))
 			data = append(data, []string{
 				keyID,
 				userEmail,

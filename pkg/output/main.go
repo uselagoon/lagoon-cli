@@ -65,7 +65,10 @@ func RenderError(errorMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		os.Stderr.WriteString(fmt.Sprintf("Error: %s", trimQuotes(errorMsg)))
+		_, err := os.Stderr.WriteString(fmt.Sprintf("Error: %s", trimQuotes(errorMsg)))
+		if err != nil {
+			_ = fmt.Errorf(err.Error())
+		}
 	}
 }
 
@@ -77,7 +80,10 @@ func RenderInfo(infoMsg string, opts Options) {
 		}
 		RenderJSON(jsonData, opts)
 	} else {
-		os.Stderr.WriteString(fmt.Sprintf("Info: %s", trimQuotes(infoMsg)))
+		_, err := os.Stderr.WriteString(fmt.Sprintf("Info: %s", trimQuotes(infoMsg)))
+		if err != nil {
+			_ = fmt.Errorf(err.Error())
+		}
 	}
 }
 
@@ -130,7 +136,10 @@ func RenderOutput(data Table, opts Options) string {
 	} else {
 		// otherwise render a table
 		if opts.Error != "" {
-			os.Stderr.WriteString(opts.Error)
+			_, err := os.Stderr.WriteString(opts.Error)
+			if err != nil {
+				_ = fmt.Errorf(err.Error())
+			}
 		}
 		t := table.NewWriter()
 		opts.Header = !opts.Header
