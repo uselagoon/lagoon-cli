@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uselagoon/lagoon-cli/internal/util"
+	"github.com/uselagoon/lagoon-cli/internal/wizard/themes"
 	"github.com/uselagoon/machinery/api/lagoon"
 	"github.com/uselagoon/machinery/api/lagoon/client"
 	"github.com/uselagoon/machinery/api/schema"
@@ -42,7 +43,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 				Title("Do you want to create this project in an Organization?").
 				Value(&organizationConfirm),
 		),
-	).WithTheme(huh.ThemeCharm())
+	).WithTheme(themes.ThemeLagoon())
 
 	formErr := initForm.Run()
 	if formErr != nil {
@@ -115,7 +116,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 						return nil
 					}),
 			),
-		).WithTheme(huh.ThemeCharm())
+		).WithTheme(themes.ThemeLagoon())
 
 		err = form2.Run()
 		if err != nil {
@@ -134,7 +135,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 						).
 						Value(&orgRetryResp),
 				),
-			).WithTheme(huh.ThemeCharm())
+			).WithTheme(themes.ThemeLagoon())
 
 			err := orgRetryRespForm.Run()
 			if err != nil {
@@ -194,7 +195,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 				Title("Do you want to define any other fields?").
 				Value(&additionalFields),
 		),
-	).WithTheme(huh.ThemeCharm())
+	).WithTheme(themes.ThemeLagoon())
 
 	err = form3.Run()
 	if err != nil {
@@ -217,7 +218,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 					Options(additionalFieldsOptions...).
 					Value(&fields),
 			),
-		).WithTheme(huh.ThemeCharm())
+		).WithTheme(themes.ThemeLagoon())
 
 		err = form4.Run()
 		if err != nil {
@@ -272,7 +273,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 
 		form5 := huh.NewForm(
 			huh.NewGroup(inputs...),
-		).WithTheme(huh.ThemeCharm())
+		).WithTheme(themes.ThemeLagoon())
 
 		err = form5.Run()
 		if err != nil {
