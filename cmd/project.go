@@ -151,6 +151,9 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if interactive && !experimentalEnabled {
+			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml")
+		}
 		generatedCommand := ""
 
 		if !interactive {
@@ -797,7 +800,7 @@ func init() {
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
-	addProjectCmd.Flags().Bool("interactive", false, "Set Interactive mode for the project creation wizard.")
+	addProjectCmd.Flags().Bool("interactive", false, "Set Interactive mode for the project creation wizard. Requires 'experimental' flag to be set in .lagoon.yml")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
