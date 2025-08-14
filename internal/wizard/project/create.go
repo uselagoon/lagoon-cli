@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
+	"strconv"
+
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uselagoon/lagoon-cli/internal/util"
@@ -12,7 +15,6 @@ import (
 	"github.com/uselagoon/machinery/api/lagoon"
 	"github.com/uselagoon/machinery/api/lagoon/client"
 	"github.com/uselagoon/machinery/api/schema"
-	"strconv"
 )
 
 func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
@@ -90,6 +92,10 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 				huh.NewSelect[string]().
 					Title("Select an organization").
 					OptionsFunc(func() []huh.Option[string] {
+						// let's sort orgs
+						sort.Slice(organizations, func(i, j int) bool {
+							return organizations[i].Name < organizations[j].Name
+						})
 						options := make([]huh.Option[string], len(organizations))
 						for i, org := range organizations {
 							orgProjectCount := len(org.Projects)
