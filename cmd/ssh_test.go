@@ -11,7 +11,6 @@ func Test_generateSSHConnectionString(t *testing.T) {
 		lagoon      map[string]string
 		service     string
 		container   string
-		isPortal    bool
 	}
 	tests := []struct {
 		name string
@@ -27,7 +26,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 					"username": "example-com-main",
 				},
 			},
-			want: `ssh -t -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com`,
+			want: `ssh example-com-main@lagoon.example.com`,
 		},
 		{
 			name: "test1 - service only, no container",
@@ -39,7 +38,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 				},
 				service: "cli",
 			},
-			want: `ssh -t -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com service=cli`,
+			want: `ssh -t example-com-main@lagoon.example.com service=cli`,
 		},
 		{
 			name: "test3 - service and container",
@@ -52,7 +51,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 				service:   "nginx-php",
 				container: "php",
 			},
-			want: `ssh -t -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com service=nginx-php container=php`,
+			want: `ssh -t example-com-main@lagoon.example.com service=nginx-php container=php`,
 		},
 		{
 			name: "test4",
@@ -66,7 +65,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 				service:   "cli",
 				container: "cli",
 			},
-			want: `ssh -t -i /home/user/.ssh/my-key -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+			want: `ssh -t -i /home/user/.ssh/my-key example-com-main@lagoon.example.com service=cli container=cli`,
 		},
 		{
 			name: "test5 - sshportal",
@@ -77,11 +76,10 @@ func Test_generateSSHConnectionString(t *testing.T) {
 					"username": "example-com-main",
 					"sshKey":   "/home/user/.ssh/my-key",
 				},
-				isPortal:  true,
 				service:   "cli",
 				container: "cli",
 			},
-			want: `ssh -t -i /home/user/.ssh/my-key -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+			want: `ssh -t -i /home/user/.ssh/my-key example-com-main@lagoon.example.com service=cli container=cli`,
 		},
 		{
 			name: "test6 - sshportal",
@@ -91,11 +89,34 @@ func Test_generateSSHConnectionString(t *testing.T) {
 					"port":     "22",
 					"username": "example-com-main",
 				},
-				isPortal:  true,
 				service:   "cli",
 				container: "cli",
 			},
-			want: `ssh -t -p 22 example-com-main@lagoon.example.com service=cli container=cli`,
+			want: `ssh -t example-com-main@lagoon.example.com service=cli container=cli`,
+		},
+		{
+			name: "test6 - sshportal nonstandard port",
+			args: args{
+				lagoon: map[string]string{
+					"hostname": "lagoon.example.com",
+					"port":     "1122",
+					"username": "example-com-main",
+				},
+			},
+			want: `ssh -p 1122 example-com-main@lagoon.example.com`,
+		},
+		{
+			name: "test6 - sshportal nonstandard port and container",
+			args: args{
+				lagoon: map[string]string{
+					"hostname": "lagoon.example.com",
+					"port":     "1122",
+					"username": "example-com-main",
+				},
+				service:   "cli",
+				container: "cli",
+			},
+			want: `ssh -t -p 1122 example-com-main@lagoon.example.com service=cli container=cli`,
 		},
 	}
 	for _, tt := range tests {
@@ -103,7 +124,7 @@ func Test_generateSSHConnectionString(t *testing.T) {
 			cmdProjectName = tt.args.project
 			cmdProjectEnvironment = tt.args.environment
 
-			if got := generateSSHConnectionString(tt.args.lagoon, tt.args.service, tt.args.container, tt.args.isPortal); got != tt.want {
+			if got := generateSSHConnectionString(tt.args.lagoon, tt.args.service, tt.args.container); got != tt.want {
 				t.Errorf("generateSSHConnectionString() = %v, want %v", got, tt.want)
 			}
 		})
