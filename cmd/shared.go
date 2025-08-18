@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cobra"
 
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
