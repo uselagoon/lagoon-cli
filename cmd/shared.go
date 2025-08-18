@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -10,8 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/uselagoon/lagoon-cli/pkg/output"
-	lclient "github.com/uselagoon/machinery/api/lagoon/client"
-	"github.com/uselagoon/machinery/api/schema"
 )
 
 // config vars
@@ -128,32 +125,4 @@ func quotaCheck(quota int) string {
 		quotaRoute = "∞"
 	}
 	return quotaRoute
-}
-
-func environmentCheck(project string, environment string, debug bool) error {
-
-	current := lagoonCLIConfig.Current
-	token := lagoonCLIConfig.Lagoons[current].Token
-	lc := lclient.New(
-		lagoonCLIConfig.Lagoons[current].GraphQL,
-		lagoonCLIVersion,
-		lagoonCLIConfig.Lagoons[current].Version,
-		&token,
-		debug)
-	
-	var environments []schema.Environment	
-	err := lc.EnvironmentsByProjectName(context.TODO(), project, &environments)
-	if err != nil {
-		return err
-	}
-
-	names := make([]string, len(environments))
-	for i, e := range environments {
-		names[i] = e.AddEnvironmentInput.Name
-		if environment == names[i] {
-			return nil
-		}
-	}
-	
-	return fmt.Errorf("invalid environment for project %s: %s. Valid options are %s.\n", project, environment, strings.Join(names, ", "))
 }

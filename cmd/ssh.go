@@ -27,10 +27,6 @@ var sshEnvCmd = &cobra.Command{
 		}
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
-			return nil
-		}
-		err = environmentCheck(cmdProjectName, cmdProjectEnvironment, debug)
-		if err != nil {
 			return err
 		}
 		ignoreHostKey, acceptNewHostKey := lagoonssh.CheckStrictHostKey(strictHostKeyCheck)
