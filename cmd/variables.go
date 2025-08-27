@@ -62,6 +62,10 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if strings.ToLower(varScope) == "internal_container_registry" {
+		return handleNilResults("Variable scope \"internal_container_registry\" is deprecated & can no longer be set.\n", cmd)
+	}
+
 	current := lagoonCLIConfig.Current
 	token := lagoonCLIConfig.Lagoons[current].Token
 	lc := lclient.New(
@@ -190,11 +194,11 @@ var deleteVariableCmd = &cobra.Command{
 func init() {
 	addVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
 	addVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
-	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry]")
 	addVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to add variable to")
 	updateVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to update")
 	updateVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to update")
-	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry]")
 	updateVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to update variable for")
 	deleteVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to delete")
 	deleteVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to delete variable from")
