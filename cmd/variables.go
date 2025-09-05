@@ -62,10 +62,6 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if strings.ToLower(varScope) == "internal_container_registry" {
-		return handleNilResults("Variable scope \"internal_container_registry\" is deprecated & can no longer be set.\n", cmd)
-	}
-
 	current := lagoonCLIConfig.Current
 	token := lagoonCLIConfig.Lagoons[current].Token
 	lc := lclient.New(
