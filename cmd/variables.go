@@ -151,11 +151,12 @@ var deleteVariableCmd = &cobra.Command{
 		}
 
 		var deleteMsg string
-		if envVarType == "organization" {
+		switch envVarType {
+		case "organization":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from organization '%s', are you sure?", varName, organizationName)
-		} else if envVarType == "project" {
+		case "project":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
-		} else if envVarType == "environment" {
+		case "environment":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
