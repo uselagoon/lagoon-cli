@@ -102,7 +102,7 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, string,
 	}
 
 	if !found {
-		return sshHost, sshPort, username, portal, fmt.Errorf("invalid environment for project %s: %s. Valid options are %s.\n", cmdProjectName, environmentName, strings.Join(names, ", "))
+		return sshHost, sshPort, username, portal, fmt.Errorf("invalid environment for project %s: %s. Valid options are %s", cmdProjectName, environmentName, strings.Join(names, ", "))
 	}
 
 	return sshHost, sshPort, username, portal, nil
