@@ -20,7 +20,7 @@ jobs:
         # remove generated code from coverage calculation
         grep -Ev 'internal/mock|_enumer.go' cover.out.raw > cover.out
     - name: Generage coverage badge
-      uses: vladopajic/go-test-coverage@937b863f06595080198d555b7ed3aa474ae5199c # v2.14.1
+      uses: vladopajic/go-test-coverage@7582aebae0a74a798d6552c9e7b65ff5f2cf91f8 # v2.16.1
       with:
         profile: cover.out
         local-prefix: github.com/${{ github.repository }}
