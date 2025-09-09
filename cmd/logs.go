@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -82,9 +83,13 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, string,
 	username := fmt.Sprintf("%s-%s", cmdProjectName, environmentName)
 
 	// check all the environments for this project
-	for _, env := range project.Environments {
+	found := false
+	names := make([]string, len(project.Environments))
+	for i, env := range project.Environments {
+		names[i] = env.Name
 		// if the env name matches the requested or computed environment then check if the deploytarget supports regional ssh endpoints
 		if env.OpenshiftProjectName == namespace.GenerateNamespaceName("", cmdProjectEnvironment, cmdProjectName, "", "", false) || env.Name == environmentName || env.Name == cmdProjectEnvironment {
+			found = true
 			// if the deploytarget supports regional endpoints, then set these as the host and port for ssh
 			if env.DeployTarget.SSHHost != "" && env.DeployTarget.SSHPort != "" {
 				sshHost = env.DeployTarget.SSHHost
@@ -95,6 +100,11 @@ func getSSHHostPort(environmentName string, debug bool) (string, string, string,
 			username = env.OpenshiftProjectName
 		}
 	}
+
+	if !found {
+		return sshHost, sshPort, username, portal, fmt.Errorf("invalid environment for project %s: %s. Valid options are %s.\n", cmdProjectName, environmentName, strings.Join(names, ", "))
+	}
+
 	return sshHost, sshPort, username, portal, nil
 }
 
