@@ -8,6 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/go-github/v66 v66.0.0
+	github.com/gorilla/mux v1.8.1
 	github.com/guregu/null v4.0.0+incompatible
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/jedib0t/go-pretty/v6 v6.6.8
