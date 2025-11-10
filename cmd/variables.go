@@ -151,11 +151,12 @@ var deleteVariableCmd = &cobra.Command{
 		}
 
 		var deleteMsg string
-		if envVarType == "organization" {
+		switch envVarType {
+		case "organization":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from organization '%s', are you sure?", varName, organizationName)
-		} else if envVarType == "project" {
+		case "project":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from project '%s', are you sure?", varName, cmdProjectName)
-		} else if envVarType == "environment" {
+		case "environment":
 			deleteMsg = fmt.Sprintf("You are attempting to delete variable '%s' from environment '%s' in project '%s', are you sure?", varName, cmdProjectEnvironment, cmdProjectName)
 		}
 		if yesNo(deleteMsg) {
@@ -190,11 +191,11 @@ var deleteVariableCmd = &cobra.Command{
 func init() {
 	addVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to add")
 	addVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to add")
-	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	addVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry]")
 	addVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to add variable to")
 	updateVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to update")
 	updateVariableCmd.Flags().StringP("value", "V", "", "Value of the variable to update")
-	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry, internal_container_registry]")
+	updateVariableCmd.Flags().StringP("scope", "S", "", "Scope of the variable[global, build, runtime, container_registry]")
 	updateVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to update variable for")
 	deleteVariableCmd.Flags().StringP("name", "N", "", "Name of the variable to delete")
 	deleteVariableCmd.Flags().StringP("organization-name", "O", "", "Name of the organization to delete variable from")

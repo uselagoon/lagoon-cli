@@ -196,7 +196,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 			return fmt.Errorf("knownhosts: host key verification failed")
 		}
 		if knownhosts.IsHostKeyChanged(err) {
-			os.Stderr.WriteString(fmt.Sprintf(remoteHostChanged, key.Type(), ssh.FingerprintSHA256(pub), filePath))
+			fmt.Fprintf(os.Stderr, remoteHostChanged, key.Type(), ssh.FingerprintSHA256(pub), filePath)
 			return fmt.Errorf("knownhosts: host key verification failed")
 		} else if knownhosts.IsHostUnknown(err) {
 			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
@@ -206,7 +206,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 				if accept {
 					response = "y"
 				} else {
-					os.Stderr.WriteString(fmt.Sprintf(hostKeyWarn, hostname, key.Type(), ssh.FingerprintSHA256(pub), "(yes/no)? "))
+					fmt.Fprintf(os.Stderr, hostKeyWarn, hostname, key.Type(), ssh.FingerprintSHA256(pub), "(yes/no)? ")
 					reader := bufio.NewReader(os.Stdin)
 					response, err = reader.ReadString('\n')
 					if err != nil {
@@ -221,9 +221,9 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 				}
 			}
 			if ferr == nil {
-				os.Stderr.WriteString(fmt.Sprintf("Warning: Permanently added '%s' to the list of known hosts\n", hostname))
+				fmt.Fprintf(os.Stderr, "Warning: Permanently added '%s' to the list of known hosts\n", hostname)
 			} else {
-				os.Stderr.WriteString(fmt.Sprintf("Failed to add host %s to known_hosts: %v\n", hostname, ferr))
+				fmt.Fprintf(os.Stderr, "Failed to add host %s to known_hosts: %v\n", hostname, ferr)
 			}
 			return nil // permit previously-unknown hosts (warning: may be insecure)
 		}
