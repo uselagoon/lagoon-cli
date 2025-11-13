@@ -19,7 +19,7 @@ import (
 
 func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 	config := &util.CreateConfig{}
-	var organizationConfirm bool
+	organizationConfirm := true
 	initForm := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
@@ -215,7 +215,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 			huh.NewOption("pullrequests: Which Pull Requests should be deployed", "PullRequests"),
 		}
 		if organizationConfirm {
-			additionalFieldsOptions = append(additionalFieldsOptions, huh.NewOption("owner", "AddOrgOwner"))
+			additionalFieldsOptions = append(additionalFieldsOptions, huh.NewOption("owner: Add your account to the project group during creation", "AddOrgOwner"))
 		}
 		form4 := huh.NewForm(
 			huh.NewGroup(

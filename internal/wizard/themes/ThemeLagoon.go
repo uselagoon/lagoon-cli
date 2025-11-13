@@ -49,5 +49,12 @@ func ThemeLagoon() *huh.Theme {
 
 	t.Group.Title = t.Focused.Title
 	t.Group.Description = t.Focused.Description
+	t.Help.Ellipsis = lipgloss.NewStyle().Foreground(lagoonBlue)
+	t.Help.ShortKey = lipgloss.NewStyle().Foreground(normalFg).Bold(true)
+	t.Help.ShortDesc = lipgloss.NewStyle().Foreground(lagoonBlue)
+	t.Help.ShortSeparator = lipgloss.NewStyle().Foreground(lagoonBlue)
+	t.Help.FullKey = lipgloss.NewStyle().Foreground(normalFg).Bold(true)
+	t.Help.FullDesc = lipgloss.NewStyle().Foreground(lagoonBlue)
+	t.Help.FullSeparator = lipgloss.NewStyle().Foreground(lagoonBlue)
 	return t
 }

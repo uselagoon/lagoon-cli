@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"github.com/uselagoon/machinery/api/lagoon/client"
 	"github.com/uselagoon/machinery/api/schema"
+	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type CreateConfig struct {
@@ -48,11 +50,34 @@ type reflectFields struct {
 	fieldValue reflect.Value
 }
 
-func IsValidGitURL(url string) bool {
-	const pattern = `^((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?$`
+func IsValidGitURL(gitUrl string) bool {
+	const sshPattern = `^[\w.-]+@[\w.-]+:[\w.-]+/[\w.-]+(?:\.git)?$`
+	re := regexp.MustCompile(sshPattern)
+	if re.MatchString(sshPattern) {
+		return true
+	}
 
-	re := regexp.MustCompile(pattern)
-	return re.MatchString(url)
+	parsedUrl, err := url.Parse(gitUrl)
+	if err != nil {
+		fmt.Println("Error parsing URL:", err)
+		return false
+	}
+
+	if parsedUrl.Host == "" {
+		return false
+	}
+
+	validProtocols := map[string]bool{"git": true, "ssh": true, "http": true, "https": true}
+	if !validProtocols[strings.ToLower(parsedUrl.Scheme)] {
+		return false
+	}
+
+	pathParts := strings.Split(strings.Trim(parsedUrl.Path, "/"), "/")
+	if len(pathParts) < 2 {
+		return false
+	}
+
+	return true
 }
 
 func QuotaCheck(quota int) string {
@@ -98,6 +123,7 @@ func GetOrgDeployTargets(lc *client.Client, orgName string) ([]schema.DeployTarg
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println()
 
 	orgData, ok := orgResp.(map[string]interface{})["organizationByName"]
 	if !ok {
