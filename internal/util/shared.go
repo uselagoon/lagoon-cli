@@ -56,7 +56,7 @@ func IsValidGitURL(gitUrl string) bool {
 		return false
 	}
 
-	const sshPattern = `^[\w.-]+@[\w.-]+:[\w.-]+/[\w.-]+(?:\.git)?$`
+	const sshPattern = `^[\w.-]+@[\w.-]+:[\w.-]+(/[\w.-]+)+(?:\.git)?$`
 	re := regexp.MustCompile(sshPattern)
 	if re.MatchString(gitUrl) {
 		return true
@@ -72,7 +72,7 @@ func IsValidGitURL(gitUrl string) bool {
 		return false
 	}
 
-	validProtocols := map[string]bool{"git": true, "ssh": true, "http": true, "https": true}
+	validProtocols := map[string]bool{"git": true, "ssh": true, "http": true, "https": true, "ftp": true}
 	if !validProtocols[strings.ToLower(parsedUrl.Scheme)] {
 		return false
 	}
