@@ -157,7 +157,7 @@ var addProjectCmd = &cobra.Command{
 			return err
 		}
 		if interactive && !experimentalEnabled {
-			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml\n")
+			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml")
 		}
 		generatedCommand := ""
 

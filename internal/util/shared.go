@@ -78,11 +78,7 @@ func IsValidGitURL(gitUrl string) bool {
 	}
 
 	pathParts := strings.Split(strings.Trim(parsedUrl.Path, "/"), "/")
-	if len(pathParts) < 2 {
-		return false
-	}
-
-	return true
+	return len(pathParts) >= 2
 }
 
 func QuotaCheck(quota int) string {
