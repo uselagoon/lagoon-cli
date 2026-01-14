@@ -39,25 +39,26 @@ type Result struct {
 	Info       string                 `json:"info,omitempty"`
 }
 
-// RenderJSON .
+// RenderJSON renders `data` as a JSON string.
 func RenderJSON(data interface{}, opts Options) string {
-	var jsonBytes []byte
-	var err error
+	var jsonBytes bytes.Buffer
+
+	enc := json.NewEncoder(&jsonBytes)
+	// Ensures characters like <>& are not converted to unicode literals.
+	enc.SetEscapeHTML(false)
+
 	if opts.Pretty {
-		jsonBytes, err = json.MarshalIndent(data, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		jsonBytes, err = json.Marshal(data)
-		if err != nil {
-			panic(err)
-		}
+		enc.SetIndent("", "  ")
 	}
-	return string(jsonBytes)
+
+	if err := enc.Encode(data); err != nil {
+		panic(err)
+	}
+
+	return jsonBytes.String()
 }
 
-// RenderError .
+// RenderError renders an error string.
 func RenderError(errorMsg string, opts Options) {
 	if opts.JSON {
 		jsonData := Result{
@@ -69,7 +70,7 @@ func RenderError(errorMsg string, opts Options) {
 	}
 }
 
-// RenderInfo .
+// RenderInfo renders an info string.
 func RenderInfo(infoMsg string, opts Options) {
 	if opts.JSON {
 		jsonData := Result{
@@ -81,7 +82,7 @@ func RenderInfo(infoMsg string, opts Options) {
 	}
 }
 
-// RenderResult .
+// RenderResult renders a result string with optional key/value data.
 func RenderResult(result Result, opts Options) string {
 	var out bytes.Buffer
 	if opts.JSON {
@@ -106,7 +107,7 @@ func RenderResult(result Result, opts Options) string {
 	return out.String()
 }
 
-// RenderOutput .
+// RenderOutput renders tabular data.
 func RenderOutput(data Table, opts Options) string {
 	var out bytes.Buffer
 	if opts.Debug {
