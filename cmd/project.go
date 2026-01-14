@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/charmbracelet/huh"
 	"github.com/uselagoon/lagoon-cli/internal/util"
 	"github.com/uselagoon/lagoon-cli/internal/wizard/project"
-	"strconv"
 
 	"strings"
 
@@ -151,8 +152,12 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		genCmdEnabled, err := cmd.Flags().GetBool("generate-command")
+		if err != nil {
+			return err
+		}
 		if interactive && !experimentalEnabled {
-			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml")
+			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml\n")
 		}
 		generatedCommand := ""
 
@@ -248,8 +253,12 @@ var addProjectCmd = &cobra.Command{
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
 		}
-		if interactive {
-			resultData.ResultData["Generated Command"] = "lagoon add project" + generatedCommand
+		if interactive && genCmdEnabled {
+			cmdPrefix := "lagoon add project"
+			if cmdLagoon != "" {
+				cmdPrefix = fmt.Sprintf("lagoon --lagoon %s add project", cmdLagoon)
+			}
+			resultData.ResultData["Generated Command"] = cmdPrefix + generatedCommand
 		}
 		r := output.RenderResult(resultData, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
@@ -801,6 +810,7 @@ func init() {
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
 	addProjectCmd.Flags().Bool("interactive", false, "Set Interactive mode for the project creation wizard. Requires 'experimental' flag to be set in .lagoon.yml")
+	addProjectCmd.Flags().Bool("generate-command", false, "Displays the generated command from the project creation wizard. Requires Interactive mode to be enabled")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")

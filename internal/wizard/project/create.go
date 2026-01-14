@@ -272,7 +272,7 @@ func RunCreateWizard(lc *client.Client) (*util.CreateConfig, error) {
 			case "AddOrgOwner":
 				config.Input.AddOrgOwner = new(bool)
 				inputs = append(inputs, huh.NewConfirm().
-					Title(fmt.Sprintf("Enable '%s'?", field)).
+					Title("Add my user to this project").
 					Value(config.Input.AddOrgOwner))
 			}
 		}

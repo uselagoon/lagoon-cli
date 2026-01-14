@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/uselagoon/machinery/api/lagoon/client"
-	"github.com/uselagoon/machinery/api/schema"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/uselagoon/machinery/api/lagoon/client"
+	"github.com/uselagoon/machinery/api/schema"
 )
 
 type CreateConfig struct {
@@ -51,9 +52,13 @@ type reflectFields struct {
 }
 
 func IsValidGitURL(gitUrl string) bool {
+	if strings.TrimSpace(gitUrl) == "" {
+		return false
+	}
+
 	const sshPattern = `^[\w.-]+@[\w.-]+:[\w.-]+/[\w.-]+(?:\.git)?$`
 	re := regexp.MustCompile(sshPattern)
-	if re.MatchString(sshPattern) {
+	if re.MatchString(gitUrl) {
 		return true
 	}
 
@@ -63,7 +68,7 @@ func IsValidGitURL(gitUrl string) bool {
 		return false
 	}
 
-	if parsedUrl.Host == "" {
+	if parsedUrl.Host == "" || parsedUrl.Scheme == "" {
 		return false
 	}
 
