@@ -173,6 +173,15 @@ func RenderOutput(data Table, opts Options) string {
 	}
 }
 
+// RenderString renders a simple string with no extra formatting.
+func RenderString(msg string, opts Options) string {
+	if opts.JSON {
+		return RenderJSON(trimQuotes(msg), opts)
+	}
+
+	return fmt.Sprintf("%s\n", trimQuotes(msg))
+}
+
 func trimQuotes(s string) string {
 	if len(s) >= 2 {
 		if s[0] == '"' && s[len(s)-1] == '"' {

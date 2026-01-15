@@ -122,3 +122,24 @@ func TestRenderOutput(t *testing.T) {
 		checkEqual(t, output, testSuccess2, " render output table stdout no header processing failed")
 	}
 }
+
+func TestRenderString(t *testing.T) {
+	var testData = `Plain string message`
+	var testSuccess1 = "Plain string message\n"
+
+	outputOptions := Options{
+		Header: false,
+		CSV:    false,
+		JSON:   false,
+		Pretty: false,
+	}
+
+	output := RenderString(testData, outputOptions)
+	checkEqual(t, output, testSuccess1, " render string processing failed")
+
+	var testSuccess2 = `"Plain string message"`
+	outputOptions.JSON = true
+
+	output = RenderString(testData, outputOptions)
+	checkEqual(t, output, testSuccess2, " render string json processing failed")
+}

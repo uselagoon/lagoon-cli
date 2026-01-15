@@ -268,8 +268,7 @@ This returns a direct URL to the backup, this is a signed download link with a l
 		for _, backup := range backupsResult.Backups {
 			if backup.BackupID == backupID {
 				if backup.Restore.RestoreLocation != "" {
-					resultData := output.Result{Result: backup.Restore.RestoreLocation}
-					r := output.RenderResult(resultData, outputOptions)
+					r := output.RenderString(backup.Restore.RestoreLocation, outputOptions)
 					fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 					return nil
 				}
