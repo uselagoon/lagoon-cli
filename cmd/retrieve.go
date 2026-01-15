@@ -3,8 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"strings"
+
+	"github.com/uselagoon/lagoon-cli/pkg/output"
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/machinery/api/lagoon"
@@ -60,7 +61,13 @@ You can check the status of the backup using the list backups or get backup comm
 				}
 				return err
 			}
-			resultData := output.Result{Result: fmt.Sprintf("successfully created restore with ID: %d", result.ID)}
+			resultData := output.Result{
+				Result: "success",
+				ResultData: map[string]interface{}{
+					"ID":     result.ID,
+					"Status": "pending",
+				},
+			}
 			r := output.RenderResult(resultData, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 		}

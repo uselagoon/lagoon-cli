@@ -34,7 +34,7 @@ type Options struct {
 // Result .
 type Result struct {
 	ResultData map[string]interface{} `json:"data,omitempty"`
-	Result     string                 `json:"result,omitempty"`
+	Result     string                 `json:"result,omitempty"` // `success` or warning/error message
 	Error      string                 `json:"error,omitempty"`
 	Info       string                 `json:"info,omitempty"`
 }
@@ -171,6 +171,15 @@ func RenderOutput(data Table, opts Options) string {
 		t.Render()
 		return out.String()
 	}
+}
+
+// RenderString renders a simple string with no extra formatting.
+func RenderString(msg string, opts Options) string {
+	if opts.JSON {
+		return RenderJSON(trimQuotes(msg), opts)
+	}
+
+	return fmt.Sprintf("%s\n", trimQuotes(msg))
 }
 
 func trimQuotes(s string) string {
