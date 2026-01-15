@@ -34,7 +34,7 @@ type Options struct {
 // Result .
 type Result struct {
 	ResultData map[string]interface{} `json:"data,omitempty"`
-	Result     string                 `json:"result,omitempty"`
+	Result     string                 `json:"result,omitempty"` // `success` or warning/error message
 	Error      string                 `json:"error,omitempty"`
 	Info       string                 `json:"info,omitempty"`
 }
