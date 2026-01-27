@@ -52,19 +52,17 @@ func TestRenderError(t *testing.T) {
 		Pretty: false,
 	}
 
-	rescueStdout := os.Stderr
-	r, w, _ := os.Pipe()
-	defer func() {
-		os.Stderr = rescueStdout
-	}()
-	os.Stderr = w
-	RenderError(testData, outputOptions)
-	w.Close()
-	var out bytes.Buffer
-	_, _ = io.Copy(&out, r)
-	if out.String() != testSuccess {
-		checkEqual(t, out.String(), testSuccess, " render error stdout processing failed")
-	}
+	out := captureStderr(func() {
+		RenderError(testData, outputOptions)
+	})
+	checkEqual(t, out, testSuccess, " render error stdout processing failed")
+
+	var testJson = `{"error":"Error Message"}`
+	outputOptions.JSON = true
+	out = captureStderr(func() {
+		RenderError(testData, outputOptions)
+	})
+	checkEqual(t, out, testJson, " render error stdout processing failed")
 }
 
 func TestRenderInfo(t *testing.T) {
@@ -142,4 +140,19 @@ func TestRenderString(t *testing.T) {
 
 	output = RenderString(testData, outputOptions)
 	checkEqual(t, output, testSuccess2, " render string json processing failed")
+}
+
+func captureStderr(fn func()) string {
+	var out bytes.Buffer
+	rescueStderr := os.Stderr
+	r, w, _ := os.Pipe()
+	os.Stderr = w
+
+	fn()
+
+	w.Close()
+	os.Stderr = rescueStderr
+
+	_, _ = io.Copy(&out, r)
+	return out.String()
 }

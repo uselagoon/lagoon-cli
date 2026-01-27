@@ -96,10 +96,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 			fmt.Println("Documentation updated")
 			return
 		}
@@ -114,10 +111,8 @@ var rootCmd = &cobra.Command{
 
 // Execute the root command.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
+	err := rootCmd.Execute()
+	handleError(err)
 }
 
 // IsInternetActive() checks to see if we have a viable
@@ -226,28 +221,18 @@ func initConfig() {
 	// Find home directory.
 	userPath, err = os.UserHomeDir()
 	if err != nil {
-		output.RenderError(fmt.Errorf("couldn't get $HOME: %v", err).Error(), outputOptions)
-		os.Exit(1)
+		handleError(fmt.Errorf("couldn't get $HOME: %v", err))
 	}
 	configFilePath = userPath
 
 	// check if we are being given a path to a different config file
 	err = getLagoonConfigFile(&configFilePath, &configName, &configExtension, createConfig, rootCmd)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
+	handleError(err)
 
 	err = readLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
+	handleError(err)
 	err = getLagoonContext(&lagoonCLIConfig, &cmdLagoon, rootCmd)
-	if err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
+	handleError(err)
 
 	// if the directory or repository you're in has a valid .lagoon.yml and docker-compose.yml with x-lagoon-project in it
 	// we can use that inplaces where projects already exist so you don't have to type it out
@@ -271,10 +256,7 @@ func yesNo(message string) bool {
 			Items: []string{"No", "Yes"},
 		}
 		_, result, err := prompt.Run()
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		return result == "Yes"
 	}
 	return true

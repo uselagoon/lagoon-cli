@@ -7,7 +7,6 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 )
 
 var webCmd = &cobra.Command{
@@ -26,8 +25,7 @@ var webCmd = &cobra.Command{
 		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].UI != "" {
 			urlBuilder.WriteString(fmt.Sprintf("/projects/%s", cmdProjectName))
 		} else {
-			output.RenderError("unable to determine url for ui, is one set?", outputOptions)
-			os.Exit(1)
+			handleError(fmt.Errorf("unable to determine url for ui, is one set?"))
 		}
 
 		url := urlBuilder.String()
@@ -44,8 +42,7 @@ var kibanaCmd = &cobra.Command{
 		urlBuilder := strings.Builder{}
 		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Kibana)
 		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].Kibana == "" {
-			output.RenderError("unable to determine url for kibana, is one set?", outputOptions)
-			os.Exit(1)
+			handleError(fmt.Errorf("unable to determine url for kibana, is one set?"))
 		}
 
 		url := urlBuilder.String()

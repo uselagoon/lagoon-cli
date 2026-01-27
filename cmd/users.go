@@ -311,8 +311,7 @@ var updateUserCmd = &cobra.Command{
 			return err
 		}
 		if firstName == "" && lastName == "" && emailAddress == "" {
-			output.RenderError("Missing arguments: Nothing to update, please provide a field to update", outputOptions)
-			return nil
+			return fmt.Errorf("missing arguments: Nothing to update, please provide a field to update")
 		}
 
 		current := lagoonCLIConfig.Current

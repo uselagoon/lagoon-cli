@@ -63,7 +63,7 @@ func RenderError(errorMsg string, opts Options) {
 		jsonData := Result{
 			Error: trimQuotes(errorMsg),
 		}
-		RenderJSON(jsonData, opts)
+		fmt.Fprintf(os.Stderr, "%s", RenderJSON(jsonData, opts))
 	} else {
 		fmt.Fprintf(os.Stderr, "Error: %s", trimQuotes(errorMsg))
 	}
