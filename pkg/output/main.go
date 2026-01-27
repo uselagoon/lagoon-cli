@@ -75,7 +75,7 @@ func RenderInfo(infoMsg string, opts Options) {
 		jsonData := Result{
 			Info: trimQuotes(infoMsg),
 		}
-		RenderJSON(jsonData, opts)
+		fmt.Fprintf(os.Stderr, "%s", RenderJSON(jsonData, opts))
 	} else {
 		fmt.Fprintf(os.Stderr, "Info: %s", trimQuotes(infoMsg))
 	}

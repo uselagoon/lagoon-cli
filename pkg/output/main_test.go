@@ -76,19 +76,17 @@ func TestRenderInfo(t *testing.T) {
 		Pretty: false,
 	}
 
-	rescueStdout := os.Stderr
-	r, w, _ := os.Pipe()
-	defer func() {
-		os.Stderr = rescueStdout
-	}()
-	os.Stderr = w
-	RenderInfo(testData, outputOptions)
-	w.Close()
-	var out bytes.Buffer
-	_, _ = io.Copy(&out, r)
-	if out.String() != testSuccess1 {
-		checkEqual(t, out.String(), testSuccess1, " render info stdout processing failed")
-	}
+	out := captureStderr(func() {
+		RenderInfo(testData, outputOptions)
+	})
+	checkEqual(t, out, testSuccess1, " render info stdout processing failed")
+
+	var testJson = `{"info":"Info Message"}`
+	outputOptions.JSON = true
+	out = captureStderr(func() {
+		RenderInfo(testData, outputOptions)
+	})
+	checkEqual(t, out, testJson, " render error stdout processing failed")
 }
 
 func TestRenderOutput(t *testing.T) {
