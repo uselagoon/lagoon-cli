@@ -181,7 +181,26 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 		// if ignore provided, just skip the hostkey verifications
 		return ssh.InsecureIgnoreHostKey(), nil, nil
 	}
-	kh, err := knownhosts.NewDB(path.Join(userPath, ".ssh/known_hosts"))
+	knownHostsPath := path.Join(userPath, ".ssh/known_hosts")
+	sshDir := path.Join(userPath, ".ssh")
+
+	// Create .ssh directory if it doesn't exist
+	if _, err := os.Stat(sshDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(sshDir, 0700); err != nil {
+			return nil, nil, fmt.Errorf("couldn't create ~/.ssh directory: %v", err)
+		}
+	}
+
+	// Create known_hosts file if it doesn't exist
+	if _, err := os.Stat(knownHostsPath); os.IsNotExist(err) {
+		if f, err := os.OpenFile(knownHostsPath, os.O_CREATE|os.O_WRONLY, 0600); err != nil {
+			return nil, nil, fmt.Errorf("couldn't create ~/.ssh/known_hosts: %v", err)
+		} else {
+			f.Close()
+		}
+	}
+
+	kh, err := knownhosts.NewDB(knownHostsPath)
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
 	}
@@ -199,7 +218,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 			fmt.Fprintf(os.Stderr, remoteHostChanged, key.Type(), ssh.FingerprintSHA256(pub), filePath)
 			return fmt.Errorf("knownhosts: host key verification failed")
 		} else if knownhosts.IsHostUnknown(err) {
-			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
+			f, ferr := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 			if ferr == nil {
 				defer f.Close()
 				var response string
