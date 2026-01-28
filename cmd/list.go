@@ -483,7 +483,7 @@ var listVariablesCmd = &cobra.Command{
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Scope)))
 			env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Name)))
 			if reveal {
-				env = append(env, fmt.Sprintf("%v", envvar.Value))
+				env = append(env, returnNonEmptyString(fmt.Sprintf("%v", envvar.Value)))
 				outputOptions.MultiLine = true
 			}
 			data = append(data, env)
