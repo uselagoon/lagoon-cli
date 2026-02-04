@@ -187,7 +187,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 	// Create .ssh directory if it doesn't exist
 	if _, err := os.Stat(sshDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(sshDir, 0700); err != nil {
-			return nil, nil, fmt.Errorf("couldn't create ~/.ssh directory: %v", err)
+			return nil, nil, fmt.Errorf("couldn't create %s directory: %v", sshDir, err)
 		}
 	}
 
