@@ -194,7 +194,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 	// Create known_hosts file if it doesn't exist
 	if _, err := os.Stat(knownHostsPath); os.IsNotExist(err) {
 		if f, err := os.OpenFile(knownHostsPath, os.O_CREATE|os.O_WRONLY, 0600); err != nil {
-			return nil, nil, fmt.Errorf("couldn't create ~/.ssh/known_hosts: %v", err)
+			return nil, nil, fmt.Errorf("couldn't create %s: %v", knownHostsPath, err)
 		} else {
 			f.Close()
 		}
