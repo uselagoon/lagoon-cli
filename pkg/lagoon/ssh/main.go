@@ -202,7 +202,7 @@ func InteractiveKnownHosts(userPath, host string, ignorehost, accept bool) (ssh.
 
 	kh, err := knownhosts.NewDB(knownHostsPath)
 	if err != nil {
-		return nil, nil, fmt.Errorf("couldn't get ~/.ssh/known_hosts: %v", err)
+		return nil, nil, fmt.Errorf("couldn't get %s: %v", knownHostsPath, err)
 	}
 	// otherwise prompt or accept for the key if required
 	return ssh.HostKeyCallback(func(hostname string, remote net.Addr, key ssh.PublicKey) error {
