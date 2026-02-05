@@ -24,7 +24,8 @@ func TestRenderJSON(t *testing.T) {
 	var testData = `Error Message`
 	var testSuccess = `{
   "error": "Error Message"
-}`
+}
+`
 	outputOptions := Options{
 		Header: false,
 		CSV:    false,
@@ -57,7 +58,8 @@ func TestRenderError(t *testing.T) {
 	})
 	checkEqual(t, out, testSuccess, " render error stdout processing failed")
 
-	var testJson = `{"error":"Error Message"}`
+	var testJson = `{"error":"Error Message"}
+`
 	outputOptions.JSON = true
 	out = captureStderr(func() {
 		RenderError(testData, outputOptions)
@@ -81,7 +83,8 @@ func TestRenderInfo(t *testing.T) {
 	})
 	checkEqual(t, out, testSuccess1, " render info stdout processing failed")
 
-	var testJson = `{"info":"Info Message"}`
+	var testJson = `{"info":"Info Message"}
+`
 	outputOptions.JSON = true
 	out = captureStderr(func() {
 		RenderInfo(testData, outputOptions)
@@ -133,7 +136,8 @@ func TestRenderString(t *testing.T) {
 	output := RenderString(testData, outputOptions)
 	checkEqual(t, output, testSuccess1, " render string processing failed")
 
-	var testSuccess2 = `"Plain string message"`
+	var testSuccess2 = `"Plain string message"
+`
 	outputOptions.JSON = true
 
 	output = RenderString(testData, outputOptions)
