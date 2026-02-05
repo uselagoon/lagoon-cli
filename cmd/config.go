@@ -220,11 +220,7 @@ var configDeleteCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if yesNo(fmt.Sprintf("You are attempting to delete config for lagoon '%s', are you sure?", lagoonConfig.Lagoon)) {
-			err := removeConfig(lagoonConfig.Lagoon)
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			removeConfig(lagoonConfig.Lagoon)
 		}
 	},
 }
@@ -247,19 +243,14 @@ var configFeatureSwitch = &cobra.Command{
 			lagoonCLIConfig.EnvironmentFromDirectory = false
 		}
 		strictHostKeyChecking, err := cmd.Flags().GetString("strict-host-key-checking")
-		if err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		handleError(err)
 		strictHostKeyCheckingProvided := cmd.Flags().Lookup("strict-host-key-checking").Changed
 		if strictHostKeyCheckingProvided {
 			lagoonCLIConfig.StrictHostKeyChecking = strictHostKeyChecking
 		}
 
-		if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-			output.RenderError(err.Error(), outputOptions)
-			os.Exit(1)
-		}
+		err = writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
+		handleError(err)
 	},
 }
 
@@ -399,11 +390,8 @@ func writeLagoonConfig(lc *config.Config, file string) error {
 	return nil
 }
 
-func removeConfig(key string) error {
+func removeConfig(key string) {
 	delete(lagoonCLIConfig.Lagoons, key)
-	if err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension)); err != nil {
-		output.RenderError(err.Error(), outputOptions)
-		os.Exit(1)
-	}
-	return nil
+	err := writeLagoonConfig(&lagoonCLIConfig, filepath.Join(configFilePath, configName+configExtension))
+	handleError(err)
 }

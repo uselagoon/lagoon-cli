@@ -6,7 +6,6 @@ import (
 
 	"github.com/spf13/cobra"
 	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
-	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -87,10 +86,7 @@ var sshEnvCmd = &cobra.Command{
 			} else {
 				err = lagoonssh.InteractiveSSH(sshConfig, sshService, sshContainer, config)
 			}
-			if err != nil {
-				output.RenderError(err.Error(), outputOptions)
-				os.Exit(1)
-			}
+			handleError(err)
 		}
 		return nil
 	},
