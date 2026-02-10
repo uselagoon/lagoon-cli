@@ -16,6 +16,11 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+const (
+	buildNoOptDefVal = "all_builds"
+	taskNoOptDefVal  = "all_tasks"
+)
+
 var (
 	// connTimeout is the network connection timeout used for SSH connections and
 	// calls to the Lagoon API.
@@ -23,6 +28,8 @@ var (
 	// these variables are assigned in init() to flag values
 	logsService   string
 	logsContainer string
+	logsBuild     string
+	logsTask      string
 	logsTailLines uint
 	logsFollow    bool
 )
@@ -30,25 +37,54 @@ var (
 func init() {
 	logsCmd.Flags().StringVarP(&logsService, "service", "s", "", "specify a specific service name")
 	logsCmd.Flags().StringVarP(&logsContainer, "container", "c", "", "specify a specific container name")
+	logsCmd.Flags().StringVarP(&logsBuild, "build", "b", "", "specify build logs, with an optional specific build name")
+	logsCmd.Flags().Lookup("build").NoOptDefVal = buildNoOptDefVal
+	logsCmd.Flags().StringVarP(&logsTask, "task", "t", "", "specify task logs, with an optional specific task name")
+	logsCmd.Flags().Lookup("task").NoOptDefVal = taskNoOptDefVal
 	logsCmd.Flags().UintVarP(&logsTailLines, "lines", "n", 32, "the number of lines to return for each container")
 	logsCmd.Flags().BoolVarP(&logsFollow, "follow", "f", false, "continue outputting new lines as they are logged")
+	logsCmd.MarkFlagsMutuallyExclusive("service", "build", "task")
+	logsCmd.MarkFlagsMutuallyExclusive("container", "build", "task")
 }
 
-func generateLogsCommand(service, container string, lines uint,
-	follow bool) ([]string, error) {
+func generateLogsCommand(
+	service,
+	container,
+	build,
+	task string,
+	lines uint,
+	follow bool,
+) ([]string, error) {
 	var argv []string
-	if service == "" {
-		return nil, fmt.Errorf("empty service name")
+	if service != "" {
+		if unsafeRegex.MatchString(service) {
+			return nil, fmt.Errorf("service name contains invalid characters")
+		}
+		argv = append(argv, "service="+service)
 	}
-	if unsafeRegex.MatchString(service) {
-		return nil, fmt.Errorf("service name contains invalid characters")
-	}
-	argv = append(argv, "service="+service)
 	if container != "" {
 		if unsafeRegex.MatchString(container) {
 			return nil, fmt.Errorf("container name contains invalid characters")
 		}
 		argv = append(argv, "container="+container)
+	}
+	if build != "" {
+		argv = append(argv, "lagoonSystem=build")
+		if build != buildNoOptDefVal {
+			if unsafeRegex.MatchString(build) {
+				return nil, fmt.Errorf("build name contains invalid characters")
+			}
+			argv = append(argv, "name="+build)
+		}
+	}
+	if task != "" {
+		argv = append(argv, "lagoonSystem=task")
+		if task != taskNoOptDefVal {
+			if unsafeRegex.MatchString(task) {
+				return nil, fmt.Errorf("task name contains invalid characters")
+			}
+			argv = append(argv, "name="+task)
+		}
 	}
 	logsCmd := fmt.Sprintf("logs=tailLines=%d", lines)
 	if follow {
@@ -155,8 +191,8 @@ var logsCmd = &cobra.Command{
 			return fmt.Errorf("couldn't get debug value: %v", err)
 		}
 		ignoreHostKey, acceptNewHostKey := lagoonssh.CheckStrictHostKey(strictHostKeyCheck)
-		argv, err := generateLogsCommand(logsService, logsContainer, logsTailLines,
-			logsFollow)
+		argv, err := generateLogsCommand(
+			logsService, logsContainer, logsBuild, logsTask, logsTailLines, logsFollow)
 		if err != nil {
 			return fmt.Errorf("couldn't generate logs command: %v", err)
 		}
