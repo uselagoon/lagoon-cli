@@ -4,6 +4,7 @@ package ssh
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -18,7 +19,13 @@ import (
 // LogStream connects to host:port using the given config, and executes the
 // argv command. It does not request a PTY, and instead just streams the
 // response to the attached terminal. argv should contain a logs=... argument.
-func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error {
+func LogStream(
+	ctx context.Context,
+	config *ssh.ClientConfig,
+	host,
+	port string,
+	argv []string,
+) error {
 	// https://stackoverflow.com/a/37088088
 	client, err := ssh.Dial("tcp", host+":"+port, config)
 	if err != nil {
@@ -29,6 +36,11 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 		return fmt.Errorf("couldn't create SSH session: %v", err)
 	}
 	defer session.Close()
+	// close the session when the context is cancelled
+	go func() {
+		<-ctx.Done()
+		session.Close()
+	}()
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -36,7 +48,12 @@ func LogStream(config *ssh.ClientConfig, host, port string, argv []string) error
 	if err != nil {
 		return fmt.Errorf("couldn't start SSH session: %v", err)
 	}
-	return session.Wait()
+	err = session.Wait()
+	if ctx.Err() == nil {
+		// context not done, so return session.Wait() error
+		return err
+	}
+	return nil
 }
 
 // InteractiveSSH .

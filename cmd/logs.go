@@ -215,8 +215,10 @@ var logsCmd = &cobra.Command{
 				fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
 			}
 		}()
+		ctx, cancel := context.WithCancel(context.TODO())
+		defer cancel()
 		// start SSH log streaming session
-		err = lagoonssh.LogStream(sshConfig, sshHost, sshPort, argv)
+		err = lagoonssh.LogStream(ctx, sshConfig, sshHost, sshPort, argv)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			switch e := err.(type) {
