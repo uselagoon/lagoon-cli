@@ -55,6 +55,14 @@ use 'lagoon deploy latest' instead`,
 		if err != nil {
 			return err
 		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
+		if err != nil {
+			return err
+		}
 		if err := requiredInputCheck("Project name", cmdProjectName, "Branch name", branch); err != nil {
 			return err
 		}
@@ -95,7 +103,7 @@ use 'lagoon deploy latest' instead`,
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 
 			if follow {
-				return followDeployLogs(cmd, cmdProjectName, branch, resultData.Result, debug)
+				return followDeployLogs(cmd, cmdProjectName, branch, resultData.Result, debug, showPod, showTimestamp)
 			}
 		}
 		return nil
@@ -128,6 +136,14 @@ var deployPromoteCmd = &cobra.Command{
 			return err
 		}
 		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
 		if err != nil {
 			return err
 		}
@@ -168,7 +184,7 @@ var deployPromoteCmd = &cobra.Command{
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 
 			if follow {
-				return followDeployLogs(cmd, cmdProjectName, destinationEnvironment, resultData.Result, debug)
+				return followDeployLogs(cmd, cmdProjectName, destinationEnvironment, resultData.Result, debug, showPod, showTimestamp)
 			}
 		}
 		return nil
@@ -196,6 +212,14 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			return err
 		}
 		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
 		if err != nil {
 			return err
 		}
@@ -239,7 +263,7 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 
 			if follow {
-				return followDeployLogs(cmd, cmdProjectName, cmdProjectEnvironment, resultData.Result, debug)
+				return followDeployLogs(cmd, cmdProjectName, cmdProjectEnvironment, resultData.Result, debug, showPod, showTimestamp)
 			}
 		}
 		return nil
@@ -305,6 +329,14 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err != nil {
 			return err
 		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
+		if err != nil {
+			return err
+		}
 
 		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
@@ -337,7 +369,7 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
 
 			if follow {
-				return followDeployLogs(cmd, cmdProjectName, fmt.Sprintf("pr-%d", prNumber), resultData.Result, debug)
+				return followDeployLogs(cmd, cmdProjectName, fmt.Sprintf("pr-%d", prNumber), resultData.Result, debug, showPod, showTimestamp)
 			}
 		}
 		return nil
@@ -353,18 +385,24 @@ func init() {
 	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployLatestCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployLatestCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployLatestCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployLatestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branch-ref", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployBranchCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployBranchCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployBranchCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployBranchCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployPromoteCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployPromoteCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployPromoteCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployPromoteCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
@@ -375,6 +413,8 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("head-branch-ref", "M", "", "Pullrequest head branch reference hash")
 	deployPullrequestCmd.Flags().Bool("returndata", false, returnDataUsageText)
 	deployPullrequestCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployPullrequestCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployPullrequestCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployPullrequestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 }
 
@@ -383,7 +423,9 @@ func followDeployLogs(
 	projectName,
 	environmentName,
 	buildName string,
-	debug bool,
+	debug,
+	showPod,
+	showTimestamp bool,
 ) error {
 	safeEnvName := makeSafe(shortenEnvironment(projectName, environmentName))
 	sshHost, sshPort, username, _, err := getSSHHostPort(safeEnvName, debug)
@@ -456,5 +498,5 @@ func followDeployLogs(
 	return lagoonssh.LogStream(ctx, sshConfig, sshHost, sshPort, []string{
 		"lagoonSystem=build",
 		"logs=tailLines=32,follow",
-	})
+	}, showPod, showTimestamp)
 }
