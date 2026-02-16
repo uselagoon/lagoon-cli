@@ -66,7 +66,7 @@ func RenderError(errorMsg string, opts Options) {
 		}
 		fmt.Fprintf(os.Stderr, "%s", RenderJSON(jsonData, opts))
 	} else {
-		fmt.Fprintf(os.Stderr, "Error: %s", trimQuotes(errorMsg))
+		fmt.Fprintf(os.Stderr, "Error: %s\n", trimQuotes(errorMsg))
 	}
 }
 

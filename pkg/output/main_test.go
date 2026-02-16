@@ -44,7 +44,7 @@ func TestRenderJSON(t *testing.T) {
 
 func TestRenderError(t *testing.T) {
 	var testData = `Error Message`
-	var testSuccess = `Error: Error Message`
+	var testSuccess = "Error: Error Message\n"
 
 	outputOptions := Options{
 		Header: false,

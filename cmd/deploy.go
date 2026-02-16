@@ -3,13 +3,17 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
+	"time"
 
+	"github.com/logrusorgru/aurora"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
 
 	"github.com/spf13/cobra"
+	lagoonssh "github.com/uselagoon/lagoon-cli/pkg/lagoon/ssh"
 	"github.com/uselagoon/machinery/api/lagoon"
 	"github.com/uselagoon/machinery/api/schema"
 )
@@ -44,6 +48,18 @@ use 'lagoon deploy latest' instead`,
 			return err
 		}
 		returnData, err := cmd.Flags().GetBool("returndata")
+		if err != nil {
+			return err
+		}
+		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
 		if err != nil {
 			return err
 		}
@@ -85,6 +101,10 @@ use 'lagoon deploy latest' instead`,
 			resultData := output.Result{Result: result.DeployEnvironmentBranch}
 			r := output.RenderResult(resultData, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+
+			if follow {
+				return followDeployLogs(cmd, cmdProjectName, branch, resultData.Result, debug, showPod, showTimestamp)
+			}
 		}
 		return nil
 	},
@@ -112,6 +132,18 @@ var deployPromoteCmd = &cobra.Command{
 			return err
 		}
 		returnData, err := cmd.Flags().GetBool("returndata")
+		if err != nil {
+			return err
+		}
+		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
 		if err != nil {
 			return err
 		}
@@ -150,6 +182,10 @@ var deployPromoteCmd = &cobra.Command{
 			resultData := output.Result{Result: result.DeployEnvironmentPromote}
 			r := output.RenderResult(resultData, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+
+			if follow {
+				return followDeployLogs(cmd, cmdProjectName, destinationEnvironment, resultData.Result, debug, showPod, showTimestamp)
+			}
 		}
 		return nil
 	},
@@ -172,6 +208,18 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			return err
 		}
 		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
 		if err != nil {
 			return err
 		}
@@ -213,6 +261,10 @@ This environment should already exist in lagoon. It is analogous with the 'Deplo
 			resultData := output.Result{Result: result.DeployEnvironmentLatest}
 			r := output.RenderResult(resultData, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+
+			if follow {
+				return followDeployLogs(cmd, cmdProjectName, cmdProjectEnvironment, resultData.Result, debug, showPod, showTimestamp)
+			}
 		}
 		return nil
 	},
@@ -273,6 +325,19 @@ This pullrequest may not already exist as an environment in lagoon.`,
 		if err != nil {
 			return err
 		}
+		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			return err
+		}
+		showPod, err := cmd.Flags().GetBool("show-pod")
+		if err != nil {
+			return err
+		}
+		showTimestamp, err := cmd.Flags().GetBool("show-timestamp")
+		if err != nil {
+			return err
+		}
+
 		if yesNo(fmt.Sprintf("You are attempting to deploy pull request '%v' for project '%s', are you sure?", prNumber, cmdProjectName)) {
 			current := lagoonCLIConfig.Current
 			token := lagoonCLIConfig.Lagoons[current].Token
@@ -302,6 +367,10 @@ This pullrequest may not already exist as an environment in lagoon.`,
 			resultData := output.Result{Result: result.DeployEnvironmentPullrequest}
 			r := output.RenderResult(resultData, outputOptions)
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+
+			if follow {
+				return followDeployLogs(cmd, cmdProjectName, fmt.Sprintf("pr-%d", prNumber), resultData.Result, debug, showPod, showTimestamp)
+			}
 		}
 		return nil
 	},
@@ -315,16 +384,25 @@ func init() {
 
 	const returnDataUsageText = "Returns the build name instead of success text"
 	deployLatestCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployLatestCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployLatestCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployLatestCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployLatestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployBranchCmd.Flags().StringP("branch", "b", "", "Branch name to deploy")
 	deployBranchCmd.Flags().StringP("branch-ref", "r", "", "Branch ref to deploy")
 	deployBranchCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployBranchCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployBranchCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployBranchCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployBranchCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPromoteCmd.Flags().StringP("destination", "d", "", "Destination environment name to create")
 	deployPromoteCmd.Flags().StringP("source", "s", "", "Source environment name to use as the base to deploy from")
 	deployPromoteCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployPromoteCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployPromoteCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployPromoteCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployPromoteCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
 
 	deployPullrequestCmd.Flags().StringP("title", "t", "", "Pullrequest title")
@@ -334,5 +412,91 @@ func init() {
 	deployPullrequestCmd.Flags().StringP("head-branch-name", "H", "", "Pullrequest head branch name")
 	deployPullrequestCmd.Flags().StringP("head-branch-ref", "M", "", "Pullrequest head branch reference hash")
 	deployPullrequestCmd.Flags().Bool("returndata", false, returnDataUsageText)
+	deployPullrequestCmd.Flags().Bool("follow", false, "Follow the deploy logs")
+	deployPullrequestCmd.Flags().Bool("show-pod", true, "show pod/container name prefix on log lines")
+	deployPullrequestCmd.Flags().Bool("show-timestamp", true, "show timestamp prefix on log lines")
 	deployPullrequestCmd.Flags().StringArray("buildvar", []string{}, "Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])")
+}
+
+func followDeployLogs(
+	cmd *cobra.Command,
+	projectName,
+	environmentName,
+	buildName string,
+	debug,
+	showPod,
+	showTimestamp bool,
+) error {
+	safeEnvName := makeSafe(shortenEnvironment(projectName, environmentName))
+	sshHost, sshPort, username, _, err := getSSHHostPort(safeEnvName, debug)
+	if err != nil {
+		return fmt.Errorf("couldn't get SSH endpoint: %v", err)
+	}
+	ignoreHostKey, acceptNewHostKey :=
+		lagoonssh.CheckStrictHostKey(strictHostKeyCheck)
+	sshConfig, closeSSHAgent, err := getSSHClientConfig(
+		username,
+		fmt.Sprintf("%s:%s", sshHost, sshPort),
+		ignoreHostKey,
+		acceptNewHostKey)
+	if err != nil {
+		return fmt.Errorf("couldn't get SSH client config: %v", err)
+	}
+	defer func() {
+		err = closeSSHAgent()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error closing ssh agent:%v\n", err)
+		}
+	}()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	// start background ticker to close session when deploy completes
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+	go func() {
+		defer cancel()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				validateToken(lagoonCLIConfig.Current)
+				current := lagoonCLIConfig.Current
+				token := lagoonCLIConfig.Lagoons[current].Token
+				lc := lclient.New(
+					lagoonCLIConfig.Lagoons[current].GraphQL,
+					lagoonCLIVersion,
+					lagoonCLIConfig.Lagoons[current].Version,
+					&token,
+					debug)
+				// ignore errors here since we can't really do anything about them
+				deployment, _ := lagoon.GetDeploymentByName(
+					ctx, cmdProjectName, cmdProjectEnvironment, buildName, false, lc)
+				if deployment.Completed != "" && deployment.Status != "running" {
+					var status string
+					switch deployment.Status {
+					case "complete":
+						status = "complete ✅"
+					case "failed":
+						status = "failed ❌"
+					case "cancelled":
+						status = "cancelled 🛑"
+					default:
+						status = deployment.Status
+					}
+					fmt.Fprintf(
+						cmd.OutOrStdout(),
+						"Deployment %s finished with status: %s\n",
+						aurora.Yellow(buildName),
+						status)
+					return
+				}
+			}
+		}
+	}()
+	fmt.Fprintf(cmd.OutOrStdout(), "Streaming deploy logs...\n")
+	return lagoonssh.LogStream(ctx, sshConfig, sshHost, sshPort, []string{
+		"lagoonSystem=build",
+		"logs=tailLines=32,follow",
+	}, showPod, showTimestamp)
 }
