@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"path"
@@ -16,6 +17,49 @@ import (
 	"golang.org/x/term"
 )
 
+// processLogs filters log components based on the show* flags.
+func processLogs(
+	ctx context.Context,
+	w io.Writer,
+	r io.Reader,
+	showPod,
+	showTimestamp bool,
+) {
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			line := scanner.Text()
+			if showPod && showTimestamp {
+				// no formatting required: print whole line
+				fmt.Fprintln(w, line)
+				continue
+			}
+			// split log line: [pod/container] timestamp message
+			parts := strings.SplitN(line, " ", 3)
+			if len(parts) < 3 {
+				// unexpected log format: ignore format directives and print whole line
+				fmt.Fprintln(w, line)
+				continue
+			}
+			// format line based on flags
+			var sb strings.Builder
+			if showPod {
+				sb.WriteString(parts[0])
+				sb.WriteByte(' ')
+			}
+			if showTimestamp {
+				sb.WriteString(parts[1])
+				sb.WriteByte(' ')
+			}
+			sb.WriteString(parts[2])
+			fmt.Fprintln(w, sb.String())
+		}
+	}
+}
+
 // LogStream connects to host:port using the given config, and executes the
 // argv command. It does not request a PTY, and instead just streams the
 // response to the attached terminal. argv should contain a logs=... argument.
@@ -25,6 +69,8 @@ func LogStream(
 	host,
 	port string,
 	argv []string,
+	showPod,
+	showTimestamp bool,
 ) error {
 	// https://stackoverflow.com/a/37088088
 	client, err := ssh.Dial("tcp", host+":"+port, config)
@@ -41,9 +87,12 @@ func LogStream(
 		<-ctx.Done()
 		session.Close()
 	}()
-	session.Stdout = os.Stdout
+	sessStdout, err := session.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("couldn't set up session stdout pipe: %v", err)
+	}
+	go processLogs(ctx, os.Stdout, sessStdout, showPod, showTimestamp)
 	session.Stderr = os.Stderr
-	session.Stdin = os.Stdin
 	err = session.Start(strings.Join(argv, " "))
 	if err != nil {
 		return fmt.Errorf("couldn't start SSH session: %v", err)

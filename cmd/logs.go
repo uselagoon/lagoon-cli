@@ -26,12 +26,14 @@ var (
 	// calls to the Lagoon API.
 	connTimeout = 8 * time.Second
 	// these variables are assigned in init() to flag values
-	logsService   string
-	logsContainer string
-	logsBuild     string
-	logsTask      string
-	logsTailLines uint
-	logsFollow    bool
+	logsService       string
+	logsContainer     string
+	logsBuild         string
+	logsTask          string
+	logsTailLines     uint
+	logsFollow        bool
+	logsShowPod       bool
+	logsShowTimestamp bool
 )
 
 func init() {
@@ -43,6 +45,8 @@ func init() {
 	logsCmd.Flags().Lookup("task").NoOptDefVal = taskNoOptDefVal
 	logsCmd.Flags().UintVarP(&logsTailLines, "lines", "n", 32, "the number of lines to return for each container")
 	logsCmd.Flags().BoolVarP(&logsFollow, "follow", "f", false, "continue outputting new lines as they are logged")
+	logsCmd.Flags().BoolVarP(&logsShowPod, "show-pod", "", true, "show pod/container name prefix on log lines")
+	logsCmd.Flags().BoolVarP(&logsShowTimestamp, "show-timestamp", "", true, "show timestamp prefix on log lines")
 	logsCmd.MarkFlagsMutuallyExclusive("service", "build", "task")
 	logsCmd.MarkFlagsMutuallyExclusive("container", "build", "task")
 }
@@ -218,7 +222,8 @@ var logsCmd = &cobra.Command{
 		ctx, cancel := context.WithCancel(context.TODO())
 		defer cancel()
 		// start SSH log streaming session
-		err = lagoonssh.LogStream(ctx, sshConfig, sshHost, sshPort, argv)
+		err = lagoonssh.LogStream(
+			ctx, sshConfig, sshHost, sshPort, argv, logsShowPod, logsShowTimestamp)
 		if err != nil {
 			output.RenderError(err.Error(), outputOptions)
 			switch e := err.(type) {
