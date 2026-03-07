@@ -91,7 +91,7 @@ func isInternetActive() bool {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig, StrictHostKeyCheckInit)
+	cobra.OnInitialize(initConfig, strictHostKeyCheckInit)
 
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
@@ -244,7 +244,7 @@ func initConfig() {
 	}
 }
 
-func StrictHostKeyCheckInit() {
+func strictHostKeyCheckInit() {
 	if lagoonCLIConfig.StrictHostKeyChecking != "" {
 		strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
 	}
