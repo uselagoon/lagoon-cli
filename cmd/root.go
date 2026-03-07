@@ -93,7 +93,7 @@ func isInternetActive() bool {
 func init() {
 	// Add functionality that will be required to run before all commands
 	// These are executed in order.
-	cobra.OnInitialize(initConfig, checkLagoonCliRequiresUpdate)
+	cobra.OnInitialize(initConfig, strictHostKeyCheckInit, checkLagoonCliRequiresUpdate)
 
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
@@ -218,15 +218,20 @@ func initConfig() {
 	}
 }
 
+// strictHostKeyCheckInit sets the strictHostKeyCheck if it's
+// set in the lagoonCLIConfig
+func strictHostKeyCheckInit() {
+	if lagoonCLIConfig.StrictHostKeyChecking != "" {
+		strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
+	}
+}
+
 // checkLagoonCliRequiresUpdate runs the logic to check
 // the current version of the cli against the most recently
 // released.
 func checkLagoonCliRequiresUpdate() {
 	if lagoonCLIConfig.UpdateCheckDisable {
 		skipUpdateCheck = true
-	}
-	if lagoonCLIConfig.StrictHostKeyChecking != "" {
-		strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
 	}
 	if !skipUpdateCheck {
 		// Using code from https://github.com/drud/ddev/
