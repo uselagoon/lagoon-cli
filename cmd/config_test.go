@@ -58,6 +58,12 @@ func TestConfigRead(t *testing.T) {
 				EnvironmentFromDirectory: false,
 			},
 		},
+		"missing-yaml-file": {
+			input:           "testdata/lagoon.yml.doesntexist",
+			description:     "This test checks the behavior if a file doesn't exist at all - should fail in non-interactive mode",
+			readfailallowed: true,
+			expect:          config.Config{},
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {

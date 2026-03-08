@@ -15,6 +15,7 @@ import (
 	"github.com/uselagoon/lagoon-cli/pkg/output"
 	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
+	"golang.org/x/term"
 	"gopkg.in/yaml.v3"
 )
 
@@ -344,9 +345,13 @@ func init() {
 func readLagoonConfig(lc *config.Config, file string) error {
 	data, err := os.ReadFile(file)
 	if err != nil {
+
+		// We want to ensure that we've got interactive terms before we show the yesNo
+		isTermStdin := term.IsTerminal(int(os.Stdin.Fd()))
+		isTermStdout := term.IsTerminal(int(os.Stdout.Fd()))
 		// if there is no file found in the specified location, prompt the user to create it with the default
 		// configuration to point to the amazeeio lagoon instance
-		if yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
+		if isTermStdin && isTermStdout && yesNo(fmt.Sprintf("Config file '%s' does not exist, do you want to create it with defaults?", file)) {
 			l := config.Context{
 				GraphQL:  "https://api.amazeeio.cloud/graphql",
 				HostName: "token.amazeeio.cloud",
