@@ -23,7 +23,7 @@ var webCmd = &cobra.Command{
 		urlBuilder := strings.Builder{}
 		urlBuilder.WriteString(lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].UI)
 		if lagoonCLIConfig.Lagoons[lagoonCLIConfig.Current].UI != "" {
-			urlBuilder.WriteString(fmt.Sprintf("/projects/%s", cmdProjectName))
+			fmt.Fprintf(&urlBuilder,"/projects/%s", cmdProjectName)
 		} else {
 			handleError(fmt.Errorf("unable to determine url for ui, is one set?"))
 		}
