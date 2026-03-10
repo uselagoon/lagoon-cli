@@ -60,39 +60,6 @@ var rootCmd = &cobra.Command{
 	Short:             "Command line integration for Lagoon",
 	Long:              `Lagoon CLI. Manage your Lagoon hosted projects.`,
 	DisableAutoGenTag: true,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if lagoonCLIConfig.UpdateCheckDisable {
-			skipUpdateCheck = true
-		}
-		if lagoonCLIConfig.StrictHostKeyChecking != "" {
-			strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
-		}
-		if !skipUpdateCheck {
-			// Using code from https://github.com/drud/ddev/
-			updateFile := filepath.Join(userPath, ".lagoon.update")
-			// Do periodic detection of whether an update is available for lagoon-cli users.
-			timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
-			if err != nil {
-				output.RenderInfo(fmt.Sprintf("Could not perform update check %v\n", err), outputOptions)
-			}
-			if timeToCheckForUpdates && isInternetActive() {
-				// Recreate the updatefile with current time so we won't do this again soon.
-				err = updatecheck.ResetUpdateTime(updateFile)
-				if err != nil {
-					output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s\n", updateFile), outputOptions)
-				}
-				updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
-				if err != nil {
-					output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.\n", outputOptions)
-					output.RenderError(err.Error(), outputOptions)
-					return
-				}
-				if updateNeeded {
-					output.RenderInfo(fmt.Sprintf("A new update is available! please visit %s to download the update.\nFor upgrade help see %s\n\nIf installed using brew, upgrade using `brew upgrade lagoon`\n", updateURL, updateDocURL), outputOptions)
-				}
-			}
-		}
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
@@ -124,7 +91,9 @@ func isInternetActive() bool {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	// Add functionality that will be required to run before all commands
+	// These are executed in order.
+	cobra.OnInitialize(initConfig, strictHostKeyCheckInit, checkLagoonCliRequiresUpdate)
 
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectName, "project", "p", "", "Specify a project to use")
 	rootCmd.PersistentFlags().StringVarP(&cmdProjectEnvironment, "environment", "e", "", "Specify an environment to use")
@@ -246,6 +215,48 @@ func initConfig() {
 	}
 	if cmdProject.Environment != "" && cmdProjectEnvironment == "" {
 		cmdProjectEnvironment = cmdProject.Environment
+	}
+}
+
+// strictHostKeyCheckInit sets the strictHostKeyCheck if it's
+// set in the lagoonCLIConfig
+func strictHostKeyCheckInit() {
+	if lagoonCLIConfig.StrictHostKeyChecking != "" {
+		strictHostKeyCheck = lagoonCLIConfig.StrictHostKeyChecking
+	}
+}
+
+// checkLagoonCliRequiresUpdate runs the logic to check
+// the current version of the cli against the most recently
+// released.
+func checkLagoonCliRequiresUpdate() {
+	if lagoonCLIConfig.UpdateCheckDisable {
+		skipUpdateCheck = true
+	}
+	if !skipUpdateCheck {
+		// Using code from https://github.com/drud/ddev/
+		updateFile := filepath.Join(userPath, ".lagoon.update")
+		// Do periodic detection of whether an update is available for lagoon-cli users.
+		timeToCheckForUpdates, err := updatecheck.IsUpdateNeeded(updateFile, updateInterval)
+		if err != nil {
+			output.RenderInfo(fmt.Sprintf("Could not perform update check %v\n", err), outputOptions)
+		}
+		if timeToCheckForUpdates && isInternetActive() {
+			// Recreate the updatefile with current time so we won't do this again soon.
+			err = updatecheck.ResetUpdateTime(updateFile)
+			if err != nil {
+				output.RenderInfo(fmt.Sprintf("Failed to update updatecheck file %s\n", updateFile), outputOptions)
+			}
+			updateNeeded, updateURL, err := updatecheck.AvailableUpdates("uselagoon", "lagoon-cli", lagoonCLIVersion)
+			if err != nil {
+				output.RenderInfo("Could not check for updates. This is most often caused by a networking issue.\n", outputOptions)
+				output.RenderError(err.Error(), outputOptions)
+				return
+			}
+			if updateNeeded {
+				output.RenderInfo(fmt.Sprintf("A new update is available! please visit %s to download the update.\nFor upgrade help see %s\n\nIf installed using brew, upgrade using `brew upgrade lagoon`\n", updateURL, updateDocURL), outputOptions)
+			}
+		}
 	}
 }
 
