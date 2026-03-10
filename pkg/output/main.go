@@ -89,17 +89,17 @@ func RenderResult(result Result, opts Options) string {
 		return RenderJSON(result, opts)
 	} else {
 		if trimQuotes(result.Result) == "success" {
-			out.WriteString(fmt.Sprintf("Result: %s\n", aurora.Green(trimQuotes(result.Result))))
+			fmt.Fprintf(&out, "Result: %s\n", aurora.Green(trimQuotes(result.Result)))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					out.WriteString(fmt.Sprintf("%s: %v\n", k, v))
+					fmt.Fprintf(&out, "%s: %v\n", k, v)
 				}
 			}
 		} else {
-			fmt.Printf("Result: %s\n", aurora.Yellow(trimQuotes(result.Result)))
+			fmt.Fprintf(&out, "Result: %s\n", aurora.Yellow(trimQuotes(result.Result)))
 			if len(result.ResultData) != 0 {
 				for k, v := range result.ResultData {
-					out.WriteString(fmt.Sprintf("%s: %v\n", k, v))
+					fmt.Fprintf(&out, "%s: %v\n", k, v)
 				}
 			}
 		}
@@ -111,7 +111,7 @@ func RenderResult(result Result, opts Options) string {
 func RenderOutput(data Table, opts Options) string {
 	var out bytes.Buffer
 	if opts.Debug {
-		out.WriteString(fmt.Sprintf("%s\n", aurora.Yellow("Final result:")))
+		fmt.Fprintf(&out, "%s\n", aurora.Yellow("Final result:"))
 	}
 	if opts.JSON {
 		// really basic tabledata to json implementation
