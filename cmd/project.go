@@ -3,8 +3,13 @@ package cmd
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/charmbracelet/huh"
+	"github.com/uselagoon/lagoon-cli/internal/util"
+	"github.com/uselagoon/lagoon-cli/internal/wizard/project"
 
 	"strings"
 
@@ -143,9 +148,23 @@ var addProjectCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
-		if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
+		interactive, err := cmd.Flags().GetBool("interactive")
+		if err != nil {
 			return err
+		}
+		genCmdEnabled, err := cmd.Flags().GetBool("generate-command")
+		if err != nil {
+			return err
+		}
+		if interactive && !experimentalEnabled {
+			return fmt.Errorf("--interactive requires experimental flag to be set in .lagoon.yml")
+		}
+		generatedCommand := ""
+
+		if !interactive {
+			if err := requiredInputCheck("Project name", cmdProjectName, "git-url", gitUrl, "Production environment", productionEnvironment, "Deploytarget", strconv.Itoa(int(deploytarget))); err != nil {
+				return err
+			}
 		}
 
 		current := lagoonCLIConfig.Current
@@ -157,19 +176,37 @@ var addProjectCmd = &cobra.Command{
 			&token,
 			debug)
 
-		projectInput := schema.AddProjectInput{
-			Name:                         cmdProjectName,
-			GitURL:                       gitUrl,
-			ProductionEnvironment:        productionEnvironment,
-			StandbyProductionEnvironment: standbyProductionEnvironment,
-			Branches:                     branches,
-			PullRequests:                 pullrequests,
-			OpenshiftProjectPattern:      deploytargetProjectPattern,
-			Openshift:                    deploytarget,
-			Subfolder:                    subfolder,
-			PrivateKey:                   privateKey,
-			BuildImage:                   buildImage,
-			RouterPattern:                routerPattern,
+		projectInput := schema.AddProjectInput{}
+		if interactive {
+			config, err := project.RunCreateWizard(lc)
+			if err != nil {
+				if errors.Is(err, huh.ErrUserAborted) {
+					return nil
+				}
+				return err
+			}
+			projectInput = config.Input
+			if config.OrganizationDetails.Name != "" {
+				organizationName = config.OrganizationDetails.Name
+			}
+			generatedCommand = util.GenerateCLICommand(config)
+		}
+
+		if !interactive {
+			projectInput = schema.AddProjectInput{
+				Name:                         cmdProjectName,
+				GitURL:                       gitUrl,
+				ProductionEnvironment:        productionEnvironment,
+				StandbyProductionEnvironment: standbyProductionEnvironment,
+				Branches:                     branches,
+				PullRequests:                 pullrequests,
+				OpenshiftProjectPattern:      deploytargetProjectPattern,
+				Openshift:                    deploytarget,
+				Subfolder:                    subfolder,
+				PrivateKey:                   privateKey,
+				BuildImage:                   buildImage,
+				RouterPattern:                routerPattern,
+			}
 		}
 		if orgOwnerProvided {
 			projectInput.AddOrgOwner = &orgOwner
@@ -210,11 +247,18 @@ var addProjectCmd = &cobra.Command{
 			Result: "success",
 			ResultData: map[string]interface{}{
 				"Project Name": project.Name,
-				"GitURL":       gitUrl,
+				"GitURL":       projectInput.GitURL,
 			},
 		}
 		if organizationName != "" {
 			resultData.ResultData["Organization"] = organizationName
+		}
+		if interactive && genCmdEnabled {
+			cmdPrefix := "lagoon add project"
+			if cmdLagoon != "" {
+				cmdPrefix = fmt.Sprintf("lagoon --lagoon %s add project", cmdLagoon)
+			}
+			resultData.ResultData["Generated Command"] = cmdPrefix + generatedCommand
 		}
 		r := output.RenderResult(resultData, outputOptions)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
@@ -765,6 +809,8 @@ func init() {
 	addProjectCmd.Flags().Bool("owner", false, "Add the user as an owner of the project")
 	addProjectCmd.Flags().StringP("organization-name", "O", "", "Name of the Organization to add the project to")
 	addProjectCmd.Flags().UintP("organization-id", "", 0, "ID of the Organization to add the project to")
+	addProjectCmd.Flags().Bool("interactive", false, "Set Interactive mode for the project creation wizard. Requires 'experimental' flag to be set in .lagoon.yml")
+	addProjectCmd.Flags().Bool("generate-command", false, "Displays the generated command from the project creation wizard. Requires Interactive mode to be enabled")
 
 	listCmd.AddCommand(listProjectByMetadata)
 	listProjectByMetadata.Flags().StringP("key", "K", "", "The key name of the metadata value you are querying on")
