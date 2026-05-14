@@ -12,6 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uselagoon/lagoon-cli/pkg/output"
+	"gopkg.in/yaml.v3"
 
 	"github.com/uselagoon/machinery/api/lagoon"
 	lclient "github.com/uselagoon/machinery/api/lagoon/client"
@@ -545,6 +546,112 @@ var uploadFilesToTask = &cobra.Command{
 	},
 }
 
+var addAdvancedTaskCmd = &cobra.Command{
+	Use:     "task",
+	Short:   "Add an advanced task definition to an environment",
+	Long:    `Add an advanced task definition to an environment`,
+	Aliases: []string{"t"},
+	PreRunE: func(_ *cobra.Command, _ []string) error {
+		return validateTokenE(lagoonCLIConfig.Current)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		var task schema.AdvancedTaskDefinition
+		var (
+			taskName             string
+			taskService          string
+			taskCommand          string
+			taskDescription      string
+			taskConfirmationText string
+		)
+
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+
+		if cmd.Flags().Changed("file") {
+			// User has specified a yaml config file for the task definition.
+			filePath, err := cmd.Flags().GetString("file")
+			if err != nil {
+				return err
+			}
+			fileData, err := os.ReadFile(filePath)
+			if err != nil {
+				return err
+			}
+			if err := yaml.Unmarshal(fileData, &task); err != nil {
+				return err
+			}
+		} else { // case where the user uses flags instead of a yaml config file.
+			taskName, err = cmd.Flags().GetString("name")
+			if err != nil {
+				return err
+			}
+			taskService, err = cmd.Flags().GetString("service")
+			if err != nil {
+				return err
+			}
+			taskCommand, err = cmd.Flags().GetString("command")
+			if err != nil {
+				return err
+			}
+			taskDescription, err = cmd.Flags().GetString("description")
+			if err != nil {
+				return err
+			}
+			taskConfirmationText, err = cmd.Flags().GetString("confirmation-text")
+			if err != nil {
+				return err
+			}
+			if err := requiredInputCheck(
+				"Project name", cmdProjectName,
+				"Environment name", cmdProjectEnvironment,
+				"Task command", taskCommand,
+				"Task name", taskName,
+				"Task service", taskService,
+				"Task description", taskDescription,
+			); err != nil {
+				return err
+			}
+			task = schema.AdvancedTaskDefinition{
+				Name:             taskName,
+				Command:          taskCommand,
+				Service:          taskService,
+				Description:      taskDescription,
+				ConfirmationText: taskConfirmationText,
+			}
+		}
+
+		current := lagoonCLIConfig.Current
+		token := lagoonCLIConfig.Lagoons[current].Token
+		lc := lclient.New(
+			lagoonCLIConfig.Lagoons[current].GraphQL,
+			lagoonCLIVersion,
+			lagoonCLIConfig.Lagoons[current].Version,
+			&token,
+			debug)
+
+		environment, err := lagoon.GetEnvironmentByNameAndProjectName(context.TODO(), cmdProjectEnvironment, cmdProjectName, lc)
+		if err != nil {
+			return err
+		}
+
+		taskResult, err := lagoon.AddAdvancedTaskDefinition(context.TODO(), environment.ID, task, lc)
+		if err != nil {
+			return err
+		}
+		resultData := output.Result{
+			Result: "success",
+			ResultData: map[string]interface{}{
+				"id": taskResult.ID,
+			},
+		}
+		r := output.RenderResult(resultData, outputOptions)
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", r)
+		return nil
+	},
+}
+
 func init() {
 	uploadFilesToTask.Flags().IntP("id", "I", 0, "ID of the task")
 	uploadFilesToTask.Flags().StringSliceP("file", "F", []string{}, "File to upload (add multiple flags to upload multiple files)")
@@ -553,4 +660,10 @@ func init() {
 	runCustomTask.Flags().StringP("service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
 	runCustomTask.Flags().StringP("command", "c", "", "The command to run in the task")
 	runCustomTask.Flags().StringP("script", "s", "", "Path to bash script to run (will use this before command(-c) if both are defined)")
+	addAdvancedTaskCmd.Flags().StringP("name", "N", "Custom Task", "Name of the task that will show in the UI (default: Custom Task)")
+	addAdvancedTaskCmd.Flags().StringP("service", "S", "cli", "Name of the service (cli, nginx, other) that should run the task (default: cli)")
+	addAdvancedTaskCmd.Flags().StringP("command", "c", "", "The command to run in the task")
+	addAdvancedTaskCmd.Flags().StringP("description", "d", "", "The task description (this is what is displayed in the Lagoon UI)")
+	addAdvancedTaskCmd.Flags().StringP("confirmation-text", "C", "", "The text displayed in the confirmation modal in the Lagoon UI")
+	addAdvancedTaskCmd.Flags().StringP("file", "f", "", "Path to YAML file task definition")
 }
