@@ -362,7 +362,7 @@ Direct:
 		}
 
 		var taskId uint
-		for _, task := range environment.AdvancedTasks {
+		for _, task := range environment.AdvancedTaskDefinitions {
 			if invokedTaskName == task.Name {
 				taskId = uint(task.ID)
 			}
@@ -547,10 +547,10 @@ var uploadFilesToTask = &cobra.Command{
 }
 
 var addAdvancedTaskCmd = &cobra.Command{
-	Use:     "task",
+	Use:     "task-definition",
 	Short:   "Add an advanced task definition to an environment",
 	Long:    `Add an advanced task definition to an environment`,
-	Aliases: []string{"t"},
+	Aliases: []string{"td"},
 	PreRunE: func(_ *cobra.Command, _ []string) error {
 		return validateTokenE(lagoonCLIConfig.Current)
 	},
