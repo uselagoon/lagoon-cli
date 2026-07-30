@@ -15,8 +15,11 @@ lagoon deploy promote [flags]
 ```
       --buildvar stringArray   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
   -d, --destination string     Destination environment name to create
+      --follow                 Follow the deploy logs
   -h, --help                   help for promote
       --returndata             Returns the build name instead of success text
+      --show-pod               show pod/container name prefix on log lines (default true)
+      --show-timestamp         show timestamp prefix on log lines (default true)
   -s, --source string          Source environment name to use as the base to deploy from
 ```
 
