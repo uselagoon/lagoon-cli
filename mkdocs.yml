@@ -42,9 +42,15 @@ markdown_extensions:
 
 plugins:
   - search
+  - awesome-pages
+  - llms-source:
+      description: >-
+        Documentation for the Lagoon CLI, the command line client for the
+        Lagoon application delivery platform.
 
 nav:
   - Getting Started: index.md
   - Configuration: config.md
-  - Commands: commands/lagoon.md
+  - Commands:
+    - ... | commands/*.md
   - Troubleshooting: troubleshooting.md
