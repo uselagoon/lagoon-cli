@@ -9,11 +9,15 @@ lagoon logs [flags]
 ### Options
 
 ```
-  -c, --container string   specify a specific container name
-  -f, --follow             continue outputting new lines as they are logged
-  -h, --help               help for logs
-  -n, --lines uint         the number of lines to return for each container (default 32)
-  -s, --service string     specify a specific service name
+  -b, --build string[="all_builds"]   specify build logs, with an optional specific build name
+  -c, --container string              specify a specific container name
+  -f, --follow                        continue outputting new lines as they are logged
+  -h, --help                          help for logs
+  -n, --lines uint                    the number of lines to return for each container (default 32)
+  -s, --service string                specify a specific service name
+      --show-pod                      show pod/container name prefix on log lines (default true)
+      --show-timestamp                show timestamp prefix on log lines (default true)
+  -t, --task string[="all_tasks"]     specify task logs, with an optional specific task name
 ```
 
 ### Options inherited from parent commands

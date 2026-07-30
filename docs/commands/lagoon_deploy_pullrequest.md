@@ -17,11 +17,14 @@ lagoon deploy pullrequest [flags]
   -N, --base-branch-name string   Pullrequest base branch name
   -R, --base-branch-ref string    Pullrequest base branch reference hash
       --buildvar stringArray      Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
+      --follow                    Follow the deploy logs
   -H, --head-branch-name string   Pullrequest head branch name
   -M, --head-branch-ref string    Pullrequest head branch reference hash
   -h, --help                      help for pullrequest
   -n, --number uint               Pullrequest number
       --returndata                Returns the build name instead of success text
+      --show-pod                  show pod/container name prefix on log lines (default true)
+      --show-timestamp            show timestamp prefix on log lines (default true)
   -t, --title string              Pullrequest title
 ```
 

@@ -18,8 +18,11 @@ lagoon deploy branch [flags]
   -b, --branch string          Branch name to deploy
   -r, --branch-ref string      Branch ref to deploy
       --buildvar stringArray   Add one or more build variables to deployment (--buildvar KEY1=VALUE1 [--buildvar KEY2=VALUE2])
+      --follow                 Follow the deploy logs
   -h, --help                   help for branch
       --returndata             Returns the build name instead of success text
+      --show-pod               show pod/container name prefix on log lines (default true)
+      --show-timestamp         show timestamp prefix on log lines (default true)
 ```
 
 ### Options inherited from parent commands
