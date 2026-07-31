@@ -47,6 +47,7 @@ plugins:
       description: >-
         Documentation for the Lagoon CLI, the command line client for the
         Lagoon application delivery platform.
+      homepage_notice: false
 
 nav:
   - Getting Started: index.md
