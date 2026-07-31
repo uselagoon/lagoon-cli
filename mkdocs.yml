@@ -52,6 +52,5 @@ plugins:
 nav:
   - Getting Started: index.md
   - Configuration: config.md
-  - Commands:
-    - ... | commands/*.md
+  - ...
   - Troubleshooting: troubleshooting.md
