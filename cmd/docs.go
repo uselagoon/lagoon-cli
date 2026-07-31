@@ -46,12 +46,12 @@ func writeDocsNav(dir string) error {
 	for _, command := range commands {
 		sort.Strings(pages[command])
 		if len(pages[command]) == 1 {
-			nav.WriteString(fmt.Sprintf("  - %s\n", pages[command][0]))
+			fmt.Fprintf(&nav, "  - %s\n", pages[command][0])
 			continue
 		}
-		nav.WriteString(fmt.Sprintf("  - %s:\n", strings.ToUpper(command[:1])+command[1:]))
+		fmt.Fprintf(&nav, "  - %s:\n", strings.ToUpper(command[:1])+command[1:])
 		for _, page := range pages[command] {
-			nav.WriteString(fmt.Sprintf("      - %s\n", page))
+			fmt.Fprintf(&nav, "      - %s\n", page)
 		}
 	}
 
