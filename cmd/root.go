@@ -64,6 +64,7 @@ var rootCmd = &cobra.Command{
 		if docsFlag {
 			err := doc.GenMarkdownTree(cmd, "docs/commands")
 			handleError(err)
+			handleError(writeDocsNav("docs/commands"))
 			fmt.Println("Documentation updated")
 			return
 		}
