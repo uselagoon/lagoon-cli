@@ -36,4 +36,5 @@ func init() {
 	addCmd.AddCommand(addDeployTargetConfigCmd)
 	addCmd.AddCommand(addDeployTargetToOrganizationCmd)
 	addCmd.AddCommand(addAdministratorToOrganizationCmd)
+	addCmd.AddCommand(addAdvancedTaskCmd)
 }
