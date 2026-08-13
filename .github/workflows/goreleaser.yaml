@@ -51,12 +51,23 @@ jobs:
         name: Fetch Dependencies
         run: go mod download
       -
+        name: Generate App Token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.HOMEBREW_REPO_WRITER_APP_ID }}
+          private-key: ${{ secrets.HOMEBREW_REPO_WRITER_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            lagoon-cli
+            homebrew-lagoon-cli
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
           version: v2
           args: release --verbose --skip=validate
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GOVERSION: ${{ matrix.goversion }}
           LOCAL_ORG: ${{ github.repository_owner }}
