@@ -424,7 +424,7 @@ func checkContextExists(lagoonCLIConfig *config.Config) error {
 func VerifyTokenExpiry(lc *config.Config, lagoon string) bool {
 	var p jwt.Parser
 	token, _, err := p.ParseUnverified(
-		lc.Lagoons[lagoon].Token, &jwt.StandardClaims{})
+		lc.Lagoons[lagoon].Token, &jwt.MapClaims{})
 	if err != nil {
 		return false
 	}
