@@ -39,6 +39,7 @@ var userPath string
 var configFilePath string
 var updateDocURL = "https://uselagoon.github.io/lagoon-cli"
 var verboseOutput bool
+var experimentalEnabled bool
 
 var skipUpdateCheck bool
 
@@ -243,6 +244,7 @@ func initConfig() {
 	if cmdProject.Environment != "" && cmdProjectEnvironment == "" {
 		cmdProjectEnvironment = cmdProject.Environment
 	}
+	experimentalEnabled = lagoonCLIConfig.IsFlagSet("experimental")
 }
 
 func strictHostKeyCheckInit() {
