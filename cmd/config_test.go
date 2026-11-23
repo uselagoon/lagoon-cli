@@ -41,6 +41,14 @@ func TestConfigRead(t *testing.T) {
 			readfailallowed: true,
 			expect:          config.Config{},
 		},
+		"empty-yaml": {
+			input:           "testdata/lagoon.yml.empty",
+			description:     "This test checks that an empty config file is parsed into a config that lagoons can be added to",
+			readfailallowed: false,
+			expect: config.Config{
+				Lagoons: map[string]config.Context{},
+			},
+		},
 		"missing-yaml": {
 			input:           "testdata/lagoon.yml.missing",
 			description:     "This test checks if a context is missing the required data (graphql, hostname, port)",

@@ -366,6 +366,10 @@ func readLagoonConfig(lc *config.Config, file string) error {
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal config, yaml is likely invalid: %v", err)
 	}
+	// an empty file, or one without any lagoons, leaves the map nil
+	if lc.Lagoons == nil {
+		lc.Lagoons = map[string]config.Context{}
+	}
 	for ln, l := range lc.Lagoons {
 		if l.GraphQL == "" || l.HostName == "" || l.Port == "" {
 			return fmt.Errorf("configured lagoon %s is missing required configuration for graphql, hostname, or port", ln)
