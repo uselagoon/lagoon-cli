@@ -390,7 +390,7 @@ func getLagoonContext(lagoonCLIConfig *config.Config, lagoon *string, cmd *cobra
 		}
 		// prefer LAGOON_CONTEXT
 		if lagoonContextEnvar, ok := os.LookupEnv("LAGOON_CONTEXT"); ok {
-			configFilePath = lagoonContextEnvar
+			lagoonContext = lagoonContextEnvar
 		}
 	}
 	if lagoonContext != "" {
