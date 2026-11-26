@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/uselagoon/machinery/api/lagoon"
@@ -60,6 +61,10 @@ func addOrUpdateVariable(cmd *cobra.Command, args []string) error {
 	}
 	if err := requiredInputCheck("Variable name", varName); err != nil {
 		return err
+	}
+
+	if varScope != "" && !slices.Contains(variableScopes, strings.ToLower(varScope)) {
+		return fmt.Errorf("invalid scope '%s', valid scopes include: %s", varScope, strings.Join(variableScopes, ", "))
 	}
 
 	current := lagoonCLIConfig.Current
