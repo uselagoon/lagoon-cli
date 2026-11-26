@@ -853,7 +853,7 @@ var listInvokableTasks = &cobra.Command{
 		}
 
 		data := []output.Data{}
-		for _, task := range tasks.AdvancedTasks {
+		for _, task := range tasks.AdvancedTaskDefinitions {
 			data = append(data, []string{
 				returnNonEmptyString(task.Name),
 				returnNonEmptyString(task.Description),
